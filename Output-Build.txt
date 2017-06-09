@@ -1,0 +1,14 @@
+------ Build started: Project: E:\Проект Касби\Kasbi_Manager\, Configuration: Debug .NET ------
+Warning: Unable to update auto-refresh reference 'infragistics.webui.ultrawebchart.v4.dll'. Can not find assembly 'C:\Program Files\Infragistics\UltraWebChart\v4.00\Infragistics.WebUI.UltraWebChart.v4.dll'.
+Pre-compiling Web Site
+
+Building directory '/Kasbi_Manager/App_Code/'.
+Building directory '/Kasbi_Manager/Admin/'.
+Building directory '/Kasbi_Manager/Controls/'.
+Building directory '/Kasbi_Manager/'.
+Building directory '/Kasbi_Manager/Reports/'.
+Building directory '/Kasbi_Manager/scripts/'.
+Pre-compilation Complete
+------ Publish started: Project: E:\Проект Касби\Kasbi_Manager\, Configuration: Debug .NET ------
+========== Build: 1 succeeded or up-to-date, 0 failed, 0 skipped ==========
+========== Publish: 1 succeeded, 0 failed, 0 skipped ==========

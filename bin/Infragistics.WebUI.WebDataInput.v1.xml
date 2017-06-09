@@ -1,0 +1,2198 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>Infragistics.WebUI.WebDataInput.v1</name>
+    </assembly>
+    <members>
+        <member name="F:AssemblyRef.BaseResourceName">
+            <summary>Name of string resources used by designer</summary>
+        </member>
+        <member name="T:Infragistics.WebUI.WebDataInput.ButtonsAppearance">
+            <summary>
+            Collection of properties related to buttons that are used by WebTextEdit control.
+            </summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.ButtonsAppearance.ShouldSerializeButtonStyle">
+            <summary>
+            Check if ButtonStyle has data.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.ButtonsAppearance.ResetButtonStyle">
+            <summary>Clears the ButtonStyle</summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.ButtonsAppearance.ShouldSerializeButtonHoverStyle">
+            <summary>
+            Check if ButtonHoverStyle has data.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.ButtonsAppearance.ResetButtonHoverStyle">
+            <summary>Clears the ButtonHoverStyle</summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.ButtonsAppearance.ShouldSerializeButtonPressedStyle">
+            <summary>
+            Check if ButtonPressedStyle has data.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.ButtonsAppearance.ResetButtonPressedStyle">
+            <summary>Clears the ButtonPressedStyle</summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.ButtonsAppearance.ShouldSerializeButtonDisabledStyle">
+            <summary>
+            Check if ButtonDisabledStyle has data.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.ButtonsAppearance.ResetButtonDisabledStyle">
+            <summary>Clears the ButtonDisabledStyle</summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.ButtonsAppearance.ToString">
+            <summary>String formatted for visual designer.</summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.ButtonsAppearance.Reset">
+            <summary>
+            Reset all properties to thier defaults.
+            </summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.ButtonsAppearance.Owner">
+            <summary>
+            Reference to the WebTextEdit.
+            </summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.ButtonsAppearance.CustomButtonImageUrl">
+            <summary>
+            Path to the image that appears on the custom button in its normal state.
+            </summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.ButtonsAppearance.CustomButtonHoverImageUrl">
+            <summary>
+            Path to the image that appears on the custom button when mouse pointer is moved over it.
+            </summary>
+            <remarks>
+            <p class="note"><b>Note</b> This property has no effect if the <see cref="P:Infragistics.WebUI.WebDataInput.ButtonsAppearance.CustomButtonImageUrl"/> property is empty.</p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.ButtonsAppearance.CustomButtonPressedImageUrl">
+            <summary>
+            Path to the image that appears on the custom button in its depressed state.
+            </summary>
+            <remarks>
+            <p class="note"><b>Note</b> This property has no effect if the <see cref="P:Infragistics.WebUI.WebDataInput.ButtonsAppearance.CustomButtonImageUrl"/> property is empty.</p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.ButtonsAppearance.CustomButtonDisabledImageUrl">
+            <summary>
+            Image that appears on the custom button in disabled state.
+            </summary>
+            <remarks>
+            <p class="note"><b>Note</b> This property has no effect if the <see cref="P:Infragistics.WebUI.WebDataInput.ButtonsAppearance.CustomButtonImageUrl"/> property is empty.</p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.ButtonsAppearance.CustomButtonTooltip">
+            <summary>
+            Text of the tooltip that will be displayed for the custom button.
+            </summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.ButtonsAppearance.ButtonStyle">
+            <summary>
+            Style that is applied to the HTML elements that render buttons in normal states.
+            </summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.ButtonsAppearance.ButtonHoverStyle">
+            <summary>
+            Style that is applied to the HTML elements that render buttons when mouse pointer is moved over them.
+            </summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.ButtonsAppearance.ButtonPressedStyle">
+            <summary>
+            Style that is applied to the HTML elements that render buttons in pressed states.
+            </summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.ButtonsAppearance.ButtonDisabledStyle">
+            <summary>
+            Style that is applied to the HTML elements that render buttons in disabled states.
+            </summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.ButtonsAppearance.StretchedImages">
+            <summary>
+            Style of rendering that will be applied to custom images for the custom and spin buttons.
+            </summary>
+            <p class="body">Value of true will stretch image to the size of button, value of false will keep original sizes of images. Default value is set to the <tt>false</tt>.</p>
+            <remarks>
+            <p class="note"><b>Note</b> This property has no effect if built-in triangle images are used.</p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.ButtonsAppearance.CustomButtonDefaultTriangleImages">
+            <summary>
+            Size of the default triangle images on custom button.
+            If <see cref="P:Infragistics.WebUI.WebDataInput.ButtonsAppearance.CustomButtonImageUrl"/>property is set, then default triangle image is not displayed.
+            </summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.ButtonsAppearance.CustomButtonDisplay">
+            <summary>
+            Determines the position and visibility of the custom button.
+            </summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.ButtonsAppearance.ViewState">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:Infragistics.WebUI.WebDataInput.ClientSideEvents">
+            <summary>
+            Object that keeps the list of names for event function handlers used by JavaScript on client side.
+            </summary>
+            <remarks>
+            <p class="body">Because of the stateless nature of web connections, and the typical delays involved in returning information from the server, WebMenu implements both client-side events and server-side events. 
+            You can choose whether you would like to respond to client-side events, which must be implemented through JavaScript.</p>
+            The ClientSideEvents object maintains a list of event handlers that are implemented on the client and called in response to events as they occur in the browser.
+            Each event is a string that represents JavaScript function name. The named function must be implemented by the developer in JavaScript code.<br></br>
+            Every event function handler should have 3 parameters (the <tt>InitializeCalendar</tt> has only 1 parameter).
+            The first parameter contains reference to the JavaScript object that represents UltraWebTab.<br></br>
+            The second parameter contains reference to the JavaScript object that represents Tab.<br></br>
+            The third parameter contains reference to the JavaScript object that represents Event.<br></br>
+            Look at the events description for details.
+            </remarks>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.ClientSideEvents.#ctor">
+            <summary>The default public constructor for the ClientSideEvents object.</summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.ClientSideEvents.SetVal(System.String,System.String)">
+            <summary>Validates value and sets ViewState for property</summary>
+            <param name="id">unique id of property</param>
+            <param name="val">value</param>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.ClientSideEvents.ToString">
+            <summary>String formatted for visual designer.</summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.ClientSideEvents.Reset">
+            <summary>
+            Reset all properties to their defaults.
+            </summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.ClientSideEvents.Copy(Infragistics.WebUI.WebDataInput.ClientSideEvents)">
+            <summary>
+            Copies properties from source
+            </summary>
+            <param name="evts">Source</param>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.ClientSideEvents.IsDataPossible(Infragistics.WebUI.WebDataInput.ClientSideEvents)">
+            <summary>
+            Public shortcut to check if object may have data
+            </summary>
+            <param name="evts">ClientSideEvents or null</param>
+            <returns>True: ViewState.Count > 0</returns>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.ClientSideEvents.Initialize">
+            <summary>
+            Event fired after WebTextEdit was initialized.
+            </summary>
+            <remarks>
+            <p class="body">Event handler on the client script may contain 2 parameters.
+            <br></br>1st parameter contains reference to the TextEdit object
+            <br></br>2nd parameter contains instant text that appears in editor
+            </p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.ClientSideEvents.ValueChange">
+            <summary>
+            Event fired when control loses the input focus the value was modified.
+            </summary>
+            <remarks>
+            <p class="body">Event handler on the client script may contain 3 parameters.
+            <br></br>1st parameter contains reference to the TextEdit object
+            <br></br>2nd parameter contains reference to the old value (value before change)
+            <br></br>3rd parameter contains reference to the ig_EventObject object
+            </p>
+            <p class="note">This event can be canceled.</p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.ClientSideEvents.TextChanged">
+            <summary>
+            Event fired when the text was modified by user.
+            </summary>
+            <remarks>
+            <p class="body">Event handler on the client script may contain 3 parameters.
+            <br></br>1st parameter contains reference to the TextEdit object
+            <br></br>2nd parameter contains new text in editor
+            <br></br>3rd parameter contains reference to the ig_EventObject object
+            </p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.ClientSideEvents.InvalidValue">
+            <summary>
+            Event fired when the control loses the input focus and has invalid value.
+            </summary>
+            <remarks>
+            <p class="body">Event handler on the client script may contain 3 parameters.
+            <br></br>1st parameter contains reference to the TextEdit object
+            <br></br>2nd parameter contains object that is different for every particular editor. In case of WebDateTimeEditor it is the reference to the object that contains instant values of date fields, suggested date, and type of invalid event.
+            <br></br>3rd parameter contains reference to the ig_EventObject object
+            </p>
+            <p class="note">If that event was canceled by the <tt>oEvent.cancel=true;</tt>, then the Server is not notified about invalid value.</p>
+            <p class="note">In case of <tt>WebDateTime</tt> editor, if the value if the <tt>fields.date</tt> was modified, then that suggested value is used automatically.</p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.ClientSideEvents.CustomButtonPress">
+            <summary>
+            Event fired when the custom button was pressed.
+            </summary>
+            <remarks>
+            <p class="body">Event handler on the client script may contain 3 parameters.
+            <br></br>1st parameter contains reference to the TextEdit object
+            <br></br>2nd parameter contains instant text that appears in editor
+            <br></br>3rd parameter contains reference to the ig_EventObject object
+            </p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.ClientSideEvents.KeyDown">
+            <summary>
+            Event fired when the control recieves the <tt>keydown</tt> event of a browser.
+            </summary>
+            <remarks>
+            <p class="body">Event handler on the client script may contain 3 parameters.
+            <br></br>1st parameter contains reference to the TextEdit object
+            <br></br>2nd parameter contains reference to the keyCode
+            <br></br>3rd parameter contains reference to the ig_EventObject object
+            </p>
+            <p class="note">This event can be canceled.</p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.ClientSideEvents.KeyPress">
+            <summary>
+            Event fired when the control recieves the <tt>keypress</tt> event of a browser.
+            </summary>
+            <remarks>
+            <p class="body">Event handler on the client script may contain 3 parameters.
+            <br></br>1st parameter contains reference to the TextEdit object
+            <br></br>2nd parameter contains reference to the keyCode
+            <br></br>3rd parameter contains reference to the ig_EventObject object
+            </p>
+            <p class="note">This event can be canceled.</p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.ClientSideEvents.Focus">
+            <summary>
+            Event fired when the control recieves the <tt>focus</tt> event of a browser.
+            </summary>
+            <remarks>
+            <p class="body">Event handler on the client script may contain 3 parameters.
+            <br></br>1st parameter contains reference to the TextEdit object
+            <br></br>2nd parameter contains instant text that appears in editor
+            <br></br>3rd parameter contains reference to the ig_EventObject object
+            </p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.ClientSideEvents.Blur">
+            <summary>
+            Event fired when the control recieves the <tt>blur</tt> event of a browser.
+            </summary>
+            <remarks>
+            <p class="body">Event handler on the client script may contain 3 parameters.
+            <br></br>1st parameter contains reference to the TextEdit object
+            <br></br>2nd parameter contains instant text that appears in editor
+            <br></br>3rd parameter contains reference to the ig_EventObject object
+            </p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.ClientSideEvents.Spin">
+            <summary>
+            Event fired when value is incremented or decremented by a spin button or by up/down arrow key.
+            </summary>
+            <remarks>
+            <p class="body">Event handler on the client script may contain 3 parameters.
+            <br></br>1st parameter contains reference to the TextEdit object
+            <br></br>2nd parameter contains reference to the delta
+            <br></br>3rd parameter contains reference to the ig_EventObject object
+            </p>
+            <p class="note">This event can be canceled.</p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.ClientSideEvents.MouseDown">
+            <summary>
+            Event fired when the control recieves the <tt>mousedown</tt> event of a browser for input field.
+            </summary>
+            <remarks>
+            <p class="body">Event handler on the client script may contain 3 parameters.
+            <br></br>1st parameter contains reference to the TextEdit object
+            <br></br>2nd parameter contains instant text that appears in editor
+            <br></br>3rd parameter contains reference to the ig_EventObject object
+            </p>
+            </remarks>
+        </member>
+        <member name="T:Infragistics.WebUI.WebDataInput.BrowserTarget">
+            <summary>
+            Type of browser the HTML should be created for.
+            </summary>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.BrowserTarget.UpLevel">
+            <summary>
+            Browser similar to IE5/6 or Netscape6/7
+            </summary>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.BrowserTarget.DownLevel">
+            <summary>
+            Browser similar to IE3/4 or Netscape4/5
+            </summary>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.BrowserTarget.Auto">
+            <summary>
+            Browser is detected automatically at run time
+            </summary>
+        </member>
+        <member name="T:Infragistics.WebUI.WebDataInput.ButtonDisplay">
+            <summary>
+            Location and visibility of buttons.
+            </summary>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.ButtonDisplay.None">
+            <summary>
+            Button is not displayed.
+            </summary>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.ButtonDisplay.OnRight">
+            <summary>
+            Button is displayed on the right side of control.
+            </summary>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.ButtonDisplay.OnLeft">
+            <summary>
+            Button is displayed on the left side of control.
+            </summary>
+        </member>
+        <member name="T:Infragistics.WebUI.WebDataInput.DefaultTriangleImages">
+            <summary>
+            Type of built-in images displayed on buttons.
+            </summary>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.DefaultTriangleImages.None">
+            <summary>
+            No built-in triangle images.
+            </summary>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.DefaultTriangleImages.Small">
+            <summary>
+            Spin button triangles 2 pixels high and custom button triangle 3 pixels high.
+            </summary>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.DefaultTriangleImages.Normal">
+            <summary>
+            Spin button triangles 3 pixels high and custom button triangle 4 pixels high.
+            </summary>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.DefaultTriangleImages.Normal1">
+            <summary>
+            Spin button triangles 4 pixels high and custom button triangle 5 pixels high.
+            </summary>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.DefaultTriangleImages.Normal2">
+            <summary>
+            Spin button triangles 5 pixels high and custom button triangle 6 pixels high.
+            </summary>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.DefaultTriangleImages.Large">
+            <summary>
+            Spin button triangles 6 pixels high and custom button triangle 7 pixels high.
+            </summary>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.DefaultTriangleImages.Largest">
+            <summary>
+            Spin button triangles 7 pixels high and custom button triangle 8 pixels high.
+            </summary>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.DefaultTriangleImages.Arrow">
+            <summary>
+            Arrow images with the sizes of 6 x 9 pixels are drawn.
+            </summary>
+        </member>
+        <member name="T:Infragistics.WebUI.WebDataInput.MaskDisplayMode">
+            <summary>
+            The approach that used to build the display string when there is no data in the <tt>WebMaskEdit</tt> control.
+            </summary>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.MaskDisplayMode.Mask">
+            <summary>
+            The literal characters and not-filled required mask positions are displayed.
+            </summary>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.MaskDisplayMode.BlankWhenEmpty">
+            <summary>
+            The blank string is displayed when there is no data.
+            </summary>
+        </member>
+        <member name="T:Infragistics.WebUI.WebDataInput.MaskDataMode">
+            <summary>
+            The approach that used to build string for the <tt>Value</tt> property of the <tt>WebMaskEdit</tt> control.
+            </summary>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.MaskDataMode.RawText">
+            <summary>
+            Raw text. No empty prompt-mask positions and no literal-mask characters.
+            </summary>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.MaskDataMode.RawTextWithRequiredPrompts">
+            <summary>
+            Raw text with empty required prompt-mask positions replaced by the <tt>EmptyPositionChar</tt> characters. No empty optional prompt-mask positions and no literal-mask characters.
+            </summary>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.MaskDataMode.RawTextWithAllPrompts">
+            <summary>
+            Raw text with all empty prompt-mask positions replaced by the <tt>EmptyPositionChar</tt> characters. No literal-mask characters.
+            </summary>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.MaskDataMode.RawTextWithLiterals">
+            <summary>
+            Raw text with literal-mask characters. No empty prompt-mask positions.
+            </summary>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.MaskDataMode.RawTextWithRequiredPromptsAndLiterals">
+            <summary>
+            Raw text with empty required prompt-mask positions replaced by the <tt>EmptyPositionChar</tt> characters. Literal-mask characters are included. No empty optional prompt-mask positions.
+            </summary>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.MaskDataMode.AllText">
+            <summary>
+            Text with all empty prompt-mask positions replaced by the <tt>EmptyPositionChar</tt> characters and literal-mask characters.
+            </summary>
+        </member>
+        <member name="T:Infragistics.WebUI.WebDataInput.DateDataMode">
+            <summary>
+            Type of string that is used to get and set the <tt>Value</tt> property by the WebDateTimeEdit control.
+            </summary>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.DateDataMode.Date">
+            <summary>
+            The <tt>Date</tt> property is used.
+            </summary>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.DateDataMode.EditModeText">
+            <summary>
+            The <tt>EditModeText</tt> property is used.
+            </summary>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.DateDataMode.Text">
+            <summary>
+            The <tt>Text</tt> property is used.
+            </summary>
+            <remarks>
+            <p class="note">The <tt>set</tt> property for month will recognize only integer value and days of the week is ignored.</p>
+            </remarks>
+        </member>
+        <member name="T:Infragistics.WebUI.WebDataInput.NumericDataMode">
+            <summary>
+            Type of object that is used to get and set the <tt>Value</tt> property by WebNumericEdit control.
+            </summary>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.NumericDataMode.Text">
+            <summary>
+            The <tt>Text</tt> property is used.
+            </summary>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.NumericDataMode.Double">
+            <summary>
+            The <tt>ValueDouble</tt> property is used.
+            </summary>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.NumericDataMode.Float">
+            <summary>
+            The <tt>float</tt> is used.
+            </summary>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.NumericDataMode.Decimal">
+            <summary>
+            The <tt>decimal</tt> is used.
+            </summary>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.NumericDataMode.Long">
+            <summary>
+            The <tt>long</tt> is used.
+            </summary>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.NumericDataMode.Ulong">
+            <summary>
+            The <tt>ulong</tt> is used.
+            </summary>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.NumericDataMode.Int">
+            <summary>
+            The <tt>int</tt> is used.
+            </summary>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.NumericDataMode.Uint">
+            <summary>
+            The <tt>uint</tt> is used.
+            </summary>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.NumericDataMode.Short">
+            <summary>
+            The <tt>short</tt> is used.
+            </summary>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.NumericDataMode.Ushort">
+            <summary>
+            The <tt>ushort</tt> is used.
+            </summary>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.NumericDataMode.Sbyte">
+            <summary>
+            The <tt>sbyte</tt> is used.
+            </summary>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.NumericDataMode.Byte">
+            <summary>
+            The <tt>byte</tt> is used.
+            </summary>
+        </member>
+        <member name="T:Infragistics.WebUI.WebDataInput.SelectionOnFocus">
+            <summary>
+            Type of selection on start of edit mode.
+            </summary>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.SelectionOnFocus.SelectAll">
+            <summary>
+            Select all text.
+            </summary>
+            <p class="note"><b>Note</b> In some browsers, this setting may lead to losing the edit-mode mouse pointer until the first keyboard entry.</p>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.SelectionOnFocus.CaretToBeginning">
+            <summary>
+            Destroy selection and move caret to the beginning of text.
+            </summary>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.SelectionOnFocus.CaretToEnd">
+            <summary>
+            Destroy selection and move caret to the end of text.
+            </summary>
+        </member>
+        <member name="T:Infragistics.WebUI.WebDataInput.MinDecimalPlaces">
+            <summary>
+            Minimum number of decimal places displayed for number strings.
+            </summary>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.MinDecimalPlaces.SameAsDecimalPlaces">
+            <summary>
+            If number of entered decimal digits was less than number of decimal places defined by the number format, then "0"s are appended.
+            </summary>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.MinDecimalPlaces.None">
+            <summary>
+            If decimal digits are not entered, then none is displayed.
+            </summary>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.MinDecimalPlaces.One">
+            <summary>
+            If decimal digits are not entered and decimal digits defined by the number format larger than 0, then "0" is displayed as decimal part of number.
+            </summary>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.MinDecimalPlaces.Two">
+            <summary>
+            If number of entered decimal digits is less than 2, then missing decimal places are filled by "0"s.
+            </summary>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.MinDecimalPlaces.Three">
+            <summary>
+            If number of entered decimal digits is less than 3, then missing decimal places are filled by "0"s.
+            </summary>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.MinDecimalPlaces.Four">
+            <summary>
+            If number of entered decimal digits is less than 4, then missing decimal places are filled by "0"s.
+            </summary>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.MinDecimalPlaces.Five">
+            <summary>
+            If number of entered decimal digits is less than 5, then missing decimal places are filled by "0"s.
+            </summary>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.MinDecimalPlaces.Six">
+            <summary>
+            If number of entered decimal digits is less than 6, then missing decimal places are filled by "0"s.
+            </summary>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.MinDecimalPlaces.Seven">
+            <summary>
+            If number of entered decimal digits is less than 7, then missing decimal places are filled by "0"s.
+            </summary>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.MinDecimalPlaces.Eight">
+            <summary>
+            If number of entered decimal digits is less than 8, then missing decimal places are filled by "0"s.
+            </summary>
+        </member>
+        <member name="T:Infragistics.WebUI.WebDataInput.InvalidValueType">
+            <summary>
+            Type of error that is raised when invalid-value event was fired.
+            </summary>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.InvalidValueType.Invalid">
+            <summary>
+            Invalid string which could not be converted to a valid value.
+            <p class="body">In case of WebNumericEdit it is fired when following strings were entered: "<tt>.</tt>", "<tt>-.</tt>", "<tt>-</tt>".</p>
+            <p class="body">In case of WebDateTimeEdit, the last good date value was used as the new value.</p>
+            </summary>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.InvalidValueType.MinMaxLimit">
+            <summary>
+            Entered value was beyond minimum or maximum limits.
+            </summary>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.InvalidValueType.FieldValue">
+            <summary>
+            Wrong values of fields, missing field value, etc.<br></br>
+            In case of WebNumericEdit it is fired when empty string was entered and null value was not allowed.
+            In case of WebDateTimeEdit it is fired when some date fields had invalid values, but new-suggested value was constructed.
+            </summary>
+        </member>
+        <member name="T:Infragistics.WebUI.WebDataInput.StylePreset">
+            <summary>
+            WebTextEdit preset of styles.
+            </summary>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.StylePreset.Default">
+            <summary>
+            Default appearance.
+            </summary>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.StylePreset.Windows2000">
+            <summary>
+            Microsoft Windows 2000 appearance.
+            </summary>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.StylePreset.WindowsXPBlue">
+            <summary>
+            Microsoft Windows XP appearance.
+            </summary>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.StylePreset.Thin3DBorders">
+            <summary>
+            Thin 3D borders of buttons.
+            </summary>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.StylePreset.PopUpFlatBorders">
+            <summary>
+            Flat borders of buttons.
+            </summary>
+        </member>
+        <member name="F:Infragistics.WebUI.WebDataInput.StylePreset.PopUp3DBorders">
+            <summary>
+            Pop-up borders of buttons.
+            </summary>
+        </member>
+        <member name="T:Infragistics.WebUI.WebDataInput.DateFormatUITypeEditor">
+            <summary></summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.DateFormatUITypeEditor.EditValue(System.ComponentModel.ITypeDescriptorContext,System.IServiceProvider,System.Object)">
+            <summary>
+            Used to edit the value and convert the value as needed.
+            </summary>
+            <param name="context">ITypeDescriptorContext</param>
+            <param name="provider">IServiceProvider</param>
+            <param name="value">Current value</param>
+            <returns>Edited value.</returns>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.DateFormatUITypeEditor.GetEditStyle(System.ComponentModel.ITypeDescriptorContext)">
+            <summary>
+            Used to determine the type of UIEditor that will be displayed.
+            </summary>
+            <param name="context">ITypeDescriptorContext</param>
+            <returns>UITypeEditorEditStyle specifying the type of UIEditor.</returns>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.DateFormatUITypeEditor.GetPaintValueSupported(System.ComponentModel.ITypeDescriptorContext)">
+            <summary>
+            Indicates if the a small representation of the value is rendered in the property grid.
+            </summary>
+            <param name="context">Context information about the property to render</param>
+            <returns>True to indicate that a value will be rendered</returns>
+        </member>
+        <member name="T:Infragistics.WebUI.WebDataInput.MaskUITypeEditor">
+            <summary></summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.MaskUITypeEditor.EditValue(System.ComponentModel.ITypeDescriptorContext,System.IServiceProvider,System.Object)">
+            <summary>
+            Used to edit the value and convert the value as needed.
+            </summary>
+            <param name="context">ITypeDescriptorContext</param>
+            <param name="provider">IServiceProvider</param>
+            <param name="value">Current value</param>
+            <returns>Edited value.</returns>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.MaskUITypeEditor.GetEditStyle(System.ComponentModel.ITypeDescriptorContext)">
+            <summary>
+            Used to determine the type of UIEditor that will be displayed.
+            </summary>
+            <param name="context">ITypeDescriptorContext</param>
+            <returns>UITypeEditorEditStyle specifying the type of UIEditor.</returns>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.MaskUITypeEditor.GetPaintValueSupported(System.ComponentModel.ITypeDescriptorContext)">
+            <summary>
+            Indicates if the a small representation of the value is rendered in the property grid.
+            </summary>
+            <param name="context">Context information about the property to render</param>
+            <returns>True to indicate that a value will be rendered</returns>
+        </member>
+        <member name="T:Infragistics.WebUI.WebDataInput.RenderDownLevel">
+            <summary>
+            Summary description for RenderDownLevel.
+            </summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.RenderDownLevel.VisitObjects(System.Web.UI.HtmlTextWriter)">
+            <summary></summary>
+        </member>
+        <member name="T:Infragistics.WebUI.WebDataInput.RenderUpLevel">
+            <summary>
+            Summary description for RenderUpLevel.
+            </summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.RenderUpLevel.RenderScriptMain(System.Text.StringBuilder)">
+            <summary>
+            Appends properties that are rendered to html as 3rd parameter to function that initialize control.
+            </summary>
+            <param name="str"></param>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.RenderUpLevel.VisitObjects(System.Web.UI.HtmlTextWriter)">
+            <summary></summary>
+        </member>
+        <member name="T:Infragistics.WebUI.WebDataInput.CustomButtonPressHandler">
+            <summary>Handler for custom button press event.</summary>
+        </member>
+        <member name="T:Infragistics.WebUI.WebDataInput.EnterKeyPressHandler">
+            <summary>Handler for Enter key press event.</summary>
+        </member>
+        <member name="T:Infragistics.WebUI.WebDataInput.ValueChangeHandler">
+            <summary>Handler for value changed event.</summary>
+        </member>
+        <member name="T:Infragistics.WebUI.WebDataInput.InvalidValueHandler">
+            <summary>Handler for value changed event.</summary>
+        </member>
+        <member name="T:Infragistics.WebUI.WebDataInput.InvalidNumberHandler">
+            <summary>Handler for value changed event.</summary>
+        </member>
+        <member name="T:Infragistics.WebUI.WebDataInput.InvalidDateHandler">
+            <summary>Handler for value changed event.</summary>
+        </member>
+        <member name="T:Infragistics.WebUI.WebDataInput.ValueChangeEventArgs">
+            <summary>ValueChangeEventArgs object is used to notify listener about the change of value.</summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.ValueChangeEventArgs.OldValue">
+            <summary>Old date.</summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.ValueChangeEventArgs.Value">
+            <summary>New date.</summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.ValueChangeEventArgs.Cancel">
+            <summary>Cancel change.</summary>
+        </member>
+        <member name="T:Infragistics.WebUI.WebDataInput.InvalidDateEventArgs">
+            <summary>Event that is fired when invalid date was entered.</summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.InvalidDateEventArgs.Year">
+            <summary>Value of year field that was entered in control.</summary>
+            <remarks>
+            <p class="note">Valid range of values: 1-9999.<br></br>
+            If value is -1, then it means that year field is not in input mask or value was not entered.
+            </p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.InvalidDateEventArgs.Month">
+            <summary>Value of month field that was entered in control.</summary>
+            <remarks>
+            <p class="note">Valid range of values: 1-12.<br></br>
+            If value is -1, then it means that month field is not in input mask or value was not entered.
+            </p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.InvalidDateEventArgs.Day">
+            <summary>Value of day field that was entered in control.</summary>
+            <remarks>
+            <p class="note">Valid range of values: 1-31.<br></br>
+            If value is -1, then it means that day field is not in input mask or value was not entered.
+            </p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.InvalidDateEventArgs.Hours">
+            <summary>Value of hour field that was entered in control.</summary>
+            <remarks>
+            <p class="note">Valid range of values: 0-23.<br></br>
+            If value is -1, then it means that hour field is not in input mask or value was not entered.
+            </p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.InvalidDateEventArgs.Minutes">
+            <summary>Value of minute field that was entered in control.</summary>
+            <remarks>
+            <p class="note">Valid range of values: 0-59.<br></br>
+            If value is -1, then it means that minute field is not in input mask or value was not entered.
+            </p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.InvalidDateEventArgs.Seconds">
+            <summary>Value of second field that was entered in control.</summary>
+            <remarks>
+            <p class="note">Valid range of values: 0-59.<br></br>
+            If value is -1, then it means that second field is not in input mask or value was not entered.
+            </p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.InvalidDateEventArgs.Milliseconds">
+            <summary>Value of millisecond field that was entered in control.</summary>
+            <remarks>
+            <p class="note">Valid range of values: 0-999.<br></br>
+            If value is -1, then it means that millisecond field is not in input mask or value was not entered.
+            </p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.InvalidDateEventArgs.SuggestedValue">
+            <summary>Suggested value of date.</summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.InvalidDateEventArgs.Type">
+            <summary>Type of invalid entry.</summary>
+        </member>
+        <member name="T:Infragistics.WebUI.WebDataInput.InvalidNumberEventArgs">
+            <summary>Event that is fired when invalid number was entered.</summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.InvalidNumberEventArgs.Text">
+            <summary>Value of text that was entered in control.</summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.InvalidNumberEventArgs.SuggestedValue">
+            <summary>Suggested value of number.</summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.InvalidNumberEventArgs.Type">
+            <summary>Type of invalid entry.</summary>
+        </member>
+        <member name="T:Infragistics.WebUI.WebDataInput.SpinButtons">
+            <summary>
+            Collection of properties related to spin buttons that are used by WebTextEdit control.
+            </summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.SpinButtons.ToString">
+            <summary>String formatted for visual designer.</summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.SpinButtons.Reset">
+            <summary>
+            Reset all properties to thier defaults.
+            </summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.SpinButtons.Owner">
+            <summary>
+            Reference to the WebTextEdit.
+            </summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.SpinButtons.LowerButtonImageUrl">
+            <summary>
+            Image that appears on the lower spin button in normal state.
+            </summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.SpinButtons.LowerButtonHoverImageUrl">
+            <summary>
+            Image that appears on the lower spin button when mouse is moved over it.
+            </summary>
+            <remarks>
+            <p class="note">This property has no effect if the <tt>LowerButtonImageUrl</tt>code> property is empty.</p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.SpinButtons.LowerButtonPressedImageUrl">
+            <summary>
+            Image that appears on the lower spin button in pressed state.
+            </summary>
+            <remarks>
+            <p class="note">This property has no effect if the <tt>LowerButtonImageUrl</tt>code> property is empty.</p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.SpinButtons.LowerButtonDisabledImageUrl">
+            <summary>
+            Image that appears on the lower spin button in disabled state.
+            </summary>
+            <remarks>
+            <p class="note">This property has no effect if the <tt>LowerButtonImageUrl</tt>code> property is empty.</p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.SpinButtons.UpperButtonImageUrl">
+            <summary>
+            Image that appears on the upper spin button in normal state.
+            </summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.SpinButtons.UpperButtonHoverImageUrl">
+            <summary>
+            Image that appears on the upper spin button when mouse is moved over it.
+            </summary>
+            <remarks>
+            <p class="note">This property has no effect if the <tt>UpperButtonImageUrl</tt>code> property is empty.</p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.SpinButtons.UpperButtonPressedImageUrl">
+            <summary>
+            Image that appears on the upper spin button in pressed state.
+            </summary>
+            <remarks>
+            <p class="note">This property has no effect if the <tt>UpperButtonImageUrl</tt>code> property is empty.</p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.SpinButtons.UpperButtonDisabledImageUrl">
+            <summary>
+            Image that appears on the upper spin button in disabled state.
+            </summary>
+            <remarks>
+            <p class="note">This property has no effect if the <tt>UpperButtonImageUrl</tt>code> property is empty.</p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.SpinButtons.LowerButtonTooltip">
+            <summary>
+            Tooltip for the lower spin button.
+            </summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.SpinButtons.UpperButtonTooltip">
+            <summary>
+            Tooltip for the upper spin button.
+            </summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.SpinButtons.DefaultTriangleImages">
+            <summary>
+            Size of default triangle images.
+            If ImageUrl property of a button is set, then default triangle images for that button are not displayed.
+            </summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.SpinButtons.Display">
+            <summary>
+            Visibility and layout of spin buttons.
+            </summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.SpinButtons.Delay">
+            <summary>
+            Initial delay in milliseconds between increment/decrement spin events.
+            </summary>
+            <remarks>
+            <p class="note">Default value is set to 200.</p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.SpinButtons.Delta">
+            <summary>
+            Value that is used to increment/decrement editing value on spin events.
+            </summary>
+            <remarks>
+            <p class="note">That value is also used when increment/decrement happens on the up/down arrow keys.</p>
+            <p class="note">In case of zero, the value of 1 of the field where caret was is used.</p>
+            <p class="note">Default value is set to 1. In case of date editor, it is 1 day and in case of time editor it is 1 minute.</p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.SpinButtons.SpeedUpRate">
+            <summary>
+            Ability to automatically increase/decrease delay while spin events.
+            </summary>
+            <remarks>
+            <p class="note">This property allows to increase, decrease or keep permanent delay between spin events.
+            <br></br>Positive values will gradually decrease delay (increase speed) until the value of the <tt><b>(Delay / 2 ^ value)</b></tt> is reached.
+            <br></br>Negative values will increase delay (decrease speed) until the value of the <tt><b>(Delay * 2 ^ value)</b></tt> is reached.
+            <br></br>Value of zero will keep permanent delay between spin events.
+            <br></br>Range of values is -3..0..+6. The value of -3 will slow down initial delay in 8 times. The value of 6 will speed up initial delay in 64 times.
+            </p>
+            <p class="note">Default value is set to 3.</p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.SpinButtons.SpinOnArrowKeys">
+            <summary>
+            Ability to increment/decrement value on Up/Down arrow keys.
+            <remarks>
+            <p class="note">Default value is set to true.</p>
+            </remarks>
+            </summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.SpinButtons.SpinOnReadOnly">
+            <summary>
+            Ability to increment/decrement value when ReadOnly is true.
+            </summary>
+            <remarks>
+            <p class="note">Default value is set to false.</p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.SpinButtons.SpinOnlyOneField">
+            <summary>
+            Ability to increment/decrement value of only one field.
+            </summary>
+            <remarks>
+            <p class="body">This property is applied only to date editor.
+            <br></br>If value is true, then only one current field is incremented/decremented and all other fieds remain unchanged.
+            <br></br>If value is false, then other date fields can be affected too.
+            </p>
+            <p class="note">Default value is set to false.</p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.SpinButtons.Width">
+            <summary>
+            Width of spin buttons excluding borders.
+            </summary>
+            <remarks>
+            <p class="note">If button has image, then width can not be smaller than the width of image.</p>
+            <p class="note">If value is not set, then 12 pixel is used.</p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.SpinButtons.ViewState">
+            <summary>
+            
+            </summary>
+        </member>
+        <member name="T:Infragistics.WebUI.WebDataInput.SR">
+            <summary>
+            Internal class for retrieving information from an assembly's resource file.
+            </summary>
+            <remarks>
+            Additionally, any assemblies using this class should also add the 
+            SatelliteContractVersion attribute to the assembly. This essentially provides a 
+            version number which any satellite assemblies will use to associate with
+            this assembly. Therefore, if the assembly using this class is rebuilt and
+            has its version number incremented, the satellite dlls that been built against
+            this dll will still work since it is the satellite contract version that binds
+            the two. If you do not add this attribute, the compiler will use the assembly
+            version number for the satellite contract version.
+            e.g.
+            [assembly: System.Resources.SatelliteContractVersion("1.0.5006.0")]
+            
+            And in case someone has a problem where the resources are not being displayed,
+            the best thing to use if the log binding viewer (fuslogvw.exe). However, in
+            order to have this work with resources, you need to make a modification to the
+            registry. You can also have this log all binding info, including successful binds.
+            The following info is straight out of MS's docs for settings this up:
+            To log all binds in the viewer 
+            	Set the HKLM\Software\Microsoft\Fusion\ForceLog registry value to 1 (the value is a DWORD). 
+            	By default, Fuslogvw.exe only logs failed attempts to locate assemblies. You might have a situation where it is useful to view all successful assembly binds. For example, you might want to verify that an assembly is loading from your application directory instead of from the global assembly cache. Setting this registry key forces Fuslogvw.exe to log all assembly binds.
+            To log bind failures to satellite assemblies 
+            	Set the HKLM\Software\Microsoft\Fusion\LogResourceBinds registry value to 1 (the value is a DWORD). 
+            	By default, Fuslogvw.exe does not log failed attempts to locate satellite assemblies. Setting this registry key enables this feature.
+            </remarks>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.SR.GetString(System.String)">
+            <summary>
+            Returns the resource string using the specified name and default culture.
+            </summary>
+            <param name="name">Name of the string resource to return.</param>
+            <returns>Null if the name is null; otherwise a string from the resource for the default culture.</returns>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.SR.GetString(System.String,System.Object[])">
+            <summary>
+            Returns the resource string using the specified resource name and default culture. The string is then formatted using the arguments specified.
+            </summary>
+            <param name="name">Name of the string resource to return.</param>
+            <param name="args">Arguments supplied to the string.Format method when formatting the string.</param>
+            <returns>Null if the name is null; otherwise a formatted string using the resource specified.</returns>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.SR.GetString(System.Globalization.CultureInfo,System.String)">
+            <summary>
+            Returns the resource string using the culture and name specified.
+            </summary>
+            <param name="culture">Culture whose resource should loaded. The resource will go through a fallback process to locate the appropriate resources.</param>
+            <param name="name">Name of the string resource to return.</param>
+            <returns>Null if the name is null; otherwise a localized string for specified culture.</returns>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.SR.GetString(System.Globalization.CultureInfo,System.String,System.Object[])">
+            <summary>
+            Returns the resource string using the name and culture specified. The string is then formatted using the arguments specified.
+            </summary>
+            <param name="culture">Culture whose resource should loaded. The resource will go through a fallback process to locate the appropriate resources.</param>
+            <param name="name">Name of the string resource to return.</param>
+            <param name="args">Arguments supplied to the string.Format method when formatting the string.</param>
+            <returns>Null if the name is null; otherwise a formatted string using the resource specified.</returns>
+        </member>
+        <member name="T:Infragistics.WebUI.WebDataInput.LocalizedCategoryAttribute">
+            <summary>
+            Internal class for returning a localized category string
+            </summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.LocalizedCategoryAttribute.#ctor(System.String)">
+            <summary>
+            Initializes a new <b>LocalizedCategoryAttribute</b>
+            </summary>
+            <param name="category">Name of the resource containing the localizable category name</param>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.LocalizedCategoryAttribute.GetLocalizedString(System.String)">
+            <summary>
+            Returns the localized category name
+            </summary>
+            <param name="value">Name of the category to retreive</param>
+            <returns>The localized string value</returns>
+        </member>
+        <member name="T:Infragistics.WebUI.WebDataInput.LocalizedDescriptionAttribute">
+            <summary>
+            Internal class for returning the localized description string
+            </summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.LocalizedDescriptionAttribute.#ctor(System.String)">
+            <summary>
+            Creates a new instance of a <b>LocalizedDescriptionAttribute</b>
+            </summary>
+            <param name="description">Name of the resource containing the localizable description</param>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.LocalizedDescriptionAttribute.Description">
+            <summary>
+            Returns the description using the resource manager
+            </summary>
+        </member>
+        <member name="T:Infragistics.WebUI.WebDataInput.StylePresets">
+            <summary>
+            Summary description for StylePresets.
+            </summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.StylePresets.#ctor(System.Object)">
+            <summary></summary>
+            <param name="text"></param>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.StylePresets.Dispose(System.Boolean)">
+            <summary>
+            Clean up any resources being used.
+            </summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.StylePresets.InitializeComponent">
+            <summary>
+            Required method for Designer support - do not modify
+            the contents of this method with the code editor.
+            </summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.StylePresets.Preset(Infragistics.WebUI.WebDataInput.WebTextEdit,Infragistics.WebUI.WebDataInput.StylePreset,System.Boolean)">
+             <summary>
+             Configure properties of target according to predifined style.
+            <p class="note">Note: all properties of target related to the appearance will be reset.<br></br>
+             If this method is called at run time, then the size of the hidden ViewState field passed to the client will be significantly increased.</p>
+             </summary>
+             <param name="target">Instance of the WebTextEdit, which properties will be modified.</param>
+             <param name="style">Preset style.</param>
+             <param name="reset">True: reset all properties related to appearance.</param>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.UltraLicenseAttribute.LicensedWithProducts">
+            <summary>
+            Return the list of products that this control can be licensed with
+            </summary>
+        </member>
+        <member name="T:Infragistics.WebUI.WebDataInput.WebCurrencyEdit">
+            <summary>
+            Control that renders number editor.
+            </summary>
+            <remarks>
+            <p class="body">The number pattern and other aspects of number string are defined by the values
+            found in the <tt>NumberFormat</tt> property.
+            </p>
+            </remarks>
+        </member>
+        <member name="T:Infragistics.WebUI.WebDataInput.WebNumericEdit">
+            <summary>
+            Control that renders number editor.
+            </summary>
+            <remarks>
+            <p class="body">The number pattern and other aspects of number string are defined by the values
+            found in the <tt>NumberFormat</tt> property.
+            </p>
+            </remarks>
+        </member>
+        <member name="T:Infragistics.WebUI.WebDataInput.WebTextEdit">
+            <summary>
+            Control that renders text editor with optional buttons.
+            </summary>
+            <remarks>
+            <p class="body">The major property of the control is the <see cref="P:Infragistics.WebUI.WebDataInput.WebTextEdit.Value"/>. A particular type
+            of object used by that property is defined by the <tt>DataMode</tt> property which can be found in extended classes:
+            <see cref="P:Infragistics.WebUI.WebDataInput.WebMaskEdit.DataMode"/>, <see cref="P:Infragistics.WebUI.WebDataInput.WebNumericEdit.DataMode"/>, <see cref="P:Infragistics.WebUI.WebDataInput.WebDateTimeEdit.DataMode"/>.
+            </p>
+            <p class="note"><b>Note</b> The ValidationProperty attribute is linked to the <see cref="P:Infragistics.WebUI.WebDataInput.WebTextEdit.Value"/> property.</p>
+            </remarks>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebTextEdit.#ctor">
+            <summary>Creates WebTextEdit control</summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebTextEdit.ShouldSerializePadding">
+            <summary>Checks if Padding has data.</summary>
+            <returns></returns>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebTextEdit.ResetPadding">
+            <summary>Clears the Padding</summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebTextEdit.ShouldSerializeBorderDetails">
+            <summary>Check if BorderDetails has data.</summary>
+            <returns></returns>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebTextEdit.ResetBorderDetails">
+            <summary>Clears the BorderDetails</summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebTextEdit.ShouldSerializeText">
+            <summary>
+            Check if Text has data.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebTextEdit.ResetText">
+            <summary>Clears the Text</summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebTextEdit.ShouldSerializeClientSideEvents">
+            <summary>
+            Check if ClientSideEvents has data.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebTextEdit.ResetClientSideEvents">
+            <summary>Clears the ClientSideEvents</summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebTextEdit.ShouldSerializeButtonsAppearance">
+            <summary>
+            Check if ButtonsAppearance has data.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebTextEdit.ResetButtonsAppearance">
+            <summary>Clears the ButtonsAppearance</summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebTextEdit.ShouldSerializeSpinButtons">
+            <summary>
+            Check if SpinButtons has data.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebTextEdit.ResetSpinButtons">
+            <summary>Clears the SpinButtons</summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebTextEdit.CanEditType(System.Type)">
+            <summary>
+            Implementation of IProvidesEmbeddableEditor.
+            </summary>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebTextEdit.CanRenderType(System.Type)">
+            <summary>
+            Implementation of IProvidesEmbeddableEditor.
+            </summary>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebTextEdit.RenderValue(System.Object)">
+            <summary>
+            Implementation of IProvidesEmbeddableEditor.
+            </summary>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebTextEdit.RenderProps(System.Text.StringBuilder)">
+            <summary>
+            Append specific client-side properties for UpLevel renderer.
+            </summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebTextEdit.LoadViewState(System.Object)">
+            <summary></summary>
+            <param name="savedState"></param>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebTextEdit.SaveViewState">
+            <summary></summary>
+            <returns></returns>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebTextEdit.TrackViewState">
+            <summary></summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebTextEdit.Render(System.Web.UI.HtmlTextWriter)">
+            <summary>
+            Render calendar to html.
+            </summary>
+            <param name="output"></param>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebTextEdit.BeforeRenderToClient">
+            <summary></summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebTextEdit.OnPreRender(System.EventArgs)">
+            <summary>Prepares the WebTextEdit control for rendering.</summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebTextEdit.OnInit(System.EventArgs)">
+            <summary>Prepares the UltraWebTab control for rendering.</summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebTextEdit.System#Web#UI#IPostBackEventHandler#RaisePostBackEvent(System.String)">
+            <summary>Process an event when the form is posted to the server.</summary>
+            <param name="eventArgument">A String that represents an optional event argument to be passed to the event handler.</param>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebTextEdit.System#Web#UI#IPostBackDataHandler#LoadPostData(System.String,System.Collections.Specialized.NameValueCollection)">
+            <summary>Process post-back data from a server control.</summary>
+            <param name="key">The key identifier for the control.</param>
+            <param name="names">The collection of all incoming name values.</param>
+            <returns>The value of false.</returns>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebTextEdit.System#Web#UI#IPostBackDataHandler#RaisePostDataChangedEvent">
+            <summary>The OnValueChange method with reference to the selected date is invoked.</summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebTextEdit.SetPostValue(System.String,System.Boolean)">
+            <summary>
+            Convert post value to the Value object.
+            </summary>
+            <param name="value"></param>
+            <param name="old"></param>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebTextEdit.Equal(System.Object,System.Object)">
+            <summary>
+            Compare two objects
+            </summary>
+            <param name="o1"></param>
+            <param name="o2"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebTextEdit.OnValueChange">
+            <summary>
+            Method that is called on value change.
+            </summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebTextEdit.OnCustomButtonPress">
+            <summary>
+            Method that is called on custom button press.
+            </summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebTextEdit.OnEnterKeyPress">
+            <summary>
+            Method that is called on Enter key press.
+            </summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebTextEdit.OnInvalidValue">
+            <summary>
+            Method that is called when invalid value was entered.
+            </summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebTextEdit.GetClientText">
+            <summary></summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebTextEdit.GetValidatorValue">
+            <summary></summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebTextEdit.Dispose">
+            <summary>Dispose control.</summary>
+        </member>
+        <member name="E:Infragistics.WebUI.WebDataInput.WebTextEdit.ValueChange">
+            <summary>Event that is fired when value was changed. This event handler does not trigger automatic postback.</summary>
+        </member>
+        <member name="E:Infragistics.WebUI.WebDataInput.WebTextEdit.CustomButtonPress">
+            <summary>Event that is fired when page was posted back on custom button press. This event handler triggers automatic postback.</summary>
+        </member>
+        <member name="E:Infragistics.WebUI.WebDataInput.WebTextEdit.EnterKeyPress">
+            <summary>Event that is fired when page was posted back on Enter key press. This event handler triggers automatic postback.</summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebTextEdit.Padding">
+            <summary>
+            <p class="body">The amount of space to insert between text and edges of input field.</p>
+            </summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebTextEdit.BorderDetails">
+            <summary>
+            Colors, widths and styles for each side of the outter border.
+            </summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebTextEdit.AutoPostBack">
+            <summary>Automatically postback to server when control loses focus and value was changed.</summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebTextEdit.ReadOnly">
+            <summary>
+            Specifies whether the user can edit the text of the control.
+            </summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebTextEdit.UseBrowserDefaults">
+            <summary>
+            This property allows to automatically adjust appearance related properties to match with appearance of edit-field and drop-down button elements used by a particular browser on the client.
+            </summary>
+            <remarks>
+            <p class="body">Default value is true.</p>
+            <p class="note">Note: If any appearance related property is set, then those values are not affected and they have priority over corresponding "automatic" defaults.<br></br>
+            At the time the WebTextEdit supports only 3 types of predifined styles:
+            <ul>
+            <li>Internet Explorer under Windows2000.</li>
+            <li>Netscape Navigator regardless of platform.</li>
+            <li>Internet Explorer (blue) under WindowsXP.</li>
+            </ul>
+            </p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebTextEdit.AllowAltPlusDigits">
+            <summary>
+            Determines whether the user can enter characters by using the ALT key + numeric keypad digits method.
+            </summary>
+            <remarks>
+            <p class="body">Default value is true.</p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebTextEdit.HideEnterKey">
+            <summary>
+            Hides the Enter key.
+            </summary>
+            <remarks>
+            <p class="body">Setting this property to true disables the default response of the browser to an Enter key press.</p>
+            <p class="body">Default value is false.</p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebTextEdit.MaxLength">
+            <summary>
+            Maximum length of text string that can be entered in control.
+            </summary>
+            <remarks>
+            <p class="body">Default value is 0.</p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebTextEdit.Value">
+            <summary>Value in control.</summary>
+            <remarks>
+            <p class="body">In the WebTextEdit control, this property is simply a wrapper for the <see cref="P:Infragistics.WebUI.WebDataInput.WebTextEdit.Text"/> property.</p>
+            <p class="body">This virtual property is overriden by every extended class. 
+            The type of value (structure in case of string) depends on the value of <see cref="P:Infragistics.WebUI.WebDataInput.WebDateTimeEdit.DataMode"/> property. 
+            For example, in case of WebDateTimeEdit, Value can be
+            <b>DateTime</b>, focus string or no-focus string.</p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebTextEdit.Text">
+            <summary>Text displayed in control.</summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebTextEdit.Nullable">
+            <summary>Ability to use null when value is not set.</summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebTextEdit.HorizontalAlign">
+            <summary>
+            The horizontal alignment of the text.
+            </summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebTextEdit.SelectionOnFocus">
+            <summary>
+            The style of selection on start edit mode.
+            </summary>
+            <remarks>
+            <p class="body">Default value is set to the <tt>CaretToEnd</tt>.</p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebTextEdit.ClientSideEvents">
+            <summary>
+            List of client-side events that can be processed by the application.
+            </summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebTextEdit.ButtonsAppearance">
+            <summary>
+            Collection of properties that define appearance of buttons.
+            </summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebTextEdit.SpinButtons">
+            <summary>
+            Collection of properties that define appearance and behavior of spin buttons and behavior of up/down arrow keys.
+            </summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebTextEdit.StylePreset">
+            <summary>
+            Configure appearance related properties using predefined values.
+            </summary>
+            <remarks>
+            <p class="note">Note: The value of this property is not written to the ViewState and, therefore, it is not persistant between sessions.
+            However, that property modifies many other (appearance related) properties, which are persistant between sessions if the ViewState is enabled.
+            It means that if this property is set at run time, then it will result in significant increase of the size of the hidden-view-state-field which is passed to the client.</p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebTextEdit.About">
+            <summary>Display the about dialog</summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebTextEdit.Infragistics#WebUI#Shared#IUltraLicensedComponent#License">
+            <summary>
+            Return the license we cached inside the contructor.
+            </summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebTextEdit.BrowserTarget">
+            <summary>
+            Type of browser the HTML should be created for.</summary>
+            <remarks>
+            <p class="body">Permitted values are DownLevel, UpLevel, and Auto. The default value for this property is Auto which will detect the client browser and renders the output deemed appropriate for that browser.</p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebTextEdit.JavaScriptFileName">
+            <summary>Name of the file that contains the external JavaScript for client-side functionality on up-level browsers such as IE5, Netscape6.</summary>
+            <remarks>
+            <p class="body">Use this property to change the name of the external JavaScript file.</p>
+            <p class="note"><b>Note</b> The JavaScript file specified by this property must be the one that is included with the product, or an equivalent customized file that implements the identical functionality.</p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebTextEdit.JavaScriptFileNameCommon">
+            <summary>Name of the file that contains the external JavaScript with common methods for client-side functionality on up-level browsers such as IE5, Netscape6.</summary>
+            <remarks>
+            <p class="body">Use this property to change the name of the common external JavaScript file.</p>
+            <p class="note"><b>Note</b> If your application uses any other instance of any Infragistics Web control, then values of this property in all controls should match. Otherwise, client-side functionality in all controls may fail.</p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebTextEdit.ImageDirectory">
+            <summary>
+            Directory in which the images used for the tabs are stored.
+            </summary>
+            <remarks>
+            <p class="body">The string specified for <b>ImageDirectory</b> will be prefixed onto the image related properties.</p>
+            <p class="note">Note that if a particular image's file name starts with a ".", "/" or "\\" character, or contains the ":" character, then that filename will be used as it is without the <b>ImageDirectory</b> prefix.</p>
+            </remarks>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebNumericEdit.#ctor">
+            <summary>Creates WebNumericEdit control</summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebNumericEdit.ShouldSerializeValue">
+            <summary>
+            Check if Value has data.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebNumericEdit.ResetValue">
+            <summary>Clears the Text</summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebNumericEdit.GetClientText">
+            <summary></summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebNumericEdit.GetValidatorValue">
+            <summary></summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebNumericEdit.SetTxt(System.String)">
+            <summary>
+            Convert dirty number-text to clean-number
+            </summary>
+            <param name="value">Dirty number-text</param>
+            <returns>Clean number-text</returns>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebNumericEdit.GetTxt">
+            <summary></summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebNumericEdit.GetTxt(System.Object)">
+            <summary>
+            
+            </summary>
+            <param name="val"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebNumericEdit.RenderProps(System.Text.StringBuilder)">
+            <summary>
+            Append specific client-side properties for UpLevel renderer.
+            </summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebNumericEdit.SetPostValue(System.String,System.Boolean)">
+            <summary>
+            Convert post value to the Value object.
+            </summary>
+            <param name="value"></param>
+            <param name="old"></param>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebNumericEdit.CanEditType(System.Type)">
+            <summary>
+            Implementation of IProvidesEmbeddableEditor.
+            </summary>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebNumericEdit.RenderValue(System.Object)">
+            <summary>
+            Implementation of IProvidesEmbeddableEditor.
+            </summary>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebNumericEdit.OnInvalidValue">
+            <summary>
+            Method that is called when invalid number value was entered.
+            </summary>
+        </member>
+        <member name="E:Infragistics.WebUI.WebDataInput.WebNumericEdit.InvalidValue">
+            <summary>Event that is fired when invalid number was entered. This event handler does not trigger automatic postback.</summary>
+            <remarks>
+            <p class="note">This event is fired after the <tt>Value</tt> was updated. If while processing that event, the <tt>Value</tt> is modified, then new value will persist.</p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebNumericEdit.DataMode">
+            <summary>
+            Type of object that is used to wrap the <tt>Value</tt> property.
+            </summary>
+            <remarks>
+            <p class="body">Default value is set to the <tt>Double</tt>.</p>
+            <p class="note">That property is designed to be used when this editor is embedded into grid or other control.</p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebNumericEdit.NullText">
+            <summary>Text displayed in control when it has no focus and value is null.</summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebNumericEdit.MinDecimalPlaces">
+            <summary>
+            Minimum number of decimal places displayed for number strings.
+            </summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebNumericEdit.MaxValue">
+            <summary>
+            Maximum value that can be entered.
+            </summary>
+            <remarks>
+            <p class="note">Value is validated on lost focus or spin events only.</p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebNumericEdit.MinValue">
+            <summary>
+            Minimum value that can be entered.
+            </summary>
+            <remarks>
+            <p class="note">Value is validated on lost focus or spin events only.</p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebNumericEdit.SelectionOnFocus">
+            <summary>
+            Value that specifies the style of selection on start edit mode.
+            </summary>
+            <remarks>
+            <p class="body">Default value is set to the <tt>SelectAll</tt>.</p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebNumericEdit.HorizontalAlign">
+            <summary>
+            Value that specifies the horizontal alignment of the text.
+            </summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebNumericEdit.Nullable">
+            <summary>Ability to use null when value is not set.</summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebNumericEdit.SpinButtons">
+            <summary>
+            Collection of properties that define appearance of spin buttons.
+            </summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebNumericEdit.AllowAltPlusDigits">
+            <summary>This property is disabled and returns false.</summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebNumericEdit.ValueDouble">
+            <summary>
+            Value in the editor as double.
+            </summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebNumericEdit.ValueFloat">
+            <summary>
+            Value in the editor as float.
+            </summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebNumericEdit.ValueLong">
+            <summary>
+            Value in the editor as long.
+            </summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebNumericEdit.ValueInt">
+            <summary>
+            Value in the editor as int.
+            </summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebNumericEdit.ValueShort">
+            <summary>
+            Value in the editor as short.
+            </summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebNumericEdit.ValueByte">
+            <summary>
+            Value in the editor as byte.
+            </summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebNumericEdit.ValueDecimal">
+            <summary>
+            Value in the editor as decimal.
+            </summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebNumericEdit.ValueText">
+            <summary>
+            Value in the editor as text.
+            </summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebNumericEdit.Value">
+            <summary>Value defined by the <tt>DataMode</tt> property.</summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebNumericEdit.Text">
+            <summary>Text displayed in control.</summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebNumericEdit.NumberFormat">
+            <summary><see cref="T:System.Globalization.NumberFormatInfo"/> used by control.</summary>
+            <remarks>
+            <p class="body">The <tt>NumberFormat</tt> property allows to customize all aspects of format that is applied to a numeric value while converting it to string. Those format properties include number of decimal places, positive/negative patterns, thousand separators, etc.<br></br>
+            If value is not set, then the <see cref="P:System.Threading.Thread.CurrentThread"/> is used.<br></br>
+            The <tt>WebNumericEdit</tt> uses the properties of the <tt>NumberFormatInfo</tt> that starts with the "Number", for example, <tt>NumberDecimalDigits</tt>.
+            The <tt>WebCurrencyEdit</tt> uses the properties of the <tt>NumberFormatInfo</tt> that starts with the "Currency", for example, <tt>CurrencyDecimalDigits</tt>.</p>
+            <p class="note">Note: This property is dynamic and run-time only. It is not written to the ViewState and, therefore, it is not persistant between sessions.</p>
+            </remarks>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebCurrencyEdit.#ctor">
+            <summary>Creates WebCurrencyEdit control</summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebCurrencyEdit.GetTxt(System.Object)">
+            <summary>
+            Build text from value.
+            </summary>
+            <param name="val">value</param>
+            <returns>string</returns>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebCurrencyEdit.MinDecimalPlaces">
+            <summary>
+            Minimum number of decimal places displayed for numbers with float point.
+            </summary>
+        </member>
+        <member name="T:Infragistics.WebUI.WebDataInput.WebDateTimeEdit">
+            <summary>
+            Control that renders date editor.
+            </summary>
+            <remarks>
+            <p class="body">The date pattern and other aspects of date string are defined by the values
+            found in the <see cref="P:Infragistics.WebUI.WebDataInput.WebDateTimeEdit.Culture"/> property.</p>
+            <p class="body">Appearance of strings and particular types of date formats at edit and display
+            modes are defined by the <see cref="P:Infragistics.WebUI.WebDataInput.WebDateTimeEdit.EditModeFormat"/> and <see cref="P:Infragistics.WebUI.WebDataInput.WebDateTimeEdit.DisplayModeFormat"/> properties.</p>
+            <p class="note"><b>Note</b> The ValidationProperty attribute is linked to the <see cref="P:Infragistics.WebUI.WebDataInput.WebDateTimeEdit.Text"/> property for this control.</p>
+            </remarks>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebDateTimeEdit.#ctor">
+            <summary>Creates WebDateTimeEdit control</summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebDateTimeEdit.ShouldSerializeValue">
+            <summary>
+            Check if Value has data.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebDateTimeEdit.ResetValue">
+            <summary>Clears the Text</summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebDateTimeEdit.GetClientText">
+            <summary></summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebDateTimeEdit.GetValidatorValue">
+            <summary></summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebDateTimeEdit.BeforeRenderToClient">
+            <summary></summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebDateTimeEdit.RenderProps(System.Text.StringBuilder)">
+            <summary>
+            Append specific client-side properties for UpLevel renderer.
+            </summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebDateTimeEdit.GetMask(System.Boolean)">
+            <summary>
+            Build input mask. Fields replace by the explicit int with lengths of 2. 
+            </summary>
+            <param name="edit">True: mask for edit mode, false: mask for display mode</param>
+            <returns>Mask</returns>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebDateTimeEdit.GetTxt(System.Boolean,System.DateTime)">
+            <summary>
+            Return display/edit date string.
+            </summary>
+            <param name="edit">false - display date, true - edit date</param>
+            <param name="d">DateTime</param>
+            <returns>Display date or edit date as string</returns>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebDateTimeEdit.ToDate(System.String,System.Boolean)">
+            <summary>
+            Convert string to date using edit-mode(short) mask or display-mode(long) mask
+            </summary>
+            <param name="v"></param>
+            <param name="edit"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebDateTimeEdit.GetInt(System.String,System.Int32@)">
+            <summary>
+            Get numeric value from string, and move current index i
+            </summary>
+            <param name="v">source string</param>
+            <param name="i">current index</param>
+            <returns>int or -1 (no digit found)</returns>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebDateTimeEdit.GetMonth(System.String,System.Int32@,System.Boolean)">
+            <summary>
+            Get numeric value from month-name string, and move current index i
+            </summary>
+            <param name="v">source string</param>
+            <param name="i">current index</param>
+            <param name="dow">day of the week</param>
+            <returns>int or -1 (no month found)</returns>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebDateTimeEdit.DoPattern(System.String,System.Boolean)">
+            <summary>
+            Build mask for edit-mode(short) or for display-mode(long) and set AM/PM
+            That method should be called before any access to "masks".
+            </summary>
+            <param name="v">DateFormatPattern</param>
+            <param name="edit">true: build edit-mode mask</param>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebDateTimeEdit.SetPostValue(System.String,System.Boolean)">
+            <summary>
+            Convert post value to the Value object.
+            </summary>
+            <param name="value"></param>
+            <param name="old"></param>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebDateTimeEdit.CanEditType(System.Type)">
+            <summary>
+            Implementation of IProvidesEmbeddableEditor.
+            </summary>
+            <param name="type"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebDateTimeEdit.RenderValue(System.Object)">
+            <summary>
+            Implementation of IProvidesEmbeddableEditor.
+            </summary>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebDateTimeEdit.OnInvalidValue">
+            <summary>
+            Method that is called when invalid date value was entered.
+            </summary>
+        </member>
+        <member name="E:Infragistics.WebUI.WebDataInput.WebDateTimeEdit.InvalidValue">
+            <summary>Event that is fired when invalid date was entered. This event handler does not trigger automatic postback.</summary>
+            <remarks>
+            <p class="note">This event is fired after the <tt>Value</tt> was updated. If while processing that event, the <tt>Value</tt> is modified, then new value will persist.</p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebDateTimeEdit.EditModeFormat">
+            <summary>
+            Format of date used for edit mode when control has input focus.
+            </summary>
+            <remarks>
+            <p class="body">Default value is set to the <tt>"d"</tt>.
+            If string has length of 1 (single flag-character such as: d, f, g, s, etc.),
+            then the <see cref="P:System.Threading.Thread.CurrentThread"/> is used to obtain date pattern.
+            Otherwise, this property is treated as explicit date pattern.</p>
+            <p class="body">Example of explicit pattern: <tt>"dd-MM-yyyy"</tt> 
+            To learn about format flags and patterns, see documentation for the <see cref="T:System.Globalization.DateTimeFormatInfo"/> class.</p>
+            <p class="note"><b>Note</b> The "z" and "g" characters and "%c" style in pattern are ignored. Possible day of the week field is ignored, and abbriviated month name is converted to digit.</p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebDateTimeEdit.DisplayModeFormat">
+            <summary>
+            Format of date used for display mode when control has no input focus.
+            </summary>
+            <remarks>
+            <p class="body">Default value is set to the empty string.
+            If the string is empty, then the value of <see cref="P:Infragistics.WebUI.WebDataInput.WebDateTimeEdit.EditModeFormat"/> is used.
+            If the string has a length of 1 (single flag-character such as: d, f, g, s, etc.),
+            then the <see cref="P:System.Threading.Thread.CurrentThread"/> is used to obtain date pattern.
+            Otherwise, this property is treated as explicit date pattern.</p>
+            <p class="body">Example of an explicit pattern: <tt>"dd-MM-yyyy"</tt> 
+             To learn about format flags and patterns, see documentation for the <see cref="T:System.Globalization.DateTimeFormatInfo"/> class.</p>
+            <p class="note"><b>Note</b> The "z" and "g" characters and "%c" style in pattern are ignored.</p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebDateTimeEdit.PromptChar">
+            <summary>
+            Character that is used to fill missing date fields while control has focus.
+            </summary>
+            <remarks>Default value is set to the underscore '_' character.</remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebDateTimeEdit.DataMode">
+            <summary>
+            Name of property used to wrap the <see cref="P:Infragistics.WebUI.WebDataInput.WebDateTimeEdit.Value"/> property.
+            </summary>
+            <remarks>
+            <p class="body">Default value is set to the <see cref="P:Infragistics.WebUI.WebDataInput.WebDateTimeEdit.Date"/>.</p>
+            <p class="note">That property is designed to be used when this editor is embedded into grid or other control.</p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebDateTimeEdit.MinimumNumberOfValidFields">
+             <summary>
+             Minimum number of valid fields in the date string which must be present to consider the date valid.
+             </summary>
+             <remarks>
+             <p class="body">Range of values: 0-7. If this property is set to 0, all fields are validated. Default value is 3.</p>
+             <p class="body">Missing hour, minute, second, millisecond fields are replaced by 0, and missing year, month, day fields are replaced by the fields of the today date. Date fields are counted from the left to right as they appear in the pattern of date format.</p>
+             <p class="body">When validating, the day-of-week and AM-PM fields are skipped and not included for the purposes of this property. For example, if the pattern of date format is <tt>"M-d-yy H:mm:ss"</tt> and the <b>MinimumNumberOfValidFields</b> is 4, the following then strings are validated as indicated:</p>
+            <p class="body">
+             <ul>
+             <li class="taskitem"><span class="taskitemtext"><b>"10-20-2 5:20:__"</b> - represents valid date "10-20-02 5:20:00".</span></li>
+             <li class="taskitem"><span class="taskitemtext"><b>"10-20-2 5:__:__"</b> - represents valid date "10-20-02 5:00:00".</span></li>
+             <li class="taskitem"><span class="taskitemtext"><b>"10-20-2 _:__:__"</b> - represents an invalid date.</span></li>
+             <li class="taskitem"><span class="taskitemtext"><b>"10-20-_ 5:20:30"</b> - represents an invalid date.</span></li>
+             </ul>
+             </p>
+             </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebDateTimeEdit.UseLastGoodDate">
+            <summary>Ability to automatically use the last good date value when control loses focus and has invalid values of date fields.</summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebDateTimeEdit.NullText">
+            <summary>Text displayed in control when it has no focus and value is null.</summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebDateTimeEdit.MaxLength">
+            <summary>
+            This property is disabled and has no effect.
+            </summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebDateTimeEdit.SelectionOnFocus">
+            <summary>
+            Value that specifies the style of selection when entering edit mode.
+            </summary>
+            <remarks>
+            <p class="body">Default value is set to 'SelectAll'.</p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebDateTimeEdit.Nullable">
+            <summary>Ability to use null when value is not set.</summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebDateTimeEdit.SpinButtons">
+            <summary>
+            Collection of properties that define appearance of spin buttons.
+            </summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebDateTimeEdit.AllowAltPlusDigits">
+            <summary>This property is disabled and returns false.</summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebDateTimeEdit.Fields">
+            <summary>
+            Date fields.
+            </summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebDateTimeEdit.Date">
+            <summary>
+            Date in the control.
+            </summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebDateTimeEdit.MaxValue">
+            <summary>
+            Maximum date that can be entered.
+            </summary>
+            <remarks>
+            <p class="note"><b>Note</b> Value is validated on lost focus or spin events only.</p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebDateTimeEdit.MinValue">
+            <summary>
+            Minimum date that can be entered.
+            </summary>
+            <remarks>
+            <p class="note"><b>Note</b> Value is validated on lost focus or spin events only.</p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebDateTimeEdit.Value">
+            <summary>
+            Value defined by the <see cref="P:Infragistics.WebUI.WebDataInput.WebDateTimeEdit.DataMode"/> property.
+            </summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebDateTimeEdit.Text">
+            <summary>Text displayed in the control.</summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebDateTimeEdit.EditModeText">
+            <summary>Text displayed in control while editing.</summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebDateTimeEdit.Culture">
+            <summary>The <see cref="P:System.Globalization.CultureInfo.DateTimeFormat"/> and <see cref="P:System.Globalization.CultureInfo.Calendar"/> properties of <see cref="T:System.Globalization.CultureInfo"/> object are used by control.</summary>
+            <remarks>
+            <p class="body">The <tt>Culture</tt> property allows to customize all aspects of format that is applied to a <tt>DateTime</tt> object while converting it to string.
+            Those format properties include field separators, date/time patterns, names of months, etc.<br></br>
+            If value is not set, then the <see cref="P:System.Threading.Thread.CurrentThread"/> and <see cref="P:System.Threading.Thread.CurrentThread"/> objects are used.</p>
+            <p class="note">Note: This property is dynamic and run-time only. It is not written to the ViewState and, therefore, it is not persistant between sessions.</p>
+            </remarks>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.ValueStringConverter.ConvertTo(System.ComponentModel.ITypeDescriptorContext,System.Globalization.CultureInfo,System.Object,System.Type)">
+            <summary></summary>
+        </member>
+        <member name="T:Infragistics.WebUI.WebDataInput.WebMaskEdit">
+            <summary>
+            Control that renders mask editor.
+            </summary>
+            <remarks>
+            <p class="body">The property that defines the keyboard filter and appearance of displayed string has name the <see cref="P:Infragistics.WebUI.WebDataInput.WebMaskEdit.InputMask"/>.</p>
+            <p class="body">The properties <see cref="P:Infragistics.WebUI.WebDataInput.WebMaskEdit.PadChar"/> and <see cref="P:Infragistics.WebUI.WebDataInput.WebMaskEdit.PromptChar"/> define character that is used to replace empty mask positions for no-focus and focus states. The <see cref="P:Infragistics.WebUI.WebDataInput.WebMaskEdit.EmptyPositionChar"/> is used to build string returned by the <see cref="P:Infragistics.WebUI.WebDataInput.WebMaskEdit.Value"/> property.</p>
+            <p class="body">The structure of string used by the <see cref="P:Infragistics.WebUI.WebDataInput.WebMaskEdit.Value"/> property is defined by the <see cref="P:Infragistics.WebUI.WebDataInput.WebMaskEdit.DataMode"/>.</p>
+            </remarks>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebMaskEdit.#ctor">
+            <summary>Creates WebMaskEdit control</summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebMaskEdit.ShouldSerializeText">
+            <summary>
+            Check if Text has data.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebMaskEdit.ResetText">
+            <summary>Clears the Text</summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebMaskEdit.ShouldSerializeRealText">
+            <summary>
+            Check if RealText has data.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebMaskEdit.ResetRealText">
+            <summary>Clears the RealText</summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebMaskEdit.GetClientText">
+            <summary></summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebMaskEdit.LoadViewState(System.Object)">
+            <summary></summary>
+            <param name="savedState"></param>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebMaskEdit.GetValidatorValue">
+            <summary></summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebMaskEdit.RenderProps(System.Text.StringBuilder)">
+            <summary>
+            Append specific client-side properties for UpLevel renderer.
+            </summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebMaskEdit.IsRequiredMaskFilled">
+            <summary>
+            Check if all required positions in the input mask are filled by data.
+            </summary>
+            <returns>True: all required positions are filled.</returns>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebMaskEdit.SetPostValue(System.String,System.Boolean)">
+            <summary>
+            Convert post value to the Value object.
+            </summary>
+            <param name="value"></param>
+            <param name="old"></param>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebMaskEdit.RenderValue(System.Object)">
+            <summary>
+            Implementation of IProvidesEmbeddableEditor.
+            </summary>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebMaskEdit.OnInvalidValue">
+            <summary>
+            Method that is called when not all required input-mask positions were filled.
+            </summary>
+        </member>
+        <member name="E:Infragistics.WebUI.WebDataInput.WebMaskEdit.InvalidValue">
+            <summary>Event that is fired when not all required input-mask positions were filled. This event handler does not trigger automatic postback.</summary>
+            <remarks>
+            <p class="note">This event is fired after the <tt>Value</tt> was updated. If while processing that event, the <tt>Value</tt> is modified, then new value will persist.</p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebMaskEdit.InputMask">
+            <summary>
+            Input mask used to filter keyboard entries.
+            </summary>
+            <remarks>
+            <p class="body">Default value is set to "<tt>CCCCCCCCCCCC</tt>".</p>
+            <p class="note">The mask may contain literal characters and input-mask-flags such as
+            <ul>
+              <li><tt>&amp;</tt> - any keyboard character (entry is required)</li>
+              <li><tt>L</tt> - letter (entry is required)</li>
+              <li><tt>0, #</tt> - digit (entry is required)</li>
+              <li><tt>A</tt> - letter or digit (entry is required)</li>
+              <li><tt>C</tt> - any keyboard character (entry is optional)</li>
+              <li><tt>?</tt> - letter (entry is optional)</li>
+              <li><tt>9</tt> - digit (entry is optional)</li>
+              <li><tt>a</tt> - letter or digit (entry is optional)</li>
+              <li><tt>&gt;</tt> - all letters to the right are converted to the upper case</li>
+              <li><tt>&lt;</tt> - all letters to the right are converted to the lower case</li>
+            </ul>
+            </p>
+            <p class="body">For more complete information on data masking, see the topic <a href="Data_masking_overview.htm">Data Masking Overview</a>.</p>
+            <p class="note">Notes:
+            <ul>
+              <li>If in front of any character appears the <tt>"\"</tt> (escape) character, then that character becomes the literal part of mask.
+              For example, if mask is set to the <tt>"A\AB\B\\\##\99"</tt> and control has no data, then text in edit mode will appear
+              as <tt>"_ABB\#_9_"</tt>. Where the <tt>"_"</tt> are available positions for entry.</li>
+              <li>To cancel upper/lower case convertion which was set by the <tt>&gt;</tt> or <tt>&lt;</tt> flag, that flag should be used one more time.
+              For example, if mask is set to the <tt>"&gt;CC-&gt;CC-&gt;CC"</tt> and user entered the <tt>"XxXxXx"</tt>, then resulting text should appear
+              as <tt>"XX-Xx-XX"</tt>.</li>
+              <li>While control has no input focus, the optional empty mask positions are not displayed.</li>
+            </ul>
+            </p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebMaskEdit.PadChar">
+            <summary>
+            Character that is used to fill required empty mask positions in the display text while the control does not have focus.
+            </summary>
+            <remarks>
+            <p class="body">Default value is set to the Space character.</p>
+            <p class="note">While control has no input focus, the optional empty mask positions are not displayed.</p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebMaskEdit.PromptChar">
+            <summary>
+            Character that is used to fill empty mask positions in the display text while the control has focus.
+            </summary>
+            <remarks>
+            <p class="body">Default value is set to the '_' (underscore) character.</p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebMaskEdit.EmptyPositionChar">
+            <summary>
+            Character that is used to replace empty (not filled) positions in the <see cref="P:Infragistics.WebUI.WebDataInput.WebMaskEdit.InputMask"/> while building string returned by the <see cref="P:Infragistics.WebUI.WebDataInput.WebMaskEdit.Value"/> and <see cref="P:Infragistics.WebUI.WebDataInput.WebMaskEdit.RawText"/> properties.
+            </summary>
+            <remarks>
+            <p class="body">Default value is set to the Space character.</p>
+            <p class="note">This property is designed for situation when empty position characters expected by application (database) would be confusing if used as prompts. For example '?' or '0' characters.</p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebMaskEdit.DataMode">
+            <summary>
+            Specifies rules that are used to get/set the <see cref="P:Infragistics.WebUI.WebDataInput.WebMaskEdit.Value"/> property.
+            </summary>
+            <remarks>
+            <p class="body">Those rules define various combinations of the following conditions:
+            <ul>
+            <li>Whether or not the literal characters (not editable part of mask) should be included.</li>
+            <li>Whether or not the required empty mask positions should be included.</li>
+            <li>Whether or not the optional empty mask positions should be included.</li>
+            </ul>
+            Default value is set to 'RawTextWithRequiredPrompts'. This property is designed to be used when this editor is embedded into grid or other control.</p>
+            <p class="note">Note: When literal characters are included and the value is set,
+            then characters in that new value which positions match with the positions of the literal characters in mask are ignored.
+            Though, those "dummy" characters should be present in the value, otherwise, the "data" characters will be lost and may appear shifted to wrong positions.</p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebMaskEdit.DisplayMode">
+            <summary>
+            Specifies what should be displayed when control has no focus and has no data.
+            </summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebMaskEdit.MaxLength">
+            <summary>
+            This property is disabled and has no effect.
+            </summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebMaskEdit.SelectionOnFocus">
+            <summary>
+            Value that specifies the style of selection when entering edit mode.
+            </summary>
+            <remarks>
+            <p class="body">Default value is set to the <tt>SelectAll</tt>.</p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebMaskEdit.RawText">
+            <summary>
+            String that represents the current contents of the control without literal characters and empty mask positions.
+            </summary>
+            <remarks>
+            <p class="body">This text represents only the characters entered into the control by the user.</p>
+            </remarks>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebMaskEdit.Value">
+            <summary>Value as defined by the <see cref="P:Infragistics.WebUI.WebDataInput.WebMaskEdit.DataMode"/> property.</summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebMaskEdit.Text">
+            <summary>Text displayed in the control.</summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebMaskEdit.RealText">
+            <summary>
+            Text that is displayed in control.
+            </summary>
+            <remarks>
+            <p class="body">This text represents the text displayed in the control when it loses focus, including any literal and pad characters.</p>
+            </remarks>
+        </member>
+        <member name="T:Infragistics.WebUI.WebDataInput.WebTextEditDesigner">
+            <summary>
+            Designer for WebTextEdit control.
+            </summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebTextEditDesigner.OnStylePresets(System.Object,System.EventArgs)">
+            <summary></summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebTextEditDesigner.OnControlResize">
+            <summary></summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebTextEditDesigner.GetDesignTimeHtml">
+            <summary>GetDesignTimeHtml</summary>
+        </member>
+        <member name="M:Infragistics.WebUI.WebDataInput.WebTextEditDesigner.Initialize(System.ComponentModel.IComponent)">
+            <summary></summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebTextEditDesigner.Verbs">
+            <summary>
+            Adds the about verb to the collection
+            </summary>
+        </member>
+        <member name="P:Infragistics.WebUI.WebDataInput.WebTextEditDesigner.AllowResize">
+            <summary></summary>
+        </member>
+    </members>
+</doc>

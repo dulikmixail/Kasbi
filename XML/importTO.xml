@@ -1,0 +1,20 @@
+<?xml version='1.0' encoding='windows-1251' ?>
+<Customers>
+<Customer unn="101247538" Name="ИП Зель Дмитрий Владимирович" Prichod="0" CTO="0"/>
+<Customer unn="101284776" Name="Коновалова Елена Анатольевна" Prichod="0" CTO="0"/>
+<Customer unn="101279059" Name="ИП Дунаева Елена Сергеевна" Prichod="0" CTO="0"/>
+<Customer unn="400099676" Name="Шуренков Михаил Владимирович" Prichod="0" CTO="1" Dolg="1784750"/>
+<Customer unn="100150864" Name="НПК ООО &quot;Актион-авто&quot;" Prichod="0" CTO="0"/>
+<Customer unn="101153370" Name="ПТЧУП &quot;Тривси&quot;" Prichod="0" CTO="0"/>
+<Customer unn="190039128" Name="ИП Русецкий И.И." Prichod="0"  CTO="0"/>
+<Customer unn="190024734" Name="ИП Маркова Н.И." Prichod="0" CTO="0" TO="1"/>
+<Customer unn="390075559" Name="ИП Пугавко Т.И." Prichod="0" CTO="0"/>
+<Customer unn="690142694" Name="ИП Ладысюк В.С." Prichod="0" CTO="0"/>
+<Customer unn="190025863" Name="Индивидуальный предприниматель Беленькая Анна Ивановна" Prichod="0" CTO="0" TO="1"/>
+<Customer unn="690190037" Name="Индивидуальный предприниматель Маз Ирина Александровна" Prichod="0" CTO="0"/>
+<Customer unn="190169542" Name="Индивидуальный предприниматель Казакова Татьяна Васильевна" Prichod="0"  CTO="0"/>
+<Customer unn="390011088" Name="ИП Зинькевич Станислав Марьянович" Prichod="0"  CTO="0"/>
+<Customer unn="190126426" Name="Ип Лютаревич Ольга Борисовна" Prichod="0"  CTO="0"/>
+<Customer unn="390011856" Name="ИП Макеева Анна Васильевна"  Prichod="0" CTO="0"/>
+<Customer unn="390025945" Name="ИП Пруцкова Елена Васильевна" Prichod="0" CTO="0"/>
+</Customers>

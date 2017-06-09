@@ -1,0 +1,116 @@
+<?xml version="1.0" encoding="Windows-1252" ?>
+<Customers>
+<Customer UIN="190098520" Name="Ò×ÓÏ &quot;Ìóçåíèäèñ Òóðñ&quot;" Sum="9600" />
+<Customer UIN="190187357" Name="Ò×ÓÏ &quot;Íåìáðàòóð&quot;" Sum="45300" />
+<Customer UIN="190542717" Name="×ÒÓÏ &quot;Àâòîäàðíèêà&quot;" Sum="86400" />
+<Customer UIN="190542347" Name="ÓÏ &quot;Àâòîäðóæáà&quot;" Sum="57600" />
+<Customer UIN="690313137" Name="ÎÄÎ &quot;Àâòîíèêòàí&quot;" Sum="57600" />
+<Customer UIN="100037645" Name="ÎÄÎ &quot;Àêòàì&quot;" Sum="9600" />
+<Customer UIN="100150864" Name="ÎÎÎ &quot;Àêòèîí-àâòî&quot;, ÐÁ" Sum="9600" />
+<Customer UIN="190509890" Name="ÎÄÎ &quot;Àëìàñ-Àâòîëàéí&quot;,ÐÁ" Sum="211200" 
+<Customer UIN="190575155" Name="ÎÄÎ &quot;Àëüÿíñòðàíñêîì&quot;" Sum="67200" />
+<Customer UIN="190297221" Name="ÎÎÎ &quot;Áåëêîððà&quot;" Sum="9600" />
+<Customer UIN="690259349" Name="ÎÎÎ &quot;Áåëôàêòîðñåðâèñ ÐÁ&quot;" Sum="9600"/>
+<Customer UIN="190592808" Name="ÎÄÎ &quot;Áåëýêñïðåññìàðøðóò&quot; Sum="134400" />
+<Customer UIN="190539498" Name="×ÒÓÏ ÂÐÂ" Sum="307200" />
+<Customer UIN="690255172" Name="ÓÏ &quot;ÂýíËàéí&quot;" Sum="262800" />
+<Customer UIN="190511478" Name="×ÓÏ "Ãîëüäñàò"" Sum="240000" />
+<Customer UIN="100423318" Name="Ãîëüôñòðèì ÎÎÎ" Sum="9500" </Customer>
+<Customer UIN="100019869" Name="Ãîððåìàâòîäîð Ìèíãîðèñïîëêîì ÓÏ" Sum="19200" />
+<Customer UIN="190464945" Name="ÎÎÎ "Äåëüòàòðàíñ,ÐÁ" Sum="183500" />
+<Customer UIN="190481873" Name="ÎÄÎ "Äèíàìî-Ñòàðò" Sum="376420" />
+<Customer UIN="690318126" Name="×ÓÏ "ÅâðîÂýáÓñëóãè" Sum="4000" />
+<Customer UIN="100119254" Name="ÎÎÎ "Èíôàñò" Sum="96000" />
+<Customer UIN="190436784" Name="ÓÏ "Êàïèò" , ÐÁ" Sum="28000" />
+<Customer UIN="190463594" Name="ÎÎÎ "Êàó÷óê"" Sum="48000" />
+<Customer UIN="190530845" Name="×ÓÏ "Êîðëèò"" Sum="19200" />
+<Customer UIN="100123074" Name="ÎÎÎ "ÌèêÁîð"" Sum="400" />
+<Customer UIN="600041148" Name="ÎÎÎ "Ìýòà-ïëþñ"" Sum="500" />
+<Customer UIN="690021885" Name="ÎñòÇþéäÒðàíñ ×ÓÏ" Sum="76800" />
+<Customer UIN="600007562" Name="Îòäåë îáðàçîâàíèÿ ×åðâåíñêîãî ðàéèñïîëêîìà" Sum="19200" </Customer>
+<Customer UIN="100021433" Name="ÇÀÎ ÏÊ "Ñàäêî"" Sum="9600" </Customer>
+<Customer UIN="100343926" Name="ÑÎÎÎ "Ñîâïîëüäà"" Sum="19200" </Customer>
+<Customer UIN="190571731" Name="ÎÄÎ" Ñîë-Àðò"" Sum="9500" </Customer>
+<Customer UIN="190587239" Name="×ÓÏ "Ñòèëüòðàíñ"" Sum="38400" </Customer>
+<Customer UIN="190481781" Name="ÎÄÎ Òîðëåäà ,  ÐÁ" Sum="34400" </Customer>
+<Customer UIN="690243721" Name="ÎÄÎ "Òðàíñïàññàæèð-Ñåðâèñ",ÐÁ" Sum="124800" </Customer>
+<Customer UIN="690274019" Name="ÎÎÎ "Òðàíñôåððóì" ,ÐÁ" Sum="57600" </Customer>
+<Customer UIN="600009246" Name="ÓÑÓ ÑÄÞØÎÐ" Sum="100" </Customer>
+<Customer UIN="100185450" Name="ÎÄÎ Ôèàëêà - 92" Sum="9600" </Customer>
+<Customer UIN="190530646" Name="Ñåðâèñíîå ÷àñòíîå ÓÏ "Õàðâåòà"" Sum="96000" </Customer>
+<Customer UIN="100121638" Name="ÎÎÎ "Öåíòàâðà"" Sum="9600" </Customer>
+<Customer UIN="101519373" Name="ÍÏÓÏ "Ýëåêòðîðåìîíò" ÎÎ ÁåëÎÈ" Sum="100" </Customer>
+<Customer UIN="601010924" Name="Ôèëèàë "Àâòî-Òðèââè"" Sum="624490" </Customer>
+<Customer UIN="600356561" Name="ÎÄÎ "Àâòîëþêñ"" Sum="19195" </Customer>
+<Customer UIN="600020015" Name="ÄÓÏ Àâòîïàðê ¹ 14" Sum="67500" </Customer>
+<Customer UIN="100177079" Name="ÓÏ "Àðòè-Ôåêñ"" Sum="19200" </Customer>
+<Customer UIN="690314835" Name="È×ÒÓÏ "Áàíèàð"" Sum="76800" </Customer>
+<Customer UIN="100048299" Name="ÓÏ "ÁÅËÆÈËÏÐÎÅÊÒ"" Sum="47920" </Customer>
+<Customer UIN="101199774" Name="ÎÎÎ "Áåëìåäïàê"" Sum="28800" </Customer>
+<Customer UIN="190542809" Name="×ÓÏ "Áåëòåõìåòàëë"" Sum="21600" </Customer>
+<Customer UIN="190593156" Name="ÎÄÎ "Áåëòðàíçèòñåðâèñ"" Sum="38400" </Customer>
+<Customer UIN="100883310" Name="ÈÏ "ÁÈÞÏÈ  Èíòåðíýøíë"" Sum="57600" </Customer>
+<Customer UIN="600177757" Name="Áëóæñêèé ñåëüñêèé Ñîâåò" Sum="19200" </Customer>
+<Customer UIN="100131826" Name="ÁÌÍ ×ÓÏ" Sum="182400" </Customer>
+<Customer UIN="101140512" Name="ÓÏ "Áûòèìïîðòòåõíèêà"" Sum="57500" </Customer>
+<Customer UIN="190568004" Name="×ÓÏ Âàäèëàíà" Sum="9700" </Customer>
+<Customer UIN="190526443" Name="ÎÄÎ "Âåëëòðåâåë"" Sum="28800" </Customer>
+<Customer UIN="690318312" Name="×ÒÓÏ "ÂåðèÊ-ÅÕÒ"" Sum="9960" </Customer>
+<Customer UIN="190617323" Name="Ò×ÓÏ "Âèòàëòðýâåë"" Sum="340840" </Customer>
+<Customer UIN="190583884" Name="×ÓÏ "Âñå âîïðîñû"" Sum="9600" </Customer>
+<Customer UIN="190184503" Name="ÎÄÎ "ÃóðÑòà"" Sum="1042250" </Customer>
+<Customer UIN="190617507" Name="ÎÎÎ "Äàêàðàé"" Sum="3726530" </Customer>
+<Customer UIN="100162141" Name="ÓÏ "Äàëüíåâîñòî÷íûé ôëàãìàí"" Sum="66740" </Customer>
+<Customer UIN="100207694" Name="ÓÏ "Äâåëèíã"" Sum="57500" </Customer>
+<Customer UIN="190565046" Name="×ÒÓÏ "Äåêààâòî"" Sum="172800" </Customer>
+<Customer UIN="100914667" Name="ÎÎÎ "Äåêîñ"" Sum="40220" </Customer>
+<Customer UIN="190406309" Name="ÓÏ "Äèíàìî Öåíòð"" Sum="57240" </Customer>
+<Customer UIN="101277296" Name="ÎÄÎ "ÄÑïðîäóêò",ÐÁ" Sum="115000" </Customer>
+<Customer UIN="100098298" Name="ÓÏ "Äþìà"" Sum="19200" </Customer>
+<Customer UIN="100032975" Name="ÓÏ "Çâåçäíîå"" Sum="28800" </Customer>
+<Customer UIN="190464759" Name="×ÏÓÏ "Èìèäæ-Òðåéä"" Sum="9700" </Customer>
+<Customer UIN="100789778" Name="ÎÎÎ "Èíâàóñëóãè-21",ÐÁ" Sum="516000" </Customer>
+<Customer UIN="300062307" Name="ÎÀÎ "ÈÍÂÅÒ"" Sum="96000" </Customer>
+<Customer UIN="190321599" Name="Ò×ÓÏ "Èíæêîìïëåêò"" Sum="15100" </Customer>
+<Customer UIN="690281116" Name="ÎÄÎ "Èíòðàíñòåõ"" Sum="86400" </Customer>
+<Customer UIN="190421313" Name="ÎÎÎ "Êåìïèíã-Ì" ,ÐÁ" Sum="19201" </Customer>
+<Customer UIN="600462430" Name="Êðàñíîñåëüñêîå ÃËÕÓ ÓÄ Ï ÐÁ" Sum="19200" </Customer>
+<Customer UIN="190263432" Name="ÎÎÎ " Êóïå÷åñòâî è Ò"" Sum="28700" </Customer>
+<Customer UIN="100386394" Name="ÃÑÊ "Êóðàñîâùèíà-4"" Sum="28789" </Customer>
+<Customer UIN="190482642" Name="ÎÎÎ "Ëàäüÿ-Ïëþñ" ÐÁ" Sum="38400" </Customer>
+<Customer UIN="101201374" Name="ÎÎÎ "Ëîêîñèí",ÐÁ" Sum="470400" </Customer>
+<Customer UIN="190436557" Name="ÎÄÎ "Ëóêîð-Òåõíî"" Sum="9800" </Customer>
+<Customer UIN="600017217" Name="ÎÀÎ "Ëþáàíñêèé ñûðîäåëüíûé çàâîä" ÐÁ" Sum="38400" </Customer>
+<Customer UIN="100138328" Name="ÎÄÎ "Ëÿâîíèõà"" Sum="19200" </Customer>
+<Customer UIN="101110586" Name="Ìàêáåòîí ÎÎÎ ÏÊ" Sum="67200" </Customer>
+<Customer UIN="100835539" Name="ÎÎÎ "Ìèêðîíåò"" Sum="28700" </Customer>
+<Customer UIN="100686069" Name="ÓÎ "Ìèíñêèé ãîñóäàðñòâåííûé Äâîðåö äåòåé è ìîëîäåæè"" Sum="19200" </Customer>
+<Customer UIN="190470954" Name="ÓÏ "Ìèð âèäåî"" Sum="154400" </Customer>
+<Customer UIN="190580247" Name="×ÏÓÏ "Îëåñòàð"" Sum="76800" </Customer>
+<Customer UIN="190256029" Name="ÓÏ "Ïàâåëèð"" Sum="57500" </Customer>
+<Customer UIN="100207255" Name="Ðåëèãèîçíàÿ îáùèíà "Ïðèõîä â ÷åñòü ñâÿòûõ"" Sum="28800" </Customer>
+<Customer UIN="100144245" Name="Ïðîòèâîïîæàðíûå ðàáîòû ÓÏ ÎÎ ÁÄÏÎ" Sum="55700" </Customer>
+<Customer UIN="700026645" Name="ÏÒÓ -130 êóëèíàðèè ×åðèêîâñêîå,ÐÁ" Sum="119500" </Customer>
+<Customer UIN="800016716" Name="ÈÏ "Ïüåð Øàññàíü ãðóïï"" Sum="57500" </Customer>
+<Customer UIN="190527118" Name="Ðàçâåöêèé È.Â. ×ÓÏ" Sum="67000" </Customer>
+<Customer UIN="300325320" Name="Ñàíàòîðèé-ïðîôèëàêòîðèé "Ëåñíîå" ÊÃÁ" Sum="56100" </Customer>
+<Customer UIN="200114948" Name="ÑÏÊ "Ñåìèãîñòè÷è"" Sum="57480" </Customer>
+<Customer UIN="190465449" Name=" ÎÄÎ "Ñëàâèãîðèÿ"" Sum="48000" </Customer>
+<Customer UIN="190565061" Name="ÎÄÎ "Ñëàâóòà"" Sum="223400" </Customer>
+<Customer UIN="101282268" Name="Ñòðîéâåðòèêàëüèíâåñò ÎÎÎ" Sum="28790" </Customer>
+<Customer UIN="190549538" Name="×ÓÏ "Òîïðèýëò"" Sum="38398" </Customer>
+<Customer UIN="190601336" Name="×ÓÏ "Òðàíñïîðò äëÿ Âàñ"" Sum="57600" </Customer>
+<Customer UIN="190533196" Name="Òðèêîì-Ñåðâèñ ×ÓÏ" Sum="326400" </Customer>
+<Customer UIN="190080224" Name="ÓÏ "Òýíñòðàíñ"" Sum="44090" </Customer>
+<Customer UIN="101189836" Name="Ï×ÓÏ "Ôîðåìàí"" Sum="19200" </Customer>
+<Customer UIN="190572526" Name="ÈÎÄÎ "Ôîðòý-777"" Sum="76800" </Customer>
+<Customer UIN="190218795" Name="Ôýíòåçè Òóðñ ÎÎÎ" Sum="28800" </Customer>
+<Customer UIN="190455051" Name="ÎÎÎ "×óäî ñâåòà" ,ÐÁ" Sum="28800" </Customer>
+<Customer UIN="190443718" Name="ÎÄÎ "Ýêñïðåññëàéíñåðâèñ"" Sum="100" </Customer>
+<Customer UIN="190448791" Name="ÎÎÎ "ÞÐÒÓÐ"" Sum="69000" </Customer>
+<Customer UIN="700169887" Name="ÏÌÏ "Äðóæáà"" Sum="57600" </Customer>
+<Customer UIN="700089829" Name="×ÓÏ "Èíèöèàòèâà ïëþñ"" Sum="143000" </Customer>
+<Customer UIN="790137208" Name="ÎÎÎ "Ïðèçìà"" Sum="28800" </Customer>
+<Customer UIN="700184531" Name="Ó×ÒÏ "Ôèðìà ÝëèïÑ"" Sum="57500" </Customer>
+<Customer UIN="790187450" Name="×ÓÏ "ßñü è ßíèíà"" Sum="9600" </Customer>
+</Customers>

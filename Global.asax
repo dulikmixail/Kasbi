@@ -1,0 +1,1 @@
+<%@ Application Inherits="Kasbi.Global" Language="VB" %>

@@ -1,0 +1,95 @@
+<%@ Page Language="vb" AutoEventWireup="false" Inherits="Kasbi.Reports.TOSupportReport" CodeFile="TOSupportReport.aspx.vb" %>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+	<HEAD>
+		<title>SellingReport</title>
+		<meta content="Microsoft Visual Studio .NET 7.1" name="GENERATOR">
+		<meta content="Visual Basic .NET 7.1" name="CODE_LANGUAGE">
+		<meta content="JavaScript" name="vs_defaultClientScript">
+		<meta content="http://schemas.microsoft.com/intellisense/ie5" name="vs_targetSchema">
+	</HEAD>
+	<body>
+		<center>
+			<form id="Form1" method="post" runat="server">
+				<asp:repeater id="repCustomers" runat="server">
+					<HeaderTemplate>
+						<TABLE id="Table1" cellSpacing="2" cellPadding="1" width="600" border="0">
+					</HeaderTemplate>
+					<ItemTemplate>
+						<TR>
+							<TD colspan ="2">
+								<font size="3" style="FONT-WEIGHT: bold">Клиент
+								</font>
+							</TD>
+							<TD><font size="3" style="FONT-WEIGHT: bold"><%# DataBinder.Eval(Container.DataItem, "customer_name")%></font></TD>
+						</TR>
+						<TR>
+							<td width="15"></td>
+							<td colspan="3">
+								<asp:datagrid id="grdGoods" runat="server" Font-Size="9pt" AutoGenerateColumns="False" ShowFooter="True"
+									Width="100%">
+									<HeaderStyle Font-Size="10pt" Font-Underline="True" HorizontalAlign="Center"></HeaderStyle>
+									<FooterStyle Font-Bold="True" HorizontalAlign="Right"></FooterStyle>
+									<Columns>
+										<asp:TemplateColumn HeaderText="№">
+											<ItemStyle Width="10" HorizontalAlign="Center"></ItemStyle>
+											<ItemTemplate>
+												<asp:Label Runat="server" ID="lblNumGood"></asp:Label>
+											</ItemTemplate>
+										</asp:TemplateColumn>
+										<asp:TemplateColumn SortExpression="sale_date" HeaderText="Дата постановки">
+											<ItemStyle Width="100" HorizontalAlign="Right"></ItemStyle>
+											<ItemTemplate>
+												<asp:Label runat="server" Text='<%# Format(DataBinder.Eval(Container.DataItem, "support_date"), "dd.MM.yyyy") %>' ID="Label2" >
+												</asp:Label>
+											</ItemTemplate>
+										</asp:TemplateColumn>
+										<asp:TemplateColumn SortExpression="good_name" HeaderText="Товар">
+											<ItemStyle Width="100" HorizontalAlign="Right"></ItemStyle>
+											<ItemTemplate>
+												<asp:Label runat="server" Text='<%# DataBinder.Eval(Container, "DataItem.good_name") %>' ID="Label6" >
+												</asp:Label>
+											</ItemTemplate>
+										</asp:TemplateColumn>
+										<asp:TemplateColumn SortExpression="good_description" HeaderText="Описание">
+											<ItemStyle Width="100" HorizontalAlign="Right"></ItemStyle>
+											<ItemTemplate>
+												<asp:Label runat="server" Text='<%# DataBinder.Eval(Container, "DataItem.good_description") %>' ID="Label1" >
+												</asp:Label>
+											</ItemTemplate>
+										</asp:TemplateColumn>
+										<asp:TemplateColumn SortExpression="info" HeaderText="Доп.инф-ция">
+											<ItemStyle Width="100" HorizontalAlign="Right"></ItemStyle>
+											<ItemTemplate>
+												<asp:Label runat="server" Text='<%# DataBinder.Eval(Container, "DataItem.info") %>' ID="Label3" >
+												</asp:Label>
+											</ItemTemplate>
+										</asp:TemplateColumn>
+									</Columns>
+								</asp:datagrid>
+							</td>
+						</tr>
+						<TR>
+							<td colspan="3"><hr size="1"></td>
+						</TR>
+						
+						<TR>
+							<td colspan="3" height="20"></td>
+						</TR>
+					</ItemTemplate>
+					<FooterTemplate>
+						</TABLE>
+					</FooterTemplate>
+				</asp:repeater>
+				<table runat="server" border="0" width="100%" id="tblSaleNotExists" cellpadding="2" cellspacing="1">
+						<tr>
+							<td align="center">
+								<font size="2" style="FONT-WEIGHT: bold">Кассовые аппараты не находятся на ТО</font>
+							</td>
+						</tr>
+				</table>
+		
+			</form>
+		</center>
+	</body>
+</HTML>

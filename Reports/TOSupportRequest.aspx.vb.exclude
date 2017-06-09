@@ -1,0 +1,93 @@
+Namespace Kasbi.Reports
+
+    Partial Class TOSupportRequest
+        Inherits PageBase
+
+#Region " Web Form Designer Generated Code "
+
+        'This call is required by the Web Form Designer.
+        <System.Diagnostics.DebuggerStepThrough()> Private Sub InitializeComponent()
+
+        End Sub
+
+
+        Private Sub Page_Init(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Init
+            'CODEGEN: This method call is required by the Web Form Designer
+            'Do not modify it using the code editor.
+            InitializeComponent()
+        End Sub
+
+#End Region
+
+        Private Overloads Sub Page_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
+            lblError.Visible = False
+
+            If Not IsPostBack Then
+                LoadCustomerList()
+            End If
+        End Sub
+
+        Private Sub LoadCustomerList()
+            Dim sql$ = "select distinct c.customer_sys_id ,c.customer_name from customer c inner join cash_history hc on hc.owner_sys_id=c.customer_sys_id order by customer_name"
+            Dim adapt As SqlClient.SqlDataAdapter
+            Dim ds As DataSet
+            Try
+                adapt = dbSQL.GetDataAdapter(sql)
+                ds = New DataSet
+                adapt.Fill(ds)
+                lstClient.DataSource = ds.Tables(0).DefaultView
+                lstClient.DataTextField = "customer_name"
+                lstClient.DataValueField = "customer_sys_id"
+                lstClient.DataBind()
+            Catch
+                'msgEmployee.Text = "Ошибка загрузки информации о ЦТО!<br>" & Err.Description
+            End Try
+            lstClient.Enabled = True
+        End Sub
+
+        Private Function GetList(ByVal list As ListBox) As String
+            Dim s$ = String.Empty
+            Dim item As ListItem
+            For i As Integer = 0 To list.Items.Count - 1
+                item = list.Items(i)
+                If (item.Selected) Then
+                    s += item.Value
+                    If i < list.Items.Count - 1 Then s += ","
+                End If
+            Next
+            GetList = s
+        End Function
+
+        Private Sub btnView_Click(ByVal sender As System.Object, ByVal e As System.Web.UI.ImageClickEventArgs) Handles btnView.Click
+            If CalBegin.SelectedDate <= DateTime.MinValue Or CalEnd.SelectedDate <= DateTime.MinValue Then
+                lblError.Visible = True
+                lblError.Text = "Необходимо указать Начальную и Конечную дату."
+                Exit Sub
+            End If
+
+            If CalBegin.SelectedDate > CalEnd.SelectedDate Then
+                lblError.Visible = True
+                lblError.Text = "Временной диапозон определен неверно."
+                Exit Sub
+            End If
+            Dim strRequest$ = ""
+            strRequest &= "&db=" & CalBegin.SelectedDate.ToShortDateString()
+            strRequest &= "&de=" & CalEnd.SelectedDate.ToShortDateString()
+
+            If rbtnClientSet1.Checked Then
+                strRequest &= "&cs=1"
+            ElseIf rbtnClientSet4.Checked Then
+                strRequest &= "&cs=4"
+                strRequest &= "&cust=" & GetList(lstClient)
+            End If
+            strRequest = "<script language='javascript' type='text/javascript'>window.open('TOSupportReport.aspx?" & strRequest & "')</script>"
+
+
+            'Dim strRequest$ = "TOSupportReport.aspx?start_date=" & CalBegin.SelectedDate.ToShortDateString() & "&end_date=" & CalEnd.SelectedDate.ToShortDateString()
+            'strRequest = "<script language='javascript' type='text/javascript'>window.open('" & strRequest & "')</script>"
+            Me.RegisterStartupScript("report", strRequest)
+        End Sub
+
+    End Class
+
+End Namespace

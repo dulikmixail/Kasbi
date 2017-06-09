@@ -1,0 +1,54 @@
+Namespace Kasbi.Reports
+
+    Partial Class TOReport
+        Inherits PageBase
+
+#Region " Web Form Designer Generated Code "
+
+        'This call is required by the Web Form Designer.
+        <System.Diagnostics.DebuggerStepThrough()> Private Sub InitializeComponent()
+
+        End Sub
+
+
+        Private Sub Page_Init(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Init
+            'CODEGEN: This method call is required by the Web Form Designer
+            'Do not modify it using the code editor.
+            InitializeComponent()
+        End Sub
+
+#End Region
+
+        Public start_date As DateTime
+        Public end_date As DateTime
+
+        Private Overloads Sub Page_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
+            If Not IsPostBack Then
+                Bind()
+            End If
+        End Sub
+
+        Private Sub Bind()
+            Dim cmd As SqlClient.SqlCommand
+            Dim adapterDealers As SqlClient.SqlDataAdapter
+            Dim ds As DataSet = New DataSet
+            Try
+                cmd = New SqlClient.SqlCommand("prc_rpt_TO")
+                cmd.CommandType = CommandType.StoredProcedure
+
+                start_date = Request.QueryString("start_date")
+                end_date = Request.QueryString("end_date")
+                cmd.Parameters.AddWithValue("@pi_begin_date", start_date)
+                cmd.Parameters.AddWithValue("@pi_end_date", end_date)
+                adapterDealers = dbSQL.GetDataAdapter(cmd)
+                adapterDealers.Fill(ds)
+
+                'grid.DataSource = ds
+                '  grid.DataBind()
+            Catch
+            End Try
+        End Sub
+
+    End Class
+
+End Namespace

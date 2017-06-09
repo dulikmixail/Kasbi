@@ -1,0 +1,105 @@
+<%@ Page Language="vb" AutoEventWireup="false" Inherits="Kasbi.Reports.TOSupportRequest" CodeFile="TOSupportRequest.aspx.vb" %>
+<%@ Register TagPrefix="uc1" TagName="Footer" Src="../Controls/Footer.ascx" %>
+<%@ Register TagPrefix="uc1" TagName="Header" Src="../Controls/Header.ascx" %>
+<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
+<HTML>
+	<HEAD>
+		<title>УП Рамок - Отчет по продажам</title>
+		<meta content="Microsoft Visual Studio .NET 7.1" name="GENERATOR">
+		<meta content="Visual Basic .NET 7.1" name="CODE_LANGUAGE">
+		<meta content="JavaScript" name="vs_defaultClientScript">
+		<meta content="http://schemas.microsoft.com/intellisense/ie5" name="vs_targetSchema">
+		<LINK href="../styles.css" type="text/css" rel="stylesheet">
+	</HEAD>
+	<body bottomMargin="0" leftMargin="0" topMargin="0" rightMargin="0">
+		<form id="Form1" method="post" runat="server">
+			<uc1:header id="Header1" runat="server"></uc1:header>
+			<table class=PageTitle cellSpacing=1 cellPadding=2 width="100%" border=0>
+				<tr>
+					<td class=HeaderTitle width="100%">&nbsp;Отчеты&nbsp;-&gt; ТО</td>
+				</tr>
+			</table>
+			<TABLE id="Table1" cellSpacing="1" cellPadding="2" width="100%" border="0">
+				<tr>
+					<td class="Unit" vAlign="top">Отчет ТО по клиентам</td>
+				</tr>
+				<TR>
+					<TD align="center"><asp:label id="lblError" runat="server" Visible="False" Font-Bold="True" ForeColor="Red" Font-Size="12pt">Label</asp:label></TD>
+				</TR>
+				<TR>
+					<TD>
+						<TABLE id="Table2" align="center">
+							<TR style="FONT-SIZE: 7pt; FONT-STYLE: italic; POSITION: relative; TOP: 3pt" align="center">
+								<TD>Начальная дата</TD>
+								<TD width="10"></TD>
+								<TD>Конечная дата</TD>
+							</TR>
+							<TR vAlign="top">
+								<TD><asp:calendar id="CalBegin" runat="server" ForeColor="#663399" Font-Size="8pt" Height="168px"
+										DESIGNTIMEDRAGDROP="2657" BorderWidth="1px" BackColor="#FFFFCC" DayNameFormat="FirstLetter"
+										Font-Names="Verdana" BorderColor="#FFCC66" ShowGridLines="True" FirstDayOfWeek="Monday" Width="160px">
+										<TodayDayStyle ForeColor="DarkRed" BackColor="#FFFFCC"></TodayDayStyle>
+										<SelectorStyle BackColor="#FFCC66"></SelectorStyle>
+										<NextPrevStyle Font-Size="9pt" ForeColor="#FFFFCC"></NextPrevStyle>
+										<DayHeaderStyle Height="1px" BackColor="#FFCC66"></DayHeaderStyle>
+										<SelectedDayStyle Font-Bold="True" BackColor="#CCCCFF"></SelectedDayStyle>
+										<TitleStyle Font-Size="9pt" Font-Bold="True" ForeColor="#FFFFCC" BackColor="#990000"></TitleStyle>
+										<WeekendDayStyle BackColor="#F6F8FC"></WeekendDayStyle>
+										<OtherMonthDayStyle ForeColor="#CC9966"></OtherMonthDayStyle>
+									</asp:calendar></TD>
+								<TD width="10"></TD>
+								<TD><asp:calendar id="CalEnd" runat="server" ForeColor="#663399" Font-Size="8pt" Height="168px" DESIGNTIMEDRAGDROP="2659"
+										BorderWidth="1px" BackColor="#FFFFCC" DayNameFormat="FirstLetter" Font-Names="Verdana" BorderColor="#FFCC66"
+										ShowGridLines="True" FirstDayOfWeek="Monday" Width="160px">
+										<TodayDayStyle ForeColor="DarkRed" BackColor="#FFFFCC"></TodayDayStyle>
+										<SelectorStyle BackColor="#FFCC66"></SelectorStyle>
+										<NextPrevStyle Font-Size="9pt" ForeColor="#FFFFCC"></NextPrevStyle>
+										<DayHeaderStyle Height="1px" BackColor="#FFCC66"></DayHeaderStyle>
+										<SelectedDayStyle Font-Bold="True" BackColor="#CCCCFF"></SelectedDayStyle>
+										<TitleStyle Font-Size="9pt" Font-Bold="True" ForeColor="#FFFFCC" BackColor="#990000"></TitleStyle>
+										<WeekendDayStyle BackColor="#F6F8FC"></WeekendDayStyle>
+										<OtherMonthDayStyle ForeColor="#CC9966"></OtherMonthDayStyle>
+									</asp:calendar></TD>
+							</TR>
+						</TABLE>
+					</TD>
+				</TR>
+				<TR id="pnlClient" runat="server">
+					<TD align="center">
+						<TABLE id="Table3" cellSpacing="1" cellPadding="2" border="0">
+							<TR>
+								<TD style="HEIGHT: 27px" vAlign="top">
+									<TABLE id="Table5" cellSpacing="0" cellPadding="0" width="100%" border="0">
+										<TR>
+											<TD><asp:radiobutton id="rbtnClientSet1" runat="server" Font-Size="8pt" Text="Все" GroupName="ClientSet"
+													Checked="True"></asp:radiobutton></TD>
+										</TR>
+									</TABLE>
+								</TD>
+							</TR>
+							<TR>
+								<TD vAlign="top" rowSpan="3">
+									<TABLE id="Table4" cellSpacing="0" cellPadding="0" width="100%" border="0">
+										<TR>
+											<TD vAlign="top"><asp:radiobutton id="rbtnClientSet4" runat="server" Font-Size="8pt" Text="Выбрать" GroupName="ClientSet"></asp:radiobutton></TD>
+											<TD><asp:listbox id="lstClient" runat="server" Rows="8" SelectionMode="Multiple"></asp:listbox></TD>
+										</TR>
+									</TABLE>
+								</TD>
+							</TR>
+						</TABLE>
+					</TD>
+				</TR>
+				<TR>
+					<TD align="center" height="20"></TD>
+				</TR>
+				<TR>
+					<TD align="center">
+						<asp:ImageButton id="btnView" runat="server" ImageUrl="../Images/create.gif"></asp:ImageButton></TD>
+				</TR>
+			</TABLE>
+			<uc1:footer id=Footer1 runat="server"></uc1:footer>
+			<asp:validationsummary id="ValidationSummary1" runat="server" CssClass="ErrorMessage" HeaderText="Заполните обязательные поля :"
+				ShowSummary="False" ShowMessageBox="True"></asp:validationsummary></form>
+	</body>
+</HTML>
