@@ -102,11 +102,12 @@
 <asp:Image runat="server" ID="Image4" ImageUrl="Images/sel.gif" style="Z-INDEX: 103; position:relative; left:10;"></asp:Image>&nbsp;Экспорт</asp:linkbutton>
 						<asp:hyperlink id="Hyperlink3" runat="server" EnableViewState="False" Font-Size="8pt" Target="_blank"></asp:hyperlink><br /><br /> 
 
-    <asp:RadioButtonList ID="radioButtonListExport" runat="server">
+    <asp:RadioButtonList ID="radioButtonListExport" runat="server" Font-Size="8pt">
         <asp:ListItem Selected="True" Value="fullHistory">Все работы</asp:ListItem>
-        <asp:ListItem Value="historyWithoutWarranty">Исключить гарантийные ремонты</asp:ListItem>
-        <asp:ListItem Value="historyWithoutNotWork">Исключить ремонты без стоимости работ</asp:ListItem>
-        <asp:ListItem Value="historyWithoutWarantyAndNotWork">Исключить гарантийные и без стоимоти работ ремонты</asp:ListItem>
+        <asp:ListItem Value="warrantyHistory">Гарантийные ремонты</asp:ListItem>
+        <asp:ListItem Value="notWorkHistory">Ремонты без стоимости работ</asp:ListItem>
+        <asp:ListItem Value="standartHistory">Платные ремонты</asp:ListItem>
+        <asp:ListItem Value="toHistory">ТО</asp:ListItem>
     </asp:RadioButtonList>
 
 <br />

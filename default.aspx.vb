@@ -280,20 +280,17 @@ Namespace Kasbi
             cmd.Parameters.AddWithValue("@date_end2", enddate2)
 
             If radioButtonListExport.SelectedValue = "fullHistory" Then
-                cmd.Parameters.AddWithValue("@isGarantia", 1)
-                cmd.Parameters.AddWithValue("@isWorkNotCall", 1)
-            ElseIf radioButtonListExport.SelectedValue = "historyWithoutWarranty" Then
-                cmd.Parameters.AddWithValue("@isGarantia", 0)
-                cmd.Parameters.AddWithValue("@isWorkNotCall", 1)
-            ElseIf radioButtonListExport.SelectedValue = "historyWithoutNotWork" Then
-                cmd.Parameters.AddWithValue("@isGarantia", 1)
-                cmd.Parameters.AddWithValue("@isWorkNotCall", 0)
-            ElseIf radioButtonListExport.SelectedValue = "historyWithoutWarantyAndNotWork" Then
-                cmd.Parameters.AddWithValue("@isGarantia", 0)
-                cmd.Parameters.AddWithValue("@isWorkNotCall", 0)
+                cmd.Parameters.AddWithValue("@pi_state", 1)
+            ElseIf radioButtonListExport.SelectedValue = "warrantyHistory" Then
+                cmd.Parameters.AddWithValue("@pi_state", 7)
+            ElseIf radioButtonListExport.SelectedValue = "notWorkHistory" Then
+                cmd.Parameters.AddWithValue("@pi_state", 8)
+            ElseIf radioButtonListExport.SelectedValue = "standartHistory" Then
+                cmd.Parameters.AddWithValue("@pi_state", 5)
+            ElseIf radioButtonListExport.SelectedValue = "toHistory" Then
+                cmd.Parameters.AddWithValue("@pi_state", 1)
             Else
-                cmd.Parameters.AddWithValue("@isGarantia", 1)
-                cmd.Parameters.AddWithValue("@isWorkNotCall", 1)
+                cmd.Parameters.AddWithValue("@pi_state", 1)
             End If
 
             rs = dbSQL.GetReader(cmd)
