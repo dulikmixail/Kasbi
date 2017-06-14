@@ -1,6 +1,8 @@
 Imports System
 Imports System.IO
 Imports System.Xml
+Imports System.Globalization
+
 
 
 Namespace Kasbi.Admin
@@ -69,13 +71,14 @@ Namespace Kasbi.Admin
                 For Each Customer In nodeList.ChildNodes
                     Try
                         'Проверка на схожесть UNN названия клиента
+
                         Dim base_name = dbSQL.ExecuteScalar("SELECT customer_abr + ' ' + customer_name as customer_name FROM customer WHERE unn='" & Customer.Attributes.ItemOf("UNN").Value().Trim & "'")
                         'попытка
                         row = table.NewRow()
                         If base_name <> "" And Customer.Attributes.ItemOf("UNN").Value().Trim.Length = 9 Then
                             valid_count = valid_count + 1
                             'qqq
-                            query = dbSQL.ExecuteScalar("INSERT INTO unn VALUES('" & Customer.Attributes.ItemOf("UNN").Value().Trim & "', '1', '1', '" & Customer.Attributes.ItemOf("Name").Value & "', '" & Double.Parse(Customer.Attributes.ItemOf("Sum").Value) & "')")
+                            query = dbSQL.ExecuteScalar("INSERT INTO unn VALUES('" & Customer.Attributes.ItemOf("UNN").Value().Trim & "', '1', '1', '" & Customer.Attributes.ItemOf("Name").Value & "', '" & Double.Parse(Customer.Attributes.ItemOf("Sum").Value, CultureInfo.InvariantCulture) & "')")
 
                             If base_name = Customer.Attributes.ItemOf("Name").Value Then
                                 row("name") = Customer.Attributes.ItemOf("Name").Value
@@ -86,13 +89,13 @@ Namespace Kasbi.Admin
                         Else
                             row("name") = Customer.Attributes.ItemOf("Name").Value
                             'qqq
-                            query = dbSQL.ExecuteScalar("INSERT INTO unn VALUES('" & Customer.Attributes.ItemOf("UNN").Value().Trim & "', '0', '1', '" & Customer.Attributes.ItemOf("Name").Value & "', '" & Double.Parse(Customer.Attributes.ItemOf("Sum").Value) & "')")
+                            query = dbSQL.ExecuteScalar("INSERT INTO unn VALUES('" & Customer.Attributes.ItemOf("UNN").Value().Trim & "', '0', '1', '" & Customer.Attributes.ItemOf("Name").Value & "', '" & Double.Parse(Customer.Attributes.ItemOf("Sum").Value, CultureInfo.InvariantCulture) & "')")
 
                             row("unn") = "<span style=color:red>" & Customer.Attributes.ItemOf("UNN").Value() & "</span>"
                         End If
 
                         If Customer.Attributes.ItemOf("Sum").Value.Trim() <> String.Empty Then
-                            row("sum") = Double.Parse(Customer.Attributes.ItemOf("Sum").Value)
+                            row("sum") = Double.Parse(Customer.Attributes.ItemOf("Sum").Value, CultureInfo.InvariantCulture)
                         Else
                             row("sum") = 0
                         End If
@@ -113,7 +116,7 @@ Namespace Kasbi.Admin
                 grdImportData.DataSource = table.DefaultView
                 grdImportData.DataKeyField = "id"
                 grdImportData.DataBind()
-                msgImport.Text = "Загружено удачно " & valid_count & " записей из " & table.DefaultView.Count
+                msgImport.Text = "Загружено удачно " & table.DefaultView.Count & " записей из " & valid_count
 
             Catch
                 msgImport.Text = "Проблемы с загрузкой данных!<br>" & Err.Description

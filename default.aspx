@@ -100,12 +100,16 @@
 <br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
 <asp:linkbutton id="lnk_export" runat="server" CssClass="PanelHider" EnableViewState="False">
 <asp:Image runat="server" ID="Image4" ImageUrl="Images/sel.gif" style="Z-INDEX: 103; position:relative; left:10;"></asp:Image>&nbsp;Экспорт</asp:linkbutton>
-						<asp:hyperlink id="Hyperlink3" runat="server" EnableViewState="False" Font-Size="8pt" Target="_blank"></asp:hyperlink>      
+						<asp:hyperlink id="Hyperlink3" runat="server" EnableViewState="False" Font-Size="8pt" Target="_blank"></asp:hyperlink><br /><br /> 
 
+    <asp:RadioButtonList ID="radioButtonListExport" runat="server">
+        <asp:ListItem Selected="True" Value="fullHistory">Все работы</asp:ListItem>
+        <asp:ListItem Value="historyWithoutWarranty">Исключить гарантийные ремонты</asp:ListItem>
+        <asp:ListItem Value="historyWithoutNotWork">Исключить ремонты без стоимости работ</asp:ListItem>
+        <asp:ListItem Value="historyWithoutWarantyAndNotWork">Исключить гарантийные и без стоимоти работ ремонты</asp:ListItem>
+    </asp:RadioButtonList>
 
-
-
-<br /><br />
+<br />
 &nbsp;&nbsp;Дата начала экспорта:
 <asp:textbox id="tbxBeginDate" Runat="server" BorderWidth="1px"></asp:textbox><A href="javascript:showdatepicker('tbxBeginDate', 0, false,'DD.MM.YYYY')"><IMG alt="Date Picker" src="../Images/cal_date_picker.gif" border="0"></A><asp:requiredfieldvalidator id="RequiredFieldValidator1" runat="server" CssClass="ErrorMessage" ErrorMessage="Начальная дата"
 										ControlToValidate="tbxBeginDate">*</asp:requiredfieldvalidator>&nbsp;<asp:label id="lblDateFormat2" runat="server" CssClass="text02"></asp:label>

@@ -270,6 +270,7 @@ Namespace Kasbi
             Dim startdate2 = DateTime.Parse(tbxBeginDate.Text + " 00:00:00")
             Dim enddate2 = DateTime.Parse(tbxEndDate.Text + " 23:59:59")
 
+
             cmd = New SqlClient.SqlCommand("get_xml_new_history")
             cmd.CommandType = CommandType.StoredProcedure
             cmd.Parameters.AddWithValue("@date", Date.Today)
@@ -277,6 +278,23 @@ Namespace Kasbi
             cmd.Parameters.AddWithValue("@date_end", enddate)
             cmd.Parameters.AddWithValue("@date_start2", startdate2)
             cmd.Parameters.AddWithValue("@date_end2", enddate2)
+
+            If radioButtonListExport.SelectedValue = "fullHistory" Then
+                cmd.Parameters.AddWithValue("@isGarantia", 1)
+                cmd.Parameters.AddWithValue("@isWorkNotCall", 1)
+            ElseIf radioButtonListExport.SelectedValue = "historyWithoutWarranty" Then
+                cmd.Parameters.AddWithValue("@isGarantia", 0)
+                cmd.Parameters.AddWithValue("@isWorkNotCall", 1)
+            ElseIf radioButtonListExport.SelectedValue = "historyWithoutNotWork" Then
+                cmd.Parameters.AddWithValue("@isGarantia", 1)
+                cmd.Parameters.AddWithValue("@isWorkNotCall", 0)
+            ElseIf radioButtonListExport.SelectedValue = "historyWithoutWarantyAndNotWork" Then
+                cmd.Parameters.AddWithValue("@isGarantia", 0)
+                cmd.Parameters.AddWithValue("@isWorkNotCall", 0)
+            Else
+                cmd.Parameters.AddWithValue("@isGarantia", 1)
+                cmd.Parameters.AddWithValue("@isWorkNotCall", 1)
+            End If
 
             rs = dbSQL.GetReader(cmd)
             'MsgBox(lbxExecutor.SelectedValue)
