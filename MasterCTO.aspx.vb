@@ -568,18 +568,18 @@ Namespace Kasbi
             End If
             'фильтр по проведению ТО за произвольный месяц
             'Для(сервера)
-            Dim d_to = DateTime.Parse(lstMonth.SelectedValue & "." & "01" & "." & lstYear.SelectedValue)
-            'Dim d_to = DateTime.Parse("01" & "." & lstMonth.SelectedValue & "." & lstYear.SelectedValue)
+            'Dim d_to = DateTime.Parse(lstMonth.SelectedValue & "." & "01" & "." & lstYear.SelectedValue)
+            Dim d_to = DateTime.Parse("01" & "." & lstMonth.SelectedValue & "." & lstYear.SelectedValue)
 
             If to_made = 1 Then
-                'filter &= " and good.good_sys_id IN (SELECT cash_history.good_sys_id FROM cash_history WHERE cash_history.start_date='01/" & lstMonth.SelectedValue & "/" & lstYear.SelectedValue & "' and cash_history.good_sys_id=good.good_sys_id)"
+                filter &= " and good.good_sys_id IN (SELECT cash_history.good_sys_id FROM cash_history WHERE cash_history.start_date='01/" & lstMonth.SelectedValue & "/" & lstYear.SelectedValue & "' and cash_history.good_sys_id=good.good_sys_id)"
                 'для сервера
-                filter &= " and good.good_sys_id IN (SELECT cash_history.good_sys_id FROM cash_history WHERE cash_history.start_date='" & lstMonth.SelectedValue & "/01/" & lstYear.SelectedValue & "' and cash_history.good_sys_id=good.good_sys_id)"
+                'filter &= " and good.good_sys_id IN (SELECT cash_history.good_sys_id FROM cash_history WHERE cash_history.start_date='" & lstMonth.SelectedValue & "/01/" & lstYear.SelectedValue & "' and cash_history.good_sys_id=good.good_sys_id)"
             End If
             If to_made = 2 Then
-                'filter &= " and good.good_sys_id NOT IN (SELECT top 1 cash_history.good_sys_id FROM cash_history WHERE cash_history.state=4 and cash_history.good_sys_id=good.good_sys_id AND cash_history.change_state_date>'01/" & lstMonth.SelectedValue & "/" & lstYear.SelectedValue & "') and good.good_sys_id NOT IN (SELECT cash_history.good_sys_id FROM cash_history WHERE cash_history.start_date='01/" & lstMonth.SelectedValue & "/" & lstYear.SelectedValue & "' and cash_history.good_sys_id=good.good_sys_id) "
+                filter &= " and good.good_sys_id NOT IN (SELECT top 1 cash_history.good_sys_id FROM cash_history WHERE cash_history.state=4 and cash_history.good_sys_id=good.good_sys_id AND cash_history.change_state_date>'01/" & lstMonth.SelectedValue & "/" & lstYear.SelectedValue & "') and good.good_sys_id NOT IN (SELECT cash_history.good_sys_id FROM cash_history WHERE cash_history.start_date='01/" & lstMonth.SelectedValue & "/" & lstYear.SelectedValue & "' and cash_history.good_sys_id=good.good_sys_id) "
                 'для сервера
-                filter &= " and good.good_sys_id NOT IN (SELECT top 1 cash_history.good_sys_id FROM cash_history WHERE cash_history.state=4 and cash_history.good_sys_id=good.good_sys_id AND cash_history.change_state_date>'" & lstMonth.SelectedValue & "/01/" & lstYear.SelectedValue & "') and good.good_sys_id NOT IN (SELECT cash_history.good_sys_id FROM cash_history WHERE cash_history.start_date='" & lstMonth.SelectedValue & "/01/" & lstYear.SelectedValue & "' and cash_history.good_sys_id=good.good_sys_id) "
+                'filter &= " and good.good_sys_id NOT IN (SELECT top 1 cash_history.good_sys_id FROM cash_history WHERE cash_history.state=4 and cash_history.good_sys_id=good.good_sys_id AND cash_history.change_state_date>'" & lstMonth.SelectedValue & "/01/" & lstYear.SelectedValue & "') and good.good_sys_id NOT IN (SELECT cash_history.good_sys_id FROM cash_history WHERE cash_history.start_date='" & lstMonth.SelectedValue & "/01/" & lstYear.SelectedValue & "' and cash_history.good_sys_id=good.good_sys_id) "
 
                 'filter &= " and (select top 1 good_sys_id from cash_history WHERE cash_history.good_sys_id=good.good_sys_id and cash_history.start_date<>'" & lstMonth.SelectedValue & "." & "01" & "." & lstYear.SelectedValue & "' and (cash_history.start_date<'" & lstMonth.SelectedValue + 1 & "." & "01" & "." & lstYear.SelectedValue & "'  and cash_history.start_date>'" & lstMonth.SelectedValue - 1 & "." & "01" & "." & lstYear.SelectedValue & "') and cash_history.state='1') = good.good_sys_id"
             End If
@@ -627,7 +627,7 @@ Namespace Kasbi
             Dim query = ""
 
             'Для(сервера)
-            Dim d = DateTime.Parse(lstMonth.SelectedValue & "." & "01" & "." & lstYear.SelectedValue)
+            Dim d = DateTime.Parse("01" & "." & lstMonth.SelectedValue & "." & lstYear.SelectedValue)
             'Dim d = DateTime.Parse(lstMonth.SelectedValue & "." & "01" & "." & lstYear.SelectedValue)
 
             d = Format(d, "dd/MM/yyyy")
@@ -671,14 +671,14 @@ Namespace Kasbi
                     End If
                     reader.Close()
 
-                    d = DateTime.Parse(lstMonth.SelectedValue & "." & "01" & "." & lstYear.SelectedValue)
-                    d = Format(d, "dd/MM/yyyy")
+                    d = DateTime.Parse("01" & "/" & lstMonth.SelectedValue & "/" & lstYear.SelectedValue)
+                    'd = Format(d, "dd/MM/yyyy")
                     'MsgBox(sample_date & " --- " & d)
 
                     If sample_date <> d Then
                         'MsgBox(sample_date & " --- " & d)
-                        d = DateTime.Parse(lstMonth.SelectedValue & "." & "01" & "." & lstYear.SelectedValue)
-                        d = Format(d, "MM/dd/yyyy")
+                        d = DateTime.Parse("01" & "/" & lstMonth.SelectedValue & "/" & lstYear.SelectedValue)
+                        'd = Format(d, "dd/MM/yyyy")
 
                         cmd = New SqlClient.SqlCommand("insert_TO")
                         cmd.CommandType = CommandType.StoredProcedure
@@ -732,9 +732,9 @@ Namespace Kasbi
             Dim query = ""
 
             If lstEmployee.SelectedValue <> "" Then
-                query = "DELETE FROM cash_history WHERE start_date='" & lstMonth.SelectedValue & "/01/" & lstYear.SelectedValue & "' AND good_sys_id IN (SELECT good_sys_id FROM good WHERE place_rn_id='" & lstPlaceRegion.SelectedValue & "' AND employee_cto='" & lstEmployee.SelectedValue & "')"
+                query = "DELETE FROM cash_history WHERE start_date='" & "/01/" & lstMonth.SelectedValue & lstYear.SelectedValue & "' AND good_sys_id IN (SELECT good_sys_id FROM good WHERE place_rn_id='" & lstPlaceRegion.SelectedValue & "' AND employee_cto='" & lstEmployee.SelectedValue & "')"
             Else
-                query = "DELETE FROM cash_history WHERE start_date='" & lstMonth.SelectedValue & "/01/" & lstYear.SelectedValue & "' AND good_sys_id IN (SELECT good_sys_id FROM good WHERE place_rn_id='" & lstPlaceRegion.SelectedValue & "')"
+                query = "DELETE FROM cash_history WHERE start_date='" & "/01/" & lstMonth.SelectedValue & lstYear.SelectedValue & "' AND good_sys_id IN (SELECT good_sys_id FROM good WHERE place_rn_id='" & lstPlaceRegion.SelectedValue & "')"
             End If
 
             adapt = dbSQL.GetDataAdapter(query)

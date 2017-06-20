@@ -152,7 +152,7 @@
             <tr>
                 <td align="left" colspan="2" height="15" valign="top" style="padding:5px; font-size:12px">
                 <div style="background-color:Silver; width:980; padding:5px">                         
-                <b>Укажите&nbsp;дату ТО:&nbsp;</b><asp:textbox id="tbxCloseDate" Runat="server" BorderWidth="1px"></asp:textbox><A href="javascript:showdatepicker('tbxCloseDate', 0, false,'MM.DD.YYYY')"><IMG alt="Date Picker" src="../Images/cal_date_picker.gif" border="0"></A>
+                <b>Укажите&nbsp;дату ТО:&nbsp;</b><asp:textbox id="tbxCloseDate" Runat="server" BorderWidth="1px"></asp:textbox><A href="javascript:showdatepicker('tbxCloseDate', 0, false,'DD.MM.YYYY')"><IMG alt="Date Picker" src="../Images/cal_date_picker.gif" border="0"></A>
                                 <asp:DropDownList ID="lstMonth" runat="server" BorderWidth="1px" BackColor="#F6F8FC">
                                     <asp:ListItem Value="01">Январь</asp:ListItem>
                                     <asp:ListItem Value="02">Февраль</asp:ListItem>
