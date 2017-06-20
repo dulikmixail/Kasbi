@@ -671,7 +671,7 @@ Namespace Kasbi
                     End If
                     reader.Close()
 
-                    d = DateTime.Parse("01" & "/" & lstMonth.SelectedValue & "/" & lstYear.SelectedValue)
+                    d = DateTime.Parse("01" & "." & lstMonth.SelectedValue & "." & lstYear.SelectedValue)
                     'd = Format(d, "dd/MM/yyyy")
                     'MsgBox(sample_date & " --- " & d)
 
