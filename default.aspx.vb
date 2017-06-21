@@ -273,6 +273,7 @@ Namespace Kasbi
 
             cmd = New SqlClient.SqlCommand("get_xml_new_history")
             cmd.CommandType = CommandType.StoredProcedure
+            cmd.Parameters.Clear()
             cmd.Parameters.AddWithValue("@date", Date.Today)
             cmd.Parameters.AddWithValue("@date_start", startdate)
             cmd.Parameters.AddWithValue("@date_end", enddate)
@@ -280,17 +281,36 @@ Namespace Kasbi
             cmd.Parameters.AddWithValue("@date_end2", enddate2)
 
             If radioButtonListExport.SelectedValue = "fullHistory" Then
-                cmd.Parameters.AddWithValue("@pi_state", 1)
+
+                cmd.Parameters.AddWithValue("@isWarranty", 1)
+                cmd.Parameters.AddWithValue("@isNotWork", 1)
+                cmd.Parameters.AddWithValue("@state", 5)
+
             ElseIf radioButtonListExport.SelectedValue = "warrantyHistory" Then
-                cmd.Parameters.AddWithValue("@pi_state", 7)
+                cmd.Parameters.AddWithValue("@isWarranty", 1)
+                cmd.Parameters.AddWithValue("@isNotWork", 0)
+                cmd.Parameters.AddWithValue("@state", 5)
+
             ElseIf radioButtonListExport.SelectedValue = "notWorkHistory" Then
-                cmd.Parameters.AddWithValue("@pi_state", 8)
+                cmd.Parameters.AddWithValue("@isWarranty", 0)
+                cmd.Parameters.AddWithValue("@isNotWork", 1)
+                cmd.Parameters.AddWithValue("@state", 5)
+
             ElseIf radioButtonListExport.SelectedValue = "standartHistory" Then
-                cmd.Parameters.AddWithValue("@pi_state", 5)
+                cmd.Parameters.AddWithValue("@isWarranty", 0)
+                cmd.Parameters.AddWithValue("@isNotWork", 0)
+                cmd.Parameters.AddWithValue("@state", 5)
+
             ElseIf radioButtonListExport.SelectedValue = "toHistory" Then
-                cmd.Parameters.AddWithValue("@pi_state", 1)
+                cmd.Parameters.AddWithValue("@isWarranty", 0)
+                cmd.Parameters.AddWithValue("@isNotWork", 0)
+                cmd.Parameters.AddWithValue("@state", 1)
+
             Else
-                cmd.Parameters.AddWithValue("@pi_state", 1)
+                cmd.Parameters.AddWithValue("@isWarranty", 0)
+                cmd.Parameters.AddWithValue("@isNotWork", 0)
+                cmd.Parameters.AddWithValue("@state", 1)
+
             End If
 
             rs = dbSQL.GetReader(cmd)

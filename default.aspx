@@ -103,11 +103,11 @@
 						<asp:hyperlink id="Hyperlink3" runat="server" EnableViewState="False" Font-Size="8pt" Target="_blank"></asp:hyperlink><br /><br /> 
 
     <asp:RadioButtonList ID="radioButtonListExport" runat="server" Font-Size="8pt">
-        <asp:ListItem Selected="True" Value="fullHistory">Все работы</asp:ListItem>
+        <%--<asp:ListItem  Value="fullHistory">Все работы</asp:ListItem>--%>
         <asp:ListItem Value="warrantyHistory">Гарантийные ремонты</asp:ListItem>
         <asp:ListItem Value="notWorkHistory">Ремонты без стоимости работ</asp:ListItem>
         <asp:ListItem Value="standartHistory">Платные ремонты</asp:ListItem>
-        <asp:ListItem Value="toHistory">ТО</asp:ListItem>
+        <asp:ListItem Selected="True" Value="toHistory">ТО</asp:ListItem>
     </asp:RadioButtonList>
 
 <br />
