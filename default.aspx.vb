@@ -284,32 +284,32 @@ Namespace Kasbi
 
                 cmd.Parameters.AddWithValue("@isWarranty", 1)
                 cmd.Parameters.AddWithValue("@isNotWork", 1)
-                cmd.Parameters.AddWithValue("@state", 5)
+                cmd.Parameters.AddWithValue("@pi_state", 5)
 
             ElseIf radioButtonListExport.SelectedValue = "warrantyHistory" Then
                 cmd.Parameters.AddWithValue("@isWarranty", 1)
                 cmd.Parameters.AddWithValue("@isNotWork", 0)
-                cmd.Parameters.AddWithValue("@state", 5)
+                cmd.Parameters.AddWithValue("@pi_state", 5)
 
             ElseIf radioButtonListExport.SelectedValue = "notWorkHistory" Then
                 cmd.Parameters.AddWithValue("@isWarranty", 0)
                 cmd.Parameters.AddWithValue("@isNotWork", 1)
-                cmd.Parameters.AddWithValue("@state", 5)
+                cmd.Parameters.AddWithValue("@pi_state", 5)
 
             ElseIf radioButtonListExport.SelectedValue = "standartHistory" Then
                 cmd.Parameters.AddWithValue("@isWarranty", 0)
                 cmd.Parameters.AddWithValue("@isNotWork", 0)
-                cmd.Parameters.AddWithValue("@state", 5)
+                cmd.Parameters.AddWithValue("@pi_state", 5)
 
             ElseIf radioButtonListExport.SelectedValue = "toHistory" Then
                 cmd.Parameters.AddWithValue("@isWarranty", 0)
                 cmd.Parameters.AddWithValue("@isNotWork", 0)
-                cmd.Parameters.AddWithValue("@state", 1)
+                cmd.Parameters.AddWithValue("@pi_state", 1)
 
             Else
                 cmd.Parameters.AddWithValue("@isWarranty", 0)
                 cmd.Parameters.AddWithValue("@isNotWork", 0)
-                cmd.Parameters.AddWithValue("@state", 1)
+                cmd.Parameters.AddWithValue("@pi_state", 1)
 
             End If
 
