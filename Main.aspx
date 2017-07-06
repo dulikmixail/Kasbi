@@ -66,7 +66,7 @@
                             <td>
                                 <asp:Repeater ID="repGoodStatistic" runat="server">
                                     <HeaderTemplate>
-                                        <table align="center" id="Table2" cellspacing="0" cellpadding="0" width="90%" border=".1">
+                                        <table align="center" id="Table2" cellspacing="0" cellpadding="0" width="90%" border="1">
                                     </HeaderTemplate>
                                     <ItemTemplate>
                                         <tr class="headerGrid">

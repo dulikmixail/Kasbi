@@ -28,8 +28,10 @@ Namespace Kasbi.Reports
         Private Overloads Sub Page_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
             'Put user code to initialize the page here
             Try
-                date_start = CDate(Request.QueryString("start_date"))
-                date_end = CDate(Request.QueryString("end_date"))
+                date_start = Date.ParseExact(Request.QueryString("start_date"), "dd.MM.yyyy", System.Globalization.DateTimeFormatInfo.InvariantInfo)
+                date_end = Date.ParseExact(Request.QueryString("end_date"), "dd.MM.yyyy", System.Globalization.DateTimeFormatInfo.InvariantInfo)
+                'date_start = CDate(Request.QueryString("start_date"))
+                'date_end = CDate(Request.QueryString("end_date"))
 
                 period = GetPageParam("period")
             Catch

@@ -90,7 +90,7 @@ Namespace Kasbi.Reports
                     lblError.Text = "Пожалуйста, введите корректные значения дат"
                     lblError.Visible = True
                 End Try
-                strRequest = String.Format("MasterTOReport.aspx?start_date={0}&end_date={1}&ex={2}", Format(startdate, "MM/dd/yyyy"), Format(endDate, "MM/dd/yyyy"), Executor)
+                strRequest = String.Format("MasterTOReport.aspx?start_date={0}&end_date={1}&ex={2}", Format(startdate, "dd/MM/yyyy"), Format(endDate, "dd/MM/yyyy"), Executor)
                 strRequest = "<script language='javascript' type='text/javascript'>window.open('" & strRequest & "')</script>"
 
             Else
