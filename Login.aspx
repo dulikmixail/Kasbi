@@ -13,8 +13,8 @@
     <meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5">
     <link href="Styles.css" type="text/css" rel="stylesheet">
 </head>
-<body bottommargin="0" leftmargin="0" topmargin="0" rightmargin="0">
-    <form id="Form1" method="post" runat="server">
+<body>
+        <form id="Form1" method="post" runat="server">
         <uc1:Header ID="Header1" runat="server"></uc1:Header>
         <table width="100%" border="0" cellpadding="2" cellspacing="1" class="PageTitle">
             <tr>
@@ -22,16 +22,10 @@
                     &nbsp;Идентификация&nbsp;пользователя</td>
             </tr>
         </table>
-        </td> 
-        </tr>
-        <tr>
-            <td height="20"> </td>
-        </tr>
-        <tr height="450" valign="top">
-              <td valign="top" width="100%" >
-                <table cellspacing="2" cellpadding="2" width="100" >
+       <div id="parent">
+           <table id="child" cellspacing="2" cellpadding="2" style="margin: auto">
                     <tr>
-                        <td width="80" style="font-weight: bold; font-size: 8pt">
+                        <td width="90px" style="font-weight: bold; font-size: 8pt">
                             &nbsp;Имя :</td>
                         <td style="height: 20px">
                             <asp:TextBox ID="txtLoginUser" runat="server" BorderWidth="1px" Width="80px" BorderStyle="Solid"></asp:TextBox>
@@ -43,6 +37,11 @@
                         <td>
                             <asp:TextBox ID="txtLoginPassword" runat="server" BorderWidth="1px" Width="80px"
                                 BorderStyle="Solid" TextMode="Password"></asp:TextBox>&nbsp;
+                        </td>
+                    </tr>
+                    <tr>
+                        <td></td>
+                        <td>
                             <asp:ImageButton ID="btnLogin" runat="server" ImageUrl="Images/login.gif"></asp:ImageButton>
                         </td>
                     </tr>
@@ -51,7 +50,11 @@
                             <asp:Label ID="lblError" runat="server" Font-Bold="True" ForeColor="Red" EnableViewState="False"></asp:Label></td>
                     </tr>
                 </table>
+       </div>
+            
                 <uc1:Footer ID="Footer1" runat="server"></uc1:Footer>
     </form>
+        
+    
 </body>
 </html>

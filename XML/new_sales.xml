@@ -1,4 +1,4 @@
 <?xml version='1.0' encoding='windows-1251' ?>
 <Sales>
-<sale sale_sys_id="35413" customer_sys_id="11311" firm_sys_id="1" sale_date="2017-05-03T14:22:00"><customer unn="700091235 " dogovor="10788/1"><good good_sys_id="17906" good_type_sys_id="755" param_num="1" artikul="VG-REC"><good_type name="VG-Rec"><pricelist price="1.823800000000000e+004"/></good_type></good></customer></sale>
+
 </Sales>

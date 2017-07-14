@@ -61,6 +61,34 @@ Partial Class BookKeeping
             End Try
         End Sub
 
+        Private Sub lnkExportCashКegisters_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles lnkExportCashКegisters.Click
+            Try
+                Dim cmd As SqlClient.SqlCommand
+                Dim rs As SqlClient.SqlDataReader
+                Dim f As IO.File
+                Dim fs As IO.FileStream
+                Dim i% = 0
+
+                cmd = New SqlClient.SqlCommand("get_xml_сash_registers")
+                cmd.CommandType = CommandType.StoredProcedure
+                rs = dbSQL.GetReader(cmd)
+
+                FileOpen(1, Server.MapPath("XML") & "\new_сash_registers.xml", OpenMode.Output, OpenAccess.Write, OpenShare.LockWrite)
+                PrintLine(1, "<?xml version='1.0' encoding='windows-1251' ?>")
+                PrintLine(1, "<goods>")
+                While rs.Read
+                    Print(1, rs(0))
+                    i = i + 1
+                End While
+                PrintLine(1)
+                PrintLine(1, "</goods>")
+
+                FileClose(1)
+                rs.Close()
+            Catch
+            End Try
+        End Sub
+
         Private Sub btnFind_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnFind.Click
             Dim str$ = txtFilter.Text
 

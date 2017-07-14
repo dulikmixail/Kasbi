@@ -369,7 +369,7 @@
                                     &nbsp;</td>
                                 <td class="SubTitleTextbox" align="left" style="height: 12px">
                                     Код</td>
-                                <td class="SubTitleTextbox" align="left" style="height: 12px">
+                                <td class="SubTitleTextbox" align="left" colspan ="2" style="height: 12px">
                                     Р/С</td>
                                 <td class="SubTitleTextbox" align="left" colspan="4" style="height: 12px">
                                     Название</td>
@@ -380,12 +380,12 @@
                                 <td class="SectionRowLabel" align="left">
                                     Банк:</td>
                                 <td class="SectionRow" align="left">
-                                    <asp:DropDownList ID="lstBank" runat="server" BackColor="#F6F8FC" Width="100px" Height="18px"
+                                    <asp:DropDownList ID="lstBank" runat="server" BackColor="#F6F8FC" Width="90%" Height="18px"
                                         AutoPostBack="True">
                                     </asp:DropDownList></td>
-                                <td class="SectionRow" align="right">
+                                <td class="SectionRow" align="left" colspan="2">
                                     <asp:TextBox ID="txtBankAccount" runat="server" ToolTip="Введите расчетный счет"
-                                        MaxLength="13" BackColor="#F6F8FC" BorderWidth="1px" Width="99%"></asp:TextBox></td>
+                                        MaxLength="28" BackColor="#F6F8FC" BorderWidth="1px" Width="90%"></asp:TextBox></td>
                                 <td class="SectionRow" align="right" colspan="4">
                                     <asp:TextBox ID="txtBankName" runat="server" ToolTip="Введите название банка" BackColor="#F6F8FC"
                                         BorderWidth="1px" Width="100%"></asp:TextBox></td>

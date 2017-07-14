@@ -144,7 +144,7 @@ Namespace Kasbi
                     If Session("Filter") <> "" Then
                         s = Session("Filter")
                     Else
-                        's = "SELECT * FROM customer c WHERE (cto is null or cto <> 1) and (((select count(*) from sale where customer_sys_id=c.customer_sys_id and cast(sale_date as bigint)>=cast(cast('" & Now().AddDays(-7).ToShortDateString() & "' as smalldatetime) as bigint)) > 0) or (select count(*) from sale where customer_sys_id=c.customer_sys_id)=0)"
+                        's = "SELECT * FROM customer c WHERE (cto is null or cto <> 1) and (((select count(*) from sale where customer_sys_id=c.customer_sys_i¸ d and cast(sale_date as bigint)>=cast(cast('" & Now().AddDays(-7).ToShortDateString() & "' as smalldatetime) as bigint)) > 0) or (select count(*) from sale where customer_sys_id=c.customer_sys_id)=0)"
                         Dim d1 = Now().AddDays(-7).ToShortDateString()
                         Dim d2 = Now()
                         Dim parce = Split(d1, ".")

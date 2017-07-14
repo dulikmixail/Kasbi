@@ -53,6 +53,8 @@
                         <asp:LinkButton ID="btnFind" runat="server" CssClass="PanelHider" EnableViewState="False">Искать</asp:LinkButton>&nbsp;
                         &nbsp;&nbsp;&nbsp;
                         <asp:LinkButton ID="lnkShowAll" runat="server" CssClass="PanelHider" EnableViewState="False">Показать всех клиентов</asp:LinkButton>
+                        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+                        <asp:LinkButton ID ="lnkExportCashКegisters" runat="server" CssClass="PanelHider">Выгрузить кассовые аппараты и ответственных мастеров</asp:LinkButton>
                     &nbsp;&nbsp; &nbsp;&nbsp;
                 </td>
             </tr>
