@@ -616,3 +616,20 @@ td.HeaderPage
 #child {
     padding: 10% 0;
 }
+
+.buttonCalendar .calendar {
+    display: none;
+}
+
+.buttonCalendar {
+    height: 20px;
+    width: 20px;
+    background-color: red;
+    content: "Date"
+}
+
+.buttonCalendar:focus > .calendar {
+    display: table;
+}
+
+/*date pije*/

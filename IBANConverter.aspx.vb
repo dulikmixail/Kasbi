@@ -38,6 +38,7 @@ Namespace Kasbi
             If (fileUpload.FileName <> "") Then
                 filePath = fileUpload.FileContent
 
+
                 doc = New XmlDocument
                 doc.Load(filePath)
 
