@@ -54,7 +54,7 @@ Namespace Kasbi.Reports
                 lblError.Visible = True
             End Try
 
-            Dim strRequest$ = String.Format("MasterworkReport.aspx?start_date={0}&end_date={1}", Format(startdate, "MM/dd/yyyy"), Format(endDate, "MM/dd/yyyy"))
+            Dim strRequest$ = String.Format("MasterworkReport.aspx?start_date={0}&end_date={1}", Format(startdate, "dd/MM/yyyy"), Format(endDate, "dd/MM/yyyy"))
             strRequest = "<script language='javascript' type='text/javascript'>window.open('" & strRequest & "')</script>"
             Me.RegisterStartupScript("report", strRequest)
         End Sub

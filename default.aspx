@@ -11,8 +11,12 @@
     <meta content="Visual Basic 7.0" name="CODE_LANGUAGE">
     <meta content="JavaScript" name="vs_defaultClientScript">
     <meta content="http://schemas.microsoft.com/intellisense/ie5" name="vs_targetSchema">
+    <meta charset="utf-8">
     <link href="Styles.css" type="text/css" rel="stylesheet">
     <script language="JavaScript" src="../scripts/datepicker.js"></script>
+    <script type="text/javascript" src="../scripts/js/datetimepicker/jquery.min.js"></script>
+    <script type="text/javascript" src="../scripts/js/datetimepicker/jquery.datetimepicker2.js"></script>
+    <link type="text/css" href="../scripts/js/datetimepicker/jquery.datetimepicker.css" rel="stylesheet" />
 </head>
 <body onscroll="javascript:document.all['scrollPos'].value=document.body.scrollTop;"
     bottommargin="0" leftmargin="0" topmargin="0" onload="javascript:document.body.scrollTop=document.all['scrollPos'].value;"
@@ -113,22 +117,50 @@
     </asp:RadioButtonList>
 
 <br />
+
 &nbsp;&nbsp;Дата начала экспорта:
-<asp:textbox id="tbxBeginDate" Runat="server" BorderWidth="1px"></asp:textbox><A href="javascript:showdatepicker('tbxBeginDate', 0, false,'DD.MM.YYYY')"><IMG alt="Date Picker" src="../Images/cal_date_picker.gif" border="0"></A><asp:requiredfieldvalidator id="RequiredFieldValidator1" runat="server" CssClass="ErrorMessage" ErrorMessage="Начальная дата"
+<asp:textbox id="tbxBeginDate" Runat="server" BorderWidth="1px"></asp:textbox>
+   
+    <%--<A href="javascript:showdatepicker('tbxBeginDate', 0, false,'DD.MM.YYYY')"><IMG alt="Date Picker" src="../Images/cal_date_picker.gif" border="0"></A>--%>
+    <asp:requiredfieldvalidator id="RequiredFieldValidator1" runat="server" CssClass="ErrorMessage" ErrorMessage="Начальная дата"
 										ControlToValidate="tbxBeginDate">*</asp:requiredfieldvalidator>&nbsp;<asp:label id="lblDateFormat2" runat="server" CssClass="text02"></asp:label>
 									<asp:comparevalidator id="typeValidator" runat="server" CssClass="ErrorMessage" ControlToValidate="tbxBeginDate"
 										EnableClientScript="False" Display="Dynamic" Type="Date" Operator="DataTypeCheck">Пожалуйста, введите корректные значение начальной даты</asp:comparevalidator>
 <br />
+
 &nbsp;&nbsp;Дата конца экспорта:&nbsp;&nbsp;
-<asp:textbox id="tbxEndDate" Runat="server" BorderWidth="1px"></asp:textbox><A href="javascript:showdatepicker('tbxEndDate', 0, false,'DD.MM.YYYY')"><IMG alt="Date Picker" src="../Images/cal_date_picker.gif" border="0"></A><asp:requiredfieldvalidator id="RequiredFieldValidator2" runat="server" CssClass="ErrorMessage" ErrorMessage="Конечная дата"
+<asp:textbox id="tbxEndDate" Runat="server" BorderWidth="1px"></asp:textbox>
+
+    <%--<A href="javascript:showdatepicker('tbxEndDate', 0, false,'DD.MM.YYYY')"><IMG alt="Date Picker" src="../Images/cal_date_picker.gif" border="0"></A>--%>
+    <asp:requiredfieldvalidator id="RequiredFieldValidator2" runat="server" CssClass="ErrorMessage" ErrorMessage="Конечная дата"
 										ControlToValidate="tbxEndDate">*</asp:requiredfieldvalidator>&nbsp;<asp:label id="Label1" runat="server" CssClass="text02"></asp:label>
 									<asp:comparevalidator id="Comparevalidator1" runat="server" CssClass="ErrorMessage" ControlToValidate="tbxEndDate"
 										EnableClientScript="False" Display="Dynamic" Type="Date" Operator="DataTypeCheck">Пожалуйста, введите корректные значение начальной даты</asp:comparevalidator>
+
+
 </asp:Label>
 
 
 
         <script language="javascript">
+            jQuery(function () {
+
+                    jQuery('#tbxBeginDate').datetimepicker({
+                        lang: 'ru',
+                        timepicker: false,
+                        format: 'd.m.Y',
+                        closeOnDateSelect: true,
+                    });
+
+                    jQuery('#tbxEndDate').datetimepicker({
+                        lang: 'ru',
+                        timepicker: false,
+                        format: 'd.m.Y',
+                        closeOnDateSelect: true,
+                    });
+
+                });
+
             function generate_link(com){
                 if (com==1)
                    window.open("GoodList.aspx?numcashregister=" + document.getElementById("search_kkm").value + "&action=" + document.getElementById("action_kkm").selectedIndex, "_self")

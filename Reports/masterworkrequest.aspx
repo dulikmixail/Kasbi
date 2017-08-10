@@ -12,6 +12,9 @@
 		<meta content="http://schemas.microsoft.com/intellisense/ie5" name="vs_targetSchema">
 		<LINK href="../styles.css" type="text/css" rel="stylesheet">
 		<script language="JavaScript" src="../scripts/datepicker.js"></script>
+        <script type="text/javascript" src="../scripts/js/datetimepicker/jquery.min.js"></script>
+        <script type="text/javascript" src="../scripts/js/datetimepicker/jquery.datetimepicker2.js"></script>
+        <link type="text/css" href="../scripts/js/datetimepicker/jquery.datetimepicker.css" rel="stylesheet" />
 	</HEAD>
 	<body bottomMargin="0" leftMargin="0" topMargin="0" rightMargin="0">
 		<form id="Form1" method="post" runat="server">
@@ -31,14 +34,18 @@
 						<TABLE id="Table2" width="100%">
 							<TR>
 								<TD class="SectionRowLabel" style="WIDTH: 127px"><asp:label id="Label1" runat="server">Начальная дата:</asp:label></TD>
-								<TD class="SectionRow"><asp:textbox id="tbxBeginDate" BorderWidth="1px" Runat="server"></asp:textbox><a href="javascript:showdatepicker('tbxBeginDate', 0, false,'DD.MM.YYYY')"><IMG src="../Images/cal_date_picker.gif" border="0" alt="Date Picker"></a><asp:requiredfieldvalidator id="RequiredFieldValidator1" runat="server" CssClass="ErrorMessage" ControlToValidate="tbxBeginDate"
+								<TD class="SectionRow"><asp:textbox id="tbxBeginDate" BorderWidth="1px" Runat="server"></asp:textbox>
+                                    <%--<a href="javascript:showdatepicker('tbxBeginDate', 0, false,'DD.MM.YYYY')"><IMG src="../Images/cal_date_picker.gif" border="0" alt="Date Picker"></a>--%>
+                                    <asp:requiredfieldvalidator id="RequiredFieldValidator1" runat="server" CssClass="ErrorMessage" ControlToValidate="tbxBeginDate"
 										ErrorMessage="Начальная дата">*</asp:requiredfieldvalidator>&nbsp;<asp:label id="lblDateFormat2" runat="server" CssClass="text02"></asp:label>
 									<asp:comparevalidator id="typeValidator" runat="server" CssClass="ErrorMessage" ControlToValidate="tbxBeginDate"
 										Operator="DataTypeCheck" Type="Date" Display="Dynamic" EnableClientScript="False">Пожалуйста, введите корректные значение начальной даты</asp:comparevalidator></TD>
 							</TR>
 							<TR>
 								<TD class="SectionRowLabel" style="WIDTH: 127px"><asp:label id="Label3" runat="server">Конечная дата:</asp:label></TD>
-								<TD class="SectionRow"><asp:textbox id="tbxEndDate" BorderWidth="1px" Runat="server"></asp:textbox><a href="javascript:showdatepicker('tbxEndDate', 0, false,'DD.MM.YYYY')"><IMG src="../Images/cal_date_picker.gif" border="0" alt="Date Picker"></a><asp:requiredfieldvalidator id="RequiredFieldValidator2" runat="server" CssClass="ErrorMessage" ControlToValidate="tbxEndDate"
+								<TD class="SectionRow"><asp:textbox id="tbxEndDate" BorderWidth="1px" Runat="server"></asp:textbox>
+                                    <%--<a href="javascript:showdatepicker('tbxEndDate', 0, false,'DD.MM.YYYY')"><IMG src="../Images/cal_date_picker.gif" border="0" alt="Date Picker"></a>--%>
+                                    <asp:requiredfieldvalidator id="RequiredFieldValidator2" runat="server" CssClass="ErrorMessage" ControlToValidate="tbxEndDate"
 										ErrorMessage="Конечная дата ">*</asp:requiredfieldvalidator>&nbsp;<asp:label id="lblDateFormat3" runat="server" CssClass="text02"></asp:label>
 									<asp:comparevalidator id="CompareValidator1" runat="server" CssClass="ErrorMessage" ControlToValidate="tbxEndDate"
 										Operator="DataTypeCheck" Type="Date" Display="Dynamic" EnableClientScript="False">Пожалуйста, введите корректные значение конечной даты</asp:comparevalidator></TD>
@@ -56,6 +63,25 @@
 					</TD>
 				</TR>
 			</TABLE>
+
+            <script type="text/javascript">
+                jQuery(function () {
+                    jQuery('#tbxBeginDate').datetimepicker({
+                        lang: 'ru',
+                        timepicker: false,
+                        format: 'd.m.Y',
+                        closeOnDateSelect: true,
+                    });
+
+                    jQuery('#tbxEndDate').datetimepicker({
+                        lang: 'ru',
+                        timepicker: false,
+                        format: 'd.m.Y',
+                        closeOnDateSelect: true,
+                    });
+                });
+            </script>
+
 			<uc1:footer id=Footer1 runat="server"></uc1:footer>
 			<asp:validationsummary id="ValidationSummary1" runat="server" CssClass="ErrorMessage" HeaderText="Заполните обязательные поля :"
 				ShowSummary="False" ShowMessageBox="True"></asp:validationsummary></form>
