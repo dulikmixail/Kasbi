@@ -1576,5 +1576,8 @@ Namespace Kasbi
             End Try
         End Sub
 
+        Protected Sub txtQuantity_TextChanged(sender As Object, e As EventArgs) Handles txtQuantity.TextChanged
+
+        End Sub
     End Class
 End Namespace
