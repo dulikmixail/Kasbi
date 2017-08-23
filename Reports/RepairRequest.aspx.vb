@@ -79,9 +79,9 @@ Namespace Kasbi.Reports
                 If item.Selected Then Executor &= item.Value & ","
             Next item
 
-            Dim strRequest$ = String.Format("RepairReport.aspx?start_date={0}&end_date={1}&dt={2}&dr={3}&ex={4}", Format(startdate, "MM/dd/yyyy"), Format(endDate, "MM/dd/yyyy"), tbxDetails.Text, tbxDisrepair.Text, Executor)
+            'Dim strRequest$ = String.Format("RepairReport.aspx?start_date={0}&end_date={1}&dt={2}&dr={3}&ex={4}", Format(startdate, "MM/dd/yyyy"), Format(endDate, "MM/dd/yyyy"), tbxDetails.Text, tbxDisrepair.Text, Executor)
 
-            'Dim strRequest$ = String.Format("RepairReport.aspx?start_date={0}&end_date={1}&dt={2}&dr={3}&ex={4}", Format(startdate, "dd/MM/yyyy"), Format(endDate, "dd/MM/yyyy"), tbxDetails.Text, tbxDisrepair.Text, Executor)
+            Dim strRequest$ = String.Format("RepairReport.aspx?start_date={0}&end_date={1}&dt={2}&dr={3}&ex={4}", Format(startdate, "dd/MM/yyyy"), Format(endDate, "dd/MM/yyyy"), tbxDetails.Text, tbxDisrepair.Text, Executor)
 
             strRequest = "<script language='javascript' type='text/javascript'>window.open('" & strRequest & "')</script>"
             Me.RegisterStartupScript("report", strRequest)
