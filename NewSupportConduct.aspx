@@ -16,6 +16,9 @@
     <link href="Styles.css" type="text/css" rel="stylesheet">
 
     <script language="JavaScript" src="../scripts/datepicker.js"></script>
+    <script type="text/javascript" src="../scripts/js/datetimepicker/jquery.min.js"></script>
+    <script type="text/javascript" src="../scripts/js/datetimepicker/jquery.datetimepicker2.js"></script>
+    <link type="text/css" href="../scripts/js/datetimepicker/jquery.datetimepicker.css" rel="stylesheet" />
     
 </head>
 <body onscroll="javascript:document.all['scrollPos'].value=document.body.scrollTop;"
@@ -330,9 +333,9 @@
                                             </asp:DropDownList></td>
                                         <td class="SectionRow">
                                             <asp:Panel ID="pnlDataPickerCloseDate" runat="server">
-                                                <asp:TextBox ID="txtCloseDate" runat="server" Width="95px" BorderWidth="1px"></asp:TextBox>
-                                                <a href="javascript:showdatepicker('txtCloseDate', 0, false,'DD.MM.YYYY')">
-                                                    <img alt="Date Picker" src="Images/cal_date_picker.gif" border="0" name="imgDpCloseDate"></a>
+                                                <asp:TextBox ID="txtCloseDate" runat="server" Width="95px" BorderWidth="1px" style="height: 20px"></asp:TextBox>
+                                                <%--<a href="javascript:showdatepicker('txtCloseDate', 0, false,'DD.MM.YYYY')">
+                                                    <img alt="Date Picker" src="Images/cal_date_picker.gif" border="0" name="imgDpCloseDate"></a>--%>
                                             </asp:Panel>
                                         </td>
                                     </tr>
@@ -499,8 +502,8 @@
                                             Дата снятия:</td>
                                         <td class="SectionRow" align="left">
                                             <asp:TextBox ID="tbxDismissalDate" runat="server" BorderWidth="1px"></asp:TextBox>
-                                            <a href="javascript:showdatepicker('tbxDismissalDate', 0, false,'DD.MM.YYYY')">
-                                                <img alt="Date Picker" src="Images/cal_date_picker.gif" border="0"></a>
+                                            <%--<a href="javascript:showdatepicker('tbxDismissalDate', 0, false,'DD.MM.YYYY')">
+                                                <img alt="Date Picker" src="Images/cal_date_picker.gif" border="0"></a>--%>
                                             <asp:RequiredFieldValidator ID="Requiredfieldvalidator2" runat="server" CssClass="ErrorMessage"
                                                 ErrorMessage="Дата снятия с ТО" ControlToValidate="tbxDismissalDate">*</asp:RequiredFieldValidator>&nbsp;
                                         </td>
@@ -636,9 +639,9 @@
                                         <td class="SectionRowLabel" align="left">
                                             Дата постановки:</td>
                                         <td class="SectionRow" align="left" colspan="2">
-                                            <asp:TextBox ID="tbxSupportDate" runat="server" BorderWidth="1px"></asp:TextBox><a
-                                                href="javascript:showdatepicker('tbxSupportDate', 0, false,'DD.MM.YYYY')"><img alt="Date Picker"
-                                                    src="Images/cal_date_picker.gif" border="0"></a>
+                                            <asp:TextBox ID="tbxSupportDate" runat="server" BorderWidth="1px"></asp:TextBox>
+                                            <%--<a href="javascript:showdatepicker('tbxSupportDate', 0, false,'DD.MM.YYYY')"><img alt="Date Picker"
+                                                    src="Images/cal_date_picker.gif" border="0"></a>--%>
                                             <asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" CssClass="ErrorMessage"
                                                 ErrorMessage="Дата постановки" ControlToValidate="tbxSupportDate">*</asp:RequiredFieldValidator>&nbsp;
                                             <asp:CompareValidator ID="typeValidator" runat="server" CssClass="ErrorMessage" ControlToValidate="tbxSupportDate"
@@ -897,6 +900,36 @@
                 </td>
             </tr>
         </table>
+
+        <script type="text/javascript">
+
+            jQuery(function () {
+
+                jQuery('#txtCloseDate').datetimepicker({
+                    lang: 'ru',
+                    timepicker: false,
+                    format: 'd.m.Y',
+                    closeOnDateSelect: true,
+                });
+                
+                jQuery('#tbxDismissalDate').datetimepicker({
+                    lang: 'ru',
+                    timepicker: false,
+                    format: 'd.m.Y',
+                    closeOnDateSelect: true,
+                });
+                
+                jQuery('#tbxSupportDate').datetimepicker({
+                    lang: 'ru',
+                    timepicker: false,
+                    format: 'd.m.Y',
+                    closeOnDateSelect: true,
+                });
+
+            });
+
+        </script>
+
         <uc1:Footer ID="Footer1" runat="server"></uc1:Footer>
         <input id="scrollPos" type="hidden" value="0" name="scrollPos" runat="server">
         <input lang="ru" id="CurrentPage" type="hidden" name="CurrentPage" runat="server">

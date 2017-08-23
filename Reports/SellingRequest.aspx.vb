@@ -36,8 +36,8 @@ Namespace Kasbi.Reports
 
             If Not IsPostBack Then
                 Try
-                    tbxBeginDate.Text = (New CultureInfo("ru_Ru", False)).DateTimeFormat.ShortDatePattern.ToUpper()
-                    tbxEndDate.Text = (New CultureInfo("ru_Ru", False)).DateTimeFormat.ShortDatePattern.ToUpper()
+                    'tbxBeginDate.Text = (New CultureInfo("ru-Ru", False)).DateTimeFormat.ShortDatePattern.ToUpper()
+                    'tbxEndDate.Text = (New CultureInfo("ru-Ru", False)).DateTimeFormat.ShortDatePattern.ToUpper()
                 Catch
                 End Try
                 ShowContent()
@@ -195,8 +195,8 @@ Namespace Kasbi.Reports
             If (lblError.Visible) Then Exit Sub
 
             Dim strRequest$ = "rt=" & rblReportType.SelectedValue
-            strRequest &= "&db=" & Format(startdate, "MM/dd/yyyy")
-            strRequest &= "&de=" & Format(endDate, "MM/dd/yyyy")
+            strRequest &= "&db=" & Format(startdate, "dd/MM/yyyy")
+            strRequest &= "&de=" & Format(endDate, "dd/MM/yyyy")
 
             If CInt(rblReportType.SelectedValue) = 1 Then
                 If rbtnClientSet1.Checked Then

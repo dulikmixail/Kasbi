@@ -51,8 +51,8 @@ Namespace Kasbi.Reports
             Dim adapt As SqlClient.SqlDataAdapter
             Dim ds As DataSet = New DataSet
             Try
-                lblStartDate.Text = Format(date_start, "MM.dd.yyyy")
-                lblEndDate.Text = Format(date_end, "MM.dd.yyyy")
+                lblStartDate.Text = Format(date_start, "dd.MM.yyyy")
+                lblEndDate.Text = Format(date_end, "dd.MM.yyyy")
                 lblPrintDate.Text = Format(Now, "dd.MM.yyyy")
 
                 If period = 0 Then

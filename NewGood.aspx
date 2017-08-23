@@ -12,6 +12,10 @@
     <meta name="vs_targetSchema" content="http://schemas.microsoft.com/intellisense/ie5">
     <link href="Styles.css" type="text/css" rel="stylesheet">
     <script language="JavaScript" src="../scripts/datepicker.js"></script>
+    <script type="text/javascript" src="../scripts/js/datetimepicker/jquery.min.js"></script>
+    <script type="text/javascript" src="../scripts/js/datetimepicker/jquery.datetimepicker2.js"></script>
+    <link type="text/css" href="../scripts/js/datetimepicker/jquery.datetimepicker.css" rel="stylesheet" />
+
 </head>
 <body onscroll="javascript:document.all['scrollPos'].value=document.body.scrollTop;"
     bottommargin="0" leftmargin="0" topmargin="0" onload="javascript:document.body.scrollTop=document.all['scrollPos'].value;"
@@ -154,7 +158,9 @@
                                     <asp:ListItem>Остаток</asp:ListItem>
                                 </asp:BulletedList>
                                 
-                                <asp:label id="Label1" runat="server" CssClass="text02">Дата:</asp:label> <asp:textbox id="tbxBeginDate" Runat="server" BorderWidth="1px"></asp:textbox><A href="javascript:showdatepicker('tbxBeginDate', 0, false,'MM.DD.YYYY')"><IMG alt="Date Picker" src="../Images/cal_date_picker.gif" border="0"></A><asp:requiredfieldvalidator id="RequiredFieldValidator1" runat="server" CssClass="ErrorMessage" ErrorMessage="Начальная дата"
+                                <asp:label id="Label1" runat="server" CssClass="text02">Дата:</asp:label> <asp:textbox id="tbxBeginDate" Runat="server" BorderWidth="1px"></asp:textbox>
+                                <%--<A href="javascript:showdatepicker('tbxBeginDate', 0, false,'MM.DD.YYYY')"><IMG alt="Date Picker" src="../Images/cal_date_picker.gif" border="0"></A>--%>
+                                <asp:requiredfieldvalidator id="RequiredFieldValidator1" runat="server" CssClass="ErrorMessage" ErrorMessage="Начальная дата"
 										ControlToValidate="tbxBeginDate">*</asp:requiredfieldvalidator>&nbsp;<asp:label id="lblDateFormat2" runat="server" CssClass="text02"></asp:label>
 									<asp:comparevalidator id="typeValidator" runat="server" CssClass="ErrorMessage" ControlToValidate="tbxBeginDate"
 										EnableClientScript="False" Display="Dynamic" Type="Date" Operator="DataTypeCheck">Пожалуйста, введите корректные значение начальной даты</asp:comparevalidator>
@@ -251,6 +257,21 @@
                 </td>
             </tr>
         </table>
+
+        <script language="javascript">
+            jQuery(function () {
+
+                    jQuery('#tbxBeginDate').datetimepicker({
+                        lang: 'ru',
+                        timepicker: false,
+                        format: 'd.m.Y',
+                        closeOnDateSelect: true,
+                    });
+
+             });
+
+         </script>
+
         <uc1:Footer ID="Footer1" runat="server"></uc1:Footer>
         <input runat="server" id="scrollPos" type="hidden" value="0" name="scrollPos">
         <input runat="server" id="CurrentPage" type="hidden" lang="ru" name="CurrentPage">

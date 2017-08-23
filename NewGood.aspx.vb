@@ -37,7 +37,9 @@ Namespace Kasbi
                 rbtnKKM_Type_SelectedIndexChanged(Me, Nothing)
             End If
             LoadStatistic()
-            tbxBeginDate.Text = Format(Now, "MM.dd.yyyy")
+            If tbxBeginDate.Text = "" Then
+                tbxBeginDate.Text = Format(Now, "dd.MM.yyyy")
+            End If
         End Sub
 
         Sub LoadStatistic()

@@ -74,7 +74,7 @@ Namespace Kasbi.Reports
 
             Dim strRequest$
             If RadioButton2.Checked Then
-                strRequest = "CTODismissReport.aspx?start_date=" & Format(startdate, "MM/dd/yyyy") & "&end_date=" & Format(endDate, "MM/dd/yyyy")
+                strRequest = "CTODismissReport.aspx?start_date=" & Format(startdate, "dd/MM/yyyy") & "&end_date=" & Format(endDate, "dd/MM/yyyy")
                 Dim item As ListItem
                 Dim s$ = ""
                 For Each item In lbxNI.Items
@@ -82,7 +82,7 @@ Namespace Kasbi.Reports
                 Next item
                 strRequest &= "&niset=" & s
             Else
-                strRequest = "CTODismissReport.aspx?start_date=" & Format(startdate, "MM/dd/yyyy") & "&end_date=" & Format(endDate, "MM/dd/yyyy")
+                strRequest = "CTODismissReport.aspx?start_date=" & Format(startdate, "dd/MM/yyyy") & "&end_date=" & Format(endDate, "dd/MM/yyyy")
                 strRequest &= "&niset="
             End If
             strRequest &= "&oni=" & IIf(cbxNI.Checked, "1", "0")

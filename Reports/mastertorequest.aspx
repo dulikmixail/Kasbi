@@ -97,6 +97,7 @@
 										<asp:ListItem Value="2015">2015</asp:ListItem>
 										<asp:ListItem Value="2016">2016</asp:ListItem>
 										<asp:ListItem Value="2017" Selected="True">2017</asp:ListItem>
+                                        <asp:ListItem Value="2018">2018</asp:ListItem>
 									</asp:dropdownlist></TD>
 							<TR>
 								<td class="SectionRow">&nbsp;</td>
@@ -122,16 +123,27 @@
 					</TD>
 				</TR>
 				</TBODY></TABLE>
-            <script type="text/javascript">
+
+            <script language="javascript">
                 jQuery(function () {
-                    jQuery('#tbxBeginDate, #tbxEndDate').datetimepicker({
+
+                    jQuery('#tbxBeginDate').datetimepicker({
                         lang: 'ru',
                         timepicker: false,
                         format: 'd.m.Y',
                         closeOnDateSelect: true,
                     });
+
+                    jQuery('#tbxEndDate').datetimepicker({
+                        lang: 'ru',
+                        timepicker: false,
+                        format: 'd.m.Y',
+                        closeOnDateSelect: true,
+                    });
+
                 });
-            </script>
+
+         </script>
 
 			<uc1:footer id="Footer1" runat="server"></uc1:footer>
 			<asp:validationsummary id="ValidationSummary1" runat="server" CssClass="ErrorMessage" HeaderText="Заполните обязательные поля :"

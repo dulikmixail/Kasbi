@@ -16,6 +16,9 @@
     <link href="Styles.css" type="text/css" rel="stylesheet">
 
     <script language="JavaScript" src="../scripts/datepicker.js"></script>
+    <script type="text/javascript" src="../scripts/js/datetimepicker/jquery.min.js"></script>
+    <script type="text/javascript" src="../scripts/js/datetimepicker/jquery.datetimepicker2.js"></script>
+    <link type="text/css" href="../scripts/js/datetimepicker/jquery.datetimepicker.css" rel="stylesheet" />
 
 </head>
 <body onscroll="javascript:document.all['scrollPos'].value=document.body.scrollTop;"
@@ -119,9 +122,9 @@
                                     <td class="SectionRow" colspan="3">
                                         <asp:Label ID="lblRepairDateIn" runat="server" CssClass="text02"></asp:Label><asp:Panel
                                             ID="pnlRepairDateIn" runat="server" Visible="False">
-                                            <asp:TextBox ID="tbxRepairDateIn" runat="server" BorderWidth="1px" BackColor="#F6F8FC"></asp:TextBox><a
-                                                href="javascript:showdatepicker('tbxRepairDateIn', 0, false,'DD.MM.YYYY')"><img id="imgRepairDateIn"
-                                                    alt="Date Picker" src="Images/cal_date_picker.gif" border="0"></a>
+                                            <asp:TextBox ID="tbxRepairDateIn" runat="server" BorderWidth="1px" BackColor="#F6F8FC"></asp:TextBox>
+                                            <%--<a href="javascript:showdatepicker('tbxRepairDateIn', 0, false,'DD.MM.YYYY')"><img id="imgRepairDateIn"
+                                                    alt="Date Picker" src="Images/cal_date_picker.gif" border="0"></a>--%>
                                             <asp:RequiredFieldValidator ID="Requiredfieldvalidator1" runat="server" CssClass="ErrorMessage"
                                                 ErrorMessage="Дата приема в ремонт " ControlToValidate="tbxRepairDateIn" Display="Static">*</asp:RequiredFieldValidator>&nbsp;
                                             <asp:CompareValidator ID="Comparevalidator2" runat="server" CssClass="ErrorMessage"
@@ -131,8 +134,8 @@
                                     <td class="SectionRow" colspan="5">
                                         Дата выдачи из ремонта:&nbsp;&nbsp;
                                         <asp:TextBox ID="tbxRepairDateOut" runat="server" BorderWidth="1px" BackColor="#F6F8FC"></asp:TextBox>
-                                        <a href="javascript:showdatepicker('tbxRepairDateOut', 0, false,'DD.MM.YYYY')">
-                                            <img id="imgRepairDateOut" alt="Date Picker" src="Images/cal_date_picker.gif" border="0"></a>
+                                        <%--<a href="javascript:showdatepicker('tbxRepairDateOut', 0, false,'DD.MM.YYYY')">
+                                            <img id="imgRepairDateOut" alt="Date Picker" src="Images/cal_date_picker.gif" border="0"></a>--%>
                                     </td>
                                 </tr>
                                 <tr class="SubCaption" align="center">
@@ -445,6 +448,28 @@
                 </td>
             </tr>
         </table>
+
+        <script language="javascript">
+            jQuery(function () {
+
+                jQuery('#tbxRepairDateIn').datetimepicker({
+                        lang: 'ru',
+                        timepicker: false,
+                        format: 'd.m.Y',
+                        closeOnDateSelect: true,
+                    });
+
+                jQuery('#tbxRepairDateOut').datetimepicker({
+                        lang: 'ru',
+                        timepicker: false,
+                        format: 'd.m.Y',
+                        closeOnDateSelect: true,
+                    });
+
+             });
+
+         </script>
+
         <uc1:Footer ID="Footer1" runat="server"></uc1:Footer>
         <input id="scrollPos" type="hidden" value="0" name="scrollPos" runat="server">
         <input lang="ru" id="CurrentPage" type="hidden" name="CurrentPage" runat="server">

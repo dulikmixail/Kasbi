@@ -646,8 +646,8 @@ Namespace Kasbi
 
             'Для сервера
             Dim parce = Split(tbxCloseDate.Text, ".")
-            Dim closedate = DateTime.Parse(parce(1) & "." & parce(0) & "." & parce(2))
-            'Dim closedate = DateTime.Parse(parce(0) & "." & parce(1) & "." & parce(2))
+            'Dim closedate = DateTime.Parse(parce(1) & "." & parce(0) & "." & parce(2))
+            Dim closedate = DateTime.Parse(parce(0) & "." & parce(1) & "." & parce(2))
             'Dim closedate = DateTime.Parse(tbxCloseDate.Text)
 
             'убрал пока

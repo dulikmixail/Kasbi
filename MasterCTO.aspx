@@ -45,7 +45,10 @@
     <meta content="JavaScript" name="vs_defaultClientScript">
     <meta content="http://schemas.microsoft.com/intellisense/ie5" name="vs_targetSchema">
     <link href="Styles.css" type="text/css" rel="stylesheet">
-    	<script language="JavaScript" src="../scripts/datepicker.js"></script>
+    <script language="JavaScript" src="../scripts/datepicker.js"></script>
+    <script type="text/javascript" src="../scripts/js/datetimepicker/jquery.min.js"></script>
+    <script type="text/javascript" src="../scripts/js/datetimepicker/jquery.datetimepicker2.js"></script>
+    <link type="text/css" href="../scripts/js/datetimepicker/jquery.datetimepicker.css" rel="stylesheet" />
 </head>
 <body onscroll="javascript:document.all['scrollPos'].value=document.body.scrollTop;"
     bottommargin="0" leftmargin="0" topmargin="0" onload="javascript:document.body.scrollTop=document.all['scrollPos'].value;"
@@ -152,7 +155,8 @@
             <tr>
                 <td align="left" colspan="2" height="15" valign="top" style="padding:5px; font-size:12px">
                 <div style="background-color:Silver; width:980; padding:5px">                         
-                <b>Укажите&nbsp;дату ТО:&nbsp;</b><asp:textbox id="tbxCloseDate" Runat="server" BorderWidth="1px"></asp:textbox><A href="javascript:showdatepicker('tbxCloseDate', 0, false,'MM.DD.YYYY')"><IMG alt="Date Picker" src="../Images/cal_date_picker.gif" border="0"></A>
+                <b>Укажите&nbsp;дату ТО:&nbsp;</b><asp:textbox id="tbxCloseDate" Runat="server" BorderWidth="1px"></asp:textbox>
+                    <%--<A href="javascript:showdatepicker('tbxCloseDate', 0, false,'MM.DD.YYYY')"><IMG alt="Date Picker" src="../Images/cal_date_picker.gif" border="0"></A>--%>
                                 <asp:DropDownList ID="lstMonth" runat="server" BorderWidth="1px" BackColor="#F6F8FC">
                                     <asp:ListItem Value="01">Январь</asp:ListItem>
                                     <asp:ListItem Value="02">Февраль</asp:ListItem>
@@ -411,6 +415,22 @@
                     &nbsp;</td>
             </tr>
         </table>
+
+        <script type="text/javascript">
+
+            jQuery(function () {
+
+                jQuery('#tbxCloseDate').datetimepicker({
+                    lang: 'ru',
+                    timepicker: false,
+                    format: 'd.m.Y',
+                    closeOnDateSelect: true,
+                });
+
+            });
+
+        </script>
+
         <uc1:Footer ID="Footer1" runat="server"></uc1:Footer>
         <input id="scrollPos" type="hidden" value="0" name="scrollPos" runat="server">
         <input lang="ru" id="CurrentPage" type="hidden" name="CurrentPage" runat="server">

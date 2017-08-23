@@ -13,6 +13,9 @@
     <link href="Styles.css" type="text/css" rel="stylesheet">
 
     <script language="JavaScript" src="../scripts/datepicker.js"></script>
+    <script type="text/javascript" src="../scripts/js/datetimepicker/jquery.min.js"></script>
+    <script type="text/javascript" src="../scripts/js/datetimepicker/jquery.datetimepicker2.js"></script>
+    <link type="text/css" href="../scripts/js/datetimepicker/jquery.datetimepicker.css" rel="stylesheet" />
 
 </head>
 <body onscroll="javascript:document.all['scrollPos'].value=document.body.scrollTop;"
@@ -523,9 +526,8 @@
                         </tr>
                         <tr>
                             <td class="SectionRowLabel">
-                                <asp:TextBox ID="calendar" runat="server" BorderWidth="1px" Width="82px"></asp:TextBox><a
-                                    href="javascript:showdatepicker('calendar', 0, false,'DD.MM.YYYY')"><img alt="Date Picker"
-                                        src="Images/cal_date_picker.gif" border="0"></a>
+                                <asp:TextBox ID="calendar" runat="server" BorderWidth="1px" Width="82px"></asp:TextBox>
+                                <%--<a href="javascript:showdatepicker('calendar', 0, false,'DD.MM.YYYY')"><img alt="Date Picker" src="Images/cal_date_picker.gif" border="0"></a>--%>
                                 <asp:RequiredFieldValidator ID="RequiredFieldValidator1" runat="server" CssClass="ErrorMessage"
                                     ErrorMessage="Дата сделки" ControlToValidate="calendar">*</asp:RequiredFieldValidator>&nbsp;
                                 <asp:Label ID="lblDateFormat2" runat="server" CssClass="text02"></asp:Label>
@@ -790,6 +792,22 @@
                 </td>
             </tr>
         </table>
+
+        <script type="text/javascript">
+
+            jQuery(function () {
+
+                jQuery('#calendar').datetimepicker({
+                    lang: 'ru',
+                    timepicker: false,
+                    format: 'd.m.Y',
+                    closeOnDateSelect: true,
+                });
+
+            });
+
+        </script>
+
         <uc1:Footer ID="Footer1" runat="server"></uc1:Footer>
         <input id="scrollPos" type="hidden" value="0" name="scrollPos" runat="server">
         <input lang="ru" id="CurrentPage" type="hidden" name="CurrentPage" runat="server">
