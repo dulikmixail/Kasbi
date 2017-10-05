@@ -63,28 +63,77 @@ Partial Class BookKeeping
 
         Private Sub lnkExportCash egisters_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles lnkExportCash egisters.Click
             Try
+                'Dim cmd As SqlClient.SqlCommand
+                'Dim rs As SqlClient.SqlDataReader
+
+                '“ÂÒÚÓ‚˚È ÍÓ‰_Õ¿◊¿ÀŒ'
                 Dim cmd As SqlClient.SqlCommand
-                Dim rs As SqlClient.SqlDataReader
+                Dim adapt As SqlClient.SqlDataAdapter
+                Dim ds As DataSet
+                '“ÂÒÚÓ‚˚È ÍÓ‰_ ŒÕ≈÷'
+
                 Dim f As IO.File
                 Dim fs As IO.FileStream
                 Dim i% = 0
 
+
+
+                'cmd = New SqlClient.SqlCommand("get_xml_Òash_registers")
+                'cmd.CommandType = CommandType.StoredProcedure
+                'rs = dbSQL.GetReader(cmd)
+
+                '“ÂÒÚÓ‚˚È ÍÓ‰_Õ¿◊¿ÀŒ'
                 cmd = New SqlClient.SqlCommand("get_xml_Òash_registers")
                 cmd.CommandType = CommandType.StoredProcedure
-                rs = dbSQL.GetReader(cmd)
+                cmd.CommandTimeout = 0
+
+                adapt = dbSQL.GetDataAdapter(cmd)
+                ds = New DataSet
+                Dim table As DataTable
+                adapt.Fill(ds)
 
                 FileOpen(1, Server.MapPath("XML") & "\new_Òash_registers.xml", OpenMode.Output, OpenAccess.Write, OpenShare.LockWrite)
                 PrintLine(1, "<?xml version='1.0' encoding='windows-1251' ?>")
                 PrintLine(1, "<goods>")
-                While rs.Read
-                    Print(1, rs(0))
-                    i = i + 1
-                End While
+
+                table = ds.Tables.Item(0)
+                Dim row As DataRow
+                For Each row In table.Rows
+                    If (row("state").ToString <> "2" And row("state").ToString <> "3") Then
+                        PrintLine(1, "<good num_cashregister=" & Chr(34) & row("num_cashregister").ToString() & Chr(34) & " payerInfo=" & Chr(34) & row("payerInfo").ToString() & Chr(34) & " cto_master=" & Chr(34) & row("cto_master").ToString() & Chr(34) & "/>")
+                    End If
+
+                Next
+
+
+                'While rs.Read
+                '    Print(1, rs(0))
+                '    i = i + 1
+                'End While
                 PrintLine(1)
                 PrintLine(1, "</goods>")
 
                 FileClose(1)
-                rs.Close()
+                'rs.Close()
+
+                '“ÂÒÚÓ‚˚È ÍÓ‰_ ŒÕ≈÷'
+
+
+
+
+
+                'FileOpen(1, Server.MapPath("XML") & "\new_Òash_registers.xml", OpenMode.Output, OpenAccess.Write, OpenShare.LockWrite)
+                'PrintLine(1, "<?xml version='1.0' encoding='windows-1251' ?>")
+                'PrintLine(1, "<goods>")
+                'While rs.Read
+                '    Print(1, rs(0))
+                '    i = i + 1
+                'End While
+                'PrintLine(1)
+                'PrintLine(1, "</goods>")
+
+                'FileClose(1)
+                'rs.Close()
             Catch
             End Try
         End Sub

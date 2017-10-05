@@ -218,6 +218,7 @@ function isFind()
                         timepicker: false,
                         format: 'd.m.Y',
                         closeOnDateSelect: true,
+                        scrollMonth: false,
                     });
 
                     jQuery('#tbxEndDate').datetimepicker({
@@ -225,6 +226,7 @@ function isFind()
                         timepicker: false,
                         format: 'd.m.Y',
                         closeOnDateSelect: true,
+                        scrollMonth: false,
                     });
 
                 });

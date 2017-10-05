@@ -425,6 +425,7 @@
                     timepicker: false,
                     format: 'd.m.Y',
                     closeOnDateSelect: true,
+                    scrollMonth: false,
                 });
 
             });

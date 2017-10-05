@@ -910,6 +910,7 @@
                     timepicker: false,
                     format: 'd.m.Y',
                     closeOnDateSelect: true,
+                    scrollMonth: false,
                 });
                 
                 jQuery('#tbxDismissalDate').datetimepicker({
@@ -917,6 +918,7 @@
                     timepicker: false,
                     format: 'd.m.Y',
                     closeOnDateSelect: true,
+                    scrollMonth: false,
                 });
                 
                 jQuery('#tbxSupportDate').datetimepicker({
@@ -924,6 +926,7 @@
                     timepicker: false,
                     format: 'd.m.Y',
                     closeOnDateSelect: true,
+                    scrollMonth: false,
                 });
 
             });

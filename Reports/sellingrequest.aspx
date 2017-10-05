@@ -149,6 +149,7 @@
                         timepicker: false,
                         format: 'd.m.Y',
                         closeOnDateSelect: true,
+                        scrollMonth: false,
                     });
 
                     jQuery('#tbxEndDate').datetimepicker({
@@ -156,6 +157,7 @@
                         timepicker: false,
                         format: 'd.m.Y',
                         closeOnDateSelect: true,
+                        scrollMonth: false,
                     });
 
              });
