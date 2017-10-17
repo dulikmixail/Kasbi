@@ -868,7 +868,7 @@ Namespace Kasbi
                                     Catch ex As Exception
 
                                     End Try
-                                   
+
 
                                     'doc.Bookmarks("CashregisterName").Range.Text = ds.Tables("goods").Rows(n)("good_name")
                                     'doc.Bookmarks("Version").Range.Text = ds.Tables("goods").Rows(n)("version")
@@ -2619,7 +2619,7 @@ ExitFunction:
                         Catch ex As Exception
 
                         End Try
-                        
+
                         doc.Save()
 
                     End If

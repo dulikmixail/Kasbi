@@ -506,13 +506,13 @@ Partial Class NewSupportConduct
                         cmd = New SqlClient.SqlCommand("get_supportconduct_end_date")
                         cmd.CommandType = CommandType.StoredProcedure
                         cmd.Parameters.AddWithValue("@pi_good_sys_id", iCash)
-                        cmd.Parameters.AddWithValue("@state", 1)
+                        cmd.Parameters.AddWithValue("@state", 4)
                         adapt = dbSQL.GetDataAdapter(cmd)
                         ds = New DataSet
                         adapt.Fill(ds)
                         If ds.Tables(0).Rows.Count > 0 Then
                             With ds.Tables(0).DefaultView(0)
-                                Dim enddate As Date = .Item("end_date")
+                                'Dim enddate As Date = .Item("end_date")
                                 'If d < enddate Then
                                 'msgAddSupportConduct.Text = "Закрываемый вами период либо уже закрыт либо меньше последнего закрытого периода"
                                 'Exit Sub
