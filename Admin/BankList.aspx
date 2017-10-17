@@ -32,7 +32,7 @@
                             <td class="TitleTextbox">
                                 Код банка:</td>
                             <td>
-                                <asp:TextBox ID="txtFilterByCode" runat="server" MaxLength="3" BackColor="#F6F8FC"
+                                <asp:TextBox ID="txtFilterByCode" runat="server" MaxLength="11" BackColor="#F6F8FC"
                                     BorderWidth="1px"></asp:TextBox></td>
                             <td class="TitleTextbox">
                                 Название банка:</td>
@@ -64,11 +64,11 @@
                                 </ItemTemplate>
                                 <FooterTemplate>
                                     <asp:TextBox ID="txtBankCodeNew" runat="server" BorderWidth="1px" BackColor="#F6F8FC"
-                                        Width="40px" MaxLength="3"></asp:TextBox>
+                                        Width="120px" MaxLength="11"></asp:TextBox>
                                 </FooterTemplate>
                                 <EditItemTemplate>
                                     <asp:TextBox ID="txtBankCodeEdit" runat="server" BorderWidth="1px" BackColor="#F6F8FC"
-                                        Width="40px" MaxLength="3" Text='<%# DataBinder.Eval(Container, "DataItem.bank_code") %>'>
+                                        Width="120px" MaxLength="11" Text='<%# DataBinder.Eval(Container, "DataItem.bank_code") %>'>
                                     </asp:TextBox>
                                 </EditItemTemplate>
                             </asp:TemplateColumn>
@@ -107,15 +107,15 @@
                                 </ItemTemplate>
                                 <FooterTemplate>
                                     МФО:<asp:TextBox ID="txtBankMFONew" runat="server" BorderWidth="1px" BackColor="#F6F8FC"
-                                        Width="70px" MaxLength="9"></asp:TextBox><br />
+                                        Width="120px" MaxLength="11"></asp:TextBox><br />
                                     УНП:&nbsp;<asp:TextBox ID="txtBankUNNNew" runat="server" BorderWidth="1px" BackColor="#F6F8FC"
-                                        Width="70px" MaxLength="9"></asp:TextBox>
+                                        Width="120px" MaxLength="11"></asp:TextBox>
                                 </FooterTemplate>
                                 <EditItemTemplate>
                                     МФО:<asp:TextBox ID="txtBankMFOEdit" runat="server" BorderWidth="1px" BackColor="#F6F8FC"
-                                        Width="70px" MaxLength="9" Text='<%# DataBinder.Eval(Container, "DataItem.mfo") %>'></asp:TextBox><br />
+                                        Width="120px" MaxLength="11" Text='<%# DataBinder.Eval(Container, "DataItem.mfo") %>'></asp:TextBox><br />
                                     УНП:&nbsp;<asp:TextBox ID="txtBankUNNEdit" runat="server" BorderWidth="1px" BackColor="#F6F8FC"
-                                        Width="70px" MaxLength="9" Text='<%# DataBinder.Eval(Container, "DataItem.unn") %>'></asp:TextBox>
+                                        Width="120px" MaxLength="11" Text='<%# DataBinder.Eval(Container, "DataItem.unn") %>'></asp:TextBox>
                                 </EditItemTemplate>
                             </asp:TemplateColumn>
                             <asp:TemplateColumn HeaderText="Тел./факс">

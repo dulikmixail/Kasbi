@@ -127,7 +127,7 @@ Namespace Kasbi.Admin
                     Exit Sub
                 End If
                 Try
-                    Dim sql$ = String.Format("INSERT INTO bank (bank_code, name, address, mfo,unn, phone, fax) VALUES('{0}', '{1}', '{2}', '{3}', '{4}', '{5}','{6}')", txtBankCode.Text.Trim, txtBankAddress.Text.Replace("'", """"), txtBankAddress.Text.Replace("'", """"), txtBankMFO.Text.Trim, txtBankUNN.Text.Trim, txtBankPhone.Text.Trim, txtBankFax.Text.Trim)
+                    Dim sql$ = String.Format("INSERT INTO bank (bank_code, name, address, mfo,unn, phone, fax) VALUES('{0}', '{1}', '{2}', '{3}', '{4}', '{5}','{6}')", txtBankCode.Text.Trim, txtBankName.Text.Replace("'", """"), txtBankAddress.Text.Replace("'", """"), txtBankMFO.Text.Trim, txtBankUNN.Text.Trim, txtBankPhone.Text.Trim, txtBankFax.Text.Trim)
                     dbSQL.Execute(sql)
                 Catch
                     msg.Text = "Ошибка сохранения информации о банке !<br>" & Err.Description
