@@ -18,7 +18,8 @@
 				<tr class="DetailField">
 					<td class="SectionRow" width="80">Документы:&nbsp;</td>
 					<td class="SectionRow" width="80">&nbsp;<asp:hyperlink id="lnkSpisok_KKM" Runat="server" Target="_blank">Список&nbsp;ККМ</asp:hyperlink></td>
-					<td class="SectionRow" width="100">&nbsp;&nbsp;<asp:hyperlink id="lnkDogovor_Na_TO" Runat="server" Target="_blank">Договор&nbsp;на&nbsp;тех.&nbsp;обслуживание</asp:hyperlink></td>
+					<td class="SectionRow" width="50">&nbsp;&nbsp;<asp:hyperlink id="lnkDogovor_Na_TO" Runat="server" Target="_blank">Договор&nbsp;на&nbsp;тех.&nbsp;обслуживание</asp:hyperlink></td>
+                    <td class="SectionRow" width="50">&nbsp;&nbsp;<asp:hyperlink id="lnkDogovor_Na_TO_Dop" Runat="server" Target="_blank">Дополнение&nbsp;к&nbsp;договору&nbsp;на&nbsp;ТО</asp:hyperlink></td>
 					<td class="SectionRow" width="400">&nbsp;&nbsp;<asp:hyperlink id="lnkZayavlenie_IMNS" Runat="server" Target="_blank">Заявление&nbsp;в&nbsp;ИМНС</asp:hyperlink></td>
 					<td class="SectionRow" align="right" width="20%"><asp:linkbutton id="btnCreateDocuments" runat="server">Сформировать весь<br>комплект документов</asp:linkbutton><asp:linkbutton id="btnPrint1" runat="server" Visible="False" ToolTip="Печать 1-й страницы Договора на ТО(3 шт.), Договора / Счет-фактуры, Списка ККМ, Акта списания показаний, Тех. заключения и Удостоверения кассира">Печать экз. 1</asp:linkbutton></td>
 				</tr>

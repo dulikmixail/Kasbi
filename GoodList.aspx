@@ -290,6 +290,9 @@
                                     </asp:HyperLink>
                                     <p style="margin-top: 5px; margin-bottom: 0px" align="center">
                                         <asp:HyperLink ID="imgAlert" runat="server" CssClass="CutImageLink" ImageUrl="Images/sign.gif"></asp:HyperLink>
+                                        <asp:HyperLink ID="imgSupportSKNO" Target="_blank" runat="server" CssClass="CutImageLink" ImageUrl="Images/skno.gif" Visible="false"
+                                            ToolTip="установлено СКНО">
+                                        </asp:HyperLink>
                                         <asp:HyperLink ID="imgSupport" runat="server" CssClass="CutImageLink" ImageUrl="Images/support.gif"
                                             ToolTip="На техобслуживании">
                                         </asp:HyperLink>

@@ -277,7 +277,11 @@ Namespace Kasbi
                     If Not IsDBNull(e.Item.DataItem("street_abr")) AndAlso Trim(e.Item.DataItem("street_abr")).Length > 0 Then
                         s = s & e.Item.DataItem("street_abr") & " "
                     End If
-                    s = s & e.Item.DataItem("address")
+                    Dim email_str As String = ""
+                    If e.Item.DataItem("email").ToString <> "" Then
+                        email_str = "<br>E-mail: " & e.Item.DataItem("email")
+                    End If
+                    s = s & e.Item.DataItem("address") & email_str
                 End If
 
                 CType(e.Item.FindControl("lblAddress"), Label).Text = s

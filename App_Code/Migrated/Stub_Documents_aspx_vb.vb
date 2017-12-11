@@ -25,7 +25,7 @@ Namespace Kasbi
 
         Public MustOverride Function GetRussianDate3(ByVal d As Date) As String
 
-        Public MustOverride Function ProcessSupportDocuments(ByVal doc_type As Integer, ByVal customer As Integer, ByVal support As Integer, Optional ByVal isRefresh As Boolean = False)
+        Public MustOverride Function ProcessSupportDocuments(ByVal doc_type As Integer, ByVal customer_sys_id_s As String, ByVal good_sys_id_s As String, Optional ByVal isRefresh As Boolean = False)
 
         Public MustOverride Function ProcessSingleDocuments(ByVal num_doc() As Integer, ByVal customer As Integer, ByVal sale As Integer, ByVal cash As Integer, ByVal history As Integer, Optional ByVal sub_num As Integer = -1, Optional ByVal isRefresh As Boolean = True) As Boolean
 

@@ -125,7 +125,9 @@
                             <td align="left" colspan="2" >
                                 <asp:Label ID="lblCaptionSupport" runat="server" CssClass="cash">ТО:</asp:Label></td>
                             <td align="left" >
-                                <asp:Label ID="lblSupport" runat="server" CssClass="cashDetail"></asp:Label></td>
+                                <asp:Label ID="lblSupport" runat="server" CssClass="cashDetail"></asp:Label>
+                                <asp:Label ID="lblSupportSKNO" runat="server" CssClass="cashDetail"></asp:Label>
+                            </td>
                         </tr>
                     </table>
                 </td>
@@ -192,8 +194,8 @@
                         <tr>
                             <td colspan="3">
                                 <table id="pnlTOType" width="100%" runat="server">
-                                    <tr class="SubTitleTextbox">
-                                        <td colspan="3">
+                                    <tr class="SubTitleTextbox" >
+                                        <td colspan="3" >
                                             Вид ТО
                                             <hr>
                                         </td>
@@ -206,11 +208,34 @@
                                                 <asp:ListItem Value="1">Снятие с ТО</asp:ListItem>
                                                 <asp:ListItem Value="2" Selected="True">Проведение ТО</asp:ListItem>
                                             </asp:RadioButtonList>
-                                            <hr>
+                                            
                                             <asp:CheckBox ID="chkDelayTO" runat="server" CssClass="text02" AutoPostBack="True"
                                                 Text="Приостановка ТО"></asp:CheckBox>
+                                            <hr>
                                         </td>
                                     </tr>
+                                    
+                                    <tr class="SubTitleTextbox" >
+                                        <td colspan="3" >
+                                            <br />
+                                            СКНО
+                                            <hr>
+                                        </td>
+                                    </tr>
+                                    <tr class="SectionRow">
+                                        <td class="SectionRow" colspan="3">
+                                            <asp:ImageButton ID="btnSaveSKNOInfo" runat="server" ImageUrl="Images/update.gif" ImageAlign="Right"></asp:ImageButton>
+                                            <asp:RadioButtonList ID="rbSKNO" runat="server" CssClass="text02" Height="16px" Width="385px"
+                                                RepeatColumns="3" AutoPostBack="True">
+                                                <asp:ListItem Value="1">установлено</asp:ListItem>
+                                                <asp:ListItem Value="0" Selected="True">Не установлено</asp:ListItem>
+                                            </asp:RadioButtonList>
+                                            <asp:Label ID="lblSKNOExecutor" runat="server" CssClass="text02">Изменил: </asp:Label><asp:Label ID="lblSKNOExecutorInfo" runat="server" CssClass="text02"></asp:Label>
+                                            
+                                            <hr>
+                                        </td>
+                                    </tr>
+
                                 </table>
                             </td>
                         </tr>

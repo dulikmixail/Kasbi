@@ -41,8 +41,32 @@ Namespace Kasbi
             End Try
             If Not IsPostBack Then
                 LoadGoodInfo()
+                LoadSKNOInfo()
                 BindGrid()
             End If
+        End Sub
+
+        Sub LoadSKNOInfo()
+            Dim cmd As SqlClient.SqlCommand
+            Dim reader As SqlClient.SqlDataReader
+
+            Try
+                cmd = New SqlClient.SqlCommand("get_skno_history")
+                cmd.Parameters.AddWithValue("@pi_good_sys_id", iCash)
+                cmd.CommandType = CommandType.StoredProcedure
+                reader = dbSQL.GetReader(cmd)
+                If reader.Read Then
+                    If reader("state_SKNO") = 1 Then
+                        lblSupportSKNO.Text = ", установлено СКНО"
+                    End If
+                End If
+                reader.Close()
+            Catch
+                msg.Text = "Ошибка загрузки информации о установке СКНО!1<br>" & Err.Description
+                reader.Close()
+                Exit Sub
+            End Try
+
         End Sub
 
         Sub LoadGoodInfo()

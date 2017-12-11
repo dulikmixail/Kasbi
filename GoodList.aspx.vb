@@ -443,6 +443,12 @@ Partial Class GoodList
                     CType(e.Item.FindControl("imgRepaired"), HyperLink).ToolTip = "Был в ремонте " & CInt(e.Item.DataItem("repaired")) & " раз(а)"
                 End If
 
+                If IsDBNull(e.Item.DataItem("state_skno")) Then
+                    e.Item.FindControl("imgSupportSKNO").Visible = 0
+                Else
+                    e.Item.FindControl("imgSupportSKNO").Visible = e.Item.DataItem("state_skno")
+                End If
+
             ElseIf e.Item.ItemType = ListItemType.EditItem Then
 
                 If e.Item.DataItem("good_type_sys_id") = Config.Kasbi04_ID Or e.Item.DataItem("good_type_sys_id") = 1119 Then

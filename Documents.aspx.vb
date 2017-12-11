@@ -7,6 +7,7 @@
 ' The associated content page 'Documents.aspx' was also modified to refer to the new class name.
 ' For more information on this code pattern, please refer to http://go.microsoft.com/fwlink/?LinkId=46995 
 '===========================================================================
+Imports System.Collections.Generic
 Imports Microsoft.Office.Interop
 
 
@@ -38,53 +39,54 @@ Namespace Kasbi
         'Const ConnectionString = "data source=192.168.11.14;initial catalog=Ramok;persist security info=False;user id=WebDB;workstation id=198.168.11.14;packet size=4096;password=webdb;"
         Dim act_num_global
 
-        Const DocName0 = "InvoiceNDS.doc"
-        Const DocName1 = "Dogovor.doc"
-        Const DocName2 = "Zayavlenie_Na_Knigu_Kassira.doc"
-        Const DocName3 = "Zayavlenie.doc"
-        Const DocName4 = "Akt_Pokazaniy_In.doc"
-        Const DocName5 = "TTN.doc"
-        Const DocName6 = "Dogovor_Na_TO.doc"
-        Const DocName7 = "Spisok_KKM.doc"
-        Const DocName8 = "Teh_Zaklyuchenie.doc"
-        Const DocName9 = "Udostoverenie_Kassira.doc"
-        Const DocName10 = "Akt_Work.doc"
+        Const DocName0 As String = "InvoiceNDS.doc"
+        Const DocName1 As String = "Dogovor.doc"
+        Const DocName2 As String = "Zayavlenie_Na_Knigu_Kassira.doc"
+        Const DocName3 As String = "Zayavlenie.doc"
+        Const DocName4 As String = "Akt_Pokazaniy_In.doc"
+        Const DocName5 As String = "TTN.doc"
+        Const DocName6 As String = "Dogovor_Na_TO.doc"
+        Const DocName7 As String = "Spisok_KKM.doc"
+        Const DocName8 As String = "Teh_Zaklyuchenie.doc"
+        Const DocName9 As String = "Udostoverenie_Kassira.doc"
+        Const DocName10 As String = "Akt_Work.doc"
+        Const DocName57 As String = "Dogovor_Na_TO_Dop.doc"
         'постановка на ТО
-        Const DocName11 = "Akt_Pokazaniy_In.doc"
-        Const DocName12 = "Teh_Zaklyuchenie_In.doc"
-        Const DocName13 = "Dogovor_Na_TO.doc"
+        Const DocName11 As String = "Akt_Pokazaniy_In.doc"
+        Const DocName12 As String = "Teh_Zaklyuchenie_In.doc"
+        Const DocName13 As String = "Dogovor_Na_TO.doc"
         ' снятие с ТО
-        Const DocName14 = "Akt_Pokazaniy_Out.doc"
-        Const DocName15 = "Akt_Pokazaniy_Out.doc"
-        Const DocName56 = "Zayavlenie_snyat_imns.doc"
+        Const DocName14 As String = "Akt_Pokazaniy_Out.doc"
+        Const DocName15 As String = "Akt_Pokazaniy_Out.doc"
+        Const DocName56 As String = "Zayavlenie_snyat_imns.doc"
         'ремонт
-        Const DocName16 = "Akt_Pokazaniy_Repair.doc"
+        Const DocName16 As String = "Akt_Pokazaniy_Repair.doc"
         'гарантийный талон
-        Const DocName17 = "Garantia.doc"
+        Const DocName17 As String = "Garantia.doc"
         'заявление в ИМНС
-        Const DocName18 = "Zayavlenie_IMNS.doc"
+        Const DocName18 As String = "Zayavlenie_IMNS.doc"
         '
-        Const DocName19 = "Teh_Zaklyuchenie_Out.doc"
-        Const DocName20 = "Teh_Zaklyuchenie_Out.doc"
+        Const DocName19 As String = "Teh_Zaklyuchenie_Out.doc"
+        Const DocName20 As String = "Teh_Zaklyuchenie_Out.doc"
         '
-        Const DocName31 = "DefectAct.doc"
-        Const DocName32 = "Akt_RepairRealization.doc"
-        Const DocName33 = "TTN_Repair.doc"
-        Const DocName34 = "InvoiceNDS_Repair.doc"
-        Const DocName35 = "TTN_Transport.doc"
+        Const DocName31 As String = "DefectAct.doc"
+        Const DocName32 As String = "Akt_RepairRealization.doc"
+        Const DocName33 As String = "TTN_Repair.doc"
+        Const DocName34 As String = "InvoiceNDS_Repair.doc"
+        Const DocName35 As String = "TTN_Transport.doc"
         '
-        Const DocName30 = "Marka_Quartal_Report.xls"
-        Const DocName40 = "Akt_Dismissal_Mark.doc"
-        Const DocName41 = "Izveschenie.doc"
-        Const DocName42 = "DefectActForGood.doc"
+        Const DocName30 As String = "Marka_Quartal_Report.xls"
+        Const DocName40 As String = "Akt_Dismissal_Mark.doc"
+        Const DocName41 As String = "Izveschenie.doc"
+        Const DocName42 As String = "DefectActForGood.doc"
         'маршрут
-        Const DocName50 = "Route_Report.xls"
+        Const DocName50 As String = "Route_Report.xls"
         'остатки на складе
-        Const DocName51 = "Rest_Report.xls"
-        Const DocName52 = "WarehouseCard.xls"
-        Const DocName53 = "MasterTO_Report.xls"
-        Const DocName54 = "Route_Report.xls"
-        Const DocName55 = "IMNS_letter.doc"
+        Const DocName51 As String = "Rest_Report.xls"
+        Const DocName52 As String = "WarehouseCard.xls"
+        Const DocName53 As String = "MasterTO_Report.xls"
+        Const DocName54 As String = "Route_Report.xls"
+        Const DocName55 As String = "IMNS_letter.doc"
 
 
         Private reader As SqlClient.SqlDataReader
@@ -99,13 +101,17 @@ Namespace Kasbi
 
         Private Overloads Sub Page_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
             Dim customer_sys_id%, sale_sys_id%, sub_num%, doc_path$, good_sys_id%, history_id, rebilling%, vid_plateza%
+            Dim customer_sys_id_s, good_sys_id_s As String
             Dim begin_date As System.DateTime, end_date As DateTime
             Dim doc_type(0) As Integer
             Dim path$
 
+            Dim s As String()
+
 
             'проверка параметров
             Try
+
                 customer_sys_id = GetPageParam("c")
                 sale_sys_id = GetPageParam("s")
                 doc_type(0) = GetPageParam("t")
@@ -114,6 +120,10 @@ Namespace Kasbi
                 history_id = GetPageParam("h")
                 rebilling = GetPageParam("rebilling")
                 vid_plateza = GetPageParam("vidplateza")
+                If (doc_type(0) = 10) Then
+                    customer_sys_id_s = Request.QueryString("c_list")
+                    good_sys_id_s = Request.QueryString("good_id_list")
+                End If
                 Try
                     begin_date = DateTime.Parse(Request.Params.Item("begin_date"))
                     end_date = DateTime.Parse(Request.Params.Item("end_date"))
@@ -145,7 +155,7 @@ Namespace Kasbi
             ElseIf doc_type(0) = 54 Then
                 If Not ProcessKKMListTO() Then Exit Sub
             ElseIf doc_type(0) = 10 Then
-                If Not ProcessSupportDocuments(doc_type(0), customer_sys_id, sale_sys_id) Then Exit Sub
+                If Not ProcessSupportDocuments(doc_type(0), customer_sys_id_s, good_sys_id_s) Then Exit Sub
             ElseIf doc_type(0) = 11 Or doc_type(0) = 12 Or doc_type(0) = 13 Or doc_type(0) = 14 Or doc_type(0) = 15 Or doc_type(0) = 16 Or doc_type(0) = 19 Or doc_type(0) = 20 Or doc_type(0) = 32 Or doc_type(0) = 55 Or doc_type(0) = 56 Then
                 If Not ProcessSingleDocuments(doc_type, customer_sys_id, sale_sys_id, good_sys_id, history_id, sub_num, True) Then Exit Sub
             ElseIf doc_type(0) = 41 Or doc_type(0) = 42 Then
@@ -194,6 +204,7 @@ Namespace Kasbi
                     Case 54 : doc_path = DocName54
                     Case 55 : doc_path = DocName55
                     Case 56 : doc_path = DocName56
+                    Case 57 : doc_path = DocName57
 
                     Case Else
                         WriteError("Неверные параметры")
@@ -608,7 +619,6 @@ Namespace Kasbi
                             doc.Bookmarks("Date3").Range.Text = sDate
                             Dim sFirmName$ = ds.Tables("sale").Rows(0)("firm_name")
                             doc.Bookmarks("FirmName").Range.Text = sFirmName
-                            doc.Bookmarks("FirmBoosName").Range.Text = ds.Tables("sale").Rows(0)("fio")
                             If ds.Tables("sale").Rows(0)("firm_sys_id") <> 1 Then
                                 doc.Bookmarks("FirmName2").Range.Text = sFirmName
                                 doc.Bookmarks("FirmName3").Range.Text = sFirmName
@@ -1436,6 +1446,69 @@ Namespace Kasbi
 
                 End If
 
+                If num_doc(k) = 57 Then
+
+                    '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+                    'Договор на техническое обслуживание
+                    Try
+                        Dim s$
+
+                        docFullPath = path & DocName57
+
+                        fl = New IO.FileInfo(docFullPath)
+                        If (Not fl.Exists()) Or isRefresh Then
+                            If fl.Exists() Then
+                                Try
+                                    fl.Delete()
+                                Catch
+                                End Try
+                            End If
+
+                            IO.File.Copy(Server.MapPath("Templates/") & DocName57, docFullPath, True)
+
+                            doc = wrdApp.Documents.Open(docFullPath)
+
+                            doc.Bookmarks("CustomerName").Range.Text = customer_name
+                            doc.Bookmarks("BoosName").Range.Text = boos_name
+                            doc.Bookmarks("Registration").Range.Text = registration
+                            If ds.Tables("customer").Rows(0)("NDS") <> "" Then
+                                'doc.Bookmarks("NDS").Range.Text = ""
+                            End If
+
+                            s = customer_name.Trim
+                            sTmp = ds.Tables("customer").Rows(0)("customer_address")
+                            If customer_name.Trim.Length > 0 And sTmp.Trim.Length > 0 Then s = s & ", "
+                            s = s & sTmp.Trim
+                            If s.Length > 0 Then s = s & ". "
+                            sTmp = ds.Tables("customer").Rows(0)("bank")
+                            s = s & sTmp.Trim
+                            If sTmp.Trim.Length > 0 Then s = s & "."
+                            sTmp = ""
+                            If unn.Trim.Length > 0 Then s = s & " УНП"
+                            s = s & unn.Trim
+                            sTmp = ds.Tables("customer").Rows(0)("okpo")
+                            If sTmp.Trim.Length > 0 Then s = s & " ОКЮЛП "
+                            s = s & sTmp.Trim
+                            sTmp = ds.Tables("customer").Rows(0)("customer_phone")
+                            If sTmp.Trim.Length > 0 Then s = s & " Тел/ф "
+                            s = s & sTmp.Trim
+                            If sTmp.Trim.Length > 0 Or unn.Trim.Length > 0 Then s = s & "."
+                            doc.Bookmarks("Customer").Range.Text = s
+                            doc.Bookmarks("Dogovor").Range.Text = dogovor
+                            doc.Bookmarks("Dogovor2").Range.Text = dogovor
+                            doc.Bookmarks("Date").Range.Text = DateTime.Today.ToString(" MMMM yyyy").ToLower()
+
+                            doc.Save()
+                        End If
+
+                    Catch
+                        WriteError("Дополнение к договору на ТО<br>" & Err.Description & "<br>" & Err.Erl & "<br>" & Err.LastDllError & "<br>" & Err.Number & "<br>" & Err.Source)
+                        ProcessDocuments = False
+                        GoTo ExitFunction
+                    End Try
+
+                End If
+
                 If num_doc(k) = 7 Then
 
                     '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
@@ -1984,33 +2057,23 @@ ExitFunction:
             GetRussianDate3 = m(Month(d) - 1) & Year(d) & "г."
         End Function
 
-        Public Overrides Function ProcessSupportDocuments(ByVal doc_type As Integer, ByVal customer As Integer, ByVal support As Integer, Optional ByVal isRefresh As Boolean = False)
+        Public Overrides Function ProcessSupportDocuments(ByVal doc_type As Integer, ByVal customer_sys_id_s As String, ByVal good_sys_id_s As String, Optional ByVal isRefresh As Boolean = False)
             Dim cmd As SqlClient.SqlCommand
             Dim adapt As SqlClient.SqlDataAdapter
             Dim ds As DataSet
             Dim fls As IO.File
             Dim fl As IO.FileInfo
-            Dim docFullPath$
-            Dim customer_name$, materials$, works$, dogovor$, unn$, sDate$
+            Dim docFullPath, customer_name, materials, works, dogovor, unn, sDate, filter As String
             Dim cost, nds, costwithoutnds As Double
 
-            Dim path$ = Server.MapPath("Docs") & "\" & customer
+
+            Dim path$ = Server.MapPath("Docs") & "\WorkActs\"
 
             ProcessSupportDocuments = True
 
             Try
                 'Create folders and copy templates
                 Dim fldr As New IO.DirectoryInfo(path)
-                If Not fldr.Exists Then
-                    fldr.Create()
-                End If
-                path = path & "\Support\"
-                fldr = New IO.DirectoryInfo(path)
-                If Not fldr.Exists Then
-                    fldr.Create()
-                End If
-                path = path & support
-                fldr = New IO.DirectoryInfo(path)
                 If Not fldr.Exists Then
                     fldr.Create()
                 End If
@@ -2021,28 +2084,35 @@ ExitFunction:
                 Exit Function
             End Try
 
+
             Try
-                ' get data from database for specified sale
+                ' get data from database for specified good and customer
                 ds = New DataSet
-                'sale
-                cmd = New SqlClient.SqlCommand("get_support_info")
+                cmd = New SqlClient.SqlCommand("get_cto_master2")
                 cmd.CommandType = CommandType.StoredProcedure
-                cmd.Parameters.AddWithValue("@pi_customer_sys_id", customer)
-                cmd.Parameters.AddWithValue("@pi_sys_id", support)
+                filter = " where good.num_control_cto like 'МН%' and good.good_sys_id in (" & good_sys_id_s & ") "
+                cmd.Parameters.AddWithValue("@pi_filter", filter)
                 adapt = dbSQL.GetDataAdapter(cmd)
                 adapt.Fill(ds)
 
+                For Each dt As DataTable In ds.Tables
+                    For Each row As DataRow In dt.Rows
+
+                    Next
+                Next
                 If ds.Tables(0).Rows.Count = 0 Then GoTo ExitFunction
 
-                customer_name = ds.Tables(0).Rows(0)("customer_name") & ", " & ds.Tables(0).Rows(0)("customer_address") & ", " & ds.Tables(0).Rows(0)("bank")
-                dogovor = ds.Tables(0).Rows(0)("dogovor")
-                unn = ds.Tables(0).Rows(0)("unn")
-                works = ds.Tables(0).Rows(0)("works")
-                materials = ds.Tables(0).Rows(0)("materials")
-                sDate = GetRussianDate(Now())
-                cost = ds.Tables(0).Rows(0)("summ")
-                nds = Math.Round(cost * (1 - 1 / 1.2), 2)
-                costwithoutnds = Math.Round(cost / 1.2, 2)
+
+
+                'customer_name = ds.Tables(0).Rows(0)("customer_name") & ", " & ds.Tables(0).Rows(0)("customer_address") & ", " & ds.Tables(0).Rows(0)("bank")
+                'dogovor = ds.Tables(0).Rows(0)("dogovor")
+                'unn = ds.Tables(0).Rows(0)("unn")
+                'works = ds.Tables(0).Rows(0)("works")
+                'materials = ds.Tables(0).Rows(0)("materials")
+                'sDate = GetRussianDate(Now())
+                'cost = ds.Tables(0).Rows(0)("summ")
+                'nds = Math.Round(cost * (1 - 1 / 1.2), 2)
+                'costwithoutnds = Math.Round(cost / 1.2, 2)
 
             Catch
 
@@ -2065,12 +2135,12 @@ ExitFunction:
 
             Dim r1 As Word.Row
 
-            If doc_type = 0 Then
+            If doc_type = 10 Then
 
                 '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-                'Счет-фактура по НДС
+                'Акт приема-сдачи выполненных работ
                 Try
-                    docFullPath = path & DocName0
+                    docFullPath = path & DocName10
 
                     fl = New IO.FileInfo(docFullPath)
                     If (Not fl.Exists()) Or isRefresh Then
@@ -2110,65 +2180,65 @@ ExitFunction:
 
             End If
 
-            If doc_type = 10 Then
+            '            If doc_type = 10 Then
 
-                '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-                'Акт приема-сдачи выполненных работ
-                '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-                Try
-                    docFullPath = path & DocName10
+            '                '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+            '                'Акт приема-сдачи выполненных работ
+            '                '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+            '                Try
+            '                    docFullPath = path & DocName10
 
-                    'Определяем стомость ТО
-                    Dim good_type = GetPageParam("good_type")
-                    costwithoutnds = dbSQL.ExecuteScalar("SELECT price_to FROM good_type WHERE good_type_sys_id='" & good_type & "'")
-                    nds = costwithoutnds * 0.2
-                    cost = costwithoutnds + nds
+            '                    'Определяем стомость ТО
+            '                    Dim good_type = GetPageParam("good_type")
+            '                    costwithoutnds = dbSQL.ExecuteScalar("SELECT price_to FROM good_type WHERE good_type_sys_id='" & good_type & "'")
+            '                    nds = costwithoutnds * 0.2
+            '                    cost = costwithoutnds + nds
 
-                    fl = New IO.FileInfo(docFullPath)
-                    If (Not fl.Exists()) Or isRefresh Or (fl.Exists()) Then
+            '                    fl = New IO.FileInfo(docFullPath)
+            '                    If (Not fl.Exists()) Or isRefresh Or (fl.Exists()) Then
 
-                        IO.File.Copy(Server.MapPath("Templates/") & DocName10, docFullPath, True)
+            '                        IO.File.Copy(Server.MapPath("Templates/") & DocName10, docFullPath, True)
 
-                        doc = wrdApp.Documents.Open(docFullPath)
+            '                        doc = wrdApp.Documents.Open(docFullPath)
 
-                        doc.Bookmarks("Customer1").Range.Text = customer_name
-                        doc.Bookmarks("Customer2").Range.Text = customer_name
-                        doc.Bookmarks("Dogovor11").Range.Text = dogovor
-                        doc.Bookmarks("Dogovor12").Range.Text = dogovor
-                        doc.Bookmarks("Dogovor21").Range.Text = dogovor
-                        doc.Bookmarks("Dogovor22").Range.Text = dogovor
+            '                        doc.Bookmarks("Customer1").Range.Text = customer_name
+            '                        doc.Bookmarks("Customer2").Range.Text = customer_name
+            '                        doc.Bookmarks("Dogovor11").Range.Text = dogovor
+            '                        doc.Bookmarks("Dogovor12").Range.Text = dogovor
+            '                        doc.Bookmarks("Dogovor21").Range.Text = dogovor
+            '                        doc.Bookmarks("Dogovor22").Range.Text = dogovor
 
-                        If materials.Length > 0 Then
-                            doc.Bookmarks("Materials1").Range.Text = materials
-                            doc.Bookmarks("Materials2").Range.Text = materials
-                        End If
+            '                        If materials.Length > 0 Then
+            '                            doc.Bookmarks("Materials1").Range.Text = materials
+            '                            doc.Bookmarks("Materials2").Range.Text = materials
+            '                        End If
 
-                        If works.Length > 0 Then
-                            doc.Bookmarks("Works1").Range.Text = ", " & works
-                            doc.Bookmarks("Works2").Range.Text = ", " & works
-                        End If
+            '                        If works.Length > 0 Then
+            '                            doc.Bookmarks("Works1").Range.Text = ", " & works
+            '                            doc.Bookmarks("Works2").Range.Text = ", " & works
+            '                        End If
 
-                        doc.Bookmarks("Cost1").Range.Text = Summa_propis(costwithoutnds)
-                        doc.Bookmarks("Cost2").Range.Text = Summa_propis(costwithoutnds)
-                        doc.Bookmarks("FullCost1").Range.Text = Summa_propis(cost)
-                        doc.Bookmarks("FullCost2").Range.Text = Summa_propis(cost)
-                        doc.Bookmarks("NDS1").Range.Text = Summa_propis(nds)
-                        doc.Bookmarks("NDS2").Range.Text = Summa_propis(nds)
-                        doc.Bookmarks("KOplate1").Range.Text = Summa_propis(cost)
-                        doc.Bookmarks("KOplate2").Range.Text = Summa_propis(cost)
+            '                        doc.Bookmarks("Cost1").Range.Text = Summa_propis(costwithoutnds)
+            '                        doc.Bookmarks("Cost2").Range.Text = Summa_propis(costwithoutnds)
+            '                        doc.Bookmarks("FullCost1").Range.Text = Summa_propis(cost)
+            '                        doc.Bookmarks("FullCost2").Range.Text = Summa_propis(cost)
+            '                        doc.Bookmarks("NDS1").Range.Text = Summa_propis(nds)
+            '                        doc.Bookmarks("NDS2").Range.Text = Summa_propis(nds)
+            '                        doc.Bookmarks("KOplate1").Range.Text = Summa_propis(cost)
+            '                        doc.Bookmarks("KOplate2").Range.Text = Summa_propis(cost)
 
-                        doc.Bookmarks("d1").Range.Text = GetRussianDate(Now)
-                        doc.Bookmarks("d2").Range.Text = GetRussianDate(Now)
+            '                        doc.Bookmarks("d1").Range.Text = GetRussianDate(Now)
+            '                        doc.Bookmarks("d2").Range.Text = GetRussianDate(Now)
 
-                        doc.Save()
-                    End If
-                Catch
-                    WriteError("Акт приема-сдачи выполненных работ<br>" & Err.Description & "<br>" & Err.Erl & "<br>" & Err.LastDllError & "<br>" & Err.Number & "<br>" & Err.Source)
-                    ProcessSupportDocuments = False
-                    GoTo ExitFunction
-                End Try
+            '                        doc.Save()
+            '                    End If
+            '                Catch
+            '                    WriteError("Акт приема-сдачи выполненных работ<br>" & Err.Description & "<br>" & Err.Erl & "<br>" & Err.LastDllError & "<br>" & Err.Number & "<br>" & Err.Source)
+            '                    ProcessSupportDocuments = False
+            '                    GoTo ExitFunction
+            '                End Try
 
-            End If
+            '            End If
 
 ExitFunction:
             Try
@@ -2700,7 +2770,7 @@ ExitFunction:
                         Catch ex As Exception
 
                         End Try
-                       
+
                         doc.Save()
                     End If
                 Catch
@@ -4409,7 +4479,7 @@ ExitFunction:
                 For j = 0 To .Rows.Count - 1
                     Try
 
-        
+
                         Dim price$
                         Dim priceWithNDS$
                         If Not IsDBNull(dv.Item(j)("price")) Then

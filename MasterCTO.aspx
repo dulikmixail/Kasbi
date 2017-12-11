@@ -192,10 +192,9 @@
                                 </asp:DropDownList>                  
                 &nbsp;&nbsp;&nbsp;
                 <asp:LinkButton ID="lnkSetTO" cssClass="LinkButton" runat="server">Провести ТО</asp:LinkButton>&nbsp;|&nbsp;
-                <asp:LinkButton ID="LinkButton1" cssClass="LinkButton" runat="server">Сформировать док-ты</asp:LinkButton>&nbsp;|&nbsp;               
+                <asp:LinkButton ID="LinkButton1" cssClass="LinkButton" runat="server">АКТ приема-сдачи выполненных работ</asp:LinkButton>&nbsp;|&nbsp;               
                 <asp:LinkButton ID="lnkExportData" cssClass="LinkButton" runat="server">Экспорт в Excel</asp:LinkButton>&nbsp;|&nbsp;
-                <asp:LinkButton ID="lnkSetRaon" cssClass="LinkButton" runat="server">Привязать к району</asp:LinkButton>            
-                
+                <asp:LinkButton ID="lnkSetRaon" cssClass="LinkButton" runat="server">Привязать к району</asp:LinkButton>       
                 </div>   
                 <br />
                
@@ -222,6 +221,7 @@
                                     <asp:CheckBox ID="cbxSelect" Checked="False" runat="server"></asp:CheckBox>
                                     <asp:Label Visible="false" ID="lblPayerId" Text='<%# DataBinder.Eval(Container, "DataItem.payer_sys_id") %>' runat="server"></asp:Label>
                                     <asp:Label Visible="false" ID="lblGoodType" Text='<%# DataBinder.Eval(Container, "DataItem.good_type_sys_id") %>' runat="server"></asp:Label>
+                                    <asp:Label Visible="false" ID="lblGood" Text='<%# DataBinder.Eval(Container, "DataItem.good_sys_id") %>' runat="server"></asp:Label>
                                 </ItemTemplate>
                                 <ItemStyle HorizontalAlign="Center" />
                             </asp:TemplateColumn>
@@ -251,6 +251,9 @@
                                     </asp:HyperLink>
                                     <p style="margin-top: 5px; margin-bottom: 0px" align="center">
                                         <asp:HyperLink ID="imgAlert" Target="_blank" runat="server" CssClass="CutImageLink" ImageUrl="Images/sign.gif"></asp:HyperLink>
+                                        <asp:HyperLink ID="imgSupportSKNO" Target="_blank" runat="server" CssClass="CutImageLink" ImageUrl="Images/skno.gif" Visible="false"
+                                            ToolTip="установлено СКНО">
+                                        </asp:HyperLink>
                                         <asp:HyperLink ID="imgSupport" Target="_blank" runat="server" CssClass="CutImageLink" ImageUrl="Images/support.gif"
                                          ToolTip="На техобслуживании">
                                         </asp:HyperLink>
@@ -364,6 +367,7 @@
                                     </asp:HyperLink>
                                     <p style="margin-top: 5px; margin-bottom: 0px" align="center">
                                         <asp:HyperLink ID="imgAlert" runat="server" CssClass="CutImageLink" ImageUrl="Images/sign.gif"></asp:HyperLink>
+                                        
                                         <asp:HyperLink ID="imgSupport" runat="server" CssClass="CutImageLink" ImageUrl="Images/support.gif"
                                             ToolTip="На техобслуживании">
                                         </asp:HyperLink>

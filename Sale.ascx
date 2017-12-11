@@ -62,6 +62,10 @@
                     </td>
                     <td class="SectionRow">
                         <asp:HyperLink ID="lnkDogovor_Na_TO" runat="server" Target="_blank">Договор&nbsp;на&nbsp;тех.&nbsp;обслуживание</asp:HyperLink>
+                        
+                    </td>
+                    <td class="SectionRow">
+                        <asp:HyperLink ID="lnkDogovor_Na_TO_Dop" runat="server" Target="_blank">Дополнение&nbsp;к&nbsp;договору&nbsp;на&nbsp;ТО</asp:HyperLink>
                     </td>
                     <td><asp:Button Width="170" ID="add_new_goods" runat="server" Text="Внести оборудование" Visible="false" /></td>
                     <td class="SectionRow" align="right">

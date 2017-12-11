@@ -118,7 +118,9 @@
                             <td align="left" colspan="2" >
                                 <asp:Label ID="lblCaptionSupport" runat="server" CssClass="cash">рн:</asp:Label></td>
                             <td align="left" >
-                                <asp:Label ID="lblSupport" runat="server" CssClass="cashDetail"></asp:Label></td>
+                                <asp:Label ID="lblSupport" runat="server" CssClass="cashDetail"></asp:Label>
+                                <asp:Label ID="lblSupportSKNO" runat="server" CssClass="cashDetail"></asp:Label>
+                            </td>
                         </tr>
                     </table>
                 </td>

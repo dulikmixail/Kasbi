@@ -71,7 +71,41 @@ Partial Class NewSupportConduct
                 rbTO_SelectedIndexChanged(Me, Nothing)
                 LoadGoodInfo()
                 LoadCustomerList()
+                'LoadSKNOInfo()
             End If
+        End Sub
+
+        Sub LoadSKNOInfo()
+            Dim cmd As SqlClient.SqlCommand
+            Dim reader As SqlClient.SqlDataReader
+
+            Try
+                cmd = New SqlClient.SqlCommand("get_skno_history")
+                cmd.Parameters.AddWithValue("@pi_good_sys_id", iCash)
+                cmd.CommandType = CommandType.StoredProcedure
+                reader = dbSQL.GetReader(cmd)
+                If CurrentUser.is_admin = False Then
+                    rbSKNO.Visible = False
+                    btnSaveSKNOInfo.Visible = False
+                End If
+                If Not reader.Read Then
+                    rbSKNO.SelectedValue = 0
+                    lblSKNOExecutor.Visible = False
+                    lblSKNOExecutorInfo.Visible = False
+                Else
+                    If reader("state_SKNO") = 1 Then
+                        lblSupportSKNO.Text = ", установлено СКНО"
+                    End If
+                    rbSKNO.SelectedValue = reader("state_SKNO")
+                    lblSKNOExecutorInfo.Text = reader("executor")
+                End If
+                reader.Close()
+            Catch
+                msg.Text = "Ошибка загрузки информации о установке СКНО!1<br>" & Err.Description
+                reader.Close()
+                Exit Sub
+            End Try
+
         End Sub
 
         Sub LoadGoodInfo()
@@ -1323,6 +1357,24 @@ Partial Class NewSupportConduct
                 button.ToolTip = "Скрыть"
             End If
         End Sub
+        Private Sub btnSaveSKNOInfo_Click(ByVal sender As System.Object, ByVal e As System.Web.UI.ImageClickEventArgs) Handles btnSaveSKNOInfo.Click
+            Dim test As String = iCash
+            Dim cmd As SqlClient.SqlCommand
+            Dim adapt As SqlClient.SqlDataAdapter
+            Dim ds As DataSet
+
+            cmd = New SqlClient.SqlCommand("insert_skno_history")
+            cmd.CommandType = CommandType.StoredProcedure
+            cmd.Parameters.AddWithValue("@pi_good_sys_id", iCash)
+            cmd.Parameters.AddWithValue("@pi_state_skno", rbSKNO.SelectedValue)
+            cmd.Parameters.AddWithValue("@pi_executor", Session("User").sys_id)
+            cmd.Parameters.AddWithValue("@pi_comment", "")
+            adapt = dbSQL.GetDataAdapter(cmd)
+            ds = New DataSet
+            adapt.Fill(ds)
+
+        End Sub
+
 
         Private Sub rbTO_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles rbTO.SelectedIndexChanged
             If rbTO.SelectedIndex = 2 And chkDelayTO.Checked = False Then

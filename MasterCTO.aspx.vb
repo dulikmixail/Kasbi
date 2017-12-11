@@ -373,6 +373,14 @@ Namespace Kasbi
                     If e.Item.FindControl("imgRepaired").Visible Then
                         CType(e.Item.FindControl("imgRepaired"), HyperLink).ToolTip = "Был в ремонте " & CInt(e.Item.DataItem("repaired")) & " раз(а)"
                     End If
+
+                    If IsDBNull(e.Item.DataItem("state_skno")) Then
+                        e.Item.FindControl("imgSupportSKNO").Visible = 0
+                    Else
+                        e.Item.FindControl("imgSupportSKNO").Visible = e.Item.DataItem("state_skno")
+                    End If
+
+
                     '
                     'If Not IsDBNull(e.Item.DataItem("stateTO")) Then
                     '   s = e.Item.DataItem("stateTO")
@@ -866,17 +874,25 @@ Namespace Kasbi
 
         Protected Sub LinkButton1_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles LinkButton1.Click
             Dim s As String = String.Empty
-            Dim j
+            Dim j As Integer
+            Dim strRequest$ = "documents.aspx?t=10&s=10&c_list="
+            Dim strRequestPayerId As String = ""
+            Dim strRequestGoodId As String = ""
 
-            Dim strRequest$ = "documents.aspx?t=10&s=10&c="
 
             For j = 0 To grdTO.Items.Count - 1
-                If CType(grdTO.Items(j).FindControl("cbxSelect"), CheckBox).Checked = True Then
-                    strRequest = "<script language='javascript' type='text/javascript'>window.open('" & strRequest & CType(grdTO.Items(j).FindControl("lblPayerId"), Label).Text & "&good_type=" & CType(grdTO.Items(j).FindControl("lblGoodType"), Label).Text & "')</script>"
-                    Me.RegisterStartupScript("report", strRequest)
-                    'lnkExportData.Visible = False
+                If CType(grdTO.Items(j).FindControl("cbxSelect"), CheckBox).Checked Then
+                    strRequestPayerId &= CType(grdTO.Items(j).FindControl("lblPayerId"), Label).Text & ","
+                    strRequestGoodId &= CType(grdTO.Items(j).FindControl("lblGood"), Label).Text & ","
                 End If
             Next
+
+            If strRequestPayerId.Length > 0 And strRequestGoodId.Length > 0 Then
+                strRequestPayerId = Left(strRequestPayerId, strRequestPayerId.Length - 1)
+                strRequestGoodId = Left(strRequestGoodId, strRequestGoodId.Length - 1)
+                strRequest = "<script language='javascript' type='text/javascript'>window.open('" & strRequest & strRequestPayerId & "&good_id_list=" & strRequestGoodId & "')</script>"
+                Me.RegisterStartupScript("report", strRequest)
+            End If
 
         End Sub
 
