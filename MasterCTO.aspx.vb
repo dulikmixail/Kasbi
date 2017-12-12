@@ -1,6 +1,8 @@
 
-Imports System.Globalization
-Imports System.Threading
+
+Imports System.IO
+Imports System.Net
+Imports Kasbi.Documents
 
 Namespace Kasbi
 
@@ -888,10 +890,14 @@ Namespace Kasbi
             Next
 
             If strRequestPayerId.Length > 0 And strRequestGoodId.Length > 0 Then
+
                 strRequestPayerId = Left(strRequestPayerId, strRequestPayerId.Length - 1)
                 strRequestGoodId = Left(strRequestGoodId, strRequestGoodId.Length - 1)
-                strRequest = "<script language='javascript' type='text/javascript'>window.open('" & strRequest & strRequestPayerId & "&good_id_list=" & strRequestGoodId & "')</script>"
-                Me.RegisterStartupScript("report", strRequest)
+
+                Dim script As String = "<script language='javascript' type='text/javascript'> var xhr = new XMLHttpRequest(); var url = '/documents.aspx?t=10&s=10'; xhr.open('POST', url, true); xhr.setRequestHeader('Content-type', 'application/json'); xhr.onreadystatechange = function () { if (xhr.readyState === 4 && xhr.status === 200) { var json = JSON.parse(xhr.responseText); } }; var data = JSON.stringify({'c_list': '" & strRequestPayerId & "', 'good_id_list': '" & strRequestGoodId & "'}); xhr.send(data); </script>"
+                Me.RegisterStartupScript("report", script)
+                'strRequest = "<script language='javascript' type='text/javascript'>window.open('" & strRequest & strRequestPayerId & "&good_id_list=" & strRequestGoodId & "')</script>"
+                'Me.RegisterStartupScript("report", strRequest)
             End If
 
         End Sub

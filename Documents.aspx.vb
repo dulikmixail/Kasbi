@@ -8,6 +8,7 @@
 ' For more information on this code pattern, please refer to http://go.microsoft.com/fwlink/?LinkId=46995 
 '===========================================================================
 Imports System.Collections.Generic
+Imports System.IO
 Imports Microsoft.Office.Interop
 
 
@@ -121,6 +122,9 @@ Namespace Kasbi
                 rebilling = GetPageParam("rebilling")
                 vid_plateza = GetPageParam("vidplateza")
                 If (doc_type(0) = 10) Then
+                    Dim dataStream As Stream = Request.InputStream
+                    Dim reader As StreamReader = New StreamReader(dataStream)
+                    Dim responseFromServer As String = reader.ReadToEnd()
                     customer_sys_id_s = Request.QueryString("c_list")
                     good_sys_id_s = Request.QueryString("good_id_list")
                 End If
@@ -2028,8 +2032,10 @@ ExitFunction:
                 End If
                 Dim cop2 As String = ""
                 cop2 = Summa_propis(cop).ToLower().Replace("рублей", "копеек")
+                cop2 = cop2.Replace("рубль", "копейка")
                 cop2 = cop2.Replace("рубля", "копейки")
-                cop2 = cop2.Replace("два", "две")
+                cop2 = cop2.Replace("один ", "одна ")
+                cop2 = cop2.Replace("два ", "две ")
                 'cop.ToString.Replace("рублей", "копеек")
                 'cop.ToString.ToLower()
                 Summa_propis = Summa_propis + " " + cop2

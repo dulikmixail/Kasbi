@@ -192,7 +192,7 @@
                                 </asp:DropDownList>                  
                 &nbsp;&nbsp;&nbsp;
                 <asp:LinkButton ID="lnkSetTO" cssClass="LinkButton" runat="server">Провести ТО</asp:LinkButton>&nbsp;|&nbsp;
-                <asp:LinkButton ID="LinkButton1" cssClass="LinkButton" runat="server">АКТ приема-сдачи выполненных работ</asp:LinkButton>&nbsp;|&nbsp;               
+                <%--<asp:LinkButton ID="LinkButton1" cssClass="LinkButton" runat="server">АКТ приема-сдачи выполненных работ</asp:LinkButton>&nbsp;|&nbsp;--%>               
                 <asp:LinkButton ID="lnkExportData" cssClass="LinkButton" runat="server">Экспорт в Excel</asp:LinkButton>&nbsp;|&nbsp;
                 <asp:LinkButton ID="lnkSetRaon" cssClass="LinkButton" runat="server">Привязать к району</asp:LinkButton>       
                 </div>   
