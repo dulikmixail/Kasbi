@@ -874,33 +874,33 @@ Namespace Kasbi
             bind(filter)
         End Sub
 
-        Protected Sub LinkButton1_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles LinkButton1.Click
-            Dim s As String = String.Empty
-            Dim j As Integer
-            Dim strRequest$ = "documents.aspx?t=10&s=10&c_list="
-            Dim strRequestPayerId As String = ""
-            Dim strRequestGoodId As String = ""
+        'Protected Sub LinkButton1_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles LinkButton1.Click
+        '    Dim s As String = String.Empty
+        '    Dim j As Integer
+        '    Dim strRequest$ = "documents.aspx?t=10&s=10&c_list="
+        '    Dim strRequestPayerId As String = ""
+        '    Dim strRequestGoodId As String = ""
 
 
-            For j = 0 To grdTO.Items.Count - 1
-                If CType(grdTO.Items(j).FindControl("cbxSelect"), CheckBox).Checked Then
-                    strRequestPayerId &= CType(grdTO.Items(j).FindControl("lblPayerId"), Label).Text & ","
-                    strRequestGoodId &= CType(grdTO.Items(j).FindControl("lblGood"), Label).Text & ","
-                End If
-            Next
+        '    For j = 0 To grdTO.Items.Count - 1
+        '        If CType(grdTO.Items(j).FindControl("cbxSelect"), CheckBox).Checked Then
+        '            strRequestPayerId &= CType(grdTO.Items(j).FindControl("lblPayerId"), Label).Text & ","
+        '            strRequestGoodId &= CType(grdTO.Items(j).FindControl("lblGood"), Label).Text & ","
+        '        End If
+        '    Next
 
-            If strRequestPayerId.Length > 0 And strRequestGoodId.Length > 0 Then
+        '    If strRequestPayerId.Length > 0 And strRequestGoodId.Length > 0 Then
 
-                strRequestPayerId = Left(strRequestPayerId, strRequestPayerId.Length - 1)
-                strRequestGoodId = Left(strRequestGoodId, strRequestGoodId.Length - 1)
+        '        strRequestPayerId = Left(strRequestPayerId, strRequestPayerId.Length - 1)
+        '        strRequestGoodId = Left(strRequestGoodId, strRequestGoodId.Length - 1)
 
-                Dim script As String = "<script language='javascript' type='text/javascript'> var xhr = new XMLHttpRequest(); var url = '/documents.aspx?t=10&s=10'; xhr.open('POST', url, true); xhr.setRequestHeader('Content-type', 'application/json'); xhr.onreadystatechange = function () { if (xhr.readyState === 4 && xhr.status === 200) { var json = JSON.parse(xhr.responseText); } }; var data = JSON.stringify({'c_list': '" & strRequestPayerId & "', 'good_id_list': '" & strRequestGoodId & "'}); xhr.send(data); </script>"
-                Me.RegisterStartupScript("report", script)
-                'strRequest = "<script language='javascript' type='text/javascript'>window.open('" & strRequest & strRequestPayerId & "&good_id_list=" & strRequestGoodId & "')</script>"
-                'Me.RegisterStartupScript("report", strRequest)
-            End If
+        '        Dim script As String = "<script language='javascript' type='text/javascript'> var xhr = new XMLHttpRequest(); var url = '/documents.aspx?t=10&s=10'; xhr.open('POST', url, true); xhr.setRequestHeader('Content-type', 'application/json'); xhr.onreadystatechange = function () { if (xhr.readyState === 4 && xhr.status === 200) { var json = JSON.parse(xhr.responseText); } }; var data = JSON.stringify({'c_list': '" & strRequestPayerId & "', 'good_id_list': '" & strRequestGoodId & "'}); xhr.send(data); </script>"
+        '        Me.RegisterStartupScript("report", script)
+        '        strRequest = "<script language='javascript' type='text/javascript'>window.open('" & strRequest & strRequestPayerId & "&good_id_list=" & strRequestGoodId & "')</script>"
+        '        Me.RegisterStartupScript("report", strRequest)
+        '    End If
 
-        End Sub
+        'End Sub
 
         Protected Sub chk_show_kkm_CheckedChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles chk_show_kkm.CheckedChanged
             lstGoodType.Items.Clear()
