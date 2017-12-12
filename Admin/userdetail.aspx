@@ -113,7 +113,8 @@
 				        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<asp:checkbox id="rule5_1" runat="server"></asp:checkbox> Постановка на ТО<br />
 				        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<asp:checkbox id="rule5_2" runat="server"></asp:checkbox> Проведение ТО<br />
 				        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<asp:checkbox id="rule5_3" runat="server"></asp:checkbox> Снятие с ТО<br />
-				        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<asp:checkbox id="rule5_4" runat="server"></asp:checkbox> Приостановка ТО<br />				    
+				        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<asp:checkbox id="rule5_4" runat="server"></asp:checkbox> Приостановка ТО<br />
+				        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<asp:checkbox id="rule5_5" runat="server"></asp:checkbox> Установка СКНО<br />
 				    <asp:checkbox id="rule6" runat="server"></asp:checkbox> <b>Показывать Ремонт</b> <br /> 
 				        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<asp:checkbox id="rule6_1" runat="server"></asp:checkbox> Удаление записи о ремонте<br />
 				        &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<asp:checkbox id="rule6_2" runat="server"></asp:checkbox> Редактирование записи о ремонте<br />

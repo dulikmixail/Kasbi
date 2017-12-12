@@ -252,6 +252,7 @@ Partial Class Login
                             Catch ex As Exception
                                 Session("rule28") = ""
                             End Try
+                            Session("rule29") = rules(29)
 
                         End If
 

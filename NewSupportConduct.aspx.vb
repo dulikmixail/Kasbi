@@ -71,7 +71,7 @@ Partial Class NewSupportConduct
                 rbTO_SelectedIndexChanged(Me, Nothing)
                 LoadGoodInfo()
                 LoadCustomerList()
-                'LoadSKNOInfo()
+                LoadSKNOInfo()
             End If
         End Sub
 
@@ -84,20 +84,23 @@ Partial Class NewSupportConduct
                 cmd.Parameters.AddWithValue("@pi_good_sys_id", iCash)
                 cmd.CommandType = CommandType.StoredProcedure
                 reader = dbSQL.GetReader(cmd)
-                If CurrentUser.is_admin = False Then
-                    rbSKNO.Visible = False
-                    btnSaveSKNOInfo.Visible = False
+
+                rbSKNO.Visible = False
+                btnSaveSKNOInfo.Visible = False
+                If Session("rule29") = 1 Or CurrentUser.is_admin Then
+                    rbSKNO.Visible = True
+                    btnSaveSKNOInfo.Visible = True
                 End If
                 If Not reader.Read Then
-                    rbSKNO.SelectedValue = 0
+                    rbSKNO.SelectedValue = 0.ToString()
                     lblSKNOExecutor.Visible = False
                     lblSKNOExecutorInfo.Visible = False
                 Else
                     If reader("state_SKNO") = 1 Then
                         lblSupportSKNO.Text = ", установлено СКНО"
                     End If
-                    rbSKNO.SelectedValue = reader("state_SKNO")
-                    lblSKNOExecutorInfo.Text = reader("executor")
+                    rbSKNO.SelectedValue = reader("state_SKNO").ToString()
+                    lblSKNOExecutorInfo.Text = reader("executor").ToString()
                 End If
                 reader.Close()
             Catch

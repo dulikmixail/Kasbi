@@ -215,22 +215,22 @@
                                     <p class="SubTitleEditbox">
                                         Факс:</p>
                                     <asp:TextBox ID="txtPhone12" runat="server" BorderWidth="1px" Width="100%" Text='<%# DataBinder.Eval(Container, "DataItem.phone1") %>'
-                                        BorderStyle="Solid" MaxLength="13">
+                                        BorderStyle="Solid" MaxLength="20">
                                     </asp:TextBox><br>
                                     <p class="SubTitleEditbox">
                                         Телефон 1:</p>
                                     <asp:TextBox ID="txtPhone22" runat="server" BorderWidth="1px" Width="100%" Text='<%# DataBinder.Eval(Container, "DataItem.phone2") %>'
-                                        BorderStyle="Solid" MaxLength="13">
+                                        BorderStyle="Solid" MaxLength="20">
                                     </asp:TextBox><br>
                                     <p class="SubTitleEditbox">
                                         Телефон 2:</p>
                                     <asp:TextBox ID="txtPhone32" runat="server" BorderWidth="1px" Width="100%" Text='<%# DataBinder.Eval(Container, "DataItem.phone3") %>'
-                                        BorderStyle="Solid" MaxLength="13">
+                                        BorderStyle="Solid" MaxLength="20">
                                     </asp:TextBox><br>
                                     <p class="SubTitleEditbox">
                                         Телефон 3:</p>
                                     <asp:TextBox ID="txtPhone42" runat="server" BorderWidth="1px" Width="100%" Text='<%# DataBinder.Eval(Container, "DataItem.phone4") %>'
-                                        BorderStyle="Solid" MaxLength="13">
+                                        BorderStyle="Solid" MaxLength="20">
                                     </asp:TextBox>
                                 </EditItemTemplate>
                             </asp:TemplateColumn>

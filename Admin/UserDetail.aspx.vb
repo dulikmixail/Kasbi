@@ -137,7 +137,7 @@ Namespace Kasbi.Admin
                 If arr_rule(26) = 1 Then rule1_4.Checked = True
                 If arr_rule(27) = 1 Then rule1_5.Checked = True
                 If arr_rule(28) = 1 Then rule6_2.Checked = True
-
+                If arr_rule(29) = 1 Then rule5_5.Checked = True
             Catch
             End Try
         End Sub
@@ -223,7 +223,8 @@ Namespace Kasbi.Admin
                 & Int(rule9.Checked) & ";" _
                 & Int(rule1_4.Checked) & ";" _
                 & Int(rule1_5.Checked) & ";" _
-                & Int(rule6_2.Checked)
+                & Int(rule6_2.Checked) & ";" _
+                & Int(rule5_5.Checked)
 
                 cmd.Parameters.AddWithValue("@pi_rules", rules)
 
