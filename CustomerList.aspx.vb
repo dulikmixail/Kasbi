@@ -1,3 +1,6 @@
+
+Imports System.Windows.Forms
+
 Namespace Kasbi
 
     Partial Class CustomerList
@@ -51,7 +54,7 @@ Namespace Kasbi
             Session("CustomerFilter") = CStr(pnlFilter.Visible)
         End Sub
 
-        Private Sub GetBankNameAddress(ByVal bank_id As String, ByRef BankName As String, ByRef BankAddress As String, ByRef msgctrl As Label)
+        Private Sub GetBankNameAddress(ByVal bank_id As String, ByRef BankName As String, ByRef BankAddress As String, ByRef msgctrl As WebControls.Label)
             Dim reader As SqlClient.SqlDataReader
 
             Try
@@ -235,7 +238,7 @@ Namespace Kasbi
                     s = s & e.Item.DataItem("accountant")
                 End If
 
-                CType(e.Item.FindControl("lblBoosAccountant"), Label).Text = s
+                CType(e.Item.FindControl("lblBoosAccountant"), WebControls.Label).Text = s
 
                 ' Подтверждение удаления записи
 
@@ -253,7 +256,7 @@ Namespace Kasbi
                 If Not IsDBNull(e.Item.DataItem("NDS")) AndAlso e.Item.DataItem("NDS") = 1 Then
                     s = s & "НДС "
                 End If
-                CType(e.Item.FindControl("lblCodes"), Label).Text = s
+                CType(e.Item.FindControl("lblCodes"), WebControls.Label).Text = s
 
                 ' Индекс, город, адрес
 
@@ -284,7 +287,7 @@ Namespace Kasbi
                     s = s & e.Item.DataItem("address") & email_str
                 End If
 
-                CType(e.Item.FindControl("lblAddress"), Label).Text = s
+                CType(e.Item.FindControl("lblAddress"), WebControls.Label).Text = s
 
                 'Факс, телефоны
 
@@ -305,7 +308,7 @@ Namespace Kasbi
                     s = s & "Факс: " & e.Item.DataItem("phone1")
                 End If
 
-                CType(e.Item.FindControl("lblPhone"), Label).Text = s
+                CType(e.Item.FindControl("lblPhone"), WebControls.Label).Text = s
 
                 '  Код банка, адрес банка и расчетный счет
 
@@ -326,7 +329,7 @@ Namespace Kasbi
                     If s.Length > 0 Then s = s & "<br>"
                     s = s & "Расчетный счет: " & e.Item.DataItem("bank_account")
                 End If
-                CType(e.Item.FindControl("lblBank"), Label).Text = s
+                CType(e.Item.FindControl("lblBank"), WebControls.Label).Text = s
 
                 If Not IsDBNull(e.Item.DataItem("alert")) AndAlso e.Item.DataItem("alert") = 1 Then
                     e.Item.FindControl("imgAlert").Visible = True
@@ -353,10 +356,10 @@ Namespace Kasbi
                 End If
                 BindAdvert(CType(e.Item.FindControl("lstAdvert"), DropDownList), advert_id)
 
-                CType(e.Item.FindControl("chkNDS"), CheckBox).Checked = Not IsDBNull(e.Item.DataItem("NDS")) AndAlso e.Item.DataItem("NDS")
-                CType(e.Item.FindControl("chkCTO"), CheckBox).Checked = Not IsDBNull(e.Item.DataItem("cto")) AndAlso e.Item.DataItem("cto")
-                CType(e.Item.FindControl("chkSupport"), CheckBox).Checked = Not (Not IsDBNull(e.Item.DataItem("support")) AndAlso e.Item.DataItem("support") = 0)
-                CType(e.Item.FindControl("chkAlert"), CheckBox).Checked = Not (IsDBNull(e.Item.DataItem("alert")) OrElse e.Item.DataItem("alert") = 0)
+                CType(e.Item.FindControl("chkNDS"), WebControls.CheckBox).Checked = Not IsDBNull(e.Item.DataItem("NDS")) AndAlso e.Item.DataItem("NDS")
+                CType(e.Item.FindControl("chkCTO"), WebControls.CheckBox).Checked = Not IsDBNull(e.Item.DataItem("cto")) AndAlso e.Item.DataItem("cto")
+                CType(e.Item.FindControl("chkSupport"), WebControls.CheckBox).Checked = Not (Not IsDBNull(e.Item.DataItem("support")) AndAlso e.Item.DataItem("support") = 0)
+                CType(e.Item.FindControl("chkAlert"), WebControls.CheckBox).Checked = Not (IsDBNull(e.Item.DataItem("alert")) OrElse e.Item.DataItem("alert") = 0)
 
 
                 If Not IsDBNull(e.Item.DataItem("region")) AndAlso CStr(e.Item.DataItem("region")).Length > 0 Then
@@ -367,7 +370,7 @@ Namespace Kasbi
                         If sRegion.IndexOf(lstRegion.Items(i).Value) > -1 Then
                             lstRegion.SelectedIndex = i
                             sRegion = sRegion.Substring(lstRegion.SelectedItem.Value.Length)
-                            CType(e.Item.FindControl("txtRegion"), TextBox).Text = IIf(sRegion.Length = 0 Or sRegion.Trim = ",", "", sRegion.Trim.TrimStart(",").Trim)
+                            CType(e.Item.FindControl("txtRegion"), WebControls.TextBox).Text = IIf(sRegion.Length = 0 Or sRegion.Trim = ",", "", sRegion.Trim.TrimStart(",").Trim)
                             Exit For
                         End If
                     Next
@@ -421,7 +424,7 @@ Namespace Kasbi
                 i = e.Item.ItemIndex
                 Session("Customer") = grdCustomers.DataKeys.Item(i)
                 s = CType(grdCustomers.Items(i).Cells(0).FindControl("lblCustomerName"), LinkButton).Text
-                s1 = CType(grdCustomers.Items(i).FindControl("lblBoosAccountant"), Label).Text
+                s1 = CType(grdCustomers.Items(i).FindControl("lblBoosAccountant"), WebControls.Label).Text
                 If s.Trim.Length > 0 And s1.Trim.Length > 0 Then s = s & "<br>"
                 Session("CustomerInfo") = s & s1
                 Session("CurrentPage") = "CustomerSales"
@@ -446,35 +449,35 @@ Namespace Kasbi
                     cmd = New SqlClient.SqlCommand("update_customer")
                     cmd.CommandType = CommandType.StoredProcedure
                     cmd.Parameters.AddWithValue("@pi_customer_sys_id", grdCustomers.DataKeys(e.Item.ItemIndex))
-                    cmd.Parameters.AddWithValue("@pi_customer_abr", CType(e.Item.FindControl("txtCustomerAbr"), TextBox).Text.Replace("'", """"))
-                    cmd.Parameters.AddWithValue("@pi_customer_name", CType(e.Item.FindControl("txtCustomerName"), TextBox).Text.Replace("'", """"))
-                    cmd.Parameters.AddWithValue("@pi_boos_last_name", CType(e.Item.FindControl("txtLastName"), TextBox).Text.Replace("'", """"))
-                    cmd.Parameters.AddWithValue("@pi_boos_first_name", CType(e.Item.FindControl("txtFirstName"), TextBox).Text.Replace("'", """"))
-                    cmd.Parameters.AddWithValue("@pi_boos_patronymic_name", CType(e.Item.FindControl("txtPatronymicName"), TextBox).Text.Replace("'", """"))
-                    cmd.Parameters.AddWithValue("@pi_accountant", CType(e.Item.FindControl("txtAccountant"), TextBox).Text.Replace("'", """"))
-                    cmd.Parameters.AddWithValue("@pi_unn", CType(e.Item.FindControl("txtUNN"), TextBox).Text.Replace("'", """"))
-                    cmd.Parameters.AddWithValue("@pi_okpo", CType(e.Item.FindControl("txtOKPO"), TextBox).Text.Replace("'", """"))
-                    cmd.Parameters.AddWithValue("@pi_zipcode", CType(e.Item.FindControl("txtZipCode"), TextBox).Text.Replace("'", """"))
-                    Dim sTmp$ = CType(e.Item.FindControl("txtRegion"), TextBox).Text.Replace("'", """").Trim
+                    cmd.Parameters.AddWithValue("@pi_customer_abr", CType(e.Item.FindControl("txtCustomerAbr"), WebControls.TextBox).Text.Replace("'", """"))
+                    cmd.Parameters.AddWithValue("@pi_customer_name", CType(e.Item.FindControl("txtCustomerName"), WebControls.TextBox).Text.Replace("'", """"))
+                    cmd.Parameters.AddWithValue("@pi_boos_last_name", CType(e.Item.FindControl("txtLastName"), WebControls.TextBox).Text.Replace("'", """"))
+                    cmd.Parameters.AddWithValue("@pi_boos_first_name", CType(e.Item.FindControl("txtFirstName"), WebControls.TextBox).Text.Replace("'", """"))
+                    cmd.Parameters.AddWithValue("@pi_boos_patronymic_name", CType(e.Item.FindControl("txtPatronymicName"), WebControls.TextBox).Text.Replace("'", """"))
+                    cmd.Parameters.AddWithValue("@pi_accountant", CType(e.Item.FindControl("txtAccountant"), WebControls.TextBox).Text.Replace("'", """"))
+                    cmd.Parameters.AddWithValue("@pi_unn", CType(e.Item.FindControl("txtUNN"), WebControls.TextBox).Text.Replace("'", """"))
+                    cmd.Parameters.AddWithValue("@pi_okpo", CType(e.Item.FindControl("txtOKPO"), WebControls.TextBox).Text.Replace("'", """"))
+                    cmd.Parameters.AddWithValue("@pi_zipcode", CType(e.Item.FindControl("txtZipCode"), WebControls.TextBox).Text.Replace("'", """"))
+                    Dim sTmp$ = CType(e.Item.FindControl("txtRegion"), WebControls.TextBox).Text.Replace("'", """").Trim
                     If sTmp.IndexOf(" ") > -1 Then
                         sTmp = sTmp.Substring(0, sTmp.IndexOf(" "))
                     End If
-                    cmd.Parameters.AddWithValue("@pi_region", CType(e.Item.FindControl("lstRegion"), DropDownList).SelectedItem.Value & IIf(CType(e.Item.FindControl("txtRegion"), TextBox).Text.Replace("'", """").Trim.Length > 0, ", " & sTmp & " р-н", ""))
+                    cmd.Parameters.AddWithValue("@pi_region", CType(e.Item.FindControl("lstRegion"), DropDownList).SelectedItem.Value & IIf(CType(e.Item.FindControl("txtRegion"), WebControls.TextBox).Text.Replace("'", """").Trim.Length > 0, ", " & sTmp & " р-н", ""))
                     cmd.Parameters.AddWithValue("@pi_city_abr", CType(e.Item.FindControl("lstCityAbr"), DropDownList).SelectedItem.Value)
-                    cmd.Parameters.AddWithValue("@pi_city", CType(e.Item.FindControl("txtCity"), TextBox).Text.Replace("'", """"))
+                    cmd.Parameters.AddWithValue("@pi_city", CType(e.Item.FindControl("txtCity"), WebControls.TextBox).Text.Replace("'", """"))
                     cmd.Parameters.AddWithValue("@pi_street_abr", CType(e.Item.FindControl("lstStreetAbr"), DropDownList).SelectedItem.Value)
-                    cmd.Parameters.AddWithValue("@pi_address", CType(e.Item.FindControl("txtAddress"), TextBox).Text.Replace("'", """"))
-                    cmd.Parameters.AddWithValue("@pi_phone1", CType(e.Item.FindControl("txtPhone1"), TextBox).Text.Replace("'", """"))
-                    cmd.Parameters.AddWithValue("@pi_phone2", CType(e.Item.FindControl("txtPhone2"), TextBox).Text.Replace("'", """"))
-                    cmd.Parameters.AddWithValue("@pi_phone3", CType(e.Item.FindControl("txtPhone3"), TextBox).Text.Replace("'", """"))
-                    cmd.Parameters.AddWithValue("@pi_phone4", CType(e.Item.FindControl("txtPhone4"), TextBox).Text.Replace("'", """"))
-                    cmd.Parameters.AddWithValue("@pi_tax_inspection", CType(e.Item.FindControl("txtTaxInspection"), TextBox).Text.Replace("'", """"))
+                    cmd.Parameters.AddWithValue("@pi_address", CType(e.Item.FindControl("txtAddress"), WebControls.TextBox).Text.Replace("'", """"))
+                    cmd.Parameters.AddWithValue("@pi_phone1", CType(e.Item.FindControl("txtPhone1"), WebControls.TextBox).Text.Replace("'", """"))
+                    cmd.Parameters.AddWithValue("@pi_phone2", CType(e.Item.FindControl("txtPhone2"), WebControls.TextBox).Text.Replace("'", """"))
+                    cmd.Parameters.AddWithValue("@pi_phone3", CType(e.Item.FindControl("txtPhone3"), WebControls.TextBox).Text.Replace("'", """"))
+                    cmd.Parameters.AddWithValue("@pi_phone4", CType(e.Item.FindControl("txtPhone4"), WebControls.TextBox).Text.Replace("'", """"))
+                    cmd.Parameters.AddWithValue("@pi_tax_inspection", CType(e.Item.FindControl("txtTaxInspection"), WebControls.TextBox).Text.Replace("'", """"))
                     If CType(e.Item.FindControl("lstIMNS"), DropDownList).SelectedIndex > 0 Then
                         cmd.Parameters.AddWithValue("@pi_imns_sys_id", CType(e.Item.FindControl("lstIMNS"), DropDownList).SelectedValue)
                     End If
-                    cmd.Parameters.AddWithValue("@pi_NDS", CType(e.Item.FindControl("chkNDS"), CheckBox).Checked)
-                    cmd.Parameters.AddWithValue("@pi_CTO", CType(e.Item.FindControl("chkCTO"), CheckBox).Checked)
-                    cmd.Parameters.AddWithValue("@pi_Support", CType(e.Item.FindControl("chkSupport"), CheckBox).Checked)
+                    cmd.Parameters.AddWithValue("@pi_NDS", CType(e.Item.FindControl("chkNDS"), WebControls.CheckBox).Checked)
+                    cmd.Parameters.AddWithValue("@pi_CTO", CType(e.Item.FindControl("chkCTO"), WebControls.CheckBox).Checked)
+                    cmd.Parameters.AddWithValue("@pi_Support", CType(e.Item.FindControl("chkSupport"), WebControls.CheckBox).Checked)
 
                     Dim bank_id As Object = CType(e.Item.FindControl("lstBankCode"), DropDownList).SelectedItem.Value
                     If (CType(e.Item.FindControl("lstBankCode"), DropDownList).SelectedItem.Value = "0") Then
@@ -489,16 +492,16 @@ Namespace Kasbi
                     cmd.Parameters.AddWithValue("@pi_bank_sys_id", bank_id)
                     cmd.Parameters.AddWithValue("@pi_advertise_id", advert_id)
                     cmd.Parameters.AddWithValue("@pi_bank_code", CType(e.Item.FindControl("lstBankCode"), DropDownList).SelectedItem.Text)
-                    cmd.Parameters.AddWithValue("@pi_bank_account", CType(e.Item.FindControl("txtBankAccount"), TextBox).Text.Replace("'", """"))
-                    cmd.Parameters.AddWithValue("@pi_bank_address", CType(e.Item.FindControl("txtBankAddress"), TextBox).Text.Replace("'", """"))
-                    cmd.Parameters.AddWithValue("@pi_registration", CType(e.Item.FindControl("txtRegistration"), TextBox).Text.Replace("'", """"))
-                    cmd.Parameters.AddWithValue("@pi_branch", CType(e.Item.FindControl("txtBranch"), TextBox).Text.Replace("'", """"))
-                    cmd.Parameters.AddWithValue("@pi_dogovor", CType(e.Item.FindControl("txtDogovor"), TextBox).Text.Replace("'", """"))
-                    cmd.Parameters.AddWithValue("@pi_alert", CType(e.Item.FindControl("chkAlert"), CheckBox).Checked)
-                    cmd.Parameters.AddWithValue("@pi_info", CType(e.Item.FindControl("txtInfo"), TextBox).Text.Replace("'", """"))
+                    cmd.Parameters.AddWithValue("@pi_bank_account", CType(e.Item.FindControl("txtBankAccount"), WebControls.TextBox).Text.Replace("'", """"))
+                    cmd.Parameters.AddWithValue("@pi_bank_address", CType(e.Item.FindControl("txtBankAddress"), WebControls.TextBox).Text.Replace("'", """"))
+                    cmd.Parameters.AddWithValue("@pi_registration", CType(e.Item.FindControl("txtRegistration"), WebControls.TextBox).Text.Replace("'", """"))
+                    cmd.Parameters.AddWithValue("@pi_branch", CType(e.Item.FindControl("txtBranch"), WebControls.TextBox).Text.Replace("'", """"))
+                    cmd.Parameters.AddWithValue("@pi_dogovor", CType(e.Item.FindControl("txtDogovor"), WebControls.TextBox).Text.Replace("'", """"))
+                    cmd.Parameters.AddWithValue("@pi_alert", CType(e.Item.FindControl("chkAlert"), WebControls.CheckBox).Checked)
+                    cmd.Parameters.AddWithValue("@pi_info", CType(e.Item.FindControl("txtInfo"), WebControls.TextBox).Text.Replace("'", """"))
 
-                    cmd.Parameters.AddWithValue("@pi_post_adress", CType(e.Item.FindControl("txt_post_adress"), TextBox).Text.Replace("'", """"))
-                    cmd.Parameters.AddWithValue("@pi_email", CType(e.Item.FindControl("txt_email"), TextBox).Text.Replace("'", """"))
+                    cmd.Parameters.AddWithValue("@pi_post_adress", CType(e.Item.FindControl("txt_post_adress"), WebControls.TextBox).Text.Replace("'", """"))
+                    cmd.Parameters.AddWithValue("@pi_email", CType(e.Item.FindControl("txt_email"), WebControls.TextBox).Text.Replace("'", """"))
 
                     dbSQL.Execute(cmd)
                 Catch
@@ -529,6 +532,12 @@ Namespace Kasbi
 
             Bind(s)
             Session("Filter") = s
+        End Sub
+        Private Sub txtFilter_KeyDown(sender As Object, e As System.Windows.Forms.KeyEventArgs)
+            If e.KeyCode = Keys.Enter Then
+                Dim t As Integer = 0
+            End If
+
         End Sub
 
         Private Sub btnFind_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnFind.Click

@@ -612,7 +612,7 @@ Namespace Kasbi
                             trace = "tr5"
                             doc.Bookmarks("Registration").Range.Text = registration
                             doc.Bookmarks("CustomerName").Range.Text = customer_name
-                            doc.Bookmarks("Customer").Range.Text = customer_name & ", " & ds.Tables("customer").Rows(0)("customer_address") & ", " & ds.Tables("customer").Rows(0)("bank") & ", смм:" & customer_unn & ", " & text_phones
+                            doc.Bookmarks("Customer").Range.Text = customer_name & ", " & ds.Tables("customer").Rows(0)("customer_address") & ", " & ds.Tables("customer").Rows(0)("bank") & ", смо:" & customer_unn & ", " & text_phones
                             doc.Bookmarks("BoosName").Range.Text = boos_name
                             doc.Bookmarks("Dogovor").Range.Text = dogovor
                             'doc.Bookmarks("Dogovor2").Range.Text = dogovor

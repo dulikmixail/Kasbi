@@ -50,7 +50,12 @@
 					<td class="SectionRow">
 						<asp:HyperLink id="HyperLink1" runat="server" NavigateUrl="ClientReports.aspx" CssClass="PanelHider">
 						<asp:Image runat="server" ID="Image20" ImageUrl="../Images/sel.gif" style="Z-INDEX: 103; position:relative; left:10;"></asp:Image>&nbsp;Клиенты - долги</asp:HyperLink></td>
-				</tr>				
+				</tr>	
+			    <tr>
+			        <td class="SectionRow">
+			            <asp:HyperLink id="lnkEmployeeCashRegisterReports" runat="server" NavigateUrl="CashRegistersForTO.aspx" CssClass="PanelHider">
+			                <asp:Image runat="server" ID="Image21" ImageUrl="../Images/sel.gif" style="Z-INDEX: 103; position:relative; left:10;"></asp:Image>&nbsp;Клиенты, диллеры - кассы</asp:HyperLink></td>
+			    </tr>
 				<TR>
 					<td class="SectionRow">
 						<asp:HyperLink id="lnkSupplierReports" runat="server" NavigateUrl="GoodsRequest.aspx" CssClass="PanelHider">
@@ -87,8 +92,8 @@
 				<!--
 				<tr>
 					<td class="SectionRow">
-						<asp:HyperLink id="HyperLink2" runat="server" NavigateUrl="TOReport.aspx" CssClass="PanelHider">
-						<asp:Image runat="server" ID="Image1" ImageUrl="../Images/sel.gif" style="Z-INDEX: 103; position:relative; left:10;"></asp:Image>&nbsp;Тестовые&nbsp;отчеты</asp:HyperLink></td> 
+						<asp:HyperLink id="HyperLink22" runat="server" NavigateUrl="TOReport.aspx" CssClass="PanelHider">
+						<asp:Image runat="server" ID="Image11" ImageUrl="../Images/sel.gif" style="Z-INDEX: 103; position:relative; left:10;"></asp:Image>&nbsp;Тестовые&nbsp;отчеты</asp:HyperLink></td> 
 				</tr>-->
 				<TR>
 					<td class="SectionRow">

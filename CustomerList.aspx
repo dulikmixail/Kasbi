@@ -27,7 +27,7 @@ function isFind()
 <body onscroll="javascript:document.all['scrollPos'].value=document.body.scrollTop;"
     bottommargin="0" leftmargin="0" topmargin="0" onload="javascript:document.body.scrollTop=document.all['scrollPos'].value;"
     rightmargin="0">
-    <form id="frmCustomerList" method="post" runat="server">
+    <form id="frmCustomerList" method="post" runat="server" KeyPreview = "true">
         <uc1:Header ID="Header1" runat="server"></uc1:Header>
         <table width="100%" border="0" cellpadding="2" cellspacing="1" class="PageTitle">
             <tr>
