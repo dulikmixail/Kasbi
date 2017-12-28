@@ -99,7 +99,6 @@
 <asp:HyperLink ID="HyperLink2" runat="server" EnableViewState="False" CssClass="PanelHider" NavigateUrl="IBANConverter.aspx"> <asp:Image runat="server" ID="Image9" ImageUrl="Images/sel.gif" Style="z-index: 103; position: relative; left: 10;"></asp:Image>&nbsp;IBAN конвертер</asp:HyperLink>
  
         
-       
         
 <asp:Label ID="lblExport" runat="server" Visible="true">
         
@@ -107,14 +106,25 @@
 <asp:linkbutton id="lnk_export" runat="server" CssClass="PanelHider" EnableViewState="False">
 <asp:Image runat="server" ID="Image4" ImageUrl="Images/sel.gif" style="Z-INDEX: 103; position:relative; left:10;"></asp:Image>&nbsp;Экспорт</asp:linkbutton>
 						<asp:hyperlink id="Hyperlink3" runat="server" EnableViewState="False" Font-Size="8pt" Target="_blank"></asp:hyperlink><br /><br /> 
+    
+    <table>
+        <tr>
+            <td>
+                <asp:RadioButtonList ID="radioButtonListExport" runat="server" Font-Size="8pt" AutoPostBack="True">
+                <%--<asp:ListItem  Value="fullHistory">Все работы</asp:ListItem>--%>
+                <asp:ListItem Value="warrantyHistory">Гарантийные ремонты</asp:ListItem>
+                <asp:ListItem Value="notWorkHistory">Ремонты без стоимости работ</asp:ListItem>
+                <asp:ListItem Value="standartHistory">Платные ремонты</asp:ListItem>
+                <asp:ListItem Selected="True" Value="toHistory">ТО</asp:ListItem>
+                <asp:ListItem Value="toHistoryByEmployee">ТО по мастерам</asp:ListItem>
 
-    <asp:RadioButtonList ID="radioButtonListExport" runat="server" Font-Size="8pt">
-        <%--<asp:ListItem  Value="fullHistory">Все работы</asp:ListItem>--%>
-        <asp:ListItem Value="warrantyHistory">Гарантийные ремонты</asp:ListItem>
-        <asp:ListItem Value="notWorkHistory">Ремонты без стоимости работ</asp:ListItem>
-        <asp:ListItem Value="standartHistory">Платные ремонты</asp:ListItem>
-        <asp:ListItem Selected="True" Value="toHistory">ТО</asp:ListItem>
-    </asp:RadioButtonList>
+                </asp:RadioButtonList>
+            </td>
+            <td>
+                <asp:ListBox runat="server" ID="lstEmployee" Rows="6" Width="250px" Visible="False" AutoPostBack="True"/>
+            </td>
+        </tr>
+    </table>
 
 <br />
 

@@ -1,3 +1,6 @@
+Imports System.IO
+Imports Microsoft.Office.Interop.Excel
+
 Namespace Kasbi
 
     Partial Class frmDefault
@@ -34,6 +37,9 @@ Namespace Kasbi
         Dim countRest% = 0
         Dim groupName$ = ""
         Dim good_sys_id = ""
+        Dim WithEvents oExcel As Application
+        Dim WithEvents oBook As Workbook
+        Dim WithEvents oSheet As Worksheet
 
         Protected Sub Page_Load1(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
             'Ограничение прав
@@ -64,10 +70,32 @@ Namespace Kasbi
 
                 tbxBeginDate.Text = Date.Now.Day & "." & Date.Now.Month & "." & Date.Now.Year
                 tbxEndDate.Text = Date.Now.Day & "." & Date.Now.Month & "." & Date.Now.Year
+                load_employee()
             End If
 
         End Sub
 
+        Sub load_employee()
+            Dim cmd As SqlClient.SqlCommand
+            Dim adapt As SqlClient.SqlDataAdapter
+            Dim ds As DataSet
+
+            cmd = New SqlClient.SqlCommand("get_employee_by_role_id")
+            cmd.CommandType = CommandType.StoredProcedure
+            cmd.Parameters.AddWithValue("@pi_role_id", 0)
+            Try
+                adapt = dbSQL.GetDataAdapter(cmd)
+                ds = New DataSet
+                adapt.Fill(ds)
+                ds.Tables(0).DefaultView.Sort = "name"
+                lstEmployee.DataSource = ds.Tables(0).DefaultView
+                lstEmployee.DataTextField = "name"
+                lstEmployee.DataValueField = "sys_id"
+                lstEmployee.DataBind()
+            Catch
+            End Try
+        End Sub
+        
         Protected Sub lnk_search_cash_Click(sender As Object, e As EventArgs) Handles lnk_search_cash.Click
 
             If txtRequest.Text.Trim.Length > 5 Then
@@ -184,6 +212,14 @@ Namespace Kasbi
         Protected Sub lnkShowRepair_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles lnkShowRepair.Click
             Session("repair-filter") = " where good.inrepair='1' "
             Response.Redirect(GetAbsoluteUrl("~/RepairMaster.aspx"))
+        End Sub
+
+        Private Sub radioButtonListExport_SelectedIndexChanged(sender As Object, e As EventArgs) Handles radioButtonListExport.SelectedIndexChanged
+            If radioButtonListExport.SelectedValue = "toHistoryByEmployee" 
+                lstEmployee.Visible = True
+            Else 
+                lstEmployee.Visible = False
+            End If
         End Sub
 
         Sub export_customer()
@@ -497,15 +533,120 @@ Namespace Kasbi
             End Try
         End Sub
 
+        Sub export_TO_by_executor()
+            Dim cmd As SqlClient.SqlCommand
+            
+            Dim adapt As SqlClient.SqlDataAdapter
+            Dim ds As DataSet
+            Dim docPath As String
+            Dim file As IO.FileInfo
+            Dim fileNotBusy As Boolean
+            Dim dt As Data.DataTable
+            Dim drs() As Data.DataRow
+            startdate = DateTime.Parse(tbxBeginDate.Text)
+            enddate = DateTime.Parse(tbxEndDate.Text)
+
+            Dim startdate2 = DateTime.Parse(tbxBeginDate.Text + " 00:00:00")
+            Dim enddate2 = DateTime.Parse(tbxEndDate.Text + " 23:59:59")
+
+
+            cmd = New SqlClient.SqlCommand("get_new_history")
+            cmd.CommandType = CommandType.StoredProcedure
+            cmd.Parameters.Clear()
+            cmd.Parameters.AddWithValue("@date", Date.Today)
+            cmd.Parameters.AddWithValue("@date_start", startdate)
+            cmd.Parameters.AddWithValue("@date_end", enddate)
+            cmd.Parameters.AddWithValue("@date_start2", startdate2)
+            cmd.Parameters.AddWithValue("@date_end2", enddate2)
+            cmd.Parameters.AddWithValue("@isWarranty", 0)
+            cmd.Parameters.AddWithValue("@isNotWork", 0)
+            cmd.Parameters.AddWithValue("@pi_state", 1)
+            cmd.Parameters.AddWithValue("@pi_employee_sys_id", lstEmployee.SelectedValue)
+
+
+            adapt = dbSQL.GetDataAdapter(cmd)
+            ds = New DataSet
+            adapt.Fill(ds)
+
+            oExcel = New ApplicationClass()
+            oExcel.DisplayAlerts = False
+            oBook = oExcel.Workbooks.Add
+            oSheet = oBook.Worksheets(1)
+            oSheet.Columns("A").ColumnWidth = 20
+            oSheet.Columns("B").ColumnWidth = 20
+            oSheet.Columns("C").ColumnWidth = 50
+            oSheet.Columns("D").ColumnWidth = 20
+            oSheet.Columns("E").ColumnWidth = 30
+            oSheet.Columns("F").ColumnWidth = 15
+            'oSheet.Columns("A1:H1").Font.Bold = True
+            oSheet.Range("A1").Value = "Исполнитель"
+            oSheet.Range("B1").Value = "Дата проведения ТО"
+            oSheet.Range("C1").Value = "Контраагент"
+            oSheet.Range("D1").Value = "УНП"
+            oSheet.Range("E1").Value = "ККМ"
+            oSheet.Range("F1").Value = "Номер ККМ"
+
+            dt = ds.Tables(0)
+            drs = dt.Select()
+            
+            For i As Integer = 0 To drs.Length - 1
+                oSheet.Range("A" & i+2).Value() = drs(i).Item(0)
+                oSheet.Range("B" & i+2).Value() = drs(i).Item(1)
+                oSheet.Range("C" & i+2).Value() = drs(i).Item(2)
+                oSheet.Range("D" & i+2).Value() = drs(i).Item(3)
+                oSheet.Range("E" & i+2).Value() = drs(i).Item(4)
+                oSheet.Range("F" & i+2).Value() = drs(i).Item(5)
+            Next
+            
+            docPath = Server.MapPath("XML") & "\TO_by_executor.xlsx"
+            oBook.SaveAs(docPath)
+            oExcel.Quit
+            Threading.Thread.Sleep(1000)
+
+            file = New System.IO.FileInfo(docPath)
+            If file.Exists Then 'set appropriate headers
+                Response.Clear()
+                Response.AddHeader("Content-Disposition", "attachment; filename=" & file.Name)
+                Response.AddHeader("Content-Length", file.Length.ToString())
+                Response.ContentType = "application/octet-stream"
+                Response.WriteFile(docPath)
+                Response.End 'if file does not exist
+            Else
+                Response.Write("This file does not exist.")
+            End If
+
+            
+        End Sub
+
+        Public Function IsFileInUse(filename As String) As Boolean 
+            Dim Locked As Boolean = False 
+            Try 
+                'Open the file in a try block in exclusive mode.  
+                'If the file is in use, it will throw an IOException. 
+                Dim fs As FileStream = File.Open(filename, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None) 
+                fs.Close() 
+                ' If an exception is caught, it means that the file is in Use 
+            Catch ex As IOException 
+                Locked = True 
+            End Try 
+            Return Locked 
+        End Function 
+
+
         Protected Sub lnk_export_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles lnk_export.Click
-            export_customer()
-            export_sale()
-            export_history()
-            export_docs()
-            export_ostatki()
-            export_site()
-            export_user()
-            export_allcustomers()
+            If radioButtonListExport.SelectedValue = "toHistoryByEmployee"
+                export_TO_by_executor()
+            Else 
+                export_customer()
+                export_sale()
+                export_history()
+                export_docs()
+                export_ostatki()
+                export_site()
+                export_user()
+                export_allcustomers()
+            End If
+
         End Sub
 
 

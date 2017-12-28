@@ -164,13 +164,21 @@ Namespace Kasbi
         End Sub
 
         Sub LoadEmployee()
-            Dim sql$ = "select * from employee order by name"
+            
+            Dim cmd As SqlClient.SqlCommand
             Dim adapt As SqlClient.SqlDataAdapter
             Dim ds As DataSet
+
+
+            cmd = New SqlClient.SqlCommand("get_employee_by_role_id")
+            cmd.CommandType = CommandType.StoredProcedure
+            cmd.Parameters.AddWithValue("@pi_role_id", 0)
+
             Try
-                adapt = dbSQL.GetDataAdapter(sql)
+                adapt = dbSQL.GetDataAdapter(cmd)
                 ds = New DataSet
                 adapt.Fill(ds)
+                ds.Tables(0).DefaultView.Sort = "name"
                 lstEmployee.DataSource = ds.Tables(0).DefaultView
                 lstEmployee.DataTextField = "name"
                 lstEmployee.DataValueField = "sys_id"
