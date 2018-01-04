@@ -117,6 +117,7 @@
                 <asp:ListItem Value="standartHistory">Платные ремонты</asp:ListItem>
                 <asp:ListItem Selected="True" Value="toHistory">ТО</asp:ListItem>
                 <asp:ListItem Value="toHistoryByEmployee">ТО по мастерам</asp:ListItem>
+                <asp:ListItem Value="removedFromTO">ТО не проведено и снятые с ТО</asp:ListItem>
 
                 </asp:RadioButtonList>
             </td>

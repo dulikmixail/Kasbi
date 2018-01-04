@@ -572,16 +572,16 @@ Namespace Kasbi
             oExcel.DisplayAlerts = False
             oBook = oExcel.Workbooks.Add
             oSheet = oBook.Worksheets(1)
-            oSheet.Columns("A").ColumnWidth = 20
+            oSheet.Columns("A").ColumnWidth = 30
             oSheet.Columns("B").ColumnWidth = 20
             oSheet.Columns("C").ColumnWidth = 50
             oSheet.Columns("D").ColumnWidth = 20
             oSheet.Columns("E").ColumnWidth = 30
             oSheet.Columns("F").ColumnWidth = 15
-            'oSheet.Columns("A1:H1").Font.Bold = True
+            oSheet.Rows("1").Font.Bold = True
             oSheet.Range("A1").Value = "Исполнитель"
             oSheet.Range("B1").Value = "Дата проведения ТО"
-            oSheet.Range("C1").Value = "Контраагент"
+            oSheet.Range("C1").Value = "Контрагент"
             oSheet.Range("D1").Value = "УНП"
             oSheet.Range("E1").Value = "ККМ"
             oSheet.Range("F1").Value = "Номер ККМ"
@@ -599,6 +599,80 @@ Namespace Kasbi
             Next
             
             docPath = Server.MapPath("XML") & "\TO_by_executor.xlsx"
+            oBook.SaveAs(docPath)
+            oExcel.Quit
+            Threading.Thread.Sleep(1000)
+
+            file = New System.IO.FileInfo(docPath)
+            If file.Exists Then 'set appropriate headers
+                Response.Clear()
+                Response.AddHeader("Content-Disposition", "attachment; filename=" & file.Name)
+                Response.AddHeader("Content-Length", file.Length.ToString())
+                Response.ContentType = "application/octet-stream"
+                Response.WriteFile(docPath)
+                Response.End 'if file does not exist
+            Else
+                Response.Write("This file does not exist.")
+            End If
+
+            
+        End Sub
+        Sub export_removed_from_TO()
+            Dim cmd As SqlClient.SqlCommand
+            
+            Dim adapt As SqlClient.SqlDataAdapter
+            Dim ds As DataSet
+            Dim docPath As String
+            Dim file As IO.FileInfo
+            Dim fileNotBusy As Boolean
+            Dim dt As Data.DataTable
+            Dim drs() As Data.DataRow
+            startdate = DateTime.Parse(tbxBeginDate.Text)
+            enddate = DateTime.Parse(tbxEndDate.Text)
+
+            Dim startdate2 = DateTime.Parse(tbxBeginDate.Text + " 00:00:00")
+            Dim enddate2 = DateTime.Parse(tbxEndDate.Text + " 23:59:59")
+
+
+            cmd = New SqlClient.SqlCommand("get_removed_from_TO")
+            cmd.CommandType = CommandType.StoredProcedure
+            cmd.Parameters.Clear()
+            cmd.Parameters.AddWithValue("@date", Date.Today)
+            cmd.Parameters.AddWithValue("@date_start", startdate)
+            cmd.Parameters.AddWithValue("@date_end", enddate)
+            cmd.Parameters.AddWithValue("@date_start2", startdate2)
+            cmd.Parameters.AddWithValue("@date_end2", enddate2)
+
+
+            adapt = dbSQL.GetDataAdapter(cmd)
+            ds = New DataSet
+            adapt.Fill(ds)
+
+            oExcel = New ApplicationClass()
+            oExcel.DisplayAlerts = False
+            oBook = oExcel.Workbooks.Add
+            oSheet = oBook.Worksheets(1)
+            oSheet.Columns("A").ColumnWidth = 70
+            oSheet.Columns("B").ColumnWidth = 20
+            oSheet.Columns("C").ColumnWidth = 20
+            oSheet.Columns("D").ColumnWidth = 20
+            oSheet.Rows("1").Font.Bold = True
+            oSheet.Range("A1").Value = "Контрагент"
+            oSheet.Range("B1").Value = "УНП"
+            oSheet.Range("C1").Value = "Номер ККМ"
+            oSheet.Range("D1").Value = "Дата снятия с ТО"
+
+            dt = ds.Tables(0)
+            drs = dt.Select()
+            
+            For i As Integer = 0 To drs.Length - 1
+                oSheet.Range("A" & i+2).Value() = drs(i).Item(0)
+                oSheet.Range("B" & i+2).Value() = drs(i).Item(1)
+                oSheet.Range("C" & i+2).Value() = drs(i).Item(2)
+                oSheet.Range("D" & i+2).Value() = drs(i).Item(3)
+            Next
+            
+            docPath = Server.MapPath("XML") & "\removed_from_TO.xlsx"
             oBook.SaveAs(docPath)
             oExcel.Quit
             Threading.Thread.Sleep(1000)
@@ -636,6 +710,8 @@ Namespace Kasbi
         Protected Sub lnk_export_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles lnk_export.Click
             If radioButtonListExport.SelectedValue = "toHistoryByEmployee"
                 export_TO_by_executor()
+            ElseIf radioButtonListExport.SelectedValue = "removedFromTO"
+                export_removed_from_TO()
             Else 
                 export_customer()
                 export_sale()

@@ -70,8 +70,7 @@
 								<TR>
 									<td class="SectionRow" colspan="2">&nbsp;</td>
 									<TD class="SectionRow">
-										<asp:textbox id="txtUNN" runat="server" BorderWidth="1px" BackColor="#F6F8FC" Width="95%" ToolTip="Введите УНП организации"
-											MaxLength="9"></asp:textbox>
+										<asp:textbox id="txtUNN" runat="server" BorderWidth="1px" BackColor="#F6F8FC" Width="95%" ToolTip="Введите УНП организации" MaxLength="20"></asp:textbox>
 									</TD>
 									<TD class="SectionRow">
 										<asp:textbox id="txtOKPO" runat="server" BorderWidth="1px" BackColor="#F6F8FC" Width="95%" ToolTip="Введите код ОКЮЛП"
