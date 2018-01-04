@@ -117,12 +117,13 @@
                 <asp:ListItem Value="standartHistory">Платные ремонты</asp:ListItem>
                 <asp:ListItem Selected="True" Value="toHistory">ТО</asp:ListItem>
                 <asp:ListItem Value="toHistoryByEmployee">ТО по мастерам</asp:ListItem>
-                <asp:ListItem Value="removedFromTO">ТО не проведено и снятые с ТО</asp:ListItem>
+                <asp:ListItem Value="toHistoryByEmployeeExcel">ТО по мастерам (Excel)</asp:ListItem>
+                <asp:ListItem Value="removedFromTOExcel">ТО не проведено и снятые с ТО (Excel)</asp:ListItem>
 
                 </asp:RadioButtonList>
             </td>
             <td>
-                <asp:ListBox runat="server" ID="lstEmployee" Rows="6" Width="250px" Visible="False" AutoPostBack="True"/>
+                <asp:ListBox runat="server" ID="lstEmployee" Rows="7" Width="250px" Visible="False" AutoPostBack="True"/>
             </td>
         </tr>
     </table>

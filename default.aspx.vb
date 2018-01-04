@@ -215,7 +215,7 @@ Namespace Kasbi
         End Sub
 
         Private Sub radioButtonListExport_SelectedIndexChanged(sender As Object, e As EventArgs) Handles radioButtonListExport.SelectedIndexChanged
-            If radioButtonListExport.SelectedValue = "toHistoryByEmployee" 
+            If radioButtonListExport.SelectedValue = "toHistoryByEmployeeExcel" Or radioButtonListExport.SelectedValue = "toHistoryByEmployee"
                 lstEmployee.Visible = True
             Else 
                 lstEmployee.Visible = False
@@ -534,6 +534,54 @@ Namespace Kasbi
         End Sub
 
         Sub export_TO_by_executor()
+            'Try
+            Dim cmd As SqlClient.SqlCommand
+            Dim rs As SqlClient.SqlDataReader
+            Dim f As IO.File
+            Dim fs As IO.FileStream
+            Dim i% = 0
+
+            startdate = DateTime.Parse(tbxBeginDate.Text)
+            enddate = DateTime.Parse(tbxEndDate.Text)
+
+            Dim startdate2 = DateTime.Parse(tbxBeginDate.Text + " 00:00:00")
+            Dim enddate2 = DateTime.Parse(tbxEndDate.Text + " 23:59:59")
+
+
+            cmd = New SqlClient.SqlCommand("get_xml_TO_by_executor")
+            cmd.CommandType = CommandType.StoredProcedure
+            cmd.Parameters.Clear()
+            cmd.Parameters.AddWithValue("@date", Date.Today)
+            cmd.Parameters.AddWithValue("@date_start", startdate)
+            cmd.Parameters.AddWithValue("@date_end", enddate)
+            cmd.Parameters.AddWithValue("@date_start2", startdate2)
+            cmd.Parameters.AddWithValue("@date_end2", enddate2)
+            cmd.Parameters.AddWithValue("@isWarranty", 0)
+            cmd.Parameters.AddWithValue("@isNotWork", 0)
+            cmd.Parameters.AddWithValue("@pi_state", 1)
+            cmd.Parameters.AddWithValue("@pi_employee_sys_id", lstEmployee.SelectedValue)
+
+            rs = dbSQL.GetReader(cmd)
+            'MsgBox(lbxExecutor.SelectedValue)
+            FileOpen(1, Server.MapPath("XML") & "\new_history.xml", OpenMode.Output, OpenAccess.Write, OpenShare.LockWrite)
+            PrintLine(1, "<?xml version='1.0' encoding='windows-1251' ?>")
+            PrintLine(1, "<history>")
+            While rs.Read
+                Print(1, rs(0))
+                i = i + 1
+            End While
+            PrintLine(1)
+            PrintLine(1, "</history>")
+
+            FileClose(1)
+            rs.Close()
+            'Catch
+            ' End Try
+
+        End Sub
+
+
+        Sub export_TO_by_executor_to_Excel()
             Dim cmd As SqlClient.SqlCommand
             
             Dim adapt As SqlClient.SqlDataAdapter
@@ -550,7 +598,7 @@ Namespace Kasbi
             Dim enddate2 = DateTime.Parse(tbxEndDate.Text + " 23:59:59")
 
 
-            cmd = New SqlClient.SqlCommand("get_new_history")
+            cmd = New SqlClient.SqlCommand("get_TO_by_executor")
             cmd.CommandType = CommandType.StoredProcedure
             cmd.Parameters.Clear()
             cmd.Parameters.AddWithValue("@date", Date.Today)
@@ -617,7 +665,7 @@ Namespace Kasbi
 
             
         End Sub
-        Sub export_removed_from_TO()
+        Sub export_removed_from_TO_to_Excel()
             Dim cmd As SqlClient.SqlCommand
             
             Dim adapt As SqlClient.SqlDataAdapter
@@ -708,24 +756,27 @@ Namespace Kasbi
 
 
         Protected Sub lnk_export_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles lnk_export.Click
-            If radioButtonListExport.SelectedValue = "toHistoryByEmployee"
-                export_TO_by_executor()
-            ElseIf radioButtonListExport.SelectedValue = "removedFromTO"
-                export_removed_from_TO()
-            Else 
-                export_customer()
-                export_sale()
-                export_history()
-                export_docs()
-                export_ostatki()
-                export_site()
-                export_user()
-                export_allcustomers()
-            End If
+
+            Select Case radioButtonListExport.SelectedValue
+                Case "toHistoryByEmployee"
+                    export_TO_by_executor()
+                Case "toHistoryByEmployeeExcel"
+                    export_TO_by_executor_to_Excel()
+                Case "removedFromTOExcel"
+                    export_removed_from_TO_to_Excel()
+                Case Else
+                    export_customer()
+                    export_sale()
+                    export_history()
+                    export_docs()
+                    export_ostatki()
+                    export_site()
+                    export_user()
+                    export_allcustomers()
+            End Select
 
         End Sub
 
 
-        
     End Class
 End Namespace
