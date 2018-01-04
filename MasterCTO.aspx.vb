@@ -41,11 +41,12 @@ Namespace Kasbi
 
                 'Выставляем текущий месяц и год
                 lstMonth.SelectedIndex = Month(Now) - 1
-                If Year(Now) > 2002 And Year(Now) < 2018 Then
-                    lstYear.SelectedIndex = Year(Now) - 2003
-                Else
-                    lstYear.SelectedIndex = 0
-                End If
+                lstYear.SelectedValue = Year(Now).ToString()
+                'If Year(Now) > 2002 And Year(Now) < 2019 Then
+                '    lstYear.SelectedIndex = Year(Now) - 2003
+                'Else
+                '    lstYear.SelectedIndex = 0
+                'End If
 
 
 
