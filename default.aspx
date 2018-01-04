@@ -119,6 +119,7 @@
                 <asp:ListItem Value="toHistoryByEmployee">ТО по мастерам</asp:ListItem>
                 <asp:ListItem Value="toHistoryByEmployeeExcel">ТО по мастерам (Excel)</asp:ListItem>
                 <asp:ListItem Value="removedFromTOExcel">ТО не проведено и снятые с ТО (Excel)</asp:ListItem>
+                <asp:ListItem Value="toHistorySpecialRulesExcel">Список ТО - исключение (Excel)</asp:ListItem>
 
                 </asp:RadioButtonList>
             </td>

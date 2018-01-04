@@ -315,6 +315,7 @@ Namespace Kasbi
             cmd.Parameters.AddWithValue("@date_end", enddate)
             cmd.Parameters.AddWithValue("@date_start2", startdate2)
             cmd.Parameters.AddWithValue("@date_end2", enddate2)
+            'cmd.Parameters.AddWithValue("@excludeCustomers", "'700847187', '700847133', '700847174', '700847279', '700847294', '700847266', '700847225', '700847212', '700847146', '700847120', '700847332', '700847238', '700847317', '700847161', '700847240', '700048641', '790428714', '790599137', '790426658', '790473326', '790432442', '790384081', '791011407', '790602805', '812005052', '790386916', '790384502', '790627415', '790754552', '812004413', '790701937', '790384316', '790384280', '790610462', '790386880', '300046309', '390491694', '690243721', '190592808', '690612576', '190634129', '190571693', '690621783', '691830932', '691073509', '192791253', '190764408', '190559938', '691382370', '192577111', '192479014', '691539193', '191182125', '192593758', '190999171', '190706481', '691830945', '192764415', '691822895', '190454134', '601079710', '190908735', '192694244', '192606702', '390504572', '690618015', '191174460', '191455232', '192150614', '192548018', '690610823', '192701377', '190580247', '190542717', '192036519', '190542347', '190575206'")
 
             If radioButtonListExport.SelectedValue = "fullHistory" Then
 
@@ -583,7 +584,7 @@ Namespace Kasbi
 
         Sub export_TO_by_executor_to_Excel()
             Dim cmd As SqlClient.SqlCommand
-            
+
             Dim adapt As SqlClient.SqlDataAdapter
             Dim ds As DataSet
             Dim docPath As String
@@ -636,16 +637,16 @@ Namespace Kasbi
 
             dt = ds.Tables(0)
             drs = dt.Select()
-            
+
             For i As Integer = 0 To drs.Length - 1
-                oSheet.Range("A" & i+2).Value() = drs(i).Item(0)
-                oSheet.Range("B" & i+2).Value() = drs(i).Item(1)
-                oSheet.Range("C" & i+2).Value() = drs(i).Item(2)
-                oSheet.Range("D" & i+2).Value() = drs(i).Item(3)
-                oSheet.Range("E" & i+2).Value() = drs(i).Item(4)
-                oSheet.Range("F" & i+2).Value() = drs(i).Item(5)
+                oSheet.Range("A" & i + 2).Value() = drs(i).Item(0)
+                oSheet.Range("B" & i + 2).Value() = drs(i).Item(1)
+                oSheet.Range("C" & i + 2).Value() = drs(i).Item(2)
+                oSheet.Range("D" & i + 2).Value() = drs(i).Item(3)
+                oSheet.Range("E" & i + 2).Value() = drs(i).Item(4)
+                oSheet.Range("F" & i + 2).Value() = drs(i).Item(5)
             Next
-            
+
             docPath = Server.MapPath("XML") & "\TO_by_executor.xlsx"
             oBook.SaveAs(docPath)
             oExcel.Quit
@@ -663,8 +664,93 @@ Namespace Kasbi
                 Response.Write("This file does not exist.")
             End If
 
-            
+
         End Sub
+
+        Sub export_TO_Special_Rules_to_Excel()
+            Dim cmd As SqlClient.SqlCommand
+
+            Dim adapt As SqlClient.SqlDataAdapter
+            Dim ds As DataSet
+            Dim docPath As String
+            Dim file As IO.FileInfo
+            Dim fileNotBusy As Boolean
+            Dim dt As Data.DataTable
+            Dim drs() As Data.DataRow
+            startdate = DateTime.Parse(tbxBeginDate.Text)
+            enddate = DateTime.Parse(tbxEndDate.Text)
+
+            Dim startdate2 = DateTime.Parse(tbxBeginDate.Text + " 00:00:00")
+            Dim enddate2 = DateTime.Parse(tbxEndDate.Text + " 23:59:59")
+
+
+            cmd = New SqlClient.SqlCommand("get_TO_special_rules")
+            cmd.CommandType = CommandType.StoredProcedure
+            cmd.Parameters.Clear()
+            cmd.Parameters.AddWithValue("@date", Date.Today)
+            cmd.Parameters.AddWithValue("@date_start", startdate)
+            cmd.Parameters.AddWithValue("@date_end", enddate)
+            cmd.Parameters.AddWithValue("@date_start2", startdate2)
+            cmd.Parameters.AddWithValue("@date_end2", enddate2)
+            cmd.Parameters.AddWithValue("@isWarranty", 0)
+            cmd.Parameters.AddWithValue("@isNotWork", 0)
+            cmd.Parameters.AddWithValue("@pi_state", 1)
+
+
+            adapt = dbSQL.GetDataAdapter(cmd)
+            ds = New DataSet
+            adapt.Fill(ds)
+
+            oExcel = New ApplicationClass()
+            oExcel.DisplayAlerts = False
+            oBook = oExcel.Workbooks.Add
+            oSheet = oBook.Worksheets(1)
+            oSheet.Columns("A").ColumnWidth = 30
+            oSheet.Columns("B").ColumnWidth = 20
+            oSheet.Columns("C").ColumnWidth = 50
+            oSheet.Columns("D").ColumnWidth = 20
+            oSheet.Columns("E").ColumnWidth = 30
+            oSheet.Columns("F").ColumnWidth = 15
+            oSheet.Rows("1").Font.Bold = True
+            oSheet.Range("A1").Value = "Исполнитель"
+            oSheet.Range("B1").Value = "Дата проведения ТО"
+            oSheet.Range("C1").Value = "Контрагент"
+            oSheet.Range("D1").Value = "УНП"
+            oSheet.Range("E1").Value = "ККМ"
+            oSheet.Range("F1").Value = "Номер ККМ"
+
+            dt = ds.Tables(0)
+            drs = dt.Select()
+
+            For i As Integer = 0 To drs.Length - 1
+                oSheet.Range("A" & i + 2).Value() = drs(i).Item(0)
+                oSheet.Range("B" & i + 2).Value() = drs(i).Item(1)
+                oSheet.Range("C" & i + 2).Value() = drs(i).Item(2)
+                oSheet.Range("D" & i + 2).Value() = drs(i).Item(3)
+                oSheet.Range("E" & i + 2).Value() = drs(i).Item(4)
+                oSheet.Range("F" & i + 2).Value() = drs(i).Item(5)
+            Next
+
+            docPath = Server.MapPath("XML") & "\TO_special_rules.xlsx"
+            oBook.SaveAs(docPath)
+            oExcel.Quit()
+            Threading.Thread.Sleep(1000)
+
+            file = New System.IO.FileInfo(docPath)
+            If file.Exists Then 'set appropriate headers
+                Response.Clear()
+                Response.AddHeader("Content-Disposition", "attachment; filename=" & file.Name)
+                Response.AddHeader("Content-Length", file.Length.ToString())
+                Response.ContentType = "application/octet-stream"
+                Response.WriteFile(docPath)
+                Response.End() 'if file does not exist
+            Else
+                Response.Write("This file does not exist.")
+            End If
+
+
+        End Sub
+
         Sub export_removed_from_TO_to_Excel()
             Dim cmd As SqlClient.SqlCommand
             
@@ -764,6 +850,8 @@ Namespace Kasbi
                     export_TO_by_executor_to_Excel()
                 Case "removedFromTOExcel"
                     export_removed_from_TO_to_Excel()
+                Case "toHistorySpecialRulesExcel"
+                    export_TO_Special_Rules_to_Excel()
                 Case Else
                     export_customer()
                     export_sale()
