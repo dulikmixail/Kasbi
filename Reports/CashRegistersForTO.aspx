@@ -68,6 +68,11 @@
                 <asp:ListBox runat="server" ID="lstDealers" Rows="10" Width="350px" SelectionMode="Multiple" EnableTheming="true" EnableViewState="true" AppendDataBoundItems="true"/>
             </td>
         </tr>
+        <tr>
+            <td><asp:linkbutton id="lnkExportReportToExcel" runat="server" CssClass="LinkButton">
+                <asp:Image runat="server" ID="Image2" ImageUrl="../Images/sel.gif" style="Z-INDEX: 103; position:relative; left:10;"></asp:Image>
+                &nbsp;Экспорт&nbsp;отчета&nbsp;в&nbsp;Microsoft&nbsp;Excel</asp:linkbutton></td>
+        </tr>
     </table>
 
     <asp:Button runat="server" ID="Submit" Text="Показать"/>

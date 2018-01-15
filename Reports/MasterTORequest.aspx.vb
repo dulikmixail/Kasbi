@@ -38,7 +38,7 @@ Namespace Kasbi.Reports
 
                 d.AddMonths(-1)
                 lstMonth.SelectedIndex = d.Month - 1
-                If d.Year > 2002 And d.Year < 2018 Then
+                If d.Year > 2002 And d.Year <= 2020 Then
                     lstYear.SelectedIndex = d.Year - 2003
                 Else
                     lstYear.SelectedIndex = 0
@@ -90,7 +90,7 @@ Namespace Kasbi.Reports
                     lblError.Text = "Пожалуйста, введите корректные значения дат"
                     lblError.Visible = True
                 End Try
-                strRequest = String.Format("MasterTOReport.aspx?start_date={0}&end_date={1}&ex={2}", Format(startdate, "MM/dd/yyyy"), Format(endDate, "MM/dd/yyyy"), Executor)
+                strRequest = String.Format("MasterTOReport.aspx?start_date={0}&end_date={1}&ex={2}", Format(startdate, "dd/MM/yyyy"), Format(endDate, "dd/MM/yyyy"), Executor)
                 strRequest = "<script language='javascript' type='text/javascript'>window.open('" & strRequest & "')</script>"
 
             Else
