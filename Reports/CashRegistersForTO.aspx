@@ -73,6 +73,12 @@
                 <asp:Image runat="server" ID="Image2" ImageUrl="../Images/sel.gif" style="Z-INDEX: 103; position:relative; left:10;"></asp:Image>
                 &nbsp;Экспорт&nbsp;отчета&nbsp;в&nbsp;Microsoft&nbsp;Excel</asp:linkbutton></td>
         </tr>
+        <tr>
+            <td class="Unit" align="center" colspan="3">
+                <asp:ImageButton id="btnView" runat="server" ImageUrl="../Images/create.gif"></asp:ImageButton>&nbsp;&nbsp;
+                <asp:ImageButton id="btnBack" runat="server" ImageUrl="../Images/back.gif" CausesValidation="False"></asp:ImageButton>
+            </td>
+        </tr>
     </table>
 
     <asp:Button runat="server" ID="Submit" Text="Показать"/>
