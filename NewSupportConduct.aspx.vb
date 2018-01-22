@@ -533,28 +533,43 @@ Partial Class NewSupportConduct
                 End If
 
                 If rbTO.SelectedIndex = 2 And chkDelayTO.Checked = False Then
-                    d = New Date(lstYear.SelectedItem.Value, lstMonth.SelectedItem.Value, 1)
-                    If (d > dNow) Then
-                        msgAddSupportConduct.Text = "Выбранный период больше текущего периода"
-                        Exit Sub
-                    End If
+
 
                     Try
                         cmd = New SqlClient.SqlCommand("get_supportconduct_end_date")
                         cmd.CommandType = CommandType.StoredProcedure
                         cmd.Parameters.AddWithValue("@pi_good_sys_id", iCash)
-                        cmd.Parameters.AddWithValue("@state", 4)
                         adapt = dbSQL.GetDataAdapter(cmd)
                         ds = New DataSet
                         adapt.Fill(ds)
+
+                        d = New Date(lstYear.SelectedItem.Value, lstMonth.SelectedItem.Value, 1)
+
                         If ds.Tables(0).Rows.Count > 0 Then
                             With ds.Tables(0).DefaultView(0)
-                                'Dim enddate As Date = .Item("end_date")
-                                'If d < enddate Then
-                                'msgAddSupportConduct.Text = "Закрываемый вами период либо уже закрыт либо меньше последнего закрытого периода"
-                                'Exit Sub
-                                'End If
+                                Dim enddate As Date = .Item("end_date")
+                                Dim state As Integer = .Item("state")
+                                Select Case state
+                                    Case 1
+                                        If d < enddate Then
+                                            msgAddSupportConduct.Text = "Закрываемый вами период либо уже закрыт либо меньше последнего закрытого периода"
+                                            Exit Sub
+                                        End If
+                                    Case 6
+                                        If d < enddate Then
+                                            msgAddSupportConduct.Text = "Кассовый аппарат находиться на приостановке ТО"
+                                            Exit Sub
+                                        End If
+                                    Case 2 To 3
+                                        msgAddSupportConduct.Text = "Кассовый аппарат уже снят с ТО"
+                                        Exit Sub
+                                End Select
                             End With
+                        End If
+
+                        If (d > dNow) Then
+                            msgAddSupportConduct.Text = "Выбранный период больше текущего периода"
+                            Exit Sub
                         End If
                     Catch
                         msgAddSupportConduct.Text = Err.Description
@@ -613,17 +628,23 @@ Partial Class NewSupportConduct
                         cmd = New SqlClient.SqlCommand("get_supportconduct_end_date")
                         cmd.CommandType = CommandType.StoredProcedure
                         cmd.Parameters.AddWithValue("@pi_good_sys_id", iCash)
-                        cmd.Parameters.AddWithValue("@state", 6)
                         adapt = dbSQL.GetDataAdapter(cmd)
                         ds = New DataSet
                         adapt.Fill(ds)
                         If ds.Tables(0).Rows.Count > 0 Then
                             With ds.Tables(0).DefaultView(0)
-                                Dim enddate As Date = CDate(.Item("end_date"))
-                                If d < enddate Then
-                                    msgAddSupportConduct.Text = "Закрываемый вами период либо уже закрыт либо меньше последнего закрытого периода"
-                                    Exit Sub
-                                End If
+                                Dim enddate As Date = .Item("end_date")
+                                Dim state As Integer = .Item("state")
+                                Select Case state
+                                    Case 6
+                                        If d < enddate Then
+                                            msgAddSupportConduct.Text = "Кассовый аппарат находиться на приостановке ТО"
+                                            Exit Sub
+                                        End If
+                                    Case 2 To 3
+                                        msgAddSupportConduct.Text = "Кассовый аппарат снят с ТО"
+                                        Exit Sub
+                                End Select
                             End With
                         End If
                     Catch
@@ -661,15 +682,39 @@ Partial Class NewSupportConduct
                     Catch
                         msgAddSupportConduct.Text = Err.Description
                     End Try
+
+
+                    'Снятие с ТО
                 ElseIf rbTO.SelectedIndex = 1 Then
-                    d = New DateTime
+
+                    cmd = New SqlClient.SqlCommand("get_supportconduct_end_date")
+                    cmd.CommandType = CommandType.StoredProcedure
+                    cmd.Parameters.AddWithValue("@pi_good_sys_id", iCash)
+                    adapt = dbSQL.GetDataAdapter(cmd)
+                    ds = New DataSet
+                    adapt.Fill(ds)
 
                     Try
+                        If ds.Tables(0).Rows.Count > 0 Then
+                            With ds.Tables(0).DefaultView(0)
+                                Dim enddate As Date = .Item("end_date")
+                                Dim state As Integer = .Item("state")
+                                Select Case state
+                                    Case 2 To 3
+                                        msgAddSupportConduct.Text = "Кассовый аппарат снят с ТО"
+                                        Exit Sub
+                                End Select
+                            End With
+                        End If
+
+                        dNow = Date.Now
                         d = DateTime.Parse(tbxDismissalDate.Text)
-                        If (d > Now) Then
-                            msgAddSupportConduct.Text = "Дата снятия с ТО больше текущей даты"
+                        If (d > dNow) Then
+                            msgAddSupportConduct.Text = "Дата снятия не может быть больше декущей даты"
                             Exit Sub
                         End If
+
+
                     Catch
                         msgAddSupportConduct.Text = "Пожалуйста, введите корректное значения даты снятия с ТО"
                         Exit Sub
@@ -713,6 +758,8 @@ Partial Class NewSupportConduct
                     Catch
                         msgAddSupportConduct.Text = Err.Description
                     End Try
+
+                    'Постановка на ТО
                 ElseIf rbTO.SelectedIndex = 0 Then
                     If lstCustomers.SelectedIndex <= 0 Then
                         msgAddSupportConduct.Text = "Не выбран ни один клиент!"
@@ -724,15 +771,50 @@ Partial Class NewSupportConduct
                         msgAddSupportConduct.Text = "Ошибка определения клиента!"
                         Exit Sub
                     End If
-                    d = New DateTime
+
+                    cmd = New SqlClient.SqlCommand("get_supportconduct_end_date")
+                    cmd.CommandType = CommandType.StoredProcedure
+                    cmd.Parameters.AddWithValue("@pi_good_sys_id", iCash)
+                    adapt = dbSQL.GetDataAdapter(cmd)
+                    ds = New DataSet
+                    adapt.Fill(ds)
 
                     Try
+                        dNow = Date.Now
                         d = DateTime.Parse(tbxSupportDate.Text)
+                        Dim regex_ru As Regex = New Regex("МН\d+") 'МН написаны Кирилицей
+                        Dim regex_en As Regex = New Regex("MH\d*") 'МН написаны Латиницей
 
-                        If (d > Now) Then
-                            msgAddSupportConduct.Text = "Дата постановки больше текущей даты"
-                            Exit Sub
+                        If ds.Tables(0).Rows.Count > 0 Then
+                            With ds.Tables(0).DefaultView(0)
+                                Dim enddate As Date = .Item("end_date")
+                                Dim state As Integer = .Item("state")
+                                Select Case state
+                                    Case 4
+                                        msgAddSupportConduct.Text = "Кассовый аппарат уже поставлен на ТО"
+                                        Exit Sub
+                                End Select
+                            End With
                         End If
+
+                        If (d > dNow) Then
+                            msgAddSupportConduct.Text = "Дата постановки не может быть больше декущей даты"
+                            Exit Sub
+                        ElseIf regex_en.Match(txtMarka_Cto_Sup_In.Text.Trim).Success Or regex_en.Match(txtMarka_Cto_Sup_Out.Text.Trim).Success Then
+                            msgAddSupportConduct.Text = "МН необходимо писать Кирилицей"
+                            Exit Sub
+                        ElseIf txtMarka_Cto_Sup_In.Text.Trim <> "" And Not regex_ru.Match(txtMarka_Cto_Sup_In.Text.Trim).Success Then
+                            msgAddSupportConduct.Text = "Введите корректно СК ЦТО в поле ""до постановки"""
+                            Exit Sub
+                        ElseIf txtMarka_Cto_Sup_Out.Text.Trim() = "" Then
+                            msgAddSupportConduct.Text = "Не введена СК ЦТО в поле ""после постановки"""
+                            Exit Sub
+                        ElseIf Not regex_ru.Match(txtMarka_Cto_Sup_Out.Text.Trim).Success Then
+                            msgAddSupportConduct.Text = "Введите корректно СК ЦТО в поле ""после постановки"""
+                            Exit Sub
+
+                        End If
+
                     Catch
                         msgAddSupportConduct.Text = "Пожалуйста, введите корректное значения даты"
                         Exit Sub

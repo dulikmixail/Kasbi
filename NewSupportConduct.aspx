@@ -137,11 +137,7 @@
                     <asp:Label ID="SectionTOName" runat="server">&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; ѕровеение 
 									технического обслуживани€</asp:Label></td>
             </tr>
-            <tr>
-                <td>
-                    <asp:Label ID="msgAddSupportConduct" runat="server" EnableViewState="false" ForeColor="#ff0000"
-                        Font-Bold="true"></asp:Label></td>
-            </tr>
+            
             <tr>
                 <td>
                     <table id="TABLE1" width="70%" runat="server">
@@ -691,9 +687,15 @@
                             <td class="SectionRow" align="center" colspan="3">
                                 <asp:ImageButton ID="btnAdd" runat="server" ImageUrl="Images/update.gif"></asp:ImageButton></td>
                         </tr>
+
                     </table>
                 </td>
             </tr>
+        <tr>
+            <td>
+                <asp:Label ID="msgAddSupportConduct" runat="server" EnableViewState="false" ForeColor="#ff0000"
+                           Font-Bold="true"></asp:Label></td>
+        </tr>
         </table>
         <table width="100%">
             <asp:Panel ID="pnlSupportConductHistory" runat="server">
