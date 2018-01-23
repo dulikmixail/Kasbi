@@ -1,8 +1,10 @@
 ﻿<%@ Register TagPrefix="uc1" TagName="Footer" Src="../Controls/Footer.ascx" %>
 <%@ Register TagPrefix="uc1" TagName="Header" Src="../Controls/Header.ascx" %>
-<%@ Page Language="vb" AutoEventWireup="false" Inherits="Kasbi.Reports.CashRegistersForTO" Culture="ru-RU" CodeFile="CashRegistersForTO.aspx.vb" %>
-<!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
-<HTML>
+<%@ Page Language="VB" AutoEventWireup="false" CodeFile="CashRegistersForTO.aspx.vb" Inherits="Kasbi.Reports.CashRegistersForTO" %>
+
+<!DOCTYPE html>
+
+<html xmlns="http://www.w3.org/1999/xhtml">
 <head id="Head1" runat="server">
     <title >[Отчет по продажам]</title>
     <meta content="Microsoft Visual Studio .NET 7.1" name="GENERATOR">
@@ -16,7 +18,7 @@
     <script type="text/javascript" src="../scripts/js/datetimepicker/jquery.datetimepicker2.js"></script>
     <link type="text/css" href="../scripts/js/datetimepicker/jquery.datetimepicker.css" rel="stylesheet"/>
 
-</HEAD>
+</head>
 <body>
 <form id="Form1" method="post" runat="server">
     <uc1:header id="Header1" runat="server"></uc1:header>
@@ -117,4 +119,4 @@
 
 </form>
 </body>
-</HTML>
+</html>

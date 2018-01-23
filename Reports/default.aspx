@@ -76,11 +76,6 @@
 						<asp:HyperLink id="lnkRubrreport" runat="server" NavigateUrl="RubrRequest.aspx" CssClass="PanelHider">
 						<asp:Image runat="server" ID="Image13" ImageUrl="../Images/sel.gif" style="Z-INDEX: 103; position:relative; left:10;"></asp:Image>&nbsp;Статистика клиентов по рубрикам</asp:HyperLink></td>
 				</TR>	
-                <TR>
-					<td class="SectionRow">
-						<asp:HyperLink id="lnkCashRegisters" runat="server" NavigateUrl="CashRegistersForTO.aspx" CssClass="PanelHider">
-						<asp:Image runat="server" ID="Image14" ImageUrl="../Images/sel.gif" style="Z-INDEX: 103; position:relative; left:10;"></asp:Image>&nbsp;Статистика по кассовым аппаратам</asp:HyperLink></td>
-				</TR>
 				<tr>
 					<td class="Unit" vAlign="top">Техническое обслуживание</td>
 				</tr>

@@ -1,8 +1,6 @@
-﻿
-Imports System.Globalization
+﻿Imports System.Globalization
 Imports System.Threading
 Imports Microsoft.Office.Interop.Excel
-
 
 Namespace Kasbi.Reports
     Partial Class CashRegistersForTO
@@ -12,21 +10,6 @@ Namespace Kasbi.Reports
         Dim WithEvents oBook As Workbook
         Dim WithEvents oSheet As Worksheet
         Const ClearString = "---------------"
-
-#Region " Web Form Designer Generated Code "
-
-        'This call is required by the Web Form Designer.
-        <System.Diagnostics.DebuggerStepThrough()>Private Sub InitializeComponent()
-        End Sub
-
-
-        Private Sub Page_Init(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Init
-            'CODEGEN: This method call is required by the Web Form Designer
-            'Do not modify it using the code editor.
-            InitializeComponent()
-        End Sub
-
-#End Region
 
         Private Overloads Sub Page_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
             'Put user code to initialize the page here
@@ -43,7 +26,7 @@ Namespace Kasbi.Reports
             End If
         End Sub
 
-        Private Sub ImgSearchClient_Click(ByVal sender As Object, ByVal e As System.Web.UI.ImageClickEventArgs) Handles imgSearchClient.Click
+        Private Sub ImgSearchClient_Click(ByVal sender As System.Object, ByVal e As System.Web.UI.ImageClickEventArgs) Handles imgSearchClient.Click
             Dim str$ = tbSearchClient.Text.Replace("'", "")
             If Trim(str).Length = 0 Then
                 LoadClientList()
@@ -52,7 +35,7 @@ Namespace Kasbi.Reports
             LoadClientList(str)
         End Sub
 
-        Private Sub ImgSearchDealer_Click(ByVal sender As Object, ByVal e As System.Web.UI.ImageClickEventArgs) Handles imgSearchDealers.Click
+        Private Sub ImgSearchDealer_Click(ByVal sender As System.Object, ByVal e As System.Web.UI.ImageClickEventArgs) Handles imgSearchDealers.Click
             Dim str$ = tbSearchDealers.Text.Replace("'", "")
             If Trim(str).Length = 0 Then
                 LoadDealerList()
@@ -298,5 +281,6 @@ Namespace Kasbi.Reports
             lstDealers.Items.Insert(0, New ListItem(ClearString, ClearString))
             lstDealers.Enabled = True
         End Sub
+
     End Class
 End Namespace
