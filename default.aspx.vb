@@ -624,16 +624,16 @@ Namespace Kasbi
             oSheet.Columns("A").ColumnWidth = 30
             oSheet.Columns("B").ColumnWidth = 20
             oSheet.Columns("C").ColumnWidth = 50
-            oSheet.Columns("D").ColumnWidth = 20
-            oSheet.Columns("E").ColumnWidth = 30
+            oSheet.Columns("D").ColumnWidth = 15
+            oSheet.Columns("E").ColumnWidth = 15
             oSheet.Columns("F").ColumnWidth = 15
             oSheet.Rows("1").Font.Bold = True
             oSheet.Range("A1").Value = "Исполнитель"
             oSheet.Range("B1").Value = "Дата проведения ТО"
             oSheet.Range("C1").Value = "Контрагент"
             oSheet.Range("D1").Value = "УНП"
-            oSheet.Range("E1").Value = "ККМ"
-            oSheet.Range("F1").Value = "Номер ККМ"
+            oSheet.Range("E1").Value = "Номер ККМ"
+            oSheet.Range("F1").Value = "Район установки"
 
             dt = ds.Tables(0)
             drs = dt.Select()
@@ -643,14 +643,13 @@ Namespace Kasbi
                 oSheet.Range("B" & i + 2).Value() = drs(i).Item(1)
                 oSheet.Range("C" & i + 2).Value() = drs(i).Item(2)
                 oSheet.Range("D" & i + 2).Value() = drs(i).Item(3)
-                oSheet.Range("E" & i + 2).Value() = drs(i).Item(4)
-                oSheet.Range("F" & i + 2).Value() = drs(i).Item(5)
+                oSheet.Range("E" & i + 2).Value() = drs(i).Item(5)
+                oSheet.Range("F" & i + 2).Value() = drs(i).Item(9)
             Next
 
             docPath = Server.MapPath("XML") & "\TO_by_executor.xlsx"
-            oBook.SaveAs(docPath)
+            oBook.Close(True, docPath, True)
             oExcel.Quit
-            Threading.Thread.Sleep(1000)
 
             file = New System.IO.FileInfo(docPath)
             If file.Exists Then 'set appropriate headers
@@ -659,7 +658,7 @@ Namespace Kasbi
                 Response.AddHeader("Content-Length", file.Length.ToString())
                 Response.ContentType = "application/octet-stream"
                 Response.WriteFile(docPath)
-                Response.End 'if file does not exist
+                Response.End() 'if file does not exist
             Else
                 Response.Write("This file does not exist.")
             End If
@@ -708,16 +707,16 @@ Namespace Kasbi
             oSheet.Columns("A").ColumnWidth = 30
             oSheet.Columns("B").ColumnWidth = 20
             oSheet.Columns("C").ColumnWidth = 50
-            oSheet.Columns("D").ColumnWidth = 20
-            oSheet.Columns("E").ColumnWidth = 30
+            oSheet.Columns("D").ColumnWidth = 15
+            oSheet.Columns("E").ColumnWidth = 15
             oSheet.Columns("F").ColumnWidth = 15
             oSheet.Rows("1").Font.Bold = True
             oSheet.Range("A1").Value = "Исполнитель"
             oSheet.Range("B1").Value = "Дата проведения ТО"
             oSheet.Range("C1").Value = "Контрагент"
             oSheet.Range("D1").Value = "УНП"
-            oSheet.Range("E1").Value = "ККМ"
-            oSheet.Range("F1").Value = "Номер ККМ"
+            oSheet.Range("E1").Value = "Номер ККМ"
+            oSheet.Range("F1").Value = "Район установки"
 
             dt = ds.Tables(0)
             drs = dt.Select()
@@ -727,14 +726,13 @@ Namespace Kasbi
                 oSheet.Range("B" & i + 2).Value() = drs(i).Item(1)
                 oSheet.Range("C" & i + 2).Value() = drs(i).Item(2)
                 oSheet.Range("D" & i + 2).Value() = drs(i).Item(3)
-                oSheet.Range("E" & i + 2).Value() = drs(i).Item(4)
-                oSheet.Range("F" & i + 2).Value() = drs(i).Item(5)
+                oSheet.Range("E" & i + 2).Value() = drs(i).Item(5)
+                oSheet.Range("F" & i + 2).Value() = drs(i).Item(9)
             Next
 
             docPath = Server.MapPath("XML") & "\TO_special_rules.xlsx"
-            oBook.SaveAs(docPath)
+            oBook.Close(True, docPath, True)
             oExcel.Quit()
-            Threading.Thread.Sleep(1000)
 
             file = New System.IO.FileInfo(docPath)
             If file.Exists Then 'set appropriate headers
@@ -787,8 +785,8 @@ Namespace Kasbi
             oBook = oExcel.Workbooks.Add
             oSheet = oBook.Worksheets(1)
             oSheet.Columns("A").ColumnWidth = 70
-            oSheet.Columns("B").ColumnWidth = 20
-            oSheet.Columns("C").ColumnWidth = 20
+            oSheet.Columns("B").ColumnWidth = 15
+            oSheet.Columns("C").ColumnWidth = 15
             oSheet.Columns("D").ColumnWidth = 20
             oSheet.Rows("1").Font.Bold = True
             oSheet.Range("A1").Value = "Контрагент"
@@ -807,9 +805,8 @@ Namespace Kasbi
             Next
             
             docPath = Server.MapPath("XML") & "\removed_from_TO.xlsx"
-            oBook.SaveAs(docPath)
+            oBook.Close(True, docPath, True)
             oExcel.Quit
-            Threading.Thread.Sleep(1000)
 
             file = New System.IO.FileInfo(docPath)
             If file.Exists Then 'set appropriate headers

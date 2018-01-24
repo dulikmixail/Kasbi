@@ -76,8 +76,9 @@ Namespace Kasbi.Reports
                 filterCustomers = Left(filterCustomers, filterCustomers.Length - 1)
                 filterCustomers &= ")"
             End If
+            Dim str As String = lstCashRegister.SelectedItem.Attributes.Item(ClearString)
 
-            If lstCashRegister.GetSelectedIndices().Length <> 0 Then
+            If lstCashRegister.GetSelectedIndices().Length <> 0 And lstCashRegister.SelectedItem.Attributes.Item(ClearString) Then
                 filterCashRegisters &= " and good.good_type_sys_id in ("
                 For Each item As ListItem In lstCashRegister.Items
                     If item.Value <> ClearString Then
