@@ -127,7 +127,7 @@ Namespace Kasbi.Reports
 
             InsertExelData(drs, endInsertIndex + 1, RGB(247, 233, 233), "ДИЛЕРЫ")
 
-            docPath = Server.MapPath("Docs") & "\test.xlsx"
+            docPath = Server.MapPath("Docs") & "\CashRegistersForTO.xlsx"
             oBook.Close(True, docPath, True)
             oExcel.Quit()
 
