@@ -45,8 +45,10 @@ Namespace Kasbi.Reports
         End Sub
 
         Private Sub btnView_Click(ByVal sender As System.Object, ByVal e As System.Web.UI.ImageClickEventArgs) Handles btnView.Click
-            Dim docPath, strExpr, strSort, filter, filterCustomers, filterCashRegisters As String
+            Dim docPath, strExpr, strSort, filter, filterCustomers, filterCashRegisters, filterClient, filterDialers As String
             filterCustomers = ""
+            filterClient = ""
+            filterDialers = ""
             filterCashRegisters = ""
             Dim file As IO.FileInfo
             Dim cmd As SqlClient.SqlCommand
@@ -56,41 +58,41 @@ Namespace Kasbi.Reports
             Dim drs() As Data.DataRow
             Dim endInsertIndex As Integer
 
-
-            If lstClient.GetSelectedIndices().Length <> 0 Or lstDealers.GetSelectedIndices().Length <> 0 Then
-                filterCustomers &= " and customer.customer_sys_id in ("
+            If Not lstClient.Items.Item(0).Selected And lstClient.GetSelectedIndices().Length <> 0 Then
                 For Each item As ListItem In lstClient.Items
-                    If item.Value <> ClearString Then
-                        If item.Selected Then
-                            filterCustomers &= item.Value & ","
-                        End If
+                    If item.Value <> ClearString And item.Selected Then
+                        filterClient &= item.Value & ","
                     End If
                 Next item
+            End If
+
+            If Not lstDealers.Items.Item(0).Selected And lstDealers.GetSelectedIndices().Length <> 0 Then
                 For Each item As ListItem In lstDealers.Items
-                    If item.Value <> ClearString Then
-                        If item.Selected Then
-                            filterCustomers &= item.Value & ","
-                        End If
+                    If item.Value <> ClearString And item.Selected Then
+                        filterDialers &= item.Value & ","
                     End If
                 Next item
+            End If
+
+            If filterClient <> "" Or filterDialers <> "" Then
+                filterCustomers &= " and customer.customer_sys_id in ("
+                filterCustomers &= filterClient & filterDialers
                 filterCustomers = Left(filterCustomers, filterCustomers.Length - 1)
                 filterCustomers &= ")"
             End If
-            Dim str As String = lstCashRegister.SelectedItem.Attributes.Item(ClearString)
 
-            If lstCashRegister.GetSelectedIndices().Length <> 0 And lstCashRegister.SelectedItem.Attributes.Item(ClearString) Then
+
+
+            If Not lstCashRegister.Items.Item(0).Selected And lstCashRegister.GetSelectedIndices().Length <> 0 Then
                 filterCashRegisters &= " and good.good_type_sys_id in ("
                 For Each item As ListItem In lstCashRegister.Items
-                    If item.Value <> ClearString Then
-                        If item.Selected Then
-                            filterCashRegisters &= item.Value & ","
-                        End If
+                    If item.Value <> ClearString And item.Selected Then
+                        filterCashRegisters &= item.Value & ","
                     End If
                 Next item
                 filterCashRegisters = Left(filterCashRegisters, filterCashRegisters.Length - 1)
                 filterCashRegisters &= ")"
             End If
-
 
             oExcel = New ApplicationClass()
             oExcel.DisplayAlerts = False
@@ -118,17 +120,16 @@ Namespace Kasbi.Reports
             strSort = "buyer_sys_id, payer_sys_id"
             drs = dt.Select(strExpr, strSort)
 
-            endInsertIndex = InsertExelData(drs, 0)
+            endInsertIndex = InsertExelData(drs, 0, RGB(214, 220, 228), "КЛИЕНТЫ")
 
             strExpr = "payer_sys_id IS NOT NULL and buyer_sys_id IS NOT NULL and cto=1"
             drs = dt.Select(strExpr, strSort)
 
-            InsertExelData(drs, endInsertIndex + 1)
+            InsertExelData(drs, endInsertIndex + 1, RGB(247, 233, 233), "ДИЛЕРЫ")
 
             docPath = Server.MapPath("Docs") & "\test.xlsx"
-            oBook.SaveAs(docPath)
+            oBook.Close(True, docPath, True)
             oExcel.Quit()
-            Thread.Sleep(1000)
 
             file = New System.IO.FileInfo(docPath)
             If file.Exists Then 'set appropriate headers
@@ -143,8 +144,8 @@ Namespace Kasbi.Reports
             End If
         End Sub
 
-        Private Function InsertExelData(ByVal drs() As Data.DataRow, ByVal startInsertIndex As Integer) As Integer
-            Dim payer_sys_id, payer_sys_id_old, payer_counter, cr_counter, crs_counter, str_i, str_i_start, i As Integer
+        Private Function InsertExelData(ByVal drs() As Data.DataRow, ByVal startInsertIndex As Integer, baseColor As Integer, title As String) As Integer
+            Dim payer_sys_id, payer_sys_id_old, payer_counter, cr_counter, crs_counter, str_i, str_i_start, i, b_color, b2_color As Integer
 
             payer_sys_id = -1
             payer_sys_id_old = -2
@@ -153,6 +154,8 @@ Namespace Kasbi.Reports
             crs_counter = 0
             str_i_start = startInsertIndex
             str_i = str_i_start
+            b_color = baseColor
+            b2_color = baseColor - 1712938
 
             For i = 0 To drs.Length - 1
                 payer_sys_id_old = payer_sys_id
@@ -168,7 +171,7 @@ Namespace Kasbi.Reports
 
                 Else
                     payer_counter += 1
-                    oSheet.Range("A" & i + str_i + 2, "F" & i + str_i + 2).Interior.Color = RGB(214, 220, 228)
+                    oSheet.Range("A" & i + str_i + 2, "F" & i + str_i + 2).Interior.Color = b_color
                     oSheet.Range("A" & i + str_i + 2).Value() = payer_counter
                     oSheet.Range("B" & i + str_i + 2).Value() = drs(i).Item(22)
                     oSheet.Range("C" & i + str_i + 2).Value() = drs(i).Item(23)
@@ -197,7 +200,7 @@ Namespace Kasbi.Reports
             oSheet.Range("A" & i + str_i + 2 & ":F" & i + str_i + 2).Font.Bold = True
             oSheet.Range("A" & i + str_i + 2 & ":F" & i + str_i + 2).Font.Size = 14
             oSheet.Range("A" & i + str_i + 2 & ":F" & i + str_i + 2).HorizontalAlignment = XlHAlign.xlHAlignRight
-            oSheet.Range("A" & i + str_i + 2 & ":F" & i + str_i + 2).Interior.Color = RGB(172, 185, 202)
+            oSheet.Range("A" & i + str_i + 2 & ":F" & i + str_i + 2).Interior.Color = b2_color
             oSheet.Range(i + str_i + 1 & ":" & i + str_i + 2 - cr_counter).Rows.Group()
 
 
@@ -205,9 +208,9 @@ Namespace Kasbi.Reports
             oSheet.Rows(str_i_start + 1).HorizontalAlignment = XlHAlign.xlHAlignCenter
             oSheet.Rows(str_i_start + 1).Font.Bold = True
             oSheet.Rows(str_i_start + 1).Font.Size = 16
-            oSheet.Range("A" & str_i_start + 1, "F" & str_i_start + 1).Interior.Color = RGB(172, 185, 202)
+            oSheet.Range("A" & str_i_start + 1, "F" & str_i_start + 1).Interior.Color = b2_color
             oSheet.Range("A" & str_i_start + 1).Value = "№"
-            oSheet.Range("B" & str_i_start + 1).Value = "Покупатель"
+            oSheet.Range("B" & str_i_start + 1).Value = "Покупатель (" & title & ")"
             oSheet.Range("C" & str_i_start + 1).Value = "Плательщик"
             oSheet.Range("D" & str_i_start + 1).Value = "Кол-во ККМ"
             oSheet.Outline.SummaryRow = XlSummaryRow.xlSummaryAbove

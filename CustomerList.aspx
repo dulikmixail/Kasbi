@@ -283,7 +283,7 @@ function isFind()
                                 <EditItemTemplate>
                                     <p class="SubTitleEditbox">
                                         ิเ๊๑:</p>
-                                    <asp:TextBox ID="txtPhone1" runat="server" Width="100%" BorderWidth="1px" MaxLength="13"
+                                    <asp:TextBox ID="txtPhone1" runat="server" Width="100%" BorderWidth="1px" MaxLength="25"
                                         BorderStyle="Solid" Text='<%# DataBinder.Eval(Container, "DataItem.phone1") %>'>
                                     </asp:TextBox><br>
                                     <p class="SubTitleEditbox">

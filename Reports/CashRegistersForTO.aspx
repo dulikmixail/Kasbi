@@ -83,8 +83,6 @@
         </tr>
     </table>
 
-    <asp:Button runat="server" ID="Submit" Text="Показать"/>
-
     <asp:DataGrid runat="server" ID="grdReport">
         <ItemStyle CssClass="itemGrid"></ItemStyle>
         <HeaderStyle CssClass="headerGrid" ForeColor="#FFFFCC"/>
