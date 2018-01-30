@@ -35,7 +35,23 @@ Namespace Kasbi.Reports
                     tbxEndDate.Text = (New CultureInfo("ru_Ru", False)).DateTimeFormat.ShortDatePattern.ToUpper()
                 Catch
                 End Try
+                LoadMasters()
             End If
+        End Sub
+
+        Private Sub LoadMasters()
+            Dim adapt As SqlClient.SqlDataAdapter
+            Dim ds As DataSet = New DataSet
+            Try
+                adapt = dbSQL.GetDataAdapter("get_masters", True)
+                ds = New DataSet
+                adapt.Fill(ds)
+                lbxExecutor.DataSource = ds.Tables(0).DefaultView
+                lbxExecutor.DataValueField = "sys_id"
+                lbxExecutor.DataTextField = "Name"
+                lbxExecutor.DataBind()
+            Catch
+            End Try
         End Sub
 
         Private Sub btnView_Click(ByVal sender As System.Object, ByVal e As System.Web.UI.ImageClickEventArgs) Handles btnView.Click
@@ -55,7 +71,15 @@ Namespace Kasbi.Reports
                 lblError.Visible = True
             End Try
 
-            Dim strRequest$ = String.Format("DetailReport.aspx?start_date={0}&end_date={1}", Format(startdate, "dd/MM/yyyy"), Format(endDate, "dd/MM/yyyy"))
+            Dim Executor$ = ""
+            If Executor <> "" Then
+                MsgBox("Невозможно вывести дату ремонта", MsgBoxStyle.Information, "Ошибка")
+            End If
+            For Each item As ListItem In lbxExecutor.Items
+                If item.Selected Then Executor &= item.Value & ","
+            Next item
+
+            Dim strRequest$ = String.Format("DetailReport.aspx?start_date={0}&end_date={1}&ex={2}", Format(startdate, "dd/MM/yyyy"), Format(endDate, "dd/MM/yyyy"), Executor)
             strRequest = "<script language='javascript' type='text/javascript'>window.open('" & strRequest & "')</script>"
             Me.RegisterStartupScript("report", strRequest)
         End Sub

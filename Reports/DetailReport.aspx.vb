@@ -41,6 +41,7 @@ Namespace Kasbi.Reports
             End Try
 
             details = Request.QueryString("dt")
+            Executor = Request.QueryString("ex")
             If Not IsPostBack Then
                 Bind()
             End If
@@ -63,6 +64,9 @@ Namespace Kasbi.Reports
 
                 If Not details Is Nothing AndAlso details <> String.Empty Then
                     cmd.Parameters.AddWithValue("@pi_details", details)
+                End If
+                If Not Executor Is Nothing AndAlso Executor <> String.Empty Then
+                    cmd.Parameters.AddWithValue("@pi_executor", Executor)
                 End If
 
                 'If Not disrepair Is Nothing AndAlso disrepair <> String.Empty Then

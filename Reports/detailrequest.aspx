@@ -51,6 +51,11 @@
 									<asp:comparevalidator id="CompareValidator1" runat="server" CssClass="ErrorMessage" ControlToValidate="tbxEndDate"
 										Operator="DataTypeCheck" Type="Date" Display="Dynamic" EnableClientScript="False">Пожалуйста, введите корректные значение конечной даты</asp:comparevalidator></TD>
 							</TR>
+						    <TR>
+						        <TD class="SectionRowLabel" vAlign="top">Мастера :</TD>
+						        <TD class="SectionRow">
+						            <asp:ListBox id="lbxExecutor" runat="server" Width="250px" BackColor="#F6F8FC" Rows="5" SelectionMode="Multiple"></asp:ListBox></TD>
+						    </TR>
 						</TABLE>
 					</TD>
 				</TR>
