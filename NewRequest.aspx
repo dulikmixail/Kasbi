@@ -306,7 +306,7 @@
                                     домашний</td>
                                 <td class="SubTitleTextbox" align="left">
                                     мобильный</td>
-                                <td class="SubTitleTextbox" align="left" colspan="3">
+                                <td class="SubTitleTextbox" align="left" colspan="2">
                                     &nbsp;</td>
                             </tr>
                             <tr class="TitleTextbox">
@@ -324,7 +324,7 @@
                                 <td class="SectionRow" align="right">
                                     <asp:TextBox ID="txtPhone4" runat="server" ToolTip="Введите телефон 3" MaxLength="20"
                                         BackColor="#F6F8FC" BorderWidth="1px" Width="100%"></asp:TextBox></td>
-                                <td class="SectionRow" align="left" colspan="3">
+                                <td class="SectionRow" align="left" colspan="2">
                                     &nbsp;</td>
                             </tr>
                             <tr class="SubTitleTextbox">
@@ -376,7 +376,7 @@
                                     Р/С</td>
                                 <td class="SubTitleTextbox" align="left" colspan="4" style="height: 12px">
                                     Название</td>
-                                <td class="SubTitleTextbox" align="left" colspan="2" style="height: 12px">
+                                <td class="SubTitleTextbox" align="left" style="height: 12px">
                                     &nbsp;</td>
                             </tr>
                             <tr>
@@ -392,7 +392,7 @@
                                 <td class="SectionRow" align="right" colspan="4">
                                     <asp:TextBox ID="txtBankName" runat="server" ToolTip="Введите название банка" BackColor="#F6F8FC"
                                         BorderWidth="1px" Width="100%"></asp:TextBox></td>
-                                <td class="SectionRow" align="left" colspan="2">
+                                <td class="SectionRow" align="left">
                                     &nbsp;</td>
                             </tr>
                             <tr class="TitleTextbox">
@@ -542,7 +542,7 @@
                                     Width="45px"></asp:TextBox></td>
                             <td class="SectionRowLabel" align="left">
                                 <asp:TextBox ID="txtDogovor" runat="server" MaxLength="10" BackColor="#F6F8FC" BorderWidth="1px"
-                                    Width="60px" ToolTip="Введите номер договора и поддоговора через слэш (/)"></asp:TextBox></td>
+                                    Width="60px" ToolTip="Введите номер договора и поддоговора через слэш (/)" ReadOnly="True"></asp:TextBox></td>
                         </tr>
                         <tr class="TitleTextbox">
                             <td class="SubTitleTextbox" align="left" colspan="4">

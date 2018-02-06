@@ -615,10 +615,10 @@ Namespace Kasbi
                             doc.Bookmarks("Customer").Range.Text = customer_name & ", " & ds.Tables("customer").Rows(0)("customer_address") & ", " & ds.Tables("customer").Rows(0)("bank") & ", УНП:" & customer_unn & ", " & text_phones
                             doc.Bookmarks("BoosName").Range.Text = boos_name
                             doc.Bookmarks("Dogovor").Range.Text = dogovor
-                            'doc.Bookmarks("Dogovor2").Range.Text = dogovor
+                            doc.Bookmarks("Dogovor2").Range.Text = dogovor
                             doc.Bookmarks("Dogovor3").Range.Text = dogovor
                             doc.Bookmarks("Date").Range.Text = sDate
-                            'doc.Bookmarks("Date2").Range.Text = sDate
+                            doc.Bookmarks("Date2").Range.Text = sDate
                             trace = "tr6"
                             doc.Bookmarks("Date3").Range.Text = sDate
                             Dim sFirmName$ = ds.Tables("sale").Rows(0)("firm_name")
@@ -1891,27 +1891,34 @@ ExitFunction:
             Dim kop_arr = s.ToString.Split(",")
             Dim cop
 
-            Try
+            If kop_arr.Length >= 2 Then
+                s = kop_arr(0)
                 cop = kop_arr(1)
-                If cop <> "" Then
-                    s = kop_arr(0)
-                End If
-                'MsgBox(cop)
-            Catch ex As Exception
-
-            End Try
-
-            If cop = "" Then
-                kop_arr = s.ToString.Split(".")
-                Try
-                    cop = kop_arr(1)
-                    If cop <> "" Then
-                        s = kop_arr(0)
-                    End If
-                    'MsgBox(cop)
-                Catch ex As Exception
-                End Try
+            Else
+                s = kop_arr(0)
+                cop = ""
             End If
+            'Try
+            '    cop = kop_arr(1)
+            '    If cop <> "" Then
+            '        s = kop_arr(0)
+            '    End If
+            '    'MsgBox(cop)
+            'Catch ex As Exception
+
+            'End Try
+
+            'If cop = "" Then
+            '    kop_arr = s.ToString.Split(".")
+            '    Try
+            '        cop = kop_arr(1)
+            '        If cop <> "" Then
+            '            s = kop_arr(0)
+            '        End If
+            '        'MsgBox(cop)
+            '    Catch ex As Exception
+            '    End Try
+            'End If
 
 
             ss@ = s
@@ -2020,10 +2027,6 @@ ExitFunction:
             End If
             txt$ = UCase$(Left$(txt$, 1)) & Mid$(txt$, 2)
             Summa_propis = txt$
-
-            If s = 0 Then
-                Summa_propis = "Ноль рублей"
-            End If
 
 
             If cop <> "" Then

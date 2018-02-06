@@ -139,11 +139,12 @@ Namespace Kasbi
             'определяем следующий номер договора
             If txtDogovor.Text.Length = 0 Then
                 Try
-                    dogovor = dbSQL.ExecuteScalar("get_next_dogovor")
-                    Try
-                        txtDogovor.Text = CInt(dogovor) + 1
-                    Catch
-                    End Try
+                    'dogovor = dbSQL.ExecuteScalar("get_next_dogovor")
+                    'Try
+                    '    txtDogovor.Text = CInt(dogovor) + 1
+                    'Catch
+                    'End Try
+                    txtDogovor.Text = txtUNN.Text
                 Catch
                     msgAddCustomer.Text = "Ошибка определения номера договора!<br>" & Err.Description
                     Exit Sub
@@ -438,25 +439,30 @@ Namespace Kasbi
             Dim ch() As Char = {"\", "/", ".", "-"}
             Dim sTmp As String
             'определяем номер договора и поддоговора
-            Try
-                s = txtDogovor.Text
-                i = s.IndexOfAny(ch)
-                If i > 0 Then
-                    sSubDogovor = s.Substring(i)
-                Else
-                    sSubDogovor = ""
-                End If
-                If Not Session("CTO") Then
-                    If i > 0 Then
-                        dogovor = CInt(s.Substring(0, i))
-                    Else
-                        dogovor = CInt(s)
-                    End If
-                End If
-            Catch
-                msgAddCustomer.Text = "Укажите правильный номер договора/поддоговора"
-                Exit Sub
-            End Try
+            'Try
+            '    s = txtDogovor.Text
+            '    i = s.IndexOfAny(ch)
+            '    If i > 0 Then
+            '        sSubDogovor = s.Substring(i)
+            '    Else
+            '        sSubDogovor = ""
+            '    End If
+            '    If Not Session("CTO") Then
+            '        If i > 0 Then
+            '            dogovor = CInt(s.Substring(0, i))
+            '        Else
+            '            dogovor = CInt(s)
+            '        End If
+            '    End If
+            'Catch
+            '    msgAddCustomer.Text = "Укажите правильный номер договора/поддоговора"
+            '    Exit Sub
+            'End Try
+
+
+            sSubDogovor = ""
+            dogovor = CInt(txtUNN.Text)
+
 
             '
             'проверяем можем ли мы заказать выбранный товар
