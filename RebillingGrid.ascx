@@ -20,6 +20,14 @@
 					<td class="SectionRow" width="80">&nbsp;<asp:hyperlink id="lnkSpisok_KKM" Runat="server" Target="_blank">Список&nbsp;ККМ</asp:hyperlink></td>
 					<td class="SectionRow" width="50">&nbsp;&nbsp;<asp:hyperlink id="lnkDogovor_Na_TO" Runat="server" Target="_blank">Договор&nbsp;на&nbsp;тех.&nbsp;обслуживание</asp:hyperlink></td>
                     <td class="SectionRow" width="50">&nbsp;&nbsp;<asp:hyperlink id="lnkDogovor_Na_TO_Dop" Runat="server" Target="_blank">Дополнение&nbsp;к&nbsp;договору&nbsp;на&nbsp;ТО</asp:hyperlink></td>
+				    <td class="SectionRow">
+				        <asp:HyperLink ID="lnkDogovor_Na_TO_2" runat="server" Target="_blank">Договор&nbsp;на&nbsp;тех.&nbsp;обслуживание (НОВЫЙ)</asp:HyperLink>
+                        
+				    </td>
+				    <td class="SectionRow">
+				        <asp:HyperLink ID="lnkDogovor_Na_TO_Dop_2" runat="server" Target="_blank">Дополнение&nbsp;к&nbsp;договору&nbsp;на&nbsp;ТО (НОВЫЙ)</asp:HyperLink>
+				    </td>
+				    
 					<td class="SectionRow" width="400">&nbsp;&nbsp;<asp:hyperlink id="lnkZayavlenie_IMNS" Runat="server" Target="_blank">Заявление&nbsp;в&nbsp;ИМНС</asp:hyperlink></td>
 					<td class="SectionRow" align="right" width="20%"><asp:linkbutton id="btnCreateDocuments" runat="server">Сформировать весь<br>комплект документов</asp:linkbutton><asp:linkbutton id="btnPrint1" runat="server" Visible="False" ToolTip="Печать 1-й страницы Договора на ТО(3 шт.), Договора / Счет-фактуры, Списка ККМ, Акта списания показаний, Тех. заключения и Удостоверения кассира">Печать экз. 1</asp:linkbutton></td>
 				</tr>
@@ -63,11 +71,11 @@
 					</asp:TemplateColumn>
 					<asp:TemplateColumn SortExpression="good_description" HeaderText="Описание">
 						<ItemTemplate>
-							<asp:Label runat="server" Text='<%# DataBinder.Eval(Container, "DataItem.good_description") %>' ID="Label2">
+							<asp:Label ID="lblGoodDesc" runat="server" Text='<%# DataBinder.Eval(Container, "DataItem.good_description") %>'>
 							</asp:Label>
 						</ItemTemplate>
 						<EditItemTemplate>
-							<asp:TextBox runat="server" Text='<%# DataBinder.Eval(Container, "DataItem.good_description") %>' ID="Textbox2" >
+							<asp:TextBox ID="lblGoodDescEdit" runat="server" Text='<%# DataBinder.Eval(Container, "DataItem.good_description") %>'>
 							</asp:TextBox>
 						</EditItemTemplate>
 					</asp:TemplateColumn>

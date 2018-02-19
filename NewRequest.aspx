@@ -542,7 +542,7 @@
                                     Width="45px"></asp:TextBox></td>
                             <td class="SectionRowLabel" align="left">
                                 <asp:TextBox ID="txtDogovor" runat="server" MaxLength="10" BackColor="#F6F8FC" BorderWidth="1px"
-                                    Width="60px" ToolTip="Введите номер договора и поддоговора через слэш (/)" ReadOnly="True"></asp:TextBox></td>
+                                    Width="110px" ToolTip="Введите номер договора и поддоговора через слэш (/)" ReadOnly="True"></asp:TextBox></td>
                         </tr>
                         <tr class="TitleTextbox">
                             <td class="SubTitleTextbox" align="left" colspan="4">

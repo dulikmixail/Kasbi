@@ -32,10 +32,12 @@ Partial Class Login
                 Exit Sub
             End If
 
-            Dim action
+            Dim action As Integer = 0
 
             Try
-                action = Integer.Parse(Request.QueryString("action"))
+                If Request.QueryString("action") <> Nothing Then
+                    action = Integer.Parse(Request.QueryString("action"))
+                End If
             Catch ex As Exception
 
             End Try

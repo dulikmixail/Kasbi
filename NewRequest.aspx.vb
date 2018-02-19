@@ -686,6 +686,15 @@ Namespace Kasbi
                         Exit Sub
                     End Try
                 End If
+
+                '
+                'Делаем номер договора = УНП клиента
+                '
+                Try
+                    dbSQL.Execute("update customer set dogovor=unn where  customer_sys_id=" & iCustomer)
+                Catch
+                    msgAddCustomer.Text = "Ошибка обновления номера договора!<br>" & Err.Description
+                End Try
                 '
                 'Заказываем товары
                 '
@@ -862,8 +871,8 @@ Namespace Kasbi
             Dim reader As SqlClient.SqlDataReader
 
             Try
-                reader = dbSQL.GetReader("select name,address from bank where bank_sys_id='" & bank_id & "'")
-                If reader.Read() Then
+                reader = dbSQL.GetReader("Select name, address from bank where bank_sys_id='" & bank_id & "'")
+                    If reader.Read() Then
                     BankName = reader.Item(0)
                     BankAddress = reader.Item(1)
                 Else
@@ -1098,45 +1107,46 @@ Namespace Kasbi
                         txtBranch.Text = .Item("branch")
                         txtInfo.Text = .Item("info")
                         'новый номер договора
-                        adapt = dbSQL.GetDataAdapter("select case when dogovor is null then '' else dogovor end dogovor from sale where customer_sys_id=" & customer_sys_id & " order by d DESC")
-                        ds = New DataSet
-                        adapt.Fill(ds)
-                        Dim ch() As Char = {"\", "/", ".", "-"}
-                        Dim s$, i%, sTmp$
-                        If ds.Tables(0).Rows.Count > 0 Then
-                            s = ds.Tables(0).Rows(0).Item("dogovor")
-                            If chkCTO.Checked Then
-                                Try
-                                    '##-yy/##
-                                    sTmp = s.Substring(s.LastIndexOfAny(ch) + 1).Trim
-                                    s = .Item("dogovor") & "-" & Format(Now, "yy") & "/"
-                                    i = CInt(sTmp) + 1
-                                    If i < 10 Then
-                                        s = s & "0" & i
-                                    Else
-                                        s = s & i
-                                    End If
-                                Catch
-                                    s = .Item("dogovor") & "-" & Format(Now, "yy") & "/01"
-                                End Try
-                            Else
-                                s = s.Trim(ch)
-                                Try
-                                    i = CInt(s) + 1
-                                    s = "/" & i
-                                Catch
-                                    s = "/1"
-                                End Try
-                                s = .Item("dogovor") & s
-                            End If
-                        Else
-                            If chkCTO.Checked Then
-                                s = .Item("dogovor") & "-" & Format(Now, "yy") & "/01"
-                            Else
-                                s = .Item("dogovor")
-                            End If
-                        End If
-                        txtDogovor.Text = s
+                        'adapt = dbSQL.GetDataAdapter("select case when dogovor is null then '' else dogovor end dogovor from sale where customer_sys_id=" & customer_sys_id & " order by d DESC")
+                        'ds = New DataSet
+                        'adapt.Fill(ds)
+                        'Dim ch() As Char = {"\", "/", ".", "-"}
+                        'Dim s$, i%, sTmp$
+                        'If ds.Tables(0).Rows.Count > 0 Then
+                        '    s = ds.Tables(0).Rows(0).Item("dogovor")
+                        '    If chkCTO.Checked Then
+                        '        Try
+                        '            '##-yy/##
+                        '            sTmp = s.Substring(s.LastIndexOfAny(ch) + 1).Trim
+                        '            s = .Item("dogovor") & "-" & Format(Now, "yy") & "/"
+                        '            i = CInt(sTmp) + 1
+                        '            If i < 10 Then
+                        '                s = s & "0" & i
+                        '            Else
+                        '                s = s & i
+                        '            End If
+                        '        Catch
+                        '            s = .Item("dogovor") & "-" & Format(Now, "yy") & "/01"
+                        '        End Try
+                        '    Else
+                        '        s = s.Trim(ch)
+                        '        Try
+                        '            i = CInt(s) + 1
+                        '            s = "/" & i
+                        '        Catch
+                        '            s = "/1"
+                        '        End Try
+                        '        s = .Item("dogovor") & s
+                        '    End If
+                        'Else
+                        '    If chkCTO.Checked Then
+                        '        s = .Item("dogovor") & "-" & Format(Now, "yy") & "/01"
+                        '    Else
+                        '        s = .Item("dogovor")
+                        '    End If
+                        'End If
+                        'txtDogovor.Text = s
+                        txtDogovor.Text = .Item("unn")
                     End With
                 Catch
                     msgAddCustomer.Text = "Ошибка получения информации о пользователе!<br>" & Err.Description

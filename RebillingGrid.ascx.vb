@@ -61,6 +61,7 @@ Namespace Kasbi
             If e.Item.ItemType = ListItemType.Item Or e.Item.ItemType = ListItemType.AlternatingItem Then
 
                 If e.Item.DataItem("is_cashregister") Then
+
                     If iCashCount.Item(e.Item.DataItem("good_name")) Is Nothing Then
                         iCashCount.Add(e.Item.DataItem("good_name"), "1")
                     Else

@@ -143,7 +143,7 @@ Namespace Kasbi
                         CType(ctrl.FindControl("lnkInvoice"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?c=" & cust & "&s=" & sale & "&t=1")
                         CType(ctrl.FindControl("lnkZayavlenieNaKniguKassira"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?c=" & cust & "&s=" & sale & "&t=2")
                         CType(ctrl.FindControl("lnkZayavlenie"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?c=" & cust & "&s=" & sale & "&t=3")
-                        CType(ctrl.FindControl("lnkDogovor_Na_TO"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?c=" & cust & "&s=" & sale & "&t=6")
+                        'CType(ctrl.FindControl("lnkDogovor_Na_TO"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?c=" & cust & "&s=" & sale & "&t=6")
                         CType(ctrl.FindControl("lnkSpisok_KKM"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?c=" & cust & "&s=" & sale & "&t=7")
                         CType(ctrl.FindControl("lnkTTN"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?c=" & cust & "&s=" & sale & "&t=5")
                         CType(ctrl.FindControl("lnkInvoiceNDS"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?c=" & cust & "&s=" & sale & "&t=0")

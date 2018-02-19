@@ -1,3 +1,5 @@
+Imports System.Collections.Generic
+
 Namespace Kasbi
 
     Partial Class CustomerSales
@@ -101,7 +103,7 @@ Namespace Kasbi
                         If s.Length > 0 Then
                             s = s & sTmp & "<br>"
                         End If
-                        
+
                         sTmp = .Item("customer_address")
                         If sTmp.Length > 0 Then
                             s = s & sTmp & "&nbsp;&nbsp;"
@@ -126,8 +128,6 @@ Namespace Kasbi
                     End With
                 End If
 
-
-
             Catch
                 msgClientInfo.Text = Err.Description
             End Try
@@ -139,15 +139,24 @@ Namespace Kasbi
             Dim readerSales As SqlClient.SqlDataReader
             Dim ctrl As Kasbi.Sale 'ASP.sale_ascx 
             Dim ctrl1 As Kasbi.RebillingGrid 'ASP.rebillinggrid_ascx 
-            Dim s$, sale%, sDogovor$
-            Dim support, cto As Boolean
+            Dim s$, sale%, sDogovor$, sDogovorOld$
+            Dim support, cto, dogovorIsVisible, dogovorOldIsVisible, dogovorDopdIsVisible As Boolean
+            Dim controls As New List(Of Control)
+            Dim saleHaveCashregCount As Integer = 0
+            sDogovorOld = ""
+            sDogovor = ""
+
+
+
 
             Try
                 cmdSales = New SqlClient.SqlCommand("get_sales_by_customer")
                 cmdSales.CommandType = CommandType.StoredProcedure
                 cmdSales.Parameters.AddWithValue("@pi_customer_sys_id", cust)
                 readerSales = dbSQL.GetReader(cmdSales)
+
                 While readerSales.Read
+                    sDogovorOld = sDogovor
                     sale = readerSales.Item("sale_sys_id")
                     sDogovor = readerSales.Item("subdogovor")
                     If sDogovor.Trim.Length > 0 Then
@@ -182,9 +191,35 @@ Namespace Kasbi
                         b = False
                         rebill = False
                     End If
+
+
+
+                    If readerSales.Item("is_have_cashregister") = 1 Then
+                        If DateTime.Parse(readerSales.Item("sale_date").ToString()) > DateTime.Parse("20.02.2018") Then
+                            If saleHaveCashregCount = 0 Then
+                                dogovorIsVisible = True
+                                dogovorDopdIsVisible = False
+                                dogovorOldIsVisible = False
+                                saleHaveCashregCount += 1
+                            Else
+                                dogovorIsVisible = False
+                                dogovorDopdIsVisible = True
+                                dogovorOldIsVisible = False
+                            End If
+                        Else
+                            dogovorIsVisible = False
+                            dogovorDopdIsVisible = False
+                            dogovorOldIsVisible = True
+                        End If
+
+                    Else
+                        dogovorIsVisible = False
+                        dogovorDopdIsVisible = False
+                        dogovorOldIsVisible = False
+                    End If
+
                     If rebill Then
                         ctrl1 = CType(LoadControl("~/RebillingGrid.ascx"), Kasbi.RebillingGrid)
-
                         'ctrl1 = CType(LoadControl("~/Controls/RebillingGrid.ascx"), ASP.controls_rebillinggrid_ascx)
                         ctrl1.iSale = sale
                         ctrl1.iCustomer = cust
@@ -196,18 +231,34 @@ Namespace Kasbi
                             s = readerSales.Item("saler_info")
                         End If
                         CType(ctrl1.FindControl("Saler"), Label).Text = s
-                        CType(ctrl1.FindControl("lnkDogovor_Na_TO"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?rebilling=1&c=" & cust & "&s=" & sale & "&t=6")
-                        CType(ctrl1.FindControl("lnkDogovor_Na_TO_Dop"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?rebilling=1&c=" & cust & "&s=" & sale & "&t=57")
+                        If dogovorOldIsVisible Then
+                            CType(ctrl1.FindControl("lnkDogovor_Na_TO"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?rebilling=1&c=" & cust & "&s=" & sale & "&t=6")
+                            CType(ctrl1.FindControl("lnkDogovor_Na_TO_Dop"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?rebilling=1&c=" & cust & "&s=" & sale & "&t=57")
+                        Else
+                            CType(ctrl1.FindControl("lnkDogovor_Na_TO"), HyperLink).Visible = False
+                            CType(ctrl1.FindControl("lnkDogovor_Na_TO_Dop"), HyperLink).Visible = False
+                        End If
+                        If dogovorIsVisible Then
+                            CType(ctrl1.FindControl("lnkDogovor_Na_TO_2"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?c=" & cust & "&s=" & sale & "&t=58")
+                        Else
+                            CType(ctrl1.FindControl("lnkDogovor_Na_TO_2"), HyperLink).Visible = False
+
+                        End If
+
+                        If dogovorDopdIsVisible Then
+                            CType(ctrl1.FindControl("lnkDogovor_Na_TO_Dop_2"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?c=" & cust & "&s=" & sale & "&t=59")
+                        Else
+                            CType(ctrl1.FindControl("lnkDogovor_Na_TO_Dop_2"), HyperLink).Visible = False
+                        End If
                         CType(ctrl1.FindControl("lnkSpisok_KKM"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?rebilling=1&c=" & cust & "&s=" & sale & "&t=7")
                         CType(ctrl1.FindControl("lnkZayavlenie_IMNS"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?rebilling=1&c=" & cust & "&s=" & sale & "&t=18")
 
-                        If Not ctrl1 Is Nothing Then
-                            pnlSales.Controls.Add(ctrl1)
-                        End If
-                    Else
-
-                        ctrl = CType(LoadControl("~/sale.ascx"), Kasbi.Sale) 'ASP.sale_ascx)
-
+                            If Not ctrl1 Is Nothing Then
+                                controls.Add(ctrl1)
+                                'pnlSales.Controls.Add(ctrl1)
+                            End If
+                        Else
+                            ctrl = CType(LoadControl("~/sale.ascx"), Kasbi.Sale) 'ASP.sale_ascx)
                         ctrl.iSale = sale
                         ctrl.iCustomer = cust
                         ctrl.FindControl("btnConfirm").Visible = b
@@ -225,8 +276,27 @@ Namespace Kasbi
                         CType(ctrl.FindControl("lnkInvoice"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?c=" & cust & "&s=" & sale & "&t=1")
                         CType(ctrl.FindControl("lnkZayavlenieNaKniguKassira"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?c=" & cust & "&s=" & sale & "&t=2")
                         CType(ctrl.FindControl("lnkZayavlenie"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?c=" & cust & "&s=" & sale & "&t=3")
-                        CType(ctrl.FindControl("lnkDogovor_Na_TO"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?c=" & cust & "&s=" & sale & "&t=6")
-                        CType(ctrl.FindControl("lnkDogovor_Na_TO_Dop"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?c=" & cust & "&s=" & sale & "&t=57")
+                        If dogovorOldIsVisible Then
+                            CType(ctrl.FindControl("lnkDogovor_Na_TO"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?rebilling=0&c=" & cust & "&s=" & sale & "&t=6")
+                            CType(ctrl.FindControl("lnkDogovor_Na_TO_Dop"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?rebilling=0&c=" & cust & "&s=" & sale & "&t=57")
+                        Else
+                            CType(ctrl.FindControl("lnkDogovor_Na_TO"), HyperLink).Visible = False
+                            CType(ctrl.FindControl("lnkDogovor_Na_TO_Dop"), HyperLink).Visible = False
+                        End If
+
+                        If dogovorIsVisible Then
+                            CType(ctrl.FindControl("lnkDogovor_Na_TO_2"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?c=" & cust & "&s=" & sale & "&t=58")
+                        Else
+                            CType(ctrl.FindControl("lnkDogovor_Na_TO_2"), HyperLink).Visible = False
+
+                        End If
+
+                        If dogovorDopdIsVisible Then
+                            CType(ctrl.FindControl("lnkDogovor_Na_TO_Dop_2"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?c=" & cust & "&s=" & sale & "&t=59")
+                        Else
+                            CType(ctrl.FindControl("lnkDogovor_Na_TO_Dop_2"), HyperLink).Visible = False
+                        End If
+
                         CType(ctrl.FindControl("lnkSpisok_KKM"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?c=" & cust & "&s=" & sale & "&t=7")
 
                         CType(ctrl.FindControl("lnkTTN"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?c=" & cust & "&s=" & sale & "&t=5")
@@ -244,13 +314,20 @@ Namespace Kasbi
                         CType(ctrl.FindControl("lnkIzveschenie"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?vidplateza=0&c=" & cust & "&s=" & sale & "&t=41")
 
                         If Not ctrl Is Nothing Then
-                            pnlSales.Controls.Add(ctrl)
+                            controls.Add(ctrl)
+                            'pnlSales.Controls.Add(ctrl)
                         End If
                     End If
                     dolg = readerSales.Item("dolg")
                     support = (readerSales.Item("support") = 0) Or (readerSales.Item("cto") = 1)
                     cto = (readerSales.Item("cto") = 1)
                 End While
+
+                controls.Reverse()
+                For Each control As Control In controls
+                    pnlSales.Controls.Add(control)
+                Next
+
                 If support = False Then
                     lnkAddSupport.Enabled = False
                     'Else

@@ -7,33 +7,34 @@ Namespace Kasbi
 
 Partial  Class Sale
     Inherits System.Web.UI.UserControl
-    Dim dTotal As Double
-    Public iSale As Integer
-    Public iCustomer As Integer
+        Dim dTotal As Double
+        Public iSale As Integer
+        Public iCustomer As Integer
+        Public iSaleCount As Integer = 0
 
-    Const DocName0 = "InvoiceNDS.doc"
-    Const DocName1 = "Dogovor.doc"
-    Const DocName2 = "Zayavlenie_Na_Knigu_Kassira.doc"
-    Const DocName3 = "Zayavlenie.doc"
-    Const DocName4 = "Akt_Pokazaniy.doc"
-    Const DocName5 = "TTN.doc"
-    Const DocName6 = "Dogovor_Na_TO.doc"
-    Const DocName7 = "Spisok_KKM.doc"
-    Const DocName8 = "Teh_Zaklyuchenie.doc"
-    Const DocName9 = "Udostoverenie_Kassira.doc"
-    Const DocName17 = "Garantia.doc"
+        Const DocName0 = "InvoiceNDS.doc"
+        Const DocName1 = "Dogovor.doc"
+        Const DocName2 = "Zayavlenie_Na_Knigu_Kassira.doc"
+        Const DocName3 = "Zayavlenie.doc"
+        Const DocName4 = "Akt_Pokazaniy.doc"
+        Const DocName5 = "TTN.doc"
+        Const DocName6 = "Dogovor_Na_TO.doc"
+        Const DocName7 = "Spisok_KKM.doc"
+        Const DocName8 = "Teh_Zaklyuchenie.doc"
+        Const DocName9 = "Udostoverenie_Kassira.doc"
+        Const DocName17 = "Garantia.doc"
         Const DocName18 = "Zayavlenie_IMNS.doc"
         Const DocName41 = "Izveschenie.xls"
 
-    Private wrdApp As Word.ApplicationClass
-    Protected WithEvents radiobuttons As System.Web.UI.WebControls.Label
-    Protected WithEvents lblTotalCount As System.Web.UI.WebControls.Label
-    Private doc As Word.DocumentClass
+        Private wrdApp As Word.ApplicationClass
+        Protected WithEvents radiobuttons As System.Web.UI.WebControls.Label
+        Protected WithEvents lblTotalCount As System.Web.UI.WebControls.Label
+        Private doc As Word.DocumentClass
 
 #Region " Web Form Designer Generated Code "
 
-    'This call is required by the Web Form Designer.
-    <System.Diagnostics.DebuggerStepThrough()> Private Sub InitializeComponent()
+        'This call is required by the Web Form Designer.
+        <System.Diagnostics.DebuggerStepThrough()> Private Sub InitializeComponent()
 
     End Sub
 
@@ -105,7 +106,7 @@ Partial  Class Sale
 
                 Dim query As String
                 Try
-                    doc_num.Text = e.Item.DataItem("num_document")
+                    doc_num.Text = e.Item.DataItem("num_document").ToString()
                 Catch
                 End Try
 

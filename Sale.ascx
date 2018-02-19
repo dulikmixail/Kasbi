@@ -20,6 +20,7 @@
         <td colspan="2">
             <table width="100%">
                 <tr class="DetailField">
+                    
                     <td align=right colspan="8" class="SectionRow" width="100%">
                         Документы:&nbsp;&nbsp;&nbsp;
                         
@@ -66,6 +67,13 @@
                     </td>
                     <td class="SectionRow">
                         <asp:HyperLink ID="lnkDogovor_Na_TO_Dop" runat="server" Target="_blank">Дополнение&nbsp;к&nbsp;договору&nbsp;на&nbsp;ТО</asp:HyperLink>
+                    </td>
+                    <td class="SectionRow">
+                        <asp:HyperLink ID="lnkDogovor_Na_TO_2" runat="server" Target="_blank">Договор&nbsp;на&nbsp;тех.&nbsp;обслуживание (НОВЫЙ)</asp:HyperLink>
+                        
+                    </td>
+                    <td class="SectionRow">
+                        <asp:HyperLink ID="lnkDogovor_Na_TO_Dop_2" runat="server" Target="_blank">Дополнение&nbsp;к&nbsp;договору&nbsp;на&nbsp;ТО (НОВЫЙ)</asp:HyperLink>
                     </td>
                     <td><asp:Button Width="170" ID="add_new_goods" runat="server" Text="Внести оборудование" Visible="false" /></td>
                     <td class="SectionRow" align="right">

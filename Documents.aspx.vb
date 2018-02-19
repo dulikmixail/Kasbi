@@ -52,6 +52,8 @@ Namespace Kasbi
         Const DocName9 As String = "Udostoverenie_Kassira.doc"
         Const DocName10 As String = "Akt_Work.doc"
         Const DocName57 As String = "Dogovor_Na_TO_Dop.doc"
+        Const DocName58 As String = "Dogovor_Na_TO_2.doc"
+        Const DocName59 As String = "Dogovor_Na_TO_Dop_2.doc"
         'постановка на ТО
         Const DocName11 As String = "Akt_Pokazaniy_In.doc"
         Const DocName12 As String = "Teh_Zaklyuchenie_In.doc"
@@ -209,6 +211,8 @@ Namespace Kasbi
                     Case 55 : doc_path = DocName55
                     Case 56 : doc_path = DocName56
                     Case 57 : doc_path = DocName57
+                    Case 58 : doc_path = DocName58
+                    Case 59 : doc_path = DocName59
 
                     Case Else
                         WriteError("Неверные параметры")
@@ -1453,7 +1457,7 @@ Namespace Kasbi
                 If num_doc(k) = 57 Then
 
                     '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-                    'Договор на техническое обслуживание
+                    'Доп к договору на ТО
                     Try
                         Dim s$
 
@@ -1512,6 +1516,202 @@ Namespace Kasbi
                     End Try
 
                 End If
+
+                If num_doc(k) = 58 Then
+                    '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+                    'Договор на техническое обслуживание НОВЫЙ
+                    Try
+                        Dim s$
+
+                        docFullPath = path & DocName58
+
+                        fl = New IO.FileInfo(docFullPath)
+                        If (Not fl.Exists()) Or isRefresh Then
+                            If fl.Exists() Then
+                                Try
+                                    fl.Delete()
+                                Catch
+                                End Try
+                            End If
+
+                            IO.File.Copy(Server.MapPath("Templates/") & DocName58, docFullPath, True)
+
+                            doc = wrdApp.Documents.Open(docFullPath)
+
+                            doc.Bookmarks("CustomerName").Range.Text = customer_name
+                            doc.Bookmarks("BoosName").Range.Text = boos_name
+                            doc.Bookmarks("Registration").Range.Text = registration
+                            If ds.Tables("customer").Rows(0)("NDS") <> "" Then
+                                'doc.Bookmarks("NDS").Range.Text = ""
+                            End If
+
+                            cmd = New SqlClient.SqlCommand("get_cashregisters_by_owner")
+                            cmd.CommandType = CommandType.StoredProcedure
+                            cmd.Parameters.AddWithValue("@pi_owner_sys_id", customer)
+                            adapt = dbSQL.GetDataAdapter(cmd)
+                            If Not ds.Tables("goods") Is Nothing Then
+                                ds.Tables("goods").Clear()
+                            End If
+                            adapt.Fill(ds, "goods")
+
+                            'cmd = New SqlClient.SqlCommand("get_goods_info_by_sale")
+                            'cmd.CommandType = CommandType.StoredProcedure
+                            'cmd.Parameters.AddWithValue("@pi_sale_sys_id", sale)
+                            'adapt = dbSQL.GetDataAdapter(cmd)
+                            'If Not ds.Tables("goods") Is Nothing Then
+                            '    ds.Tables("goods").Clear()
+                            'End If
+                            'adapt.Fill(ds, "goods")
+
+                            Dim a As Integer = 0
+                            For i = 0 To ds.Tables("goods").Rows.Count - 1
+                                If ds.Tables("goods").Rows(i)("is_cashregister") Then
+                                    r2 = doc.Tables(1).Rows.Add(doc.Tables(1).Rows(a + 2))
+                                    a = a + 1
+                                    r2.Cells(1).Range.Text = a
+                                    r2.Cells(2).Range.Text = ds.Tables("goods").Rows(i)("good_name")
+                                    r2.Cells(3).Range.Text = add_nulls(ds.Tables("goods").Rows(i)("num_cashregister"))
+                                    r2.Cells(4).Range.Text = ds.Tables("goods").Rows(i)("set_place")
+                                    If rebill = 0 Then
+                                        r2.Cells(5).Range.Text = "Новый"
+                                    Else
+                                        r2.Cells(5).Range.Text = "Переоформлен"
+                                    End If
+                                End If
+                            Next
+
+                            s = customer_name.Trim
+                            sTmp = ds.Tables("customer").Rows(0)("customer_address")
+                            If customer_name.Trim.Length > 0 And sTmp.Trim.Length > 0 Then s = s & ", "
+                            s = s & sTmp.Trim
+                            If s.Length > 0 Then s = s & ". "
+                            sTmp = ds.Tables("customer").Rows(0)("bank")
+                            s = s & sTmp.Trim
+                            If sTmp.Trim.Length > 0 Then s = s & "."
+                            sTmp = ""
+                            If unn.Trim.Length > 0 Then s = s & " УНП"
+                            s = s & unn.Trim
+                            sTmp = ds.Tables("customer").Rows(0)("okpo")
+                            If sTmp.Trim.Length > 0 Then s = s & " ОКЮЛП "
+                            s = s & sTmp.Trim
+                            sTmp = ds.Tables("customer").Rows(0)("customer_phone")
+                            If sTmp.Trim.Length > 0 Then s = s & " Тел/ф "
+                            s = s & sTmp.Trim
+                            If sTmp.Trim.Length > 0 Or unn.Trim.Length > 0 Then s = s & "."
+                            doc.Bookmarks("Customer").Range.Text = s
+                            doc.Bookmarks("Dogovor").Range.Text = dogovor
+                            doc.Bookmarks("Date").Range.Text = sDate
+                            doc.Bookmarks("Date2").Range.Text = sDate & " по " & GetRussianDate(DateTime.Parse(sDate).AddYears(1))
+
+                            doc.Save()
+                        End If
+
+                    Catch
+                        WriteError("Договор на техническое обслуживание<br>" & Err.Description & "<br>" & Err.Erl & "<br>" & Err.LastDllError & "<br>" & Err.Number & "<br>" & Err.Source)
+                        ProcessDocuments = False
+                        GoTo ExitFunction
+                    End Try
+
+                End If
+
+                If num_doc(k) = 59 Then
+                    '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
+                    'Договор на техническое обслуживание НОВЫЙ
+                    Try
+                        Dim s$
+
+                        docFullPath = path & DocName59
+
+                        fl = New IO.FileInfo(docFullPath)
+                        If (Not fl.Exists()) Or isRefresh Then
+                            If fl.Exists() Then
+                                Try
+                                    fl.Delete()
+                                Catch
+                                End Try
+                            End If
+
+                            IO.File.Copy(Server.MapPath("Templates/") & DocName59, docFullPath, True)
+
+                            doc = wrdApp.Documents.Open(docFullPath)
+
+                            doc.Bookmarks("CustomerName").Range.Text = customer_name
+                            doc.Bookmarks("BoosName").Range.Text = boos_name
+                            doc.Bookmarks("Registration").Range.Text = registration
+                            If ds.Tables("customer").Rows(0)("NDS") <> "" Then
+                                'doc.Bookmarks("NDS").Range.Text = ""
+                            End If
+
+                            cmd = New SqlClient.SqlCommand("get_cashregisters_by_owner")
+                            cmd.CommandType = CommandType.StoredProcedure
+                            cmd.Parameters.AddWithValue("@pi_owner_sys_id", customer)
+                            adapt = dbSQL.GetDataAdapter(cmd)
+                            If Not ds.Tables("goods") Is Nothing Then
+                                ds.Tables("goods").Clear()
+                            End If
+                            adapt.Fill(ds, "goods")
+
+                            'cmd = New SqlClient.SqlCommand("get_goods_info_by_sale")
+                            'cmd.CommandType = CommandType.StoredProcedure
+                            'cmd.Parameters.AddWithValue("@pi_sale_sys_id", sale)
+                            'adapt = dbSQL.GetDataAdapter(cmd)
+                            'If Not ds.Tables("goods") Is Nothing Then
+                            '    ds.Tables("goods").Clear()
+                            'End If
+                            'adapt.Fill(ds, "goods")
+
+                            Dim a As Integer = 0
+                            For i = 0 To ds.Tables("goods").Rows.Count - 1
+                                If ds.Tables("goods").Rows(i)("is_cashregister") Then
+                                    r2 = doc.Tables(1).Rows.Add(doc.Tables(1).Rows(a + 2))
+                                    a = a + 1
+                                    r2.Cells(1).Range.Text = a
+                                    r2.Cells(2).Range.Text = ds.Tables("goods").Rows(i)("good_name")
+                                    r2.Cells(3).Range.Text = add_nulls(ds.Tables("goods").Rows(i)("num_cashregister"))
+                                    r2.Cells(4).Range.Text = ds.Tables("goods").Rows(i)("set_place")
+                                    If rebill = 0 Then
+                                        r2.Cells(5).Range.Text = "Новый"
+                                    Else
+                                        r2.Cells(5).Range.Text = "Переоформлен"
+                                    End If
+                                End If
+                            Next
+
+                            s = customer_name.Trim
+                            sTmp = ds.Tables("customer").Rows(0)("customer_address")
+                            If customer_name.Trim.Length > 0 And sTmp.Trim.Length > 0 Then s = s & ", "
+                            s = s & sTmp.Trim
+                            If s.Length > 0 Then s = s & ". "
+                            sTmp = ds.Tables("customer").Rows(0)("bank")
+                            s = s & sTmp.Trim
+                            If sTmp.Trim.Length > 0 Then s = s & "."
+                            sTmp = ""
+                            If unn.Trim.Length > 0 Then s = s & " УНП"
+                            s = s & unn.Trim
+                            sTmp = ds.Tables("customer").Rows(0)("okpo")
+                            If sTmp.Trim.Length > 0 Then s = s & " ОКЮЛП "
+                            s = s & sTmp.Trim
+                            sTmp = ds.Tables("customer").Rows(0)("customer_phone")
+                            If sTmp.Trim.Length > 0 Then s = s & " Тел/ф "
+                            s = s & sTmp.Trim
+                            If sTmp.Trim.Length > 0 Or unn.Trim.Length > 0 Then s = s & "."
+                            doc.Bookmarks("Customer").Range.Text = s
+                            doc.Bookmarks("Dogovor").Range.Text = dogovor
+                            doc.Bookmarks("Dogovor2").Range.Text = dogovor
+                            doc.Bookmarks("Dogovor3").Range.Text = dogovor
+                            doc.Bookmarks("Date").Range.Text = sDate
+
+                            doc.Save()
+                        End If
+
+                    Catch
+                        WriteError("Договор на техническое обслуживание<br>" & Err.Description & "<br>" & Err.Erl & "<br>" & Err.LastDllError & "<br>" & Err.Number & "<br>" & Err.Source)
+                        ProcessDocuments = False
+                        GoTo ExitFunction
+                    End Try
+
+                End If
+
 
                 If num_doc(k) = 7 Then
 
