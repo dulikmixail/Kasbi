@@ -239,14 +239,14 @@ Namespace Kasbi
                             CType(ctrl1.FindControl("lnkDogovor_Na_TO_Dop"), HyperLink).Visible = False
                         End If
                         If dogovorIsVisible Then
-                            CType(ctrl1.FindControl("lnkDogovor_Na_TO_2"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?c=" & cust & "&s=" & sale & "&t=58")
+                            CType(ctrl1.FindControl("lnkDogovor_Na_TO_2"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?rebilling=1&c=" & cust & "&s=" & sale & "&t=58")
                         Else
                             CType(ctrl1.FindControl("lnkDogovor_Na_TO_2"), HyperLink).Visible = False
 
                         End If
 
                         If dogovorDopdIsVisible Then
-                            CType(ctrl1.FindControl("lnkDogovor_Na_TO_Dop_2"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?c=" & cust & "&s=" & sale & "&t=59")
+                            CType(ctrl1.FindControl("lnkDogovor_Na_TO_Dop_2"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?rebilling=1&c=" & cust & "&s=" & sale & "&t=59")
                         Else
                             CType(ctrl1.FindControl("lnkDogovor_Na_TO_Dop_2"), HyperLink).Visible = False
                         End If
@@ -285,14 +285,14 @@ Namespace Kasbi
                         End If
 
                         If dogovorIsVisible Then
-                            CType(ctrl.FindControl("lnkDogovor_Na_TO_2"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?c=" & cust & "&s=" & sale & "&t=58")
+                            CType(ctrl.FindControl("lnkDogovor_Na_TO_2"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?rebilling=0&c=" & cust & "&s=" & sale & "&t=58")
                         Else
                             CType(ctrl.FindControl("lnkDogovor_Na_TO_2"), HyperLink).Visible = False
 
                         End If
 
                         If dogovorDopdIsVisible Then
-                            CType(ctrl.FindControl("lnkDogovor_Na_TO_Dop_2"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?c=" & cust & "&s=" & sale & "&t=59")
+                            CType(ctrl.FindControl("lnkDogovor_Na_TO_Dop_2"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?rebilling=0&c=" & cust & "&s=" & sale & "&t=59")
                         Else
                             CType(ctrl.FindControl("lnkDogovor_Na_TO_Dop_2"), HyperLink).Visible = False
                         End If
