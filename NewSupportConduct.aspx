@@ -762,7 +762,7 @@
                                                         <asp:Label ID="lbltxtDate" runat="server" Visible="False">c&nbsp;</asp:Label>
                                                     </td>
                                                     <td class="SubCaption" align="right">
-                                                        <asp:TextBox ID="txtDate" runat="server" Visible="False" BorderWidth="1px" BackColor="#F6F8FC"></asp:TextBox>
+                                                        <asp:TextBox ID="txtDate" runat="server" Visible="False" BorderWidth="1px" BackColor="#F6F8FC" ReadOnly="True"></asp:TextBox>
                                                     </td>
                                                     <td class="SubCaption" align="left">
                                                         <asp:Label ID="lbltxtPeriod1" runat="server" Visible="False">на&nbsp;</asp:Label>

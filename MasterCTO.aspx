@@ -8,44 +8,100 @@
 <head  runat ="server">
     <title>[ЦТО "Рамок"]</title>
 
-    <script language="javascript">
+    <script type="text/javascript">
 		function isFind(s)
 		{
 			var theform = document.frmInternalCTO;
 			theform.FindHidden.value = s;
 		}
     </script>
-<script language="javascript">
-  function ExportToExcel()        
-  {
-//      alert("ExportToExcel");
-//      var sHTML = window.document.getElementById("grdTO").outerhtml;
-//      alert(sHTML);
-//      var m_objExcel = new Excel.Application();
-//        var m_objBooks = (Excel.Workbooks)m_objExcel.Workbooks;
-//var m_objBook = (Excel._Workbook)(m_objBooks.Add());
-//m_objBook.HTMLProject.HTMLProjectItems("Sheet1").Text = sHTML;
-//      m_objBook.HTMLProject.RefreshDocument();
-//     m_objExcel.Visible = true;
-//      m_objExcel.UserControl = true; 
-////      var oXL = CreateObject("Excel.Application");
-////      alert(oXL);
-////      var oBook = oXL.Workbooks.Add();
-////      alert(oBook);
-////      oBook.HTMLProject.HTMLProjectItems("Sheet1").Text = sHTML;
-////      oBook.HTMLProject.RefreshDocument;
-////      oXL.Visible = true;
-////      oXL.UserControl = true;
-//	
-}
-</script>
+    <style type="text/css">
+/* The Modal (background) */
+        .modal {
+            display: none; /* Hidden by default */
+            position: fixed; /* Stay in place */
+            z-index: 1; /* Sit on top */
+            padding-top: 100px; /* Location of the box */
+            left: 0;
+            top: 0;
+            width: 100%; /* Full width */
+            height: 100%; /* Full height */
+            overflow: auto; /* Enable scroll if needed */
+            background-color: rgb(0,0,0); /* Fallback color */
+            background-color: rgba(0,0,0,0.4); /* Black w/ opacity */
+        }
+
+        /* Modal Content */
+        .modal-content {
+            position: relative;
+            background-color: #fefefe;
+            margin: auto;
+            padding: 0;
+            border: 1px solid #888;
+            width: 90%;
+            height: 80%;
+            box-shadow: 0 4px 8px 0 rgba(0,0,0,0.2),0 6px 20px 0 rgba(0,0,0,0.19);
+            -webkit-animation-name: animatetop;
+            -webkit-animation-duration: 0.4s;
+            animation-name: animatetop;
+            animation-duration: 0.4s
+        }
+
+        /* Add Animation */
+        @-webkit-keyframes animatetop {
+            from {top:-300px; opacity:0} 
+            to {top:0; opacity:1}
+        }
+
+        @keyframes animatetop {
+            from {top:-300px; opacity:0}
+            to {top:0; opacity:1}
+        }
+
+        /* The Close Button */
+        .close {
+            color: white;
+            float: right;
+            font-size: 28px;
+            font-weight: bold;
+        }
+
+        .close:hover,
+        .close:focus {
+            color: #000;
+            text-decoration: none;
+            cursor: pointer;
+        }
+
+        .modal-header {
+            padding: 2px 16px;
+            background-color: #d3c9c7;
+            color: white;
+            height: 9%;
+        }
+
+        .modal-body {
+            padding: 2px 16px;
+            height: 90%;
+            overflow: auto;
+        }
+
+        .modal-footer {
+            padding: 2px 16px;
+            background-color: #d3c9c7;
+            color: white;
+            height: 1%;
+        }
+
+    </style>
+
 
     <meta content="Microsoft Visual Studio.NET 7.0" name="GENERATOR">
     <meta content="Visual Basic 7.0" name="CODE_LANGUAGE">
     <meta content="JavaScript" name="vs_defaultClientScript">
     <meta content="http://schemas.microsoft.com/intellisense/ie5" name="vs_targetSchema">
     <link href="Styles.css" type="text/css" rel="stylesheet">
-    <script language="JavaScript" src="../scripts/datepicker.js"></script>
+    <script type="text/javascript" src="../scripts/datepicker.js"></script>
     <script type="text/javascript" src="../scripts/js/datetimepicker/jquery.min.js"></script>
     <script type="text/javascript" src="../scripts/js/datetimepicker/jquery.datetimepicker2.js"></script>
     <link type="text/css" href="../scripts/js/datetimepicker/jquery.datetimepicker.css" rel="stylesheet" />
@@ -53,7 +109,110 @@
 <body onscroll="javascript:document.all['scrollPos'].value=document.body.scrollTop;"
     bottommargin="0" leftmargin="0" topmargin="0" onload="javascript:document.body.scrollTop=document.all['scrollPos'].value;"
     rightmargin="0">
+
+
     <form id="frmInternalCTO" method="post" runat="server">
+    
+    <!-- The Modal -->
+    <div id="myModal" runat="server" class="modal" >
+
+        <!-- Modal content -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close">&times;</span>
+                <h3>Ошибки при проведени ТО</h3>
+            </div>
+            <div id="myModalBody" runat="server" class="modal-body">
+                <asp:DataGrid ID="grdError"  runat="server" AutoGenerateColumns="False"
+                         Width="100%" AllowSorting="true"  BorderColor="#CC9966" BorderWidth="1px"> 
+                        <ItemStyle CssClass="itemGrid"></ItemStyle>
+                        <HeaderStyle CssClass="headerGrid" ForeColor="#FFFFCC" ></HeaderStyle>
+                        <FooterStyle CssClass="footerGrid"></FooterStyle>
+                                            <Columns>
+                            <asp:TemplateColumn HeaderText="№">
+                                <ItemStyle HorizontalAlign="Center"></ItemStyle>
+                                <ItemTemplate>
+                                    <asp:HyperLink Target="_blank" id="lblNumGood" runat="server" ForeColor="black"></asp:HyperLink>
+                                    <asp:Label Visible="false" ID="lblGood" Text='<%# DataBinder.Eval(Container, "DataItem.good_sys_id") %>' runat="server"></asp:Label>
+                                </ItemTemplate>
+                            </asp:TemplateColumn>
+  
+                            <asp:TemplateColumn HeaderText="Товар" SortExpression="good_name" > 
+                                <ItemTemplate>
+                                    <asp:Label ID="lbledtGoodName" runat="server" Text='<%# DataBinder.Eval(Container, "DataItem.good_name") %>'>
+                                    </asp:Label>
+                                </ItemTemplate>
+                            </asp:TemplateColumn>
+                            <asp:TemplateColumn HeaderText="№" SortExpression="num_cashregister" > 
+                                  <ItemTemplate>
+                                    <asp:HyperLink ID="lbledtNum" Target="_blank" runat="server" Text='<%# DataBinder.Eval(Container, "DataItem.num_cashregister") %>'
+                                        NavigateUrl='<%# "CashOwners.aspx?" &amp; DataBinder.Eval(Container, "DataItem.good_sys_id") &amp; "&amp;cashowner="&amp; DataBinder.Eval(Container, "DataItem.payer_sys_id")%>'>
+                                    </asp:HyperLink>
+                                    <p style="margin-top: 5px; margin-bottom: 0px" align="center">
+                                        <asp:HyperLink ID="imgAlert" Target="_blank" runat="server" CssClass="CutImageLink" ImageUrl="Images/sign.gif"></asp:HyperLink>
+                                        <asp:HyperLink ID="imgSupportSKNO" Target="_blank" runat="server" CssClass="CutImageLink" ImageUrl="Images/skno.gif" Visible="false"
+                                            ToolTip="установлено СКНО">
+                                        </asp:HyperLink>
+                                        <asp:HyperLink ID="imgSupport" Target="_blank" runat="server" CssClass="CutImageLink" ImageUrl="Images/support.gif"
+                                         ToolTip="На техобслуживании">
+                                        </asp:HyperLink>
+                                        
+                                        <asp:HyperLink ID="imgRepair" Target="_blank" runat="server" CssClass="CutImageLink" NavigateUrl='<%# "Repair.aspx?" &amp; DataBinder.Eval(Container, "DataItem.good_sys_id") %>'
+                                            ImageUrl="Images/repair.gif" ToolTip="В ремонте">
+                                        </asp:HyperLink>
+                                        <asp:HyperLink ID="imgRepaired" Target="_blank" runat="server" CssClass="CutImageLink" NavigateUrl='<%# "Repair.aspx?" &amp; DataBinder.Eval(Container, "DataItem.good_sys_id") %>'
+                                            ImageUrl="Images/repaired.gif" ToolTip="Побывал в ремонте">
+                                        </asp:HyperLink></p>
+                                </ItemTemplate>
+                            </asp:TemplateColumn>
+                            <asp:TemplateColumn HeaderText="№ СК изг./ЦТО" SortExpression="num_control_cto" > 
+                                <HeaderStyle Font-Underline="True"></HeaderStyle>
+                                <ItemTemplate>
+                                    <asp:Label ID="lbledtControl" runat="server" Text='<%# DataBinder.Eval(Container, "DataItem.num_control_reestr") & "<br>" & DataBinder.Eval(Container, "DataItem.num_control_pzu") & "<br>" & DataBinder.Eval(Container, "DataItem.num_control_mfp")& "<br>" & DataBinder.Eval(Container, "DataItem.num_control_cp")& "<br>" & DataBinder.Eval(Container, "DataItem.num_control_cto")& "<br>" & DataBinder.Eval(Container, "DataItem.num_control_cto2")%>'>
+                                    </asp:Label>
+                                </ItemTemplate>
+                            </asp:TemplateColumn>
+                            <asp:TemplateColumn HeaderText="Место установки" SortExpression="place_rn_id"> 
+                                <HeaderStyle Font-Underline="True"></HeaderStyle>
+                                <ItemTemplate>
+                                    <asp:Label ID="lbledtPlace" runat="server" Text='<%# DataBinder.Eval(Container, "DataItem.set_place")%>'>
+                                    </asp:Label>
+                                    <br>
+                                    <asp:Label CssClass="SubTitleEditbox" ID="lblPlaceRegion" runat="server" Text='Район установки:'></asp:Label>
+                                    <b>
+                                        <asp:Label ID="lbledtPlaceRegion" runat="server" Text='<%# DataBinder.Eval(Container, "DataItem.place_region")%>'>
+                                        </asp:Label></b>
+                                </ItemTemplate>
+                            </asp:TemplateColumn>
+                            <asp:TemplateColumn HeaderText="Ошибка" SortExpression="lastTO">
+                                <ItemTemplate>
+                                    <asp:Label ID="lblToExeption" runat="server" ForeColor="red"></asp:Label>
+                                </ItemTemplate>
+                                <ItemStyle HorizontalAlign="Center" />
+                            </asp:TemplateColumn>
+                            <asp:TemplateColumn HeaderText="ТО" ItemStyle-HorizontalAlign="center">
+                                <ItemTemplate>
+                                    <p>
+                                        <asp:HyperLink ID="lnkStatus" Target="_blank" runat="server" NavigateUrl='<%# GetAbsoluteUrl("NewSupportConduct2.aspx?" &amp; DataBinder.Eval(Container, "DataItem.good_sys_id")) %>'>Посмотреть</asp:HyperLink>
+                                    </p>
+                                </ItemTemplate>
+                            </asp:TemplateColumn>
+
+                            <asp:TemplateColumn HeaderText="Ответственный" SortExpression="cto_master">
+                                <ItemTemplate>
+                                    <asp:Label ID="lblCto_master" runat="server"  Text='<%# DataBinder.Eval(Container, "DataItem.cto_master")%>'></asp:Label>
+                                </ItemTemplate>
+                                <ItemStyle HorizontalAlign="Center" />
+                            </asp:TemplateColumn>                            
+                        </Columns>
+
+                    </asp:DataGrid>
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+
+    </div>
         <uc1:Header ID="Header1" runat="server"></uc1:Header>
         <table class="PageTitle" cellspacing="1" cellpadding="2" width="100%" border="0">
             <tr>
@@ -155,7 +314,7 @@
             <tr>
                 <td align="left" colspan="2" height="15" valign="top" style="padding:5px; font-size:12px">
                 <div style="background-color:Silver; width:980; padding:5px">                         
-                <b>Укажите&nbsp;дату ТО:&nbsp;</b><asp:textbox id="tbxCloseDate" Runat="server" BorderWidth="1px"></asp:textbox>
+                <b>Дата&nbsp;проведения&nbsp;ТО:&nbsp;</b><asp:textbox id="tbxCloseDate" Runat="server" BorderWidth="1px"></asp:textbox><b>&nbsp;&nbsp;Закрываемый&nbsp;период:&nbsp;</b>
                     <%--<A href="javascript:showdatepicker('tbxCloseDate', 0, false,'MM.DD.YYYY')"><IMG alt="Date Picker" src="../Images/cal_date_picker.gif" border="0"></A>--%>
                                 <asp:DropDownList ID="lstMonth" runat="server" BorderWidth="1px" BackColor="#F6F8FC">
                                     <asp:ListItem Value="01">Январь</asp:ListItem>
@@ -399,7 +558,7 @@
                             <asp:TemplateColumn HeaderText="ТО" ItemStyle-HorizontalAlign="center">
                                 <ItemTemplate>
                                     <p>
-                                        <asp:HyperLink ID="lnkStatus" Target="_blank" runat="server" NavigateUrl='<%# GetAbsoluteUrl("NewSupportConduct2.aspx?" &amp; DataBinder.Eval(Container, "DataItem.goodto_sys_id")) %>'>Посмотреть</asp:HyperLink>
+                                        <asp:HyperLink ID="lnkStatus" Target="_blank" runat="server" NavigateUrl='<%# GetAbsoluteUrl("NewSupportConduct2.aspx?" &amp; DataBinder.Eval(Container, "DataItem.good_sys_id")) %>'>Посмотреть</asp:HyperLink>
                                     </p>
                                 </ItemTemplate>
                             </asp:TemplateColumn>
@@ -420,27 +579,49 @@
             </tr>
         </table>
 
-        <script type="text/javascript">
-
-            jQuery(function () {
-
-                jQuery('#tbxCloseDate').datetimepicker({
-                    lang: 'ru',
-                    timepicker: false,
-                    format: 'd.m.Y',
-                    closeOnDateSelect: true,
-                    scrollMonth: false,
-                });
-
-            });
-
-        </script>
-
+        
+    
         <uc1:Footer ID="Footer1" runat="server"></uc1:Footer>
-        <input id="scrollPos" type="hidden" value="0" name="scrollPos" runat="server">
-        <input lang="ru" id="CurrentPage" type="hidden" name="CurrentPage" runat="server">
-        <input lang="ru" id="Parameters" type="hidden" name="Parameters" runat="server">
-        <input id="FindHidden" type="hidden" name="FindHidden" runat="server">
+    <input id="scrollPos" type="hidden" value="0" name="scrollPos" runat="server"/>
+    <input lang="ru" id="CurrentPage" type="hidden" name="CurrentPage" runat="server"/>
+    <input lang="ru" id="Parameters" type="hidden" name="Parameters" runat="server"/>
+    <input id="FindHidden" type="hidden" name="FindHidden" runat="server"/>
     </form>
+
+<script type="text/javascript">
+
+    jQuery(function () {
+
+        jQuery('#tbxCloseDate').datetimepicker({
+            lang: 'ru',
+            timepicker: false,
+            format: 'd.m.Y',
+            closeOnDateSelect: true,
+            scrollMonth: false,
+        });
+
+    });
+
+    // Get the modal
+    var modal = document.getElementById('myModal');
+
+    // Get the <span> element that closes the modal
+    var span = document.getElementsByClassName("close")[0];
+
+    // When the user clicks on <span> (x), close the modal
+    span.onclick = function () {
+        modal.style.display = "none";
+    }
+
+    // When the user clicks anywhere outside of the modal, close it
+    window.onclick = function (event) {
+        if (event.target == modal) {
+            modal.style.display = "none";
+        }
+    }
+
+   
+
+</script>
 </body>
 </html>

@@ -1,42 +1,44 @@
+Imports service
+
 Namespace Kasbi
 
-Partial Class NewSupportConduct
+    Partial Class NewSupportConduct
         Inherits PageBase
 
 #Region " Web Form Designer Generated Code "
 
-    'This call is required by the Web Form Designer.
-    <System.Diagnostics.DebuggerStepThrough()> Private Sub InitializeComponent()
+        'This call is required by the Web Form Designer.
+        <System.Diagnostics.DebuggerStepThrough()> Private Sub InitializeComponent()
 
-    End Sub
-    Protected WithEvents lblCaptionKassir As System.Web.UI.WebControls.Label
-    Protected WithEvents lblKassir As System.Web.UI.WebControls.Label
-    Protected WithEvents Linkbutton2 As System.Web.UI.WebControls.LinkButton
-    Protected WithEvents Dropdownlist4 As System.Web.UI.WebControls.DropDownList
-    Protected WithEvents Linkbutton3 As System.Web.UI.WebControls.LinkButton
-    Protected WithEvents Dropdownlist5 As System.Web.UI.WebControls.DropDownList
-    Protected WithEvents Dropdownlist6 As System.Web.UI.WebControls.DropDownList
-    Protected WithEvents txtMarka_Cond_ZReport_in As System.Web.UI.WebControls.TextBox
-    Protected WithEvents txtMarka_Cond_ZReport_out As System.Web.UI.WebControls.TextBox
-    Protected WithEvents txtMarka_Cond_Itog_in As System.Web.UI.WebControls.TextBox
-    Protected WithEvents txtMarka_Cond_Itog_out As System.Web.UI.WebControls.TextBox
+        End Sub
+        Protected WithEvents lblCaptionKassir As System.Web.UI.WebControls.Label
+        Protected WithEvents lblKassir As System.Web.UI.WebControls.Label
+        Protected WithEvents Linkbutton2 As System.Web.UI.WebControls.LinkButton
+        Protected WithEvents Dropdownlist4 As System.Web.UI.WebControls.DropDownList
+        Protected WithEvents Linkbutton3 As System.Web.UI.WebControls.LinkButton
+        Protected WithEvents Dropdownlist5 As System.Web.UI.WebControls.DropDownList
+        Protected WithEvents Dropdownlist6 As System.Web.UI.WebControls.DropDownList
+        Protected WithEvents txtMarka_Cond_ZReport_in As System.Web.UI.WebControls.TextBox
+        Protected WithEvents txtMarka_Cond_ZReport_out As System.Web.UI.WebControls.TextBox
+        Protected WithEvents txtMarka_Cond_Itog_in As System.Web.UI.WebControls.TextBox
+        Protected WithEvents txtMarka_Cond_Itog_out As System.Web.UI.WebControls.TextBox
 
 
-    Private Sub Page_Init(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Init
-        'CODEGEN: This method call is required by the Web Form Designer
-        'Do not modify it using the code editor.
-        InitializeComponent()
-    End Sub
+        Private Sub Page_Init(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Init
+            'CODEGEN: This method call is required by the Web Form Designer
+            'Do not modify it using the code editor.
+            InitializeComponent()
+        End Sub
 
 #End Region
-    Dim iNumber%, iCash%
-    Dim sCaptionRemoveSupport As String = "Снять с ТО"
-    Dim sCaptionAddSupport As String = "Поставить на ТО"
-    Dim CurrentCustomer%, iNewCust%
+        Dim iNumber%, iCash%
+        Dim sCaptionRemoveSupport As String = "Снять с ТО"
+        Dim sCaptionAddSupport As String = "Поставить на ТО"
+        Dim CurrentCustomer%, iNewCust%
         Const ClearString$ = "-------"
-    Dim d As Documents
+        Dim d As Documents
         Dim dogovor$
-
+        Private serviceTo As ServiceTo = New ServiceTo()
 
         Private Overloads Sub Page_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
             Try
@@ -134,17 +136,22 @@ Partial Class NewSupportConduct
                 Dim d As Date = reader("end_date")
 
                 d.AddMonths(1)
-                lstMonth.SelectedIndex = d.Month - 1
+                'lstMonth.SelectedIndex = d.Month - 1
+                lstMonth.SelectedIndex = Now.Month - 1
                 If d.Year > 2002 And d.Year < 2019 Then
-                    lstYear.SelectedIndex = d.Year - 2003
+                    'lstYear.SelectedIndex = d.Year - 2003
+                    lstYear.SelectedIndex = Now.Year - 2003
                 Else
                     lstYear.SelectedIndex = 0
                 End If
                 'для приостановки
                 d = Now
-                lstMonthDelayIn.SelectedIndex = d.Month - 1
+
+                'lstMonthDelayIn.SelectedIndex = d.Month - 1
+                lstMonthDelayIn.SelectedIndex = Now.Month - 1
                 If d.Year > 2002 And d.Year < 2019 Then
-                    lstYearDelayIn.SelectedIndex = d.Year - 2003
+                    'lstYearDelayIn.SelectedIndex = d.Year - 2003
+                    lstYearDelayIn.SelectedIndex = Now.Year - 2003
                 Else
                     lstYearDelayIn.SelectedIndex = 0
                 End If
@@ -518,6 +525,7 @@ Partial Class NewSupportConduct
         Private Sub btnAdd_Click(ByVal sender As System.Object, ByVal e As System.Web.UI.ImageClickEventArgs) Handles btnAdd.Click
             'Ограничение прав на добавление
             If Session("rule17") = "1" Then
+
                 Dim adapt As SqlClient.SqlDataAdapter
                 Dim cmd As SqlClient.SqlCommand
                 Dim cust%
@@ -525,7 +533,6 @@ Partial Class NewSupportConduct
 
                 Dim d, dNow As DateTime
                 CurrentCustomer = Parameters.Value
-                dNow = New Date(Now.Year, Now.Month, 1)
 
                 If lstWorker.SelectedIndex <= 0 Then
                     msgAddSupportConduct.Text = "Выберите исполнителя !"
@@ -535,45 +542,68 @@ Partial Class NewSupportConduct
                 If rbTO.SelectedIndex = 2 And chkDelayTO.Checked = False Then
 
 
-                    Try
-                        cmd = New SqlClient.SqlCommand("get_supportconduct_end_date")
-                        cmd.CommandType = CommandType.StoredProcedure
-                        cmd.Parameters.AddWithValue("@pi_good_sys_id", iCash)
-                        adapt = dbSQL.GetDataAdapter(cmd)
-                        ds = New DataSet
-                        adapt.Fill(ds)
+                    'Try
+                    '    cmd = New SqlClient.SqlCommand("get_supportconduct_end_date")
+                    '    cmd.CommandType = CommandType.StoredProcedure
+                    '    cmd.Parameters.AddWithValue("@pi_good_sys_id", iCash)
+                    '    adapt = dbSQL.GetDataAdapter(cmd)
+                    '    ds = New DataSet
+                    '    adapt.Fill(ds)
 
-                        d = New Date(lstYear.SelectedItem.Value, lstMonth.SelectedItem.Value, 1)
+                    '    d = New Date(lstYear.SelectedItem.Value, lstMonth.SelectedItem.Value, 1)
+                    '    dClose = DateTime.Parse(txtCloseDate.Text)
+                    '    dClose_2 = New DateTime(dClose.Year, dClose.Month + 1, 1)
 
-                        If ds.Tables(0).Rows.Count > 0 Then
-                            With ds.Tables(0).DefaultView(0)
-                                Dim enddate As Date = .Item("end_date")
-                                Dim state As Integer = .Item("state")
-                                Select Case state
-                                    Case 1
-                                        If d < enddate Then
-                                            msgAddSupportConduct.Text = "Закрываемый вами период либо уже закрыт либо меньше последнего закрытого периода"
-                                            Exit Sub
-                                        End If
-                                    Case 6
-                                        If d < enddate Then
-                                            msgAddSupportConduct.Text = "Кассовый аппарат находиться на приостановке ТО"
-                                            Exit Sub
-                                        End If
-                                    Case 2 To 3
-                                        msgAddSupportConduct.Text = "Кассовый аппарат уже снят с ТО"
-                                        Exit Sub
-                                End Select
-                            End With
-                        End If
+                    '    dLastReportingDay = DateTime.Today
+                    '    While (dLastReportingDay.DayOfWeek <> 3)
+                    '        dLastReportingDay = dLastReportingDay.AddDays(-1)
+                    '    End While
 
-                        If (d > dNow) Then
-                            msgAddSupportConduct.Text = "Выбранный период больше текущего периода"
-                            Exit Sub
-                        End If
-                    Catch
-                        msgAddSupportConduct.Text = Err.Description
-                    End Try
+
+
+                    '    If ds.Tables(0).Rows.Count > 0 Then
+                    '        With ds.Tables(0).DefaultView(0)
+                    '            Dim enddate As Date = .Item("end_date")
+                    '            Dim state As Integer = .Item("state")
+                    '            Select Case state
+                    '                Case 1
+                    '                    If d < enddate Then
+                    '                        msgAddSupportConduct.Text = "Закрываемый вами период прошел или уже закрыт"
+                    '                        Exit Sub
+                    '                    End If
+                    '                Case 6
+                    '                    If d < enddate Then
+                    '                        msgAddSupportConduct.Text = "Кассовый аппарат находиться на приостановке ТО"
+                    '                        Exit Sub
+                    '                    End If
+                    '                Case 2 To 3
+                    '                    msgAddSupportConduct.Text = "Кассовый аппарат уже снят с ТО"
+                    '                    Exit Sub
+                    '            End Select
+                    '        End With
+                    '    End If
+
+                    '    If (d > dNow) Then
+                    '        msgAddSupportConduct.Text = "Выбранный период больше текущего периода"
+                    '        Exit Sub
+                    '    ElseIf (d < dNow) Then
+                    '        msgAddSupportConduct.Text = "Выбранный вами период уже прошел. Проводить ТО можно только за текуший период (" & dNow.ToString("MMMM") & " " & dNow.ToString("yyyy") & ")"
+                    '        Exit Sub
+                    '    ElseIf (dLastReportingDay > dClose Or dClose > DateTime.Today) Then
+                    '        msgAddSupportConduct.Text = "Дата закрытия должна входить в отчетный период. Действующий отчетный период на данный момент с " & dLastReportingDay.ToString("dd") & "." & dLastReportingDay.ToString("MM") & "." & dLastReportingDay.ToString("yy") & " по сегодняшний день"
+                    '        Exit Sub
+                    '    End If
+                    'Catch
+                    '    msgAddSupportConduct.Text = Err.Description
+                    'End Try
+
+                    d = New Date(lstYear.SelectedItem.Value, lstMonth.SelectedItem.Value, 1)
+
+                    If Not serviceTo.CheckCashHistoryItem(iCash, d, txtCloseDate.Text) Then
+                        msgAddSupportConduct.Text = serviceTo.GetLastExeption()
+                        Exit Sub
+                    End If
+
                     Try
                         cmd = New SqlClient.SqlCommand("insert_supportConduct")
                         cmd.CommandType = CommandType.StoredProcedure
@@ -921,7 +951,7 @@ Partial Class NewSupportConduct
                             s = s & sTmp & "<br>"
                         End If
 
-                        
+
                         dogovor = .Item("dogovor")
                     End With
                 End If
@@ -994,9 +1024,9 @@ Partial Class NewSupportConduct
 
                 'Dates
                 If Not IsDBNull(e.Item.DataItem("updateDate")) Then
-                    s = "Изменил:<br> " & e.Item.DataItem("updateUserID") & "<br>" & Format(e.Item.DataItem("updateDate"), "dd.MM.yyyy HH:mm")
+                    s = "Изменил:<br> " & e.Item.DataItem("updateUserID").ToString() & "<br>" & Format(e.Item.DataItem("updateDate"), "dd.MM.yyyy HH:mm")
                 Else
-                    s = "Изменил:<br> " & e.Item.DataItem("updateUserID")
+                    s = "Изменил:<br> " & e.Item.DataItem("updateUserID").ToString()
                 End If
                 CType(e.Item.FindControl("lblUpdateRec"), Label).Text = s
 
@@ -1264,7 +1294,7 @@ Partial Class NewSupportConduct
                 If Not IsDBNull(e.Item.DataItem("marka_cto_out")) AndAlso Trim(e.Item.DataItem("marka_cto_out")).Length > 0 Then
                     CType(e.Item.FindControl("txtedtMarkaCTOOut"), TextBox).Text = Trim(e.Item.DataItem("marka_cto_out"))
                 End If
-                
+
                 'Marka CTO2 in
                 If (e.Item.DataItem("good_type_sys_id")) = Config.Kasbi04_ID Or (e.Item.DataItem("good_type_sys_id")) = 1119 Then
                     If Not IsDBNull(e.Item.DataItem("marka_cto2_in")) AndAlso Trim(e.Item.DataItem("marka_cto2_in")).Length > 0 Then

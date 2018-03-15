@@ -1,8 +1,6 @@
-
-
 Imports System.IO
-Imports System.Net
-Imports Kasbi.Documents
+Imports Kasbi
+Imports service
 
 Namespace Kasbi
 
@@ -25,32 +23,31 @@ Namespace Kasbi
 
 #End Region
         Const ClearString = "-------"
-        Dim i
+        Dim i = 0, iNumGoodOfError = 0
         Dim iType%, j%
         Dim show_state = 0
         Dim to_made = 0
         Dim to_made_tmp = 0
         Dim to_made_cnd = 0
-
+        Private serviceTo As ServiceTo = New ServiceTo()
 
         Private Overloads Sub Page_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
             If Not IsPostBack Then
                 LoadPlaceRegion()
                 LoadEmployee()
                 LoadGoodType(1)
-
                 'Выставляем текущий месяц и год
                 lstMonth.SelectedIndex = Month(Now) - 1
                 lstYear.SelectedValue = Year(Now).ToString()
+                tbxCloseDate.Text = Date.Today().ToString("dd.MM.yyyy")
                 'If Year(Now) > 2002 And Year(Now) < 2019 Then
                 '    lstYear.SelectedIndex = Year(Now) - 2003
-                'Else
+                'ElselnkStatus
                 '    lstYear.SelectedIndex = 0
                 'End If
-
-
-
             End If
+
+            myModal.Style.Add("display", "none")
 
             If Session("User").permissions <> "4" Then
                 adm_panel.Visible = False
@@ -165,7 +162,7 @@ Namespace Kasbi
         End Sub
 
         Sub LoadEmployee()
-            
+
             Dim cmd As SqlClient.SqlCommand
             Dim adapt As SqlClient.SqlDataAdapter
             Dim ds As DataSet
@@ -641,69 +638,35 @@ Namespace Kasbi
             Dim cmd As SqlClient.SqlCommand
             Dim adapt As SqlClient.SqlDataAdapter
             Dim ds As DataSet
-            Dim j
-            Dim n = 0
-            Dim query = ""
+            Dim closedate As Date
 
             'Для(сервера)
-            Dim d = DateTime.Parse("01" & "." & lstMonth.SelectedValue & "." & lstYear.SelectedValue)
-            'Dim d = DateTime.Parse(lstMonth.SelectedValue & "." & "01" & "." & lstYear.SelectedValue)
+            Dim d As DateTime = DateTime.Parse("01" & "." & lstMonth.SelectedValue & "." & lstYear.SelectedValue)
+            Dim listOfIndexOfSelectCheckBox As ArrayList = New ArrayList()
 
-            'd = Format(d, "dd/MM/yyyy")
+            For k = 0 To grdTO.Items.Count - 1
+                If CType(grdTO.Items(k).FindControl("cbxSelect"), CheckBox).Checked Then
+                    listOfIndexOfSelectCheckBox.Add(k)
+                End If
+            Next
 
-            'Проверяем корректность введенных данных
-            Dim date1 As Date = Now
-            If (d >= Now) Then
-                msgCashregister.Text = "!!! Выбранный период больше текущего"
-                Exit Sub
-            End If
+            If listOfIndexOfSelectCheckBox.Count <> 0 Then
 
-            If tbxCloseDate.Text = "" Then
-                msgCashregister.Text = "!!! Вы не указали дату проведения ТО"
-                Exit Sub
-            End If
+                'Проверяем корректность введенных данных
+                If Not serviceTo.CheckDate(d, tbxCloseDate.Text) Then
+                    msgCashregister.Text = serviceTo.GetLastExeption()
+                    Exit Sub
+                End If
 
-            'Для сервера
-            Dim parce = Split(tbxCloseDate.Text, ".")
-            'Dim closedate = DateTime.Parse(parce(1) & "." & parce(0) & "." & parce(2))
-            Dim closedate = DateTime.Parse(parce(0) & "." & parce(1) & "." & parce(2))
-            'Dim closedate = DateTime.Parse(tbxCloseDate.Text)
+                closedate = DateTime.Parse(tbxCloseDate.Text)
 
-            'убрал пока
-            'closedate = Format(closedate, "dd/MM/yyyy")
-
-            For j = 0 To grdTO.Items.Count - 1
-                If CType(grdTO.Items(j).FindControl("cbxSelect"), CheckBox).Checked = True And (grdTO.Items(j).BackColor <> Drawing.Color.FromArgb(250, 210, 210)) Then
-                    'тут вставляем проведение ТО
-                    'проверяем, проводилось ли уже в этом месяце:
-
-                    Dim reader As SqlClient.SqlDataReader
-                    query = "SELECT TOP 1 start_date FROM cash_history WHERE good_sys_id='" & grdTO.DataKeys.Item(j) & "' AND state='1' AND start_date='" & d & "' ORDER by sys_id DESC"
-                    Dim sample_date = ""
-                    reader = dbSQL.GetReader(query)
-                    If reader.Read() Then
-                        Try
-                            sample_date = reader.Item(0)
-                            'MsgBox(sample_date)
-                        Catch
-                        End Try
-                    Else
-                    End If
-                    reader.Close()
-
-                    d = DateTime.Parse("01" & "." & lstMonth.SelectedValue & "." & lstYear.SelectedValue)
-                    d = Format(d, "dd/MM/yyyy")
-                    'MsgBox(sample_date & " --- " & d)
-
-                    If sample_date <> d Then
-                        'MsgBox(sample_date & " --- " & d)
-                        d = DateTime.Parse("01" & "." & lstMonth.SelectedValue & "." & lstYear.SelectedValue)
-                        'd = Format(d, "dd/MM/yyyy")
-
+                Dim kkmDs As DataSet = CType(Session("KKM_ds"), DataSet)
+                For Each index As Integer In listOfIndexOfSelectCheckBox
+                    If serviceTo.CheckCashHistoryItem(Integer.Parse(grdTO.DataKeys.Item(index).ToString()), d, tbxCloseDate.Text) Then
                         cmd = New SqlClient.SqlCommand("insert_TO")
                         cmd.CommandType = CommandType.StoredProcedure
 
-                        cmd.Parameters.AddWithValue("@pi_good_sys_id", grdTO.DataKeys.Item(j))
+                        cmd.Parameters.AddWithValue("@pi_good_sys_id", grdTO.DataKeys.Item(index))
                         cmd.Parameters.AddWithValue("@pi_start_date", d)
                         cmd.Parameters.AddWithValue("@pi_executor", Session("User").sys_id)
                         cmd.Parameters.AddWithValue("@pi_close_date", closedate)
@@ -711,16 +674,37 @@ Namespace Kasbi
                         adapt = dbSQL.GetDataAdapter(cmd)
                         ds = New DataSet
                         adapt.Fill(ds)
+
                     End If
 
+                Next
+
+                Dim dv As DataView = New DataView(kkmDs.Tables(0))
+                Dim filter As String = String.Empty
+                If serviceTo.GetListToExeption().Count <> 0 Then
+                    filter = "good_sys_id in (" & String.Join(", ", serviceTo.GetListStringGoodSysId()) & ")"
                 End If
-            Next
+
+
+                dv.RowFilter = filter
+                grdError.DataSource = dv
+                grdError.DataKeyField = "good_sys_id"
+                grdError.DataBind()
+
+                If serviceTo.GetListToExeption().Count <> 0 Then
+                    myModal.Style.Add("display", "block")
+                End If
+            Else
+                msgCashregister.Text = "Выберите кассовый аппарат, которому хотите провести ТО"
+                Exit Sub
+            End If
+
 
             If chk_show_torg.Checked = True Then
                 If (d <= Now) Then
                     For j = 0 To grdTO_prod.Items.Count - 1
                         If CType(grdTO_prod.Items(j).FindControl("cbxSelect"), CheckBox).Checked = True And (grdTO_prod.Items(j).BackColor <> Drawing.Color.FromArgb(250, 210, 210)) Then
-
+                            closedate = DateTime.Parse(tbxCloseDate.Text)
                             cmd = New SqlClient.SqlCommand("insert_prod_TO")
                             cmd.CommandType = CommandType.StoredProcedure
 
@@ -743,6 +727,18 @@ Namespace Kasbi
             End If
             bind(Session("Filter"))
         End Sub
+
+        Private Sub grdError_ItemDataBound(ByVal sender As System.Object, ByVal e As System.Web.UI.WebControls.DataGridItemEventArgs) Handles grdError.ItemDataBound
+            If e.Item.ItemType = ListItemType.Item Or e.Item.ItemType = ListItemType.AlternatingItem Then
+                iNumGoodOfError += 1
+                CType(e.Item.FindControl("lblNumGood"), HyperLink).Text = iNumGoodOfError.ToString()
+                CType(e.Item.FindControl("lblToExeption"), Label).Text = serviceTo.GetExeptionTextByGoodId(CInt(CType(e.Item.FindControl("lblGood"), Label).Text))
+            End If
+
+        End Sub
+
+
+
 
         Protected Sub lnkDelTO_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles lnkDelTO.Click
             Dim adapt As SqlClient.SqlDataAdapter
