@@ -1,5 +1,7 @@
 Imports System.IO
 Imports Microsoft.Office.Interop.Excel
+Imports Microsoft.VisualBasic.FileIO
+Imports Microsoft.VisualBasic.FileIO.FileSystem
 
 Namespace Kasbi
 
@@ -37,7 +39,7 @@ Namespace Kasbi
         Dim countRest% = 0
         Dim groupName$ = ""
         Dim good_sys_id = ""
-        Dim WithEvents oExcel As Application
+        Dim WithEvents oExcel As Microsoft.Office.Interop.Excel.Application
         Dim WithEvents oBook As Workbook
         Dim WithEvents oSheet As Worksheet
 
@@ -95,7 +97,7 @@ Namespace Kasbi
             Catch
             End Try
         End Sub
-        
+
         Protected Sub lnk_search_cash_Click(sender As Object, e As EventArgs) Handles lnk_search_cash.Click
 
             If txtRequest.Text.Trim.Length > 5 Then
@@ -215,9 +217,9 @@ Namespace Kasbi
         End Sub
 
         Private Sub radioButtonListExport_SelectedIndexChanged(sender As Object, e As EventArgs) Handles radioButtonListExport.SelectedIndexChanged
-            If radioButtonListExport.SelectedValue = "toHistoryByEmployeeExcel" Or radioButtonListExport.SelectedValue = "toHistoryByEmployee"
+            If radioButtonListExport.SelectedValue = "toHistoryByEmployeeExcel" Or radioButtonListExport.SelectedValue = "toHistoryByEmployee" Then
                 lstEmployee.Visible = True
-            Else 
+            Else
                 lstEmployee.Visible = False
             End If
         End Sub
@@ -581,23 +583,117 @@ Namespace Kasbi
 
         End Sub
 
+        Sub createAndSendFileToByExecutor(ds As DataSet, fileName As String)
+            Dim docPath, savePath As String
+            Dim file As IO.FileInfo
+            Dim drs() As Data.DataRow
+            Dim iFirstTableRow = 2
+
+            docPath = Server.MapPath("Templates\") & "TO_by_executor.xlsx"
+            savePath = Server.MapPath("Docs") & "\TO\" & Session("User").sys_id & "\" & fileName
+            CopyFile(docPath, savePath, UIOption.OnlyErrorDialogs, UICancelOption.ThrowException)
+
+            oExcel = New ApplicationClass()
+            oExcel.DisplayAlerts = False
+            oBook = oExcel.Workbooks.Open(savePath)
+            oSheet = oBook.ActiveSheet
+
+            drs = ds.Tables(0).Select()
+
+            Dim selection As Range = oSheet.Range("B7:D13")
+            selection.Font.Size = 16
+            selection.Cut(selection.Offset(drs.Length, 0))
+
+            For i As Integer = 0 To drs.Length - 1
+                oSheet.Cells(iFirstTableRow + i, 1).Value = i + 1
+                oSheet.Cells(iFirstTableRow + i, 2).Value = drs(i).Item(0)
+                oSheet.Cells(iFirstTableRow + i, 3).Value = drs(i).Item(1)
+                oSheet.Cells(iFirstTableRow + i, 4).Value = drs(i).Item(2)
+                oSheet.Cells(iFirstTableRow + i, 5).Value = drs(i).Item(3)
+                oSheet.Cells(iFirstTableRow + i, 6).Value = drs(i).Item(5)
+                oSheet.Cells(iFirstTableRow + i, 7).Value = drs(i).Item(9)
+            Next
+
+            oSheet.Range("A" & iFirstTableRow & ":G" & drs.Length + 1).Borders.LineStyle = 1
+
+            oBook.Close(True, savePath, True)
+            oExcel.Quit()
+
+
+            file = New System.IO.FileInfo(savePath)
+            If file.Exists Then
+                Response.Clear()
+                Response.AddHeader("Content-Disposition", "attachment; filename=" & file.Name)
+                Response.AddHeader("Content-Length", file.Length.ToString())
+                Response.ContentType = "application/octet-stream"
+                Response.WriteFile(savePath)
+                Response.End()
+            Else
+                Response.Write("This file does not exist.")
+            End If
+
+        End Sub
+
+        Sub createAndSendFileRemovedFromTo(ds As DataSet, fileName As String)
+            Dim docPath, savePath As String
+            Dim file As IO.FileInfo
+            Dim drs() As Data.DataRow
+            Dim iFirstTableRow = 2
+
+            docPath = Server.MapPath("Templates\") & "removed_from_TO.xlsx"
+            savePath = Server.MapPath("Docs") & "\TO\" & Session("User").sys_id & "\" & fileName
+            CopyFile(docPath, savePath, UIOption.OnlyErrorDialogs, UICancelOption.ThrowException)
+
+            oExcel = New ApplicationClass()
+            oExcel.DisplayAlerts = False
+            oBook = oExcel.Workbooks.Open(savePath)
+            oSheet = oBook.ActiveSheet
+
+            drs = ds.Tables(0).Select()
+
+            Dim selection As Range = oSheet.Range("B7:D13")
+            selection.Font.Size = 16
+            selection.Cut(selection.Offset(drs.Length, 0))
+
+            For i As Integer = 0 To drs.Length - 1
+                oSheet.Cells(iFirstTableRow + i, 1).Value = i + 1
+                oSheet.Cells(iFirstTableRow + i, 2).Value = drs(i).Item(3)
+                oSheet.Cells(iFirstTableRow + i, 3).Value = drs(i).Item(0)
+                oSheet.Cells(iFirstTableRow + i, 4).Value = drs(i).Item(1)
+                oSheet.Cells(iFirstTableRow + i, 5).Value = drs(i).Item(2)
+            Next
+
+            oSheet.Range("A" & iFirstTableRow & ":E" & drs.Length + 1).Borders.LineStyle = 1
+
+            oBook.Close(True, savePath, True)
+            oExcel.Quit()
+
+
+            file = New System.IO.FileInfo(savePath)
+            If file.Exists Then
+                Response.Clear()
+                Response.AddHeader("Content-Disposition", "attachment; filename=" & file.Name)
+                Response.AddHeader("Content-Length", file.Length.ToString())
+                Response.ContentType = "application/octet-stream"
+                Response.WriteFile(savePath)
+                Response.End()
+            Else
+                Response.Write("This file does not exist.")
+            End If
+
+        End Sub
 
         Sub export_TO_by_executor_to_Excel()
             Dim cmd As SqlClient.SqlCommand
 
             Dim adapt As SqlClient.SqlDataAdapter
             Dim ds As DataSet
-            Dim docPath As String
-            Dim file As IO.FileInfo
-            Dim fileNotBusy As Boolean
-            Dim dt As Data.DataTable
-            Dim drs() As Data.DataRow
+
             startdate = DateTime.Parse(tbxBeginDate.Text)
             enddate = DateTime.Parse(tbxEndDate.Text)
 
             Dim startdate2 = DateTime.Parse(tbxBeginDate.Text + " 00:00:00")
             Dim enddate2 = DateTime.Parse(tbxEndDate.Text + " 23:59:59")
-
 
             cmd = New SqlClient.SqlCommand("get_TO_by_executor")
             cmd.CommandType = CommandType.StoredProcedure
@@ -612,58 +708,11 @@ Namespace Kasbi
             cmd.Parameters.AddWithValue("@pi_state", 1)
             cmd.Parameters.AddWithValue("@pi_employee_sys_id", lstEmployee.SelectedValue)
 
-
             adapt = dbSQL.GetDataAdapter(cmd)
             ds = New DataSet
             adapt.Fill(ds)
 
-            oExcel = New ApplicationClass()
-            oExcel.DisplayAlerts = False
-            oBook = oExcel.Workbooks.Add
-            oSheet = oBook.Worksheets(1)
-            oSheet.Columns("A").ColumnWidth = 30
-            oSheet.Columns("B").ColumnWidth = 20
-            oSheet.Columns("C").ColumnWidth = 50
-            oSheet.Columns("D").ColumnWidth = 15
-            oSheet.Columns("E").ColumnWidth = 15
-            oSheet.Columns("F").ColumnWidth = 15
-            oSheet.Rows("1").Font.Bold = True
-            oSheet.Range("A1").Value = "Исполнитель"
-            oSheet.Range("B1").Value = "Дата проведения ТО"
-            oSheet.Range("C1").Value = "Контрагент"
-            oSheet.Range("D1").Value = "УНП"
-            oSheet.Range("E1").Value = "Номер ККМ"
-            oSheet.Range("F1").Value = "Район установки"
-
-            dt = ds.Tables(0)
-            drs = dt.Select()
-
-            For i As Integer = 0 To drs.Length - 1
-                oSheet.Range("A" & i + 2).Value() = drs(i).Item(0)
-                oSheet.Range("B" & i + 2).Value() = drs(i).Item(1)
-                oSheet.Range("C" & i + 2).Value() = drs(i).Item(2)
-                oSheet.Range("D" & i + 2).Value() = drs(i).Item(3)
-                oSheet.Range("E" & i + 2).Value() = drs(i).Item(5)
-                oSheet.Range("F" & i + 2).Value() = drs(i).Item(9)
-            Next
-
-            docPath = Server.MapPath("XML") & "\TO_by_executor.xlsx"
-            oBook.Close(True, docPath, True)
-            oExcel.Quit
-
-            file = New System.IO.FileInfo(docPath)
-            If file.Exists Then 'set appropriate headers
-                Response.Clear()
-                Response.AddHeader("Content-Disposition", "attachment; filename=" & file.Name)
-                Response.AddHeader("Content-Length", file.Length.ToString())
-                Response.ContentType = "application/octet-stream"
-                Response.WriteFile(docPath)
-                Response.End() 'if file does not exist
-            Else
-                Response.Write("This file does not exist.")
-            End If
-
-
+            createAndSendFileToByExecutor(ds, "TO_by_executor.xlsx")
         End Sub
 
         Sub export_TO_Special_Rules_to_Excel()
@@ -676,12 +725,12 @@ Namespace Kasbi
             Dim fileNotBusy As Boolean
             Dim dt As Data.DataTable
             Dim drs() As Data.DataRow
+
             startdate = DateTime.Parse(tbxBeginDate.Text)
             enddate = DateTime.Parse(tbxEndDate.Text)
 
             Dim startdate2 = DateTime.Parse(tbxBeginDate.Text + " 00:00:00")
             Dim enddate2 = DateTime.Parse(tbxEndDate.Text + " 23:59:59")
-
 
             cmd = New SqlClient.SqlCommand("get_TO_special_rules")
             cmd.CommandType = CommandType.StoredProcedure
@@ -695,63 +744,17 @@ Namespace Kasbi
             cmd.Parameters.AddWithValue("@isNotWork", 0)
             cmd.Parameters.AddWithValue("@pi_state", 1)
 
-
             adapt = dbSQL.GetDataAdapter(cmd)
             ds = New DataSet
             adapt.Fill(ds)
 
-            oExcel = New ApplicationClass()
-            oExcel.DisplayAlerts = False
-            oBook = oExcel.Workbooks.Add
-            oSheet = oBook.Worksheets(1)
-            oSheet.Columns("A").ColumnWidth = 30
-            oSheet.Columns("B").ColumnWidth = 20
-            oSheet.Columns("C").ColumnWidth = 50
-            oSheet.Columns("D").ColumnWidth = 15
-            oSheet.Columns("E").ColumnWidth = 15
-            oSheet.Columns("F").ColumnWidth = 15
-            oSheet.Rows("1").Font.Bold = True
-            oSheet.Range("A1").Value = "Исполнитель"
-            oSheet.Range("B1").Value = "Дата проведения ТО"
-            oSheet.Range("C1").Value = "Контрагент"
-            oSheet.Range("D1").Value = "УНП"
-            oSheet.Range("E1").Value = "Номер ККМ"
-            oSheet.Range("F1").Value = "Район установки"
-
-            dt = ds.Tables(0)
-            drs = dt.Select()
-
-            For i As Integer = 0 To drs.Length - 1
-                oSheet.Range("A" & i + 2).Value() = drs(i).Item(0)
-                oSheet.Range("B" & i + 2).Value() = drs(i).Item(1)
-                oSheet.Range("C" & i + 2).Value() = drs(i).Item(2)
-                oSheet.Range("D" & i + 2).Value() = drs(i).Item(3)
-                oSheet.Range("E" & i + 2).Value() = drs(i).Item(5)
-                oSheet.Range("F" & i + 2).Value() = drs(i).Item(9)
-            Next
-
-            docPath = Server.MapPath("XML") & "\TO_special_rules.xlsx"
-            oBook.Close(True, docPath, True)
-            oExcel.Quit()
-
-            file = New System.IO.FileInfo(docPath)
-            If file.Exists Then 'set appropriate headers
-                Response.Clear()
-                Response.AddHeader("Content-Disposition", "attachment; filename=" & file.Name)
-                Response.AddHeader("Content-Length", file.Length.ToString())
-                Response.ContentType = "application/octet-stream"
-                Response.WriteFile(docPath)
-                Response.End() 'if file does not exist
-            Else
-                Response.Write("This file does not exist.")
-            End If
-
+            createAndSendFileToByExecutor(ds, "TO_by_executor_sr.xlsx")
 
         End Sub
 
         Sub export_removed_from_TO_to_Excel()
             Dim cmd As SqlClient.SqlCommand
-            
+
             Dim adapt As SqlClient.SqlDataAdapter
             Dim ds As DataSet
             Dim docPath As String
@@ -780,62 +783,63 @@ Namespace Kasbi
             ds = New DataSet
             adapt.Fill(ds)
 
-            oExcel = New ApplicationClass()
-            oExcel.DisplayAlerts = False
-            oBook = oExcel.Workbooks.Add
-            oSheet = oBook.Worksheets(1)
-            oSheet.Columns("A").ColumnWidth = 70
-            oSheet.Columns("B").ColumnWidth = 15
-            oSheet.Columns("C").ColumnWidth = 15
-            oSheet.Columns("D").ColumnWidth = 20
-            oSheet.Rows("1").Font.Bold = True
-            oSheet.Range("A1").Value = "Контрагент"
-            oSheet.Range("B1").Value = "УНП"
-            oSheet.Range("C1").Value = "Номер ККМ"
-            oSheet.Range("D1").Value = "Дата снятия с ТО"
+            'oExcel = New Microsoft.Office.Interop.Excel.ApplicationClass()
+            'oExcel.DisplayAlerts = False
+            'oBook = oExcel.Workbooks.Add
+            'oSheet = oBook.Worksheets(1)
+            'oSheet.Columns("A").ColumnWidth = 70
+            'oSheet.Columns("B").ColumnWidth = 15
+            'oSheet.Columns("C").ColumnWidth = 15
+            'oSheet.Columns("D").ColumnWidth = 20
+            'oSheet.Rows("1").Font.Bold = True
+            'oSheet.Range("A1").Value = "Контрагент"
+            'oSheet.Range("B1").Value = "УНП"
+            'oSheet.Range("C1").Value = "Номер ККМ"
+            'oSheet.Range("D1").Value = "Дата снятия с ТО"
 
-            dt = ds.Tables(0)
-            drs = dt.Select()
-            
-            For i As Integer = 0 To drs.Length - 1
-                oSheet.Range("A" & i+2).Value() = drs(i).Item(0)
-                oSheet.Range("B" & i+2).Value() = drs(i).Item(1)
-                oSheet.Range("C" & i+2).Value() = drs(i).Item(2)
-                oSheet.Range("D" & i+2).Value() = drs(i).Item(3)
-            Next
-            
-            docPath = Server.MapPath("XML") & "\removed_from_TO.xlsx"
-            oBook.Close(True, docPath, True)
-            oExcel.Quit
+            'dt = ds.Tables(0)
+            'drs = dt.Select()
 
-            file = New System.IO.FileInfo(docPath)
-            If file.Exists Then 'set appropriate headers
-                Response.Clear()
-                Response.AddHeader("Content-Disposition", "attachment; filename=" & file.Name)
-                Response.AddHeader("Content-Length", file.Length.ToString())
-                Response.ContentType = "application/octet-stream"
-                Response.WriteFile(docPath)
-                Response.End 'if file does not exist
-            Else
-                Response.Write("This file does not exist.")
-            End If
+            'For i As Integer = 0 To drs.Length - 1
+            '    oSheet.Range("A" & i + 2).Value() = drs(i).Item(0)
+            '    oSheet.Range("B" & i + 2).Value() = drs(i).Item(1)
+            '    oSheet.Range("C" & i + 2).Value() = drs(i).Item(2)
+            '    oSheet.Range("D" & i + 2).Value() = drs(i).Item(3)
+            'Next
 
-            
+            'docPath = Server.MapPath("XML") & "\removed_from_TO.xlsx"
+            'oBook.Close(True, docPath, True)
+            'oExcel.Quit()
+
+            'file = New System.IO.FileInfo(docPath)
+            'If file.Exists Then 'set appropriate headers
+            '    Response.Clear()
+            '    Response.AddHeader("Content-Disposition", "attachment; filename=" & file.Name)
+            '    Response.AddHeader("Content-Length", file.Length.ToString())
+            '    Response.ContentType = "application/octet-stream"
+            '    Response.WriteFile(docPath)
+            '    Response.End() 'if file does not exist
+            'Else
+            '    Response.Write("This file does not exist.")
+            'End If
+
+            createAndSendFileRemovedFromTo(ds, "removed_from_TO.xlsx")
+
         End Sub
 
-        Public Function IsFileInUse(filename As String) As Boolean 
-            Dim Locked As Boolean = False 
-            Try 
+        Public Function IsFileInUse(filename As String) As Boolean
+            Dim Locked As Boolean = False
+            Try
                 'Open the file in a try block in exclusive mode.  
                 'If the file is in use, it will throw an IOException. 
-                Dim fs As FileStream = File.Open(filename, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None) 
-                fs.Close() 
+                Dim fs As FileStream = File.Open(filename, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None)
+                fs.Close()
                 ' If an exception is caught, it means that the file is in Use 
-            Catch ex As IOException 
-                Locked = True 
-            End Try 
-            Return Locked 
-        End Function 
+            Catch ex As IOException
+                Locked = True
+            End Try
+            Return Locked
+        End Function
 
 
         Protected Sub lnk_export_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles lnk_export.Click

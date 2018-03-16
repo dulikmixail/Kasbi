@@ -185,10 +185,10 @@
         </script>
         
         <uc1:Footer ID="Footer1" runat="server"></uc1:Footer>
-        <input id="scrollPos" type="hidden" value="0" name="scrollPos" runat="server">
-        <input lang="ru" id="CurrentPage" type="hidden" name="CurrentPage" runat="server">
-        <input lang="ru" id="Parameters" type="hidden" name="Parameters" runat="server">
-        <input id="FindHidden" type="hidden" name="FindHidden" runat="server">
+        <input id="scrollPos" type="hidden" value="0" name="scrollPos" runat="server"/>
+        <input lang="ru" id="CurrentPage" type="hidden" name="CurrentPage" runat="server"/>
+        <input lang="ru" id="Parameters" type="hidden" name="Parameters" runat="server"/>
+        <input id="FindHidden" type="hidden" name="FindHidden" runat="server"/>
     </form>
 </body>
 </html>
