@@ -591,7 +591,7 @@ Namespace Kasbi
 
             docPath = Server.MapPath("Templates\") & "TO_by_executor.xlsx"
             savePath = Server.MapPath("Docs") & "\TO\" & Session("User").sys_id & "\" & fileName
-            CopyFile(docPath, savePath, UIOption.OnlyErrorDialogs, UICancelOption.ThrowException)
+            CopyFile(docPath, savePath, overwrite:=True)
 
             oExcel = New ApplicationClass()
             oExcel.DisplayAlerts = False
@@ -642,7 +642,7 @@ Namespace Kasbi
 
             docPath = Server.MapPath("Templates\") & "removed_from_TO.xlsx"
             savePath = Server.MapPath("Docs") & "\TO\" & Session("User").sys_id & "\" & fileName
-            CopyFile(docPath, savePath, UIOption.OnlyErrorDialogs, UICancelOption.ThrowException)
+            CopyFile(docPath, savePath, overwrite:=True)
 
             oExcel = New ApplicationClass()
             oExcel.DisplayAlerts = False
