@@ -1,6 +1,6 @@
 ﻿<%@ Register TagPrefix="uc1" TagName="Footer" Src="../Controls/Footer.ascx" %>
 <%@ Register TagPrefix="uc1" TagName="Header" Src="../Controls/Header.ascx" %>
-<%@ Page Language="vb" AutoEventWireup="false" Inherits="Kasbi.Reports.ExecutorTOReports" Culture="Ru-ru" CodeFile="ExecutorTOReports.aspx.vb" %>
+<%@ Page Language="vb" AutoEventWireup="false" Inherits="Kasbi.Reports.ExecutorTORequest" Culture="Ru-ru" CodeFile="ExecutorTORequest.aspx.vb" %>
 <!DOCTYPE HTML PUBLIC "-//W3C//DTD HTML 4.0 Transitional//EN">
 <HTML>
 	<head  runat="server">
@@ -25,8 +25,9 @@
 				</tr>
 			</table>
 			<TABLE id="Table1" cellSpacing="1" cellPadding="2" width="100%" border="0">
+                <TBODY>
 				<TR>
-					<TD align="center"><asp:label id="lblError" runat="server" Visible="False" Font-Bold="True" ForeColor="Red" Font-Size="12pt">Label</asp:label></TD>
+					<TD align="left"><asp:label id="lblError" runat="server" Visible="False" Font-Bold="True" ForeColor="Red" Font-Size="12pt">Label</asp:label></TD>
 				</TR>
 				<TR>
 					<TD>
@@ -61,13 +62,13 @@
 							<TR>
 								<TD class="SectionRowLabel" vAlign="top">Мастера :</TD>
 								<TD class="SectionRow">
-									<asp:ListBox id="lbxExecutor" runat="server" Width="400px" BackColor="#F6F8FC" Rows="10" SelectionMode="Multiple"></asp:ListBox></TD>
+									<asp:ListBox id="lbxExecutor" runat="server" Width="250px" BackColor="#F6F8FC" Rows="10" SelectionMode="Multiple"></asp:ListBox></TD>
 							</TR>
 						</TABLE>
 					</TD>
 				</TR>
 				<tr>
-					<td class="SectionRow"><asp:linkbutton id="lnkExportReportToExcel" runat="server" CssClass="LinkButton">
+					<td class="SectionRow"><asp:linkbutton id="lnkExportReportToExcel" runat="server" CssClass="LinkButtonExport" Visible="False">
 						<asp:Image runat="server" ID="Image2" ImageUrl="../Images/sel.gif" style="Z-INDEX: 103; position:relative; left:10;"></asp:Image>
 						&nbsp;Экспорт&nbsp;отчета&nbsp;в&nbsp;Microsoft&nbsp;Excel</asp:linkbutton></td>
 				</tr>
@@ -76,6 +77,7 @@
 						<asp:ImageButton id="btnView" runat="server" ImageUrl="../Images/create.gif"></asp:ImageButton>&nbsp;&nbsp;
 						<asp:ImageButton id="btnBack" runat="server" ImageUrl="../Images/back.gif" CausesValidation="False"></asp:ImageButton>
 					</TD>
+
 				</TR>
 				</TBODY></TABLE>
 

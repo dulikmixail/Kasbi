@@ -81,7 +81,7 @@
 				</tr>
 			    <tr>
 			        <td class="SectionRow">
-			            <asp:HyperLink id="lnkExecutorTOReports" runat="server" NavigateUrl="MasterTORequest.aspx" CssClass="PanelHider">
+			            <asp:HyperLink id="lnkExecutorTOReports" runat="server" NavigateUrl="ExecutorTORequest.aspx" CssClass="PanelHider">
 			                <asp:Image runat="server" ID="Image1" ImageUrl="../Images/sel.gif" style="Z-INDEX: 103; position:relative; left:10;"></asp:Image>&nbsp;Реест&nbsp;за&nbsp;ТО&nbsp;по&nbsp;ответсвенному&nbsp;мастеру&nbsp;</asp:HyperLink></td>
 			    </tr>
 

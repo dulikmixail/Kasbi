@@ -336,6 +336,32 @@ A.LinkButton:hover
 	color: #0066CC;
 	text-decoration: none;
 }
+
+
+A.LinkButtonExport
+{
+    font-size: 10pt;
+}
+A.LinkButtonExport:active
+{
+    color: #0066CC;
+    text-decoration: none;
+}
+A.LinkButtonExport:link
+{
+    color: #0066CC;
+    text-decoration: none;
+}
+A.LinkButtonExport:visited
+{
+    color: #0066CC;
+    text-decoration: none;
+}
+A.LinkButtonExport:hover
+{
+    color: #0066CC;
+    text-decoration: none;
+}
 .SubTitleTextbox
 {
 	font-size: 10pt;
