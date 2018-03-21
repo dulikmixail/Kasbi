@@ -63,7 +63,7 @@ Namespace service
             dNow = New Date(Now.Year, Now.Month, 1)
 
             dLastReportingDay = DateTime.Today
-            While (dLastReportingDay.DayOfWeek <> 3)
+            While (dLastReportingDay.DayOfWeek <> 4)
                 dLastReportingDay = dLastReportingDay.AddDays(-1)
             End While
 

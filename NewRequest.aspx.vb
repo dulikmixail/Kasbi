@@ -7,7 +7,7 @@ Namespace Kasbi
         Dim customer_sys_id%
         Dim bank_id$
         Dim dogovor$
-        Dim isChangeMonth, isExpired As Boolean
+        Dim isChangeMonth, isExpired, isCto As Boolean
         Dim m_goodsDS As DataSet
 
 
@@ -107,6 +107,7 @@ Namespace Kasbi
                     customer_sys_id = 0
                 End Try
 
+
                 Session("AddSaleForCustomer") = customer_sys_id
 
                 DisableCustomerPanel(Not GetCustomer())
@@ -124,7 +125,7 @@ Namespace Kasbi
 
             Dim vis_addtosale
             If customer_sys_id Then
-                vis_addtosale = dbSQL.ExecuteScalar("select max(sale_sys_id) from sale where customer_sys_id=" & customer_sys_id & " and type=0")
+                vis_addtosale = dbSQL.ExecuteScalar("select max(sale_sys_id) from sale where customer_sys_id=" & customer_sys_id)
                 If vis_addtosale Is DBNull.Value Then
                     chkAddToSale.Visible = False
                 End If
@@ -459,10 +460,18 @@ Namespace Kasbi
             '    Exit Sub
             'End Try
 
+            Try
+                customer_sys_id = Session("AddSaleForCustomer")
+            Catch
+                customer_sys_id = 0
+            End Try
 
             sSubDogovor = ""
-            dogovor = CInt(txtUNN.Text)
 
+            isCto = CBool(dbSQL.ExecuteScalar("Select top 1 cto from customer where customer_sys_id = " & customer_sys_id))
+            If (Not isCto) Then
+                dogovor = CInt(txtUNN.Text)
+            End If
 
             '
             'проверяем можем ли мы заказать выбранный товар
@@ -690,11 +699,15 @@ Namespace Kasbi
                 '
                 'Делаем номер договора = УНП клиента
                 '
-                Try
-                    dbSQL.Execute("update customer set dogovor=unn where  customer_sys_id=" & iCustomer)
-                Catch
-                    msgAddCustomer.Text = "Ошибка обновления номера договора!<br>" & Err.Description
-                End Try
+                isCto = CBool(dbSQL.ExecuteScalar("Select top 1 cto from customer where customer_sys_id = " & iCustomer))
+                If (Not isCto) Then
+                    Try
+                        dbSQL.Execute("update customer set dogovor=unn where  customer_sys_id=" & iCustomer)
+                    Catch
+                        msgAddCustomer.Text = "Ошибка обновления номера договора!<br>" & Err.Description
+                    End Try
+
+                End If
                 '
                 'Заказываем товары
                 '
@@ -1017,142 +1030,149 @@ Namespace Kasbi
         End Sub
 
         Private Function GetCustomer() As Boolean
-            Dim cmd As SqlClient.SqlCommand
-            Dim adapt As SqlClient.SqlDataAdapter
-            Dim ds As DataSet
-            Dim sRegion As String
-            Dim ii As Integer
+            If Request.QueryString.Count > 0 Then
+                Dim cmd As SqlClient.SqlCommand
+                Dim adapt As SqlClient.SqlDataAdapter
+                Dim ds As DataSet
+                Dim sRegion As String
+                Dim ii As Integer
 
-            Try
-                cmd = New SqlClient.SqlCommand("get_customer")
-                cmd.CommandType = CommandType.StoredProcedure
-                cmd.Parameters.AddWithValue("@pi_customer_sys_id", customer_sys_id)
-                adapt = dbSQL.GetDataAdapter(cmd)
-                ds = New DataSet
-                adapt.Fill(ds)
-            Catch
-                msgAddCustomer.Text = "Невозможно получить информацию о пользователе!<br>" & Err.Description
-                GetCustomer = False
-                Exit Function
-            End Try
 
-            If ds.Tables(0).Rows.Count = 0 Then
-                GetCustomer = False
-            Else
-                GetCustomer = True
                 Try
-                    With ds.Tables(0).Rows(0)
-                        man_name.Text = .Item("man_name")
-                        rdbtnIP.Checked = CStr(.Item("customer_abr")).Trim.ToUpper = "ИП"
-                        txtCustomerName.Text = .Item("customer_name")
-                        txtCustomerAbr.Text = .Item("customer_abr")
-                        txtBoosLastName.Text = .Item("boos_last_name")
-                        txtBoosFirstName.Text = .Item("boos_first_name")
-                        txtBoosPatronymicName.Text = .Item("boos_patronymic_name")
-                        txtProxy.Text = .Item("boos_last_name") & " " & .Item("boos_first_name") & " " & .Item("boos_patronymic_name")
-                        txtAccountant.Text = .Item("accountant")
-                        txtUNN.Text = .Item("unn")
-                        txtOKPO.Text = .Item("okpo")
-                        txtZipCode.Text = .Item("zipcode")
-                        sRegion = .Item("region")
-                        For ii = 1 To lstRegion.Items.Count - 1
-                            If sRegion.IndexOf(lstRegion.Items(ii).Value) > -1 Then
-                                lstRegion.SelectedIndex = ii
-                                sRegion = sRegion.Substring(lstRegion.SelectedItem.Value.Length)
-                                If sRegion.Length = 0 Or sRegion.Trim = "," Then
-                                    txtRegion.Text = ""
-                                Else
-                                    txtRegion.Text = sRegion.Trim.TrimStart(",").Trim
-                                End If
-                                Exit For
-                            End If
-                        Next
-                        Dim item As ListItem = lstCityAbr.Items.FindByText(CStr(.Item("city_abr")).Trim)
-                        If Not item Is Nothing Then item.Selected = True
-                        txtCity.Text = .Item("city")
-                        item = lstStreetAbr.Items.FindByText(CStr(.Item("street_abr")).Trim)
-                        If Not item Is Nothing Then item.Selected = True
-                        txtAddress.Text = .Item("address")
-                        txtPhone1.Text = .Item("phone1")
-                        txtPhone2.Text = .Item("phone2")
-                        txtPhone3.Text = .Item("phone3")
-                        txtPhone4.Text = .Item("phone4")
-                        txtTaxInspection.Text = .Item("tax_inspection")
-                        If Not IsDBNull(.Item("imns_sys_id")) Then
-                            item = dlstIMNS.Items.FindByValue(.Item("imns_sys_id"))
-                            If Not item Is Nothing Then item.Selected = True
-                        End If
-                        If Not IsDBNull(.Item("Advertise_id")) Then
-                            item = lstAdvertising.Items.FindByValue(.Item("Advertise_id"))
-                            If Not item Is Nothing Then item.Selected = True
-                        End If
-
-                        chkNDS.Checked = .Item("NDS")
-                        If Not IsDBNull(.Item("cto")) Then
-                            chkCTO.Checked = .Item("cto")
-                            Session("CTO") = .Item("cto")
-                        Else
-                            chkCTO.Checked = False
-                            Session("CTO") = False
-                        End If
-                        chkSupport.Checked = Not (Not IsDBNull(.Item("support")) AndAlso (.Item("support") = 0))
-                        bank_id = ""
-                        bank_id = .Item("bank_sys_id")
-                        lstBank_SelectedIndexChanged(Me, Nothing)
-                        If .Item("bank_address") <> "" Then
-                            txtBankAddress.Text = .Item("bank_address")
-                        End If
-                        txtBankAccount.Text = .Item("bank_account")
-                        txtRegistration.Text = .Item("registration")
-                        txtBranch.Text = .Item("branch")
-                        txtInfo.Text = .Item("info")
-                        'новый номер договора
-                        'adapt = dbSQL.GetDataAdapter("select case when dogovor is null then '' else dogovor end dogovor from sale where customer_sys_id=" & customer_sys_id & " order by d DESC")
-                        'ds = New DataSet
-                        'adapt.Fill(ds)
-                        'Dim ch() As Char = {"\", "/", ".", "-"}
-                        'Dim s$, i%, sTmp$
-                        'If ds.Tables(0).Rows.Count > 0 Then
-                        '    s = ds.Tables(0).Rows(0).Item("dogovor")
-                        '    If chkCTO.Checked Then
-                        '        Try
-                        '            '##-yy/##
-                        '            sTmp = s.Substring(s.LastIndexOfAny(ch) + 1).Trim
-                        '            s = .Item("dogovor") & "-" & Format(Now, "yy") & "/"
-                        '            i = CInt(sTmp) + 1
-                        '            If i < 10 Then
-                        '                s = s & "0" & i
-                        '            Else
-                        '                s = s & i
-                        '            End If
-                        '        Catch
-                        '            s = .Item("dogovor") & "-" & Format(Now, "yy") & "/01"
-                        '        End Try
-                        '    Else
-                        '        s = s.Trim(ch)
-                        '        Try
-                        '            i = CInt(s) + 1
-                        '            s = "/" & i
-                        '        Catch
-                        '            s = "/1"
-                        '        End Try
-                        '        s = .Item("dogovor") & s
-                        '    End If
-                        'Else
-                        '    If chkCTO.Checked Then
-                        '        s = .Item("dogovor") & "-" & Format(Now, "yy") & "/01"
-                        '    Else
-                        '        s = .Item("dogovor")
-                        '    End If
-                        'End If
-                        'txtDogovor.Text = s
-                        txtDogovor.Text = .Item("unn")
-                    End With
+                    cmd = New SqlClient.SqlCommand("get_customer")
+                    cmd.CommandType = CommandType.StoredProcedure
+                    cmd.Parameters.AddWithValue("@pi_customer_sys_id", customer_sys_id)
+                    adapt = dbSQL.GetDataAdapter(cmd)
+                    ds = New DataSet
+                    adapt.Fill(ds)
                 Catch
-                    msgAddCustomer.Text = "Ошибка получения информации о пользователе!<br>" & Err.Description
+                    msgAddCustomer.Text = "Невозможно получить информацию о пользователе!<br>" & Err.Description
+                    GetCustomer = False
                     Exit Function
                 End Try
+
+                If ds.Tables(0).Rows.Count = 0 Then
+                    GetCustomer = False
+                Else
+                    GetCustomer = True
+                    Try
+                        With ds.Tables(0).Rows(0)
+                            man_name.Text = .Item("man_name")
+                            rdbtnIP.Checked = CStr(.Item("customer_abr")).Trim.ToUpper = "ИП"
+                            txtCustomerName.Text = .Item("customer_name")
+                            txtCustomerAbr.Text = .Item("customer_abr")
+                            txtBoosLastName.Text = .Item("boos_last_name")
+                            txtBoosFirstName.Text = .Item("boos_first_name")
+                            txtBoosPatronymicName.Text = .Item("boos_patronymic_name")
+                            txtProxy.Text = .Item("boos_last_name") & " " & .Item("boos_first_name") & " " & .Item("boos_patronymic_name")
+                            txtAccountant.Text = .Item("accountant")
+                            txtUNN.Text = .Item("unn")
+                            txtOKPO.Text = .Item("okpo")
+                            txtZipCode.Text = .Item("zipcode")
+                            sRegion = .Item("region")
+                            For ii = 1 To lstRegion.Items.Count - 1
+                                If sRegion.IndexOf(lstRegion.Items(ii).Value) > -1 Then
+                                    lstRegion.SelectedIndex = ii
+                                    sRegion = sRegion.Substring(lstRegion.SelectedItem.Value.Length)
+                                    If sRegion.Length = 0 Or sRegion.Trim = "," Then
+                                        txtRegion.Text = ""
+                                    Else
+                                        txtRegion.Text = sRegion.Trim.TrimStart(",").Trim
+                                    End If
+                                    Exit For
+                                End If
+                            Next
+                            Dim item As ListItem = lstCityAbr.Items.FindByText(CStr(.Item("city_abr")).Trim)
+                            If Not item Is Nothing Then item.Selected = True
+                            txtCity.Text = .Item("city")
+                            item = lstStreetAbr.Items.FindByText(CStr(.Item("street_abr")).Trim)
+                            If Not item Is Nothing Then item.Selected = True
+                            txtAddress.Text = .Item("address")
+                            txtPhone1.Text = .Item("phone1")
+                            txtPhone2.Text = .Item("phone2")
+                            txtPhone3.Text = .Item("phone3")
+                            txtPhone4.Text = .Item("phone4")
+                            txtTaxInspection.Text = .Item("tax_inspection")
+                            If Not IsDBNull(.Item("imns_sys_id")) Then
+                                item = dlstIMNS.Items.FindByValue(.Item("imns_sys_id"))
+                                If Not item Is Nothing Then item.Selected = True
+                            End If
+                            If Not IsDBNull(.Item("Advertise_id")) Then
+                                item = lstAdvertising.Items.FindByValue(.Item("Advertise_id"))
+                                If Not item Is Nothing Then item.Selected = True
+                            End If
+
+                            chkNDS.Checked = .Item("NDS")
+                            If Not IsDBNull(.Item("cto")) Then
+                                chkCTO.Checked = .Item("cto")
+                                Session("CTO") = .Item("cto")
+                            Else
+                                chkCTO.Checked = False
+                                Session("CTO") = False
+                            End If
+                            chkSupport.Checked = Not (Not IsDBNull(.Item("support")) AndAlso (.Item("support") = 0))
+                            bank_id = ""
+                            bank_id = .Item("bank_sys_id")
+                            lstBank_SelectedIndexChanged(Me, Nothing)
+                            If .Item("bank_address") <> "" Then
+                                txtBankAddress.Text = .Item("bank_address")
+                            End If
+                            txtBankAccount.Text = .Item("bank_account")
+                            txtRegistration.Text = .Item("registration")
+                            txtBranch.Text = .Item("branch")
+                            txtInfo.Text = .Item("info")
+                            'новый номер договора
+                            'adapt = dbSQL.GetDataAdapter("select case when dogovor is null then '' else dogovor end dogovor from sale where customer_sys_id=" & customer_sys_id & " order by d DESC")
+                            'ds = New DataSet
+                            'adapt.Fill(ds)
+                            'Dim ch() As Char = {"\", "/", ".", "-"}
+                            'Dim s$, i%, sTmp$
+                            'If ds.Tables(0).Rows.Count > 0 Then
+                            '    s = ds.Tables(0).Rows(0).Item("dogovor")
+                            '    If chkCTO.Checked Then
+                            '        Try
+                            '            '##-yy/##
+                            '            sTmp = s.Substring(s.LastIndexOfAny(ch) + 1).Trim
+                            '            s = .Item("dogovor") & "-" & Format(Now, "yy") & "/"
+                            '            i = CInt(sTmp) + 1
+                            '            If i < 10 Then
+                            '                s = s & "0" & i
+                            '            Else
+                            '                s = s & i
+                            '            End If
+                            '        Catch
+                            '            s = .Item("dogovor") & "-" & Format(Now, "yy") & "/01"
+                            '        End Try
+                            '    Else
+                            '        s = s.Trim(ch)
+                            '        Try
+                            '            i = CInt(s) + 1
+                            '            s = "/" & i
+                            '        Catch
+                            '            s = "/1"
+                            '        End Try
+                            '        s = .Item("dogovor") & s
+                            '    End If
+                            'Else
+                            '    If chkCTO.Checked Then
+                            '        s = .Item("dogovor") & "-" & Format(Now, "yy") & "/01"
+                            '    Else
+                            '        s = .Item("dogovor")
+                            '    End If
+                            'End If
+                            'txtDogovor.Text = s
+                            txtDogovor.Text = .Item("unn")
+                        End With
+                    Catch
+                        msgAddCustomer.Text = "Ошибка получения информации о пользователе!<br>" & Err.Description
+                        Exit Function
+                    End Try
+                End If
+            Else
+                GetCustomer = False
+                Exit Function
             End If
+
         End Function
 
         Private Sub DisableCustomerPanel(ByVal b As Boolean)
