@@ -76,8 +76,8 @@ Namespace Kasbi.Reports
             Dim drs() As DataRow
             Dim iFirstTableRow = 2
 
-            docPath = Server.MapPath("~") & "Templates\TO_by_executor.xlsx"
-            savePath = Server.MapPath("~") & "Docs\TO\" & Session("User").sys_id & "\" & fileName
+            docPath = Server.MapPath("~") & "\Templates\TO_by_executor.xlsx"
+            savePath = Server.MapPath("~") & "\Docs\TO\" & Session("User").sys_id & "\" & fileName
             CopyFile(docPath, savePath, overwrite:=True)
 
             oExcel = New ApplicationClass()
