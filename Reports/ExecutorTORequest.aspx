@@ -21,7 +21,7 @@
 			<uc1:header id="Header1" runat="server"></uc1:header>
 			<table class="PageTitle" cellSpacing="1" cellPadding="2" width="100%" border="0">
 				<tr>
-					<td class="HeaderTitle" width="100%">&nbsp;Отчеты&nbsp;-&gt;&nbsp;Реест&nbsp;за&nbsp;ТО&nbsp;по&nbsp;ответсвенному&nbsp;мастеру&nbsp;</td>
+					<td class="HeaderTitle" width="100%">&nbsp;Отчеты&nbsp;-&gt;&nbsp;Реестр&nbsp;за&nbsp;ТО&nbsp;по&nbsp;ответственному&nbsp;мастеру</td>
 				</tr>
 			</table>
 			<TABLE id="Table1" cellSpacing="1" cellPadding="2" width="100%" border="0">
