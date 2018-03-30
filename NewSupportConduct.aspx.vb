@@ -539,66 +539,11 @@ Namespace Kasbi
                     Exit Sub
                 End If
 
+
                 If rbTO.SelectedIndex = 2 And chkDelayTO.Checked = False Then
 
 
-                    'Try
-                    '    cmd = New SqlClient.SqlCommand("get_supportconduct_end_date")
-                    '    cmd.CommandType = CommandType.StoredProcedure
-                    '    cmd.Parameters.AddWithValue("@pi_good_sys_id", iCash)
-                    '    adapt = dbSQL.GetDataAdapter(cmd)
-                    '    ds = New DataSet
-                    '    adapt.Fill(ds)
-
-                    '    d = New Date(lstYear.SelectedItem.Value, lstMonth.SelectedItem.Value, 1)
-                    '    dClose = DateTime.Parse(txtCloseDate.Text)
-                    '    dClose_2 = New DateTime(dClose.Year, dClose.Month + 1, 1)
-
-                    '    dLastReportingDay = DateTime.Today
-                    '    While (dLastReportingDay.DayOfWeek <> 3)
-                    '        dLastReportingDay = dLastReportingDay.AddDays(-1)
-                    '    End While
-
-
-
-                    '    If ds.Tables(0).Rows.Count > 0 Then
-                    '        With ds.Tables(0).DefaultView(0)
-                    '            Dim enddate As Date = .Item("end_date")
-                    '            Dim state As Integer = .Item("state")
-                    '            Select Case state
-                    '                Case 1
-                    '                    If d < enddate Then
-                    '                        msgAddSupportConduct.Text = "Закрываемый вами период прошел или уже закрыт"
-                    '                        Exit Sub
-                    '                    End If
-                    '                Case 6
-                    '                    If d < enddate Then
-                    '                        msgAddSupportConduct.Text = "Кассовый аппарат находиться на приостановке ТО"
-                    '                        Exit Sub
-                    '                    End If
-                    '                Case 2 To 3
-                    '                    msgAddSupportConduct.Text = "Кассовый аппарат уже снят с ТО"
-                    '                    Exit Sub
-                    '            End Select
-                    '        End With
-                    '    End If
-
-                    '    If (d > dNow) Then
-                    '        msgAddSupportConduct.Text = "Выбранный период больше текущего периода"
-                    '        Exit Sub
-                    '    ElseIf (d < dNow) Then
-                    '        msgAddSupportConduct.Text = "Выбранный вами период уже прошел. Проводить ТО можно только за текуший период (" & dNow.ToString("MMMM") & " " & dNow.ToString("yyyy") & ")"
-                    '        Exit Sub
-                    '    ElseIf (dLastReportingDay > dClose Or dClose > DateTime.Today) Then
-                    '        msgAddSupportConduct.Text = "Дата закрытия должна входить в отчетный период. Действующий отчетный период на данный момент с " & dLastReportingDay.ToString("dd") & "." & dLastReportingDay.ToString("MM") & "." & dLastReportingDay.ToString("yy") & " по сегодняшний день"
-                    '        Exit Sub
-                    '    End If
-                    'Catch
-                    '    msgAddSupportConduct.Text = Err.Description
-                    'End Try
-
                     d = New Date(lstYear.SelectedItem.Value, lstMonth.SelectedItem.Value, 1)
-
                     If Not serviceTo.CheckCashHistoryItem(iCash, d, txtCloseDate.Text) Then
                         msgAddSupportConduct.Text = serviceTo.GetLastExeption()
                         Exit Sub
@@ -646,6 +591,8 @@ Namespace Kasbi
                     Catch
                         msgAddSupportConduct.Text = Err.Description
                     End Try
+
+                    'приостановка ТО
                 ElseIf rbTO.SelectedIndex = 2 And chkDelayTO.Checked = True Then
                     d = New Date(lstYearDelayIn.SelectedItem.Value, lstMonthDelayIn.SelectedItem.Value, 1)
                     '

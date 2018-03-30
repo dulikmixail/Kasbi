@@ -1,4 +1,5 @@
 ﻿Imports System.Collections.Generic
+Imports System.Runtime.InteropServices
 Imports Kasbi
 
 Namespace service
@@ -29,8 +30,8 @@ Namespace service
                             Dim state As Integer = .Item("state")
                             Select Case state
                                 Case 1
-                                    If closePeriod < enddate Then
-                                        exeptionText = "Закрываемый вами период прошел или уже закрыт"
+                                    If closePeriod = enddate.AddMonths(-1) Then
+                                        exeptionText = "Закрываемый вами период уже закрыт"
                                     End If
                                 Case 6
                                     If closePeriod < enddate Then
@@ -40,6 +41,8 @@ Namespace service
                                     exeptionText = "Кассовый аппарат уже снят с ТО"
                             End Select
                         End With
+                    Else
+                        exeptionText = "Нет постановки на ТО и договор не заключен"
                     End If
 
                 Catch
@@ -58,14 +61,29 @@ Namespace service
 
         Public Function CheckDate(ByVal closePeriod As DateTime, ByVal closeDateText As String) As Boolean
             exeptionText = String.Empty
-            Dim dNow, dLastReportingDay As DateTime
-
+            Dim dNow, dStarPeriod, dEndPeriod, dToday As DateTime
+            Dim firstDayOfPeriod As Integer = 3
             dNow = New Date(Now.Year, Now.Month, 1)
 
-            dLastReportingDay = DateTime.Today
-            While (dLastReportingDay.DayOfWeek <> 4)
-                dLastReportingDay = dLastReportingDay.AddDays(-1)
+
+            dToday = DateTime.Today
+            dStarPeriod = dToday
+
+            'поправка на один дополнительный день для проведения ТО
+            If (dToday.DayOfWeek = firstDayOfPeriod) Then
+                dStarPeriod = dStarPeriod.AddDays(-1)
+            End If
+            'ищем начало отчетного периода, в данном случае это Ср
+            While (dStarPeriod.DayOfWeek <> firstDayOfPeriod)
+                dStarPeriod = dStarPeriod.AddDays(-1)
             End While
+            'задаем конечный период
+            dEndPeriod = dStarPeriod.AddDays(7).AddMinutes(-1)
+            'поправка на один дополнительный день для проведения ТО
+            If (dToday.DayOfWeek = firstDayOfPeriod) Then
+                dEndPeriod = dEndPeriod.AddDays(1)
+            End If
+
 
             If String.IsNullOrEmpty(closeDateText) Then
                 exeptionText = "Не выбрана дата выполнения"
@@ -75,8 +93,10 @@ Namespace service
                     exeptionText = "Закрываемый вами период больше текущего периода"
                 ElseIf (closePeriod < dNow) Then
                     exeptionText = "Закрываемый вами период уже прошел. Проводить ТО можно только за текуший период (" & dNow.ToString("MMMM") & " " & dNow.ToString("yyyy") & ")"
-                ElseIf (dLastReportingDay > closeDate Or closeDate > DateTime.Today) Then
-                    exeptionText = "Дата закрытия должна входить в отчетный период. Действующий отчетный период на данный момент с " & dLastReportingDay.ToString("dd") & "." & dLastReportingDay.ToString("MM") & "." & dLastReportingDay.ToString("yy") & " по сегодняшний день"
+                ElseIf closeDate > dToday Then
+                    exeptionText = "В собираеться провести ТО днем, который еще не наступил."
+                ElseIf (dStarPeriod > closeDate Or closeDate > dEndPeriod) Then
+                    exeptionText = "Дата закрытия должна входить в отчетный период. Действующий отчетный период на данный момент с " & dStarPeriod.ToString("dd") & "." & dStarPeriod.ToString("MM") & "." & dStarPeriod.ToString("yy") & " по " & dEndPeriod.ToString("dd") & "." & dEndPeriod.ToString("MM") & "." & dEndPeriod.ToString("yy") & " включительно."
                 End If
             End If
 

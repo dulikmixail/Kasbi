@@ -460,18 +460,7 @@ Namespace Kasbi
             '    Exit Sub
             'End Try
 
-            Try
-                customer_sys_id = Session("AddSaleForCustomer")
-            Catch
-                customer_sys_id = 0
-            End Try
 
-            sSubDogovor = ""
-
-            isCto = CBool(dbSQL.ExecuteScalar("Select top 1 cto from customer where customer_sys_id = " & customer_sys_id))
-            If (Not isCto) Then
-                dogovor = CInt(txtUNN.Text)
-            End If
 
             '
             'проверяем можем ли мы заказать выбранный товар
@@ -504,6 +493,14 @@ Namespace Kasbi
             Catch
                 customer_sys_id = 0
             End Try
+
+            sSubDogovor = ""
+
+            isCto = CBool(dbSQL.ExecuteScalar("Select top 1 cto from customer where customer_sys_id = " & customer_sys_id))
+            If (Not isCto) Then
+                dogovor = CInt(txtUNN.Text)
+            End If
+
             Dim advertise_id As Object = lstAdvertising.SelectedItem.Value
             If (lstAdvertising.SelectedItem.Value = "0") Then
                 advertise_id = DBNull.Value
@@ -526,7 +523,6 @@ Namespace Kasbi
                 'добавляем нового клиента
                 Try
                     'проверяем УНН на присутствие в базе
-
                     Dim dublicate = dbSQL.ExecuteScalar("SELECT unn FROM customer WHERE unn='" & txtUNN.Text & "'")
                     If dublicate <> "" Then
                         msgAddCustomer.Text = "Ошибка! В базе уже есть клиент с таким УНН!<br>"
@@ -535,6 +531,11 @@ Namespace Kasbi
                     If txtUNN.Text.Trim.Length > 9 Or txtUNN.Text.Trim.Length < 9 Then
                         msgAddCustomer.Text = "Ошибка! Вы ввели неверный УНН!<br>"
                         Exit Sub
+                    End If
+
+                    'проверяем какой нужен номер договора
+                    If chkCTO.Checked Then
+                        dogovor = CInt(dbSQL.ExecuteScalar("SELECT TOP 1 dogovor FROM customer WHERE cto = 1 ORDER BY customer_sys_id DESC")) + 1
                     End If
 
                     cmd = New SqlClient.SqlCommand("new_customer")
