@@ -1,5 +1,6 @@
 ﻿Imports System.Collections.Generic
 Imports System.Runtime.InteropServices
+Imports System.Web.UI.WebControls.Expressions
 Imports Kasbi
 
 Namespace service
@@ -66,7 +67,7 @@ Namespace service
             dNow = New Date(Now.Year, Now.Month, 1)
 
 
-            dToday = DateTime.Today
+            dToday = New DateTime(2018, 3, 30)
             dStarPeriod = dToday
 
             'поправка на один дополнительный день для проведения ТО
@@ -94,8 +95,14 @@ Namespace service
                 '    exeptionText = "Закрываемый вами период больше текущего периода"
                 'ElseIf (closePeriod < dNow) Then
                 '    exeptionText = "Закрываемый вами период уже прошел. Проводить ТО можно только за текуший период (" & dNow.ToString("MMMM") & " " & dNow.ToString("yyyy") & ")"
-                If closeDate > dToday Then
+                If closePeriod <> New DateTime(closeDate.Year, closeDate.Month, 1) Then
+                    exeptionText = "Дата закрытия периода и дата выполнения имеют разные месяца"
+                ElseIf closeDate > dToday Then
                     exeptionText = "Вы собираетесь провести ТО днем, который еще не наступил."
+                ElseIf closePeriod < New DateTime(dStarPeriod.Year, dStarPeriod.Month, 1) Then
+                    exeptionText = "Закрываемый вами период уже прошел"
+                ElseIf closePeriod > New DateTime(dEndPeriod.Year, dEndPeriod.Month, 1) Then
+                    exeptionText = "Закрываемый вами период еще не настал"
                 ElseIf (dStarPeriod > closeDate Or closeDate > dEndPeriod) Then
                     exeptionText = "Дата закрытия должна входить в отчетный период. Действующий отчетный период на данный момент с " & dStarPeriod.ToString("dd") & "." & dStarPeriod.ToString("MM") & "." & dStarPeriod.ToString("yy") & " по " & dEndPeriod.ToString("dd") & "." & dEndPeriod.ToString("MM") & "." & dEndPeriod.ToString("yy") & " включительно."
                 End If
