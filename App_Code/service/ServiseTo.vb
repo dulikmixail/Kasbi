@@ -89,12 +89,13 @@ Namespace service
                 exeptionText = "Не выбрана дата выполнения"
             Else
                 Dim closeDate As DateTime = DateTime.Parse(closeDateText)
-                If (closePeriod > dNow) Then
-                    exeptionText = "Закрываемый вами период больше текущего периода"
-                ElseIf (closePeriod < dNow) Then
-                    exeptionText = "Закрываемый вами период уже прошел. Проводить ТО можно только за текуший период (" & dNow.ToString("MMMM") & " " & dNow.ToString("yyyy") & ")"
-                ElseIf closeDate > dToday Then
-                    exeptionText = "В собираеться провести ТО днем, который еще не наступил."
+
+                'If (closePeriod > dNow) Then
+                '    exeptionText = "Закрываемый вами период больше текущего периода"
+                'ElseIf (closePeriod < dNow) Then
+                '    exeptionText = "Закрываемый вами период уже прошел. Проводить ТО можно только за текуший период (" & dNow.ToString("MMMM") & " " & dNow.ToString("yyyy") & ")"
+                If closeDate > dToday Then
+                    exeptionText = "Вы собираетесь провести ТО днем, который еще не наступил."
                 ElseIf (dStarPeriod > closeDate Or closeDate > dEndPeriod) Then
                     exeptionText = "Дата закрытия должна входить в отчетный период. Действующий отчетный период на данный момент с " & dStarPeriod.ToString("dd") & "." & dStarPeriod.ToString("MM") & "." & dStarPeriod.ToString("yy") & " по " & dEndPeriod.ToString("dd") & "." & dEndPeriod.ToString("MM") & "." & dEndPeriod.ToString("yy") & " включительно."
                 End If
