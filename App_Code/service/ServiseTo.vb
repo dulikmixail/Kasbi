@@ -67,7 +67,7 @@ Namespace service
             dNow = New Date(Now.Year, Now.Month, 1)
 
 
-            dToday = New DateTime(2018, 3, 30)
+            dToday = DateTime.Today
             dStarPeriod = dToday
 
             'поправка на один дополнительный день для проведения ТО
