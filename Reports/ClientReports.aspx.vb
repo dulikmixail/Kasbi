@@ -46,7 +46,7 @@ Namespace Kasbi.Reports
                 End If
                 cmd = New SqlClient.SqlCommand("prc_rpt_ClientDept")
                 cmd.CommandType = CommandType.StoredProcedure
-                cmd.Parameters.AddWithValue("@pi_filter", "")
+                cmd.Parameters.AddWithValue("@pi_filter", " ")
                 adapt = dbSQL.GetDataAdapter(cmd)
 
                 adapt.Fill(ds)

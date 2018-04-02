@@ -141,7 +141,7 @@ Namespace Kasbi.Admin
                         cmd = New SqlClient.SqlCommand("update_customer_dolg_by_UNP")
                         cmd.CommandType = CommandType.StoredProcedure
                         cmd.Parameters.AddWithValue("@pi_UNN", row("unn"))
-                        cmd.Parameters.AddWithValue("@pi_dolg", CInt(row("sum")))
+                        cmd.Parameters.AddWithValue("@pi_dolg", CDbl(row("sum")))
                         dbSQL.Execute(cmd)
 
                         valid_count = valid_count + 1
