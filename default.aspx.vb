@@ -782,46 +782,6 @@ Namespace Kasbi
             ds = New DataSet
             adapt.Fill(ds)
 
-            'oExcel = New Microsoft.Office.Interop.Excel.ApplicationClass()
-            'oExcel.DisplayAlerts = False
-            'oBook = oExcel.Workbooks.Add
-            'oSheet = oBook.Worksheets(1)
-            'oSheet.Columns("A").ColumnWidth = 70
-            'oSheet.Columns("B").ColumnWidth = 15
-            'oSheet.Columns("C").ColumnWidth = 15
-            'oSheet.Columns("D").ColumnWidth = 20
-            'oSheet.Rows("1").Font.Bold = True
-            'oSheet.Range("A1").Value = "Контрагент"
-            'oSheet.Range("B1").Value = "УНП"
-            'oSheet.Range("C1").Value = "Номер ККМ"
-            'oSheet.Range("D1").Value = "Дата снятия с ТО"
-
-            'dt = ds.Tables(0)
-            'drs = dt.Select()
-
-            'For i As Integer = 0 To drs.Length - 1
-            '    oSheet.Range("A" & i + 2).Value() = drs(i).Item(0)
-            '    oSheet.Range("B" & i + 2).Value() = drs(i).Item(1)
-            '    oSheet.Range("C" & i + 2).Value() = drs(i).Item(2)
-            '    oSheet.Range("D" & i + 2).Value() = drs(i).Item(3)
-            'Next
-
-            'docPath = Server.MapPath("XML") & "\removed_from_TO.xlsx"
-            'oBook.Close(True, docPath, True)
-            'oExcel.Quit()
-
-            'file = New System.IO.FileInfo(docPath)
-            'If file.Exists Then 'set appropriate headers
-            '    Response.Clear()
-            '    Response.AddHeader("Content-Disposition", "attachment; filename=" & file.Name)
-            '    Response.AddHeader("Content-Length", file.Length.ToString())
-            '    Response.ContentType = "application/octet-stream"
-            '    Response.WriteFile(docPath)
-            '    Response.End() 'if file does not exist
-            'Else
-            '    Response.Write("This file does not exist.")
-            'End If
-
             createAndSendFileRemovedFromTo(ds, "removed_from_TO.xlsx")
 
         End Sub
