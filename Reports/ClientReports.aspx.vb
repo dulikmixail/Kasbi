@@ -25,6 +25,7 @@ Namespace Kasbi.Reports
         Private Overloads Sub Page_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
             If Not IsPostBack Then
                 Bind()
+                lblCurrentDate.Text = DateTime.Today.ToString("dd.MM.yyyy")
             End If
 
         End Sub
@@ -42,19 +43,23 @@ Namespace Kasbi.Reports
                 Dim filter
                 If param1 = 11 Then
                     filter = " order by count_cash DESC"
-
-                Else
-                    filter = " order by dolg DESC"
                 End If
                 cmd = New SqlClient.SqlCommand("prc_rpt_ClientDept")
                 cmd.CommandType = CommandType.StoredProcedure
-                cmd.Parameters.AddWithValue("@pi_filter", Filter)
+                cmd.Parameters.AddWithValue("@pi_filter", "")
                 adapt = dbSQL.GetDataAdapter(cmd)
 
                 adapt.Fill(ds)
+                If ViewState("gridsort") = "" Then
+                    ds.Tables(0).DefaultView.Sort = "customer_sys_id DESC "
+                    ViewState("gridsort") = "customer_sys_id DESC "
+                Else
+                    ds.Tables(0).DefaultView.Sort = ViewState("gridsort") & ", customer_sys_id ASC "
+                End If
                 num = 0
                 dTotal = 0
-                grid.DataSource = ds
+                grid.DataSource = ds.Tables(0).DefaultView
+                grid.DataKeyField = "customer_sys_id"
                 grid.DataBind()
             Catch
             End Try
@@ -63,7 +68,6 @@ Namespace Kasbi.Reports
 
         Private Sub grid_ItemDataBound(ByVal sender As Object, ByVal e As System.Web.UI.WebControls.DataGridItemEventArgs) Handles grid.ItemDataBound
             If e.Item.ItemType = ListItemType.Item Or e.Item.ItemType = ListItemType.AlternatingItem Then
-
 
                 Dim s$ = "-"
                 If Not IsDBNull(e.Item.DataItem("count_cash")) And (param1 = 11 Or param1 = 12) Then
@@ -82,6 +86,14 @@ Namespace Kasbi.Reports
                 CType(e.Item.FindControl("lblTotal"), Label).Text = CStr(dTotal)
                 dTotal = 0
             End If
+        End Sub
+        Protected Sub grid_SortCommand(ByVal source As Object, ByVal e As System.Web.UI.WebControls.DataGridSortCommandEventArgs) Handles grid.SortCommand
+            If ViewState("gridsort") = e.SortExpression Then
+                ViewState("gridsort") = e.SortExpression & " DESC"
+            Else
+                ViewState("gridsort") = e.SortExpression
+            End If
+            Bind()
         End Sub
 
     End Class
