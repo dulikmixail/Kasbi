@@ -106,8 +106,9 @@ Namespace service
                         End If
                     End If
                 Next
-
-                clear_Part2()
+                If drs.Length Mod 2 = 1 Then
+                    clear_Part2()
+                End If
 
                 _wrdDoc.Close(True)
                 _wrdApp.Quit()
@@ -116,23 +117,6 @@ Namespace service
             Catch ex As Exception
                 _wrdDoc.Close(True)
                 _wrdApp.Quit()
-                Dim ps As Process() = Process.GetProcessesByName("WINWORD")
-                'Wait for the process to exit.
-                For Each p In ps
-                    p.WaitForExit(10000)
-                    'p.MainModule.FileVersionInfo.FileDescription
-                    If p.HasExited = False Then
-                        'Process is still running.
-                        'Test to see if process is hung up.
-                        If p.Responding Then
-                            'Process was responding; close the main window.
-                            p.CloseMainWindow()
-                        Else
-                            'Process was not responding; force the process to close.
-                            p.Kill()
-                        End If
-                    End If
-                Next
             End Try
 
             Return savePath
