@@ -10,7 +10,7 @@
 Imports System.Collections.Generic
 Imports System.IO
 Imports Microsoft.Office.Interop
-
+Imports service
 
 Namespace Kasbi
 
@@ -99,11 +99,12 @@ Namespace Kasbi
         Private doc As Word.DocumentClass
         Private sheet As Excel.WorksheetClass
         Private book As Excel.WorkbookClass
+        Private serviceDoc As ServiceDocuments = New ServiceDocuments()
 
         Dim query
 
         Private Overloads Sub Page_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
-            Dim customer_sys_id%, sale_sys_id%, sub_num%, doc_path$, good_sys_id%, history_id, rebilling%, vid_plateza%
+            Dim customer_sys_id%, sale_sys_id%, sub_num%, doc_path$, good_sys_id%, history_id, rebilling%, vid_plateza%, d%
             Dim customer_sys_id_s, good_sys_id_s As String
             Dim begin_date As System.DateTime, end_date As DateTime
             Dim doc_type(0) As Integer
@@ -123,6 +124,7 @@ Namespace Kasbi
                 history_id = GetPageParam("h")
                 rebilling = GetPageParam("rebilling")
                 vid_plateza = GetPageParam("vidplateza")
+                d = GetPageParam("d")
                 If (doc_type(0) = 10) Then
                     Dim dataStream As Stream = Request.InputStream
                     Dim reader As StreamReader = New StreamReader(dataStream)
@@ -146,6 +148,10 @@ Namespace Kasbi
             End If
             If doc_type(0) = 31 Then
                 If Not ProcessDefectAct(doc_type, customer_sys_id, good_sys_id, history_id) Then Exit Sub
+            ElseIf doc_type(0) = 60 Then
+                path = ProcessAktForTOandDolg(good_sys_id.ToString(), d.ToString())
+                doc_path = path
+                If Not path <> String.Empty Then Exit Sub
             ElseIf doc_type(0) = 42 Then
                 If Not ProcessDefectActForGood(doc_type, customer_sys_id) Then Exit Sub
             ElseIf doc_type(0) = 32 Or doc_type(0) = 33 Or doc_type(0) = 34 Then
@@ -213,6 +219,7 @@ Namespace Kasbi
                     Case 57 : doc_path = DocName57
                     Case 58 : doc_path = DocName58
                     Case 59 : doc_path = DocName59
+                    Case 60 : doc_path = ""
 
                     Case Else
                         WriteError("Неверные параметры")
@@ -226,6 +233,8 @@ Namespace Kasbi
                     'MsgBox(path)
                 ElseIf doc_type(0) = 10 Then
                     path = Server.MapPath("Docs/") & customer_sys_id & "\Support\" & sale_sys_id & doc_path
+                ElseIf doc_type(0) = 60 Then
+                    path = path
                 Else
                     path = Server.MapPath("Docs/") & customer_sys_id & "\" & sale_sys_id & "\" & doc_path
                 End If
@@ -5595,6 +5604,12 @@ ExitFunction:
                 WriteError("Аварийное завершение работы Microsoft Word<br>" & Err.Description)
             End Try
 
+        End Function
+
+        Private Function ProcessAktForTOandDolg(good_sys_id As String, d As String) As String
+            Dim checkGoods As List(Of String) = New List(Of String)
+            checkGoods.Add(good_sys_id)
+            Return serviceDoc.AktForTOandDolg(checkGoods, True, Date.ParseExact(d, "ddMMyyyy", System.Globalization.DateTimeFormatInfo.InvariantInfo))
         End Function
 
 

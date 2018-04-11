@@ -1,6 +1,7 @@
+Imports System.Diagnostics
 Imports System.IO
-Imports Kasbi
 Imports service
+
 
 Namespace Kasbi
 
@@ -29,9 +30,13 @@ Namespace Kasbi
         Dim to_made = 0
         Dim to_made_tmp = 0
         Dim to_made_cnd = 0
+
         Private serviceTo As ServiceTo = New ServiceTo()
+        Private serviceDoc As ServiceDocuments = New ServiceDocuments()
+
 
         Private Overloads Sub Page_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
+
             If Not IsPostBack Then
                 LoadPlaceRegion()
                 LoadEmployee()
@@ -322,7 +327,7 @@ Namespace Kasbi
                     Else
                     End If
                     reader.Close()
-                    CType(e.Item.FindControl("lblNumGood"), HyperLink).NavigateUrl = "cash_rubr/default.aspx?cash=" & e.Item.DataItem("good_sys_id")
+                    CType(e.Item.FindControl("lblNumGood"), WebControls.HyperLink).NavigateUrl = "cash_rubr/default.aspx?cash=" & e.Item.DataItem("good_sys_id")
 
 
                     '
@@ -349,7 +354,7 @@ Namespace Kasbi
                     '
 
                     i = i + 1
-                    CType(e.Item.FindControl("lblNumGood"), HyperLink).Text = i
+                    CType(e.Item.FindControl("lblNumGood"), WebControls.HyperLink).Text = i
                     s = ""
                     If Not IsDBNull(e.Item.DataItem("dolg")) Then
                         s = s & e.Item.DataItem("dolg")
@@ -362,7 +367,7 @@ Namespace Kasbi
                         s = CStr(e.Item.DataItem("alert"))
                     End If
                     e.Item.FindControl("imgAlert").Visible = s.Length > 0
-                    If s.Length > 0 Then CType(e.Item.FindControl("imgAlert"), HyperLink).ToolTip = s
+                    If s.Length > 0 Then CType(e.Item.FindControl("imgAlert"), WebControls.HyperLink).ToolTip = s
                     e.Item.FindControl("imgSupport").Visible = Not IsDBNull(e.Item.DataItem("support")) AndAlso e.Item.DataItem("support") = "1"
 
                     Dim b As Boolean = e.Item.DataItem("repair")
@@ -371,15 +376,15 @@ Namespace Kasbi
                     If b Then
                         Dim i As Integer = CInt(e.Item.DataItem("repaired"))
                         If i > 1 Then
-                            CType(e.Item.FindControl("imgRepair"), HyperLink).ToolTip = "В ремонте. До этого в ремонте был " & i - 1 & " раз(а)"
+                            CType(e.Item.FindControl("imgRepair"), WebControls.HyperLink).ToolTip = "В ремонте. До этого в ремонте был " & i - 1 & " раз(а)"
                         Else
-                            CType(e.Item.FindControl("imgRepair"), HyperLink).ToolTip = "В ремонте. До этого в ремонте не был"
+                            CType(e.Item.FindControl("imgRepair"), WebControls.HyperLink).ToolTip = "В ремонте. До этого в ремонте не был"
                         End If
                     End If
 
                     e.Item.FindControl("imgRepaired").Visible = Not (b OrElse CInt(e.Item.DataItem("repaired")) = 0)
                     If e.Item.FindControl("imgRepaired").Visible Then
-                        CType(e.Item.FindControl("imgRepaired"), HyperLink).ToolTip = "Был в ремонте " & CInt(e.Item.DataItem("repaired")) & " раз(а)"
+                        CType(e.Item.FindControl("imgRepaired"), WebControls.HyperLink).ToolTip = "Был в ремонте " & CInt(e.Item.DataItem("repaired")) & " раз(а)"
                     End If
 
                     If IsDBNull(e.Item.DataItem("state_skno")) Then
@@ -394,8 +399,8 @@ Namespace Kasbi
                     '   s = e.Item.DataItem("stateTO")
                     'End If
                     '
-                    CType(e.Item.FindControl("lnkStatus"), HyperLink).Text = "Просмотр"
-                    CType(e.Item.FindControl("lnkStatus"), HyperLink).ToolTip = "Просмотр"
+                    CType(e.Item.FindControl("lnkStatus"), WebControls.HyperLink).Text = "Просмотр"
+                    CType(e.Item.FindControl("lnkStatus"), WebControls.HyperLink).ToolTip = "Просмотр"
 
                     If IsDBNull(e.Item.DataItem("state")) Then
                         e.Item.DataItem("state") = 0
@@ -454,7 +459,7 @@ Namespace Kasbi
                     If count_rubr > 0 Then
                         e.Item.Cells(1).BackColor = Color.Green
                         e.Item.Cells(1).ForeColor = Color.White
-                        CType(e.Item.FindControl("lblNumGood"), HyperLink).ForeColor = Color.White
+                        CType(e.Item.FindControl("lblNumGood"), WebControls.HyperLink).ForeColor = Color.White
                     End If
 
                     If IsDBNull(e.Item.DataItem("place_rn_id")) Then
@@ -475,11 +480,11 @@ Namespace Kasbi
         Sub SelectAll(ByVal sender As Object, ByVal e As System.EventArgs)
             Dim j
             grdTO.Columns(0).Visible = True
-            Dim s As Boolean = CType(grdTO.Controls.Item(0).Controls.Item(0).FindControl("cbxSelectAll"), CheckBox).Checked
+            Dim s As Boolean = CType(grdTO.Controls.Item(0).Controls.Item(0).FindControl("cbxSelectAll"), WebControls.CheckBox).Checked
 
             For j = 0 To grdTO.Items.Count - 1
                 If grdTO.Items(j).Visible = True Then
-                    CType(grdTO.Items(j).FindControl("cbxSelect"), CheckBox).Checked = s
+                    CType(grdTO.Items(j).FindControl("cbxSelect"), WebControls.CheckBox).Checked = s
                 End If
             Next
         End Sub
@@ -490,10 +495,10 @@ Namespace Kasbi
             If grdTO_prod.Columns(1).Visible = False Then
                 'MsgBox("Вы не можете добалять пустую запись в таблицу", MsgBoxStyle.Information, "Пожалуйста, введите достоверные данные о поставке")
             End If
-            Dim s As Boolean = CType(grdTO_prod.Controls.Item(0).Controls.Item(0).FindControl("cbxSelectAll"), CheckBox).Checked
+            Dim s As Boolean = CType(grdTO_prod.Controls.Item(0).Controls.Item(0).FindControl("cbxSelectAll"), WebControls.CheckBox).Checked
 
             For j = 0 To grdTO_prod.Items.Count - 1
-                CType(grdTO_prod.Items(j).FindControl("cbxSelect"), CheckBox).Checked = s
+                CType(grdTO_prod.Items(j).FindControl("cbxSelect"), WebControls.CheckBox).Checked = s
             Next
         End Sub
 
@@ -505,7 +510,7 @@ Namespace Kasbi
             Dim query = ""
 
             For j = 0 To grdTO.Items.Count - 1
-                If CType(grdTO.Items(j).FindControl("cbxSelect"), CheckBox).Checked = True Then
+                If CType(grdTO.Items(j).FindControl("cbxSelect"), WebControls.CheckBox).Checked = True Then
                     If n = 1 Then query &= "," & grdTO.DataKeys.Item(j)
                     If n = 0 Then query &= grdTO.DataKeys.Item(j)
                     n = 1
@@ -618,7 +623,7 @@ Namespace Kasbi
 
             Dim query = ""
             For j = 0 To grdTO.Items.Count - 1
-                If CType(grdTO.Items(j).FindControl("cbxSelect"), CheckBox).Checked = True Then
+                If CType(grdTO.Items(j).FindControl("cbxSelect"), WebControls.CheckBox).Checked = True Then
                     If n = 1 Then query &= "," & grdTO.DataKeys.Item(j)
                     If n = 0 Then query &= grdTO.DataKeys.Item(j)
                     n = 1
@@ -645,7 +650,7 @@ Namespace Kasbi
             Dim listOfIndexOfSelectCheckBox As ArrayList = New ArrayList()
 
             For k = 0 To grdTO.Items.Count - 1
-                If CType(grdTO.Items(k).FindControl("cbxSelect"), CheckBox).Checked Then
+                If CType(grdTO.Items(k).FindControl("cbxSelect"), WebControls.CheckBox).Checked Then
                     listOfIndexOfSelectCheckBox.Add(k)
                 End If
             Next
@@ -703,7 +708,7 @@ Namespace Kasbi
             If chk_show_torg.Checked = True Then
                 If (d <= Now) Then
                     For j = 0 To grdTO_prod.Items.Count - 1
-                        If CType(grdTO_prod.Items(j).FindControl("cbxSelect"), CheckBox).Checked = True And (grdTO_prod.Items(j).BackColor <> Drawing.Color.FromArgb(250, 210, 210)) Then
+                        If CType(grdTO_prod.Items(j).FindControl("cbxSelect"), WebControls.CheckBox).Checked = True And (grdTO_prod.Items(j).BackColor <> Drawing.Color.FromArgb(250, 210, 210)) Then
                             closedate = DateTime.Parse(tbxCloseDate.Text)
                             cmd = New SqlClient.SqlCommand("insert_prod_TO")
                             cmd.CommandType = CommandType.StoredProcedure
@@ -731,14 +736,11 @@ Namespace Kasbi
         Private Sub grdError_ItemDataBound(ByVal sender As System.Object, ByVal e As System.Web.UI.WebControls.DataGridItemEventArgs) Handles grdError.ItemDataBound
             If e.Item.ItemType = ListItemType.Item Or e.Item.ItemType = ListItemType.AlternatingItem Then
                 iNumGoodOfError += 1
-                CType(e.Item.FindControl("lblNumGood"), HyperLink).Text = iNumGoodOfError.ToString()
+                CType(e.Item.FindControl("lblNumGood"), WebControls.HyperLink).Text = iNumGoodOfError.ToString()
                 CType(e.Item.FindControl("lblToExeption"), Label).Text = serviceTo.GetExeptionTextByGoodId(CInt(CType(e.Item.FindControl("lblGood"), Label).Text))
             End If
 
         End Sub
-
-
-
 
         Protected Sub lnkDelTO_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles lnkDelTO.Click
             Dim adapt As SqlClient.SqlDataAdapter
@@ -785,7 +787,7 @@ Namespace Kasbi
             'grdTO.Columns(0).Visible = True
             Dim s As String = String.Empty
             For j = 0 To grdTO.Items.Count - 1
-                If CType(grdTO.Items(j).FindControl("cbxSelect"), CheckBox).Checked Then
+                If CType(grdTO.Items(j).FindControl("cbxSelect"), WebControls.CheckBox).Checked Then
                     s &= grdTO.DataKeys(grdTO.Items(j).ItemIndex) & ","
                 End If
             Next
@@ -816,7 +818,7 @@ Namespace Kasbi
             Dim n = 0
             Dim query = ""
             For j = 0 To grdTO.Items.Count - 1
-                If CType(grdTO.Items(j).FindControl("cbxSelect"), CheckBox).Checked = True Then
+                If CType(grdTO.Items(j).FindControl("cbxSelect"), WebControls.CheckBox).Checked = True Then
                     If n = 1 Then query &= "," & grdTO.DataKeys.Item(j)
                     If n = 0 Then query &= grdTO.DataKeys.Item(j)
                     n = 1
@@ -977,7 +979,7 @@ Namespace Kasbi
                 End If
 
                 e.Item.FindControl("imgAlert").Visible = s.Length > 0
-                If s.Length > 0 Then CType(e.Item.FindControl("imgAlert"), HyperLink).ToolTip = s
+                If s.Length > 0 Then CType(e.Item.FindControl("imgAlert"), WebControls.HyperLink).ToolTip = s
                 e.Item.FindControl("imgSupport").Visible = Not IsDBNull(e.Item.DataItem("support")) AndAlso e.Item.DataItem("support") = "1"
 
                 Dim b As Boolean = e.Item.DataItem("repair")
@@ -986,23 +988,23 @@ Namespace Kasbi
                 If b Then
                     Dim i As Integer = CInt(e.Item.DataItem("repaired"))
                     If i > 1 Then
-                        CType(e.Item.FindControl("imgRepair"), HyperLink).ToolTip = "В ремонте. До этого в ремонте был " & i - 1 & " раз(а)"
+                        CType(e.Item.FindControl("imgRepair"), WebControls.HyperLink).ToolTip = "В ремонте. До этого в ремонте был " & i - 1 & " раз(а)"
                     Else
-                        CType(e.Item.FindControl("imgRepair"), HyperLink).ToolTip = "В ремонте. До этого в ремонте не был"
+                        CType(e.Item.FindControl("imgRepair"), WebControls.HyperLink).ToolTip = "В ремонте. До этого в ремонте не был"
                     End If
                 End If
 
                 e.Item.FindControl("imgRepaired").Visible = Not (b OrElse CInt(e.Item.DataItem("repaired")) = 0)
                 If e.Item.FindControl("imgRepaired").Visible Then
-                    CType(e.Item.FindControl("imgRepaired"), HyperLink).ToolTip = "Был в ремонте " & CInt(e.Item.DataItem("repaired")) & " раз(а)"
+                    CType(e.Item.FindControl("imgRepaired"), WebControls.HyperLink).ToolTip = "Был в ремонте " & CInt(e.Item.DataItem("repaired")) & " раз(а)"
                 End If
                 '
                 'If Not IsDBNull(e.Item.DataItem("stateTO")) Then
                 '   s = e.Item.DataItem("stateTO")
                 'End If
                 '
-                CType(e.Item.FindControl("lnkStatus"), HyperLink).Text = "Просмотр"
-                CType(e.Item.FindControl("lnkStatus"), HyperLink).ToolTip = "Просмотр"
+                CType(e.Item.FindControl("lnkStatus"), WebControls.HyperLink).Text = "Просмотр"
+                CType(e.Item.FindControl("lnkStatus"), WebControls.HyperLink).ToolTip = "Просмотр"
                 '
                 'Если проведено ТО
                 '
@@ -1058,7 +1060,7 @@ Namespace Kasbi
             Dim query = ""
 
             For j = 0 To grdTO.Items.Count - 1
-                If CType(grdTO.Items(j).FindControl("cbxSelect"), CheckBox).Checked = True Then
+                If CType(grdTO.Items(j).FindControl("cbxSelect"), WebControls.CheckBox).Checked = True Then
                     If n = 1 Then query &= "," & grdTO.DataKeys.Item(j)
                     If n = 0 Then query &= grdTO.DataKeys.Item(j)
                     n = 1
@@ -1076,5 +1078,54 @@ Namespace Kasbi
             'повтряется поле good_sys_id
             bind(Session("Filter"))
         End Sub
+
+        Protected Sub lnk_aktForTOandDolgWithtDate_Click(sender As Object, e As EventArgs) Handles lnk_aktForTOandDolgWithtDate.Click
+            Dim checkGoods As List(Of String) = New List(Of String)
+            Dim savePath As String
+            checkGoods = FindCheckGoods()
+            If checkGoods.Count > 0 Then
+                savePath = serviceDoc.AktForTOandDolg(checkGoods, True)
+                ResponseFile(savePath)
+            End If
+        End Sub
+
+        Protected Sub lnk_aktForTOandDolgWithoutDate_Click(sender As Object, e As EventArgs) Handles lnk_aktForTOandDolgWithoutDate.Click
+            Dim checkGoods As List(Of String) = New List(Of String)
+            Dim savePath As String
+            checkGoods = FindCheckGoods()
+            If checkGoods.Count > 0 Then
+                savePath = serviceDoc.AktForTOandDolg(checkGoods, False)
+                ResponseFile(savePath)
+            End If
+        End Sub
+
+
+        Private Function FindCheckGoods() As List(Of String)
+            Dim checkGoods As List(Of String) = New List(Of String)
+
+            For j = 0 To grdTO.Items.Count - 1
+                If CType(grdTO.Items(j).FindControl("cbxSelect"), WebControls.CheckBox).Checked Then
+                    checkGoods.Add(grdTO.DataKeys.Item(j).ToString())
+                End If
+            Next
+
+            Return checkGoods
+        End Function
+
+        Private Sub ResponseFile(savePath As String)
+            Dim file As IO.FileInfo
+            file = New FileInfo(savePath)
+            If file.Exists Then
+                Response.Clear()
+                Response.AddHeader("Content-Disposition", "attachment; filename=" & file.Name)
+                Response.AddHeader("Content-Length", file.Length.ToString())
+                Response.ContentType = "application/octet-stream"
+                Response.WriteFile(savePath)
+                Response.End()
+            Else
+                Response.Write("This file does not exist.")
+            End If
+        End Sub
+
     End Class
 End Namespace

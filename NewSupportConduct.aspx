@@ -892,6 +892,7 @@
                                     </asp:TemplateColumn>
                                     <asp:TemplateColumn HeaderText="Документы">
                                         <ItemTemplate>
+                                            <asp:HyperLink ID="lnkAkt_TO" runat="server" Target="_blank"></asp:HyperLink><br>
                                             <asp:HyperLink ID="lnkDogovor_Na_TO" runat="server" Target="_blank"></asp:HyperLink><br>
                                             <asp:HyperLink ID="lnkAct" runat="server" Target="_blank"></asp:HyperLink><br>
                                             <asp:HyperLink ID="lnkTehZaklyuchenie" runat="server" Target="_blank"></asp:HyperLink><br>

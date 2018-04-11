@@ -991,6 +991,8 @@ Namespace Kasbi
                         Else
                             s = ""
                         End If
+                        CType(e.Item.FindControl("lnkAkt_TO"), HyperLink).Text = "Акт ТО"
+                        CType(e.Item.FindControl("lnkAkt_TO"), HyperLink).NavigateUrl = "~/documents.aspx?" & "&t=60&g=" & e.Item.DataItem("good_sys_id") & "&d=" & Format(e.Item.DataItem("change_state_date"), "ddMMyyyy")
                         CType(e.Item.FindControl("lblPeriod"), Label).Text = GetRussianDate(d)
                         s = "ТО проведено <br>"
                         s = s & "&nbsp;СК ЦТО :" & e.Item.DataItem("marka_cto_in") & " / " & e.Item.DataItem("marka_cto_out") & "<br>"
@@ -1655,6 +1657,10 @@ Namespace Kasbi
 
         Protected Sub lstGoodType_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles lstGoodType.Load
 
+        End Sub
+
+        Protected Sub lnkAkt_TO_OnClick(sender As Object, e As EventArgs)
+            CType(sender, LinkButton).Parent.FindControl("")
         End Sub
     End Class
 

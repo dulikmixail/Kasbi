@@ -287,8 +287,8 @@
                 </td>
             </tr>
             <tr>
-                <td align="right">
-                       <div style="background-color:Silver; width:600; padding:5px; font-size:12; padding:8px">
+                <td>
+                       <div style="background-color:Silver; width:600; padding:5px; font-size:12; padding: 8px; float: right">
                                 <b>Фильтр:&nbsp;</b>
                                  
                                 <asp:LinkButton ID="lnkConduct" runat="server" CssClass="LinkButton">
@@ -311,9 +311,24 @@
                       </div>
                 </td>
             </tr>
+        <tr>
+            <td>
+                <div style="background-color:Silver; width:600px; padding:5px; font-size:12px; padding: 8px; float: right">
+                    <b>Документы:&nbsp;</b>
+                                 
+                    <asp:LinkButton ID="lnk_aktForTOandDolgWithtDate" runat="server" CssClass="LinkButton">
+                        &nbsp;Акт&nbsp;ТО&nbsp;с&nbsp;датой&nbsp;</asp:LinkButton>&nbsp;|&nbsp;
+                    
+                    <asp:LinkButton ID="lnk_aktForTOandDolgWithoutDate" runat="server" CssClass="LinkButton">
+                        &nbsp;Акт&nbsp;ТО&nbsp;без&nbsp;даты&nbsp;</asp:LinkButton>&nbsp;|&nbsp;
+                                
+                </div>
+            </td>
+        </tr>
+
             <tr>
                 <td align="left" colspan="2" height="15" valign="top" style="padding:5px; font-size:12px">
-                <div style="background-color:Silver; width:980; padding:5px">                         
+                <div style="background-color:Silver; width:980px; padding:5px">                         
                 <b>Дата&nbsp;проведения&nbsp;ТО:&nbsp;</b><asp:textbox id="tbxCloseDate" Runat="server" BorderWidth="1px"></asp:textbox><b>&nbsp;&nbsp;Закрываемый&nbsp;период:&nbsp;</b>
                     <%--<A href="javascript:showdatepicker('tbxCloseDate', 0, false,'MM.DD.YYYY')"><IMG alt="Date Picker" src="../Images/cal_date_picker.gif" border="0"></A>--%>
                                 <asp:DropDownList ID="lstMonth" runat="server" BorderWidth="1px" BackColor="#F6F8FC">
