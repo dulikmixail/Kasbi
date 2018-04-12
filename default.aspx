@@ -29,7 +29,6 @@
                     &nbsp;√лавна€</td>
             </tr>
         </table>
-        
         <table width="100%" style="font-size:12">
             <tr>
                 <td valign="top">
@@ -55,7 +54,6 @@
                         <asp:Image runat="server" ID="Image8" ImageUrl="Images/sel.gif" Style="z-index: 103;
                                             position: relative; left: 10;"></asp:Image>&nbsp; —формировать счет
                         </asp:HyperLink>
-                                                
                 </td>
                 <td valign="top">
                     ¬ведите серийный номер:<br />
@@ -152,9 +150,6 @@
 
 
 </asp:Label>
-
-
-
         <script language="javascript">
             jQuery(function () {
 

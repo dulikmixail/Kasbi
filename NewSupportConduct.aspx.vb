@@ -830,7 +830,13 @@ Namespace Kasbi
                             cmd.Parameters.AddWithValue("@pi_place_rn_id", lstPlaceRegion.SelectedValue)
                         End If
 
-                        dbSQL.Execute(cmd)
+                        If dbSQL.Execute(cmd) <> 0 Then
+                            Try
+                                dbSQL.Execute("update customer set dogovor=unn where  customer_sys_id=" & cust)
+                            Catch
+                                msgAddSupportConduct.Text = "Ошибка обновления номера договора!<br>" & Err.Description
+                            End Try
+                        End If
                     Catch
                         msgAddSupportConduct.Text = Err.Description
                         rbTO.SelectedIndex = 2
@@ -1634,7 +1640,7 @@ Namespace Kasbi
                     cmd.Parameters.AddWithValue("@pi_sale_date", rebilling_date)
                     cmd.Parameters.AddWithValue("@pi_state", 4)
                     cmd.Parameters.AddWithValue("@pi_type", 1)
-                    cmd.Parameters.AddWithValue("@pi_dogovor", sSubDogovor)
+                    cmd.Parameters.AddWithValue("@pi_dogovor", "")
                     cmd.Parameters.AddWithValue("@pi_proxy", "")
                     param = New SqlClient.SqlParameter
                     param.Direction = ParameterDirection.Output
