@@ -29,7 +29,7 @@ Namespace Kasbi
 
 
         Dim cust%
-        Dim dolg As Integer
+        Dim dolg As Double
 
         Private Overloads Sub Page_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
             Dim s$ = ""
@@ -372,13 +372,19 @@ Namespace Kasbi
 
         Private Sub btnCanceling_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnCanceling.Click
             Dim cmd As SqlClient.SqlCommand
+            Dim dolgDim As Decimal = CDec(txtSum.Text.Replace(".", ","))
+            Dim dolg As Decimal
 
             'Записываем сумму в долг
+
+            dolg = CDec(dbSQL.ExecuteScalar("Select CASE WHEN dolg IS NULL THEN 0 ELSE dolg END from  customer where customer_sys_id = " & cust))
+            dolg -= dolgDim
+
             Try
                 cmd = New SqlClient.SqlCommand("update_customer_dolg")
                 cmd.CommandType = CommandType.StoredProcedure
                 cmd.Parameters.AddWithValue("@pi_customer_sys_id", cust)
-                cmd.Parameters.AddWithValue("@pi_dolg", -CInt(txtSum.Text))
+                cmd.Parameters.AddWithValue("@pi_dolg", dolg)
                 dbSQL.Execute(cmd)
             Catch
                 msgClientInfo.Text = "Ошибка заказа товара!<br>" & Err.Description
