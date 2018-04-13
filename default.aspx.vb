@@ -616,10 +616,9 @@ Namespace Kasbi
                 oSheet.Cells(iFirstTableRow + i, 3).Value = drs(i).Item(18)
                 oSheet.Cells(iFirstTableRow + i, 4).Value = drs(i).Item(6)
                 oSheet.Cells(iFirstTableRow + i, 5).Value = drs(i).Item(4)
-                oSheet.Cells(iFirstTableRow + i, 6).Value = drs(i).Item(21)
-                oSheet.Cells(iFirstTableRow + i, 7).Value = CDbl(drs(i).Item(20)) * 0.2
-                oSheet.Cells(iFirstTableRow + i, 8).Value = CDbl(drs(i).Item(20)) * 1.2
-                'oSheet.Cells(iFirstTableRow + i, 9).Value = CDbl(drs(i).Item(20))
+                oSheet.Cells(iFirstTableRow + i, 6).Value = drs(i).Item(22)
+                oSheet.Cells(iFirstTableRow + i, 7).Value = drs(i).Item(21)
+                oSheet.Cells(iFirstTableRow + i, 8).Value = drs(i).Item(20)
             Next
 
             oSheet.Range("A" & iFirstTableRow & ":H" & iFirstTableRow + drs.Length).Borders.LineStyle = 1
