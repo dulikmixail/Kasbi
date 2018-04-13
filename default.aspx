@@ -78,46 +78,53 @@
             </tr>
         </table>
         
-        <table id="tblLinks" cellspacing="0" cellpadding="0" width="100%" runat="server">
-            <tr>
-                <td>
-                    <asp:Label ID="msg" runat="server" Font-Bold="True" ForeColor="Red" EnableViewState="False"></asp:Label></td>
-            </tr>
-            <tr>
-                <td class="SectionRow">
-                    </td>
-                <td class="SectionRow">
-                    </td>
-            </tr>
-        </table>
 
         
         
 <br /><br />
 <asp:HyperLink ID="HyperLink2" runat="server" EnableViewState="False" CssClass="PanelHider" NavigateUrl="IBANConverter.aspx"> <asp:Image runat="server" ID="Image9" ImageUrl="Images/sel.gif" Style="z-index: 103; position: relative; left: 10;"></asp:Image>&nbsp;IBAN конвертер</asp:HyperLink>
- 
+        <br /><br />
         
-        
+
+        <table id="tblLinks" cellspacing="0" cellpadding="0" width="100%" runat="server">
+            <tr>
+                <td>
+                    <asp:Label ID="msg" runat="server" Font-Bold="True" ForeColor="Red" EnableViewState="False"></asp:Label>
+                </td>
+            </tr>
+        </table>
+
 <asp:Label ID="lblExport" runat="server" Visible="true">
+    <br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+    <table>
+        <tr>
+            <td>
+                <asp:linkbutton id="lnk_export" runat="server" CssClass="PanelHider" EnableViewState="False">
+                    <asp:Image runat="server" ID="Image4" ImageUrl="Images/sel.gif" style="Z-INDEX: 103; position:relative; left:10;"></asp:Image>&nbsp;Экспорт</asp:linkbutton>
+                <asp:hyperlink id="Hyperlink3" runat="server" EnableViewState="False" Font-Size="8pt" Target="_blank"></asp:hyperlink>
+            </td>
+            <td>
+                <asp:CheckBox ID="toExcel"  runat="server" AutoPostBack="True"/><asp:Label runat="server" Font-Size="8pt">в Excel</asp:Label>
+            </td>
+        </tr>
+    </table>
         
-<br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
-<asp:linkbutton id="lnk_export" runat="server" CssClass="PanelHider" EnableViewState="False">
-<asp:Image runat="server" ID="Image4" ImageUrl="Images/sel.gif" style="Z-INDEX: 103; position:relative; left:10;"></asp:Image>&nbsp;Экспорт</asp:linkbutton>
-						<asp:hyperlink id="Hyperlink3" runat="server" EnableViewState="False" Font-Size="8pt" Target="_blank"></asp:hyperlink><br /><br /> 
+
+
+   
     
     <table>
         <tr>
             <td>
-                <asp:RadioButtonList ID="radioButtonListExport" runat="server" Font-Size="8pt" AutoPostBack="True">
-                <%--<asp:ListItem  Value="fullHistory">Все работы</asp:ListItem>--%>
+                
+
+                <asp:RadioButtonList ID="radioButtonListExport" runat="server" Font-Size="8pt" AutoPostBack="True" >
                 <asp:ListItem Value="warrantyHistory">Гарантийные ремонты</asp:ListItem>
                 <asp:ListItem Value="notWorkHistory">Ремонты без стоимости работ</asp:ListItem>
                 <asp:ListItem Value="standartHistory">Платные ремонты</asp:ListItem>
-                <%--<asp:ListItem Value="toHistory" >ТО</asp:ListItem>--%>
-                <asp:ListItem Selected="True" Value="toHistoryByEmployee">ТО по мастерам</asp:ListItem>
-                <asp:ListItem Value="toHistoryByEmployeeExcel">ТО по мастерам (Excel)</asp:ListItem>
-                <asp:ListItem Value="removedFromTOExcel">ТО не проведено и снятые с ТО (Excel)</asp:ListItem>
-                <asp:ListItem Value="toHistorySpecialRulesExcel">Список ТО - исключение (Excel)</asp:ListItem>
+                <asp:ListItem Value="toHistoryByEmployee">ТО по мастерам</asp:ListItem>
+                <asp:ListItem Value="removedFromTO" Enabled="False">ТО не проведено и снятые с ТО</asp:ListItem>
+                <asp:ListItem Value="toHistorySpecialRules" Enabled="False">Список ТО - исключение</asp:ListItem>
 
                 </asp:RadioButtonList>
             </td>

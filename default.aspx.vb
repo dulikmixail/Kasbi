@@ -64,6 +64,20 @@ Namespace Kasbi
                 btnNew.Visible = False
             End If
 
+            If toExcel.Checked Then
+                radioButtonListExport.Items.FindByValue("removedFromTO").Enabled = True
+                radioButtonListExport.Items.FindByValue("toHistorySpecialRules").Enabled = True
+            Else
+                radioButtonListExport.Items.FindByValue("removedFromTO").Enabled = False
+                radioButtonListExport.Items.FindByValue("toHistorySpecialRules").Enabled = False
+            End If
+
+            If Not radioButtonListExport.SelectedValue = "removedFromTO" And Not radioButtonListExport.SelectedValue = "toHistorySpecialRules" And toExcel.Checked Then
+                lstEmployee.Visible = True
+            Else
+                lstEmployee.Visible = False
+            End If
+
 
 
             If Not IsPostBack Then
@@ -215,14 +229,6 @@ Namespace Kasbi
             Response.Redirect(GetAbsoluteUrl("~/RepairMaster.aspx"))
         End Sub
 
-        Private Sub radioButtonListExport_SelectedIndexChanged(sender As Object, e As EventArgs) Handles radioButtonListExport.SelectedIndexChanged
-            If radioButtonListExport.SelectedValue = "toHistoryByEmployeeExcel" Or radioButtonListExport.SelectedValue = "toHistoryByEmployee" Then
-                lstEmployee.Visible = True
-            Else
-                lstEmployee.Visible = False
-            End If
-        End Sub
-
         Sub export_customer()
             Try
                 Dim cmd As SqlClient.SqlCommand
@@ -316,7 +322,6 @@ Namespace Kasbi
             cmd.Parameters.AddWithValue("@date_end", enddate)
             cmd.Parameters.AddWithValue("@date_start2", startdate2)
             cmd.Parameters.AddWithValue("@date_end2", enddate2)
-            'cmd.Parameters.AddWithValue("@excludeCustomers", "'700847187', '700847133', '700847174', '700847279', '700847294', '700847266', '700847225', '700847212', '700847146', '700847120', '700847332', '700847238', '700847317', '700847161', '700847240', '700048641', '790428714', '790599137', '790426658', '790473326', '790432442', '790384081', '791011407', '790602805', '812005052', '790386916', '790384502', '790627415', '790754552', '812004413', '790701937', '790384316', '790384280', '790610462', '790386880', '300046309', '390491694', '690243721', '190592808', '690612576', '190634129', '190571693', '690621783', '691830932', '691073509', '192791253', '190764408', '190559938', '691382370', '192577111', '192479014', '691539193', '191182125', '192593758', '190999171', '190706481', '691830945', '192764415', '691822895', '190454134', '601079710', '190908735', '192694244', '192606702', '390504572', '690618015', '191174460', '191455232', '192150614', '192548018', '690610823', '192701377', '190580247', '190542717', '192036519', '190542347', '190575206'")
 
             If radioButtonListExport.SelectedValue = "fullHistory" Then
 
@@ -582,9 +587,54 @@ Namespace Kasbi
 
         End Sub
 
+        Sub createAndSendFileHistory(ds As DataSet, fileName As String)
+            Dim docPath, savePath As String
+            Dim drs() As Data.DataRow
+            Dim iFirstTableRow = 4
+            docPath = Server.MapPath("Templates\") & fileName
+            savePath = Server.MapPath("Docs") & "\repair\" & Session("User").sys_id & "\" & fileName
+            CopyFile(docPath, savePath, overwrite:=True)
+
+            oExcel = New ApplicationClass()
+            oExcel.DisplayAlerts = False
+            oBook = oExcel.Workbooks.Open(savePath)
+            oSheet = oBook.ActiveSheet
+
+            drs = ds.Tables(0).Select()
+
+            Dim selection As Range = oSheet.Range("A4:H4")
+            selection.Cut(selection.Offset(drs.Length, 0))
+
+            If lstEmployee.SelectedValue.Length <> 0 Then
+                oSheet.Cells(2, 1).Value = radioButtonListExport.SelectedItem.Text & " (" & tbxBeginDate.Text & " - " & tbxEndDate.Text & ") - " & lstEmployee.SelectedItem.Text
+            Else
+                oSheet.Cells(2, 1).Value = radioButtonListExport.SelectedItem.Text & " (" & tbxBeginDate.Text & " - " & tbxEndDate.Text & ")"
+            End If
+            For i As Integer = 0 To drs.Length - 1
+                oSheet.Cells(iFirstTableRow + i, 1).Value = i + 1
+                oSheet.Cells(iFirstTableRow + i, 2).Value = drs(i).Item(13)
+                oSheet.Cells(iFirstTableRow + i, 3).Value = drs(i).Item(18)
+                oSheet.Cells(iFirstTableRow + i, 4).Value = drs(i).Item(6)
+                oSheet.Cells(iFirstTableRow + i, 5).Value = drs(i).Item(4)
+                oSheet.Cells(iFirstTableRow + i, 6).Value = drs(i).Item(21)
+                oSheet.Cells(iFirstTableRow + i, 7).Value = CDbl(drs(i).Item(20)) * 0.2
+                oSheet.Cells(iFirstTableRow + i, 8).Value = CDbl(drs(i).Item(20)) * 1.2
+                'oSheet.Cells(iFirstTableRow + i, 9).Value = CDbl(drs(i).Item(20))
+            Next
+
+            oSheet.Range("A" & iFirstTableRow & ":H" & iFirstTableRow + drs.Length).Borders.LineStyle = 1
+            oSheet.Cells(iFirstTableRow + drs.Length, 7).Value = oExcel.WorksheetFunction.Sum(oSheet.Range("G" & iFirstTableRow & ":G" & iFirstTableRow + drs.Length))
+            oSheet.Cells(iFirstTableRow + drs.Length, 8).Value = oExcel.WorksheetFunction.Sum(oSheet.Range("H" & iFirstTableRow & ":H" & iFirstTableRow + drs.Length))
+
+            oBook.Close(True, savePath, True)
+            oExcel.Quit()
+
+            SendFile(savePath)
+
+        End Sub
+
         Sub createAndSendFileToByExecutor(ds As DataSet, fileName As String)
             Dim docPath, savePath As String
-            Dim file As IO.FileInfo
             Dim drs() As Data.DataRow
             Dim iFirstTableRow = 2
 
@@ -618,24 +668,12 @@ Namespace Kasbi
             oBook.Close(True, savePath, True)
             oExcel.Quit()
 
-
-            file = New System.IO.FileInfo(savePath)
-            If file.Exists Then
-                Response.Clear()
-                Response.AddHeader("Content-Disposition", "attachment; filename=" & file.Name)
-                Response.AddHeader("Content-Length", file.Length.ToString())
-                Response.ContentType = "application/octet-stream"
-                Response.WriteFile(savePath)
-                Response.End()
-            Else
-                Response.Write("This file does not exist.")
-            End If
+            SendFile(savePath)
 
         End Sub
 
         Sub createAndSendFileRemovedFromTo(ds As DataSet, fileName As String)
             Dim docPath, savePath As String
-            Dim file As IO.FileInfo
             Dim drs() As Data.DataRow
             Dim iFirstTableRow = 2
 
@@ -667,22 +705,52 @@ Namespace Kasbi
             oBook.Close(True, savePath, True)
             oExcel.Quit()
 
+            SendFile(savePath)
+        End Sub
 
-            file = New System.IO.FileInfo(savePath)
-            If file.Exists Then
-                Response.Clear()
-                Response.AddHeader("Content-Disposition", "attachment; filename=" & file.Name)
-                Response.AddHeader("Content-Length", file.Length.ToString())
-                Response.ContentType = "application/octet-stream"
-                Response.WriteFile(savePath)
-                Response.End()
-            Else
-                Response.Write("This file does not exist.")
-            End If
+        Sub export_warrantyHistory_toExcel()
+            export_history_toExcel(1, 0, 5)
+        End Sub
+
+        Sub export_notWorkHistory_toExcel()
+            export_history_toExcel(0, 1, 5)
+        End Sub
+
+        Sub export_standartHistory_toExcel()
+            export_history_toExcel(0, 0, 5)
+        End Sub
+        Sub export_history_toExcel(isWarranty As Integer, isNotWork As Integer, state As Integer)
+            Dim cmd As SqlClient.SqlCommand
+            Dim adapt As SqlClient.SqlDataAdapter
+            Dim ds As DataSet
+
+            startdate = DateTime.Parse(tbxBeginDate.Text)
+            enddate = DateTime.Parse(tbxEndDate.Text)
+
+            Dim startdate2 = DateTime.Parse(tbxBeginDate.Text + " 00:00:00")
+            Dim enddate2 = DateTime.Parse(tbxEndDate.Text + " 23:59:59")
+
+            cmd = New SqlClient.SqlCommand("get_new_history")
+            cmd.CommandType = CommandType.StoredProcedure
+            cmd.Parameters.Clear()
+            cmd.Parameters.AddWithValue("@date", Date.Today)
+            cmd.Parameters.AddWithValue("@date_start", startdate)
+            cmd.Parameters.AddWithValue("@date_end", enddate)
+            cmd.Parameters.AddWithValue("@date_start2", startdate2)
+            cmd.Parameters.AddWithValue("@date_end2", enddate2)
+            cmd.Parameters.AddWithValue("@isWarranty", isWarranty)
+            cmd.Parameters.AddWithValue("@isNotWork", isNotWork)
+            cmd.Parameters.AddWithValue("@pi_state", state)
+            cmd.Parameters.AddWithValue("@pi_employee_sys_id", lstEmployee.SelectedValue)
+
+            adapt = dbSQL.GetDataAdapter(cmd)
+            ds = New DataSet
+            adapt.Fill(ds)
+            createAndSendFileHistory(ds, "Repair_history.xlsx")
 
         End Sub
 
-        Sub export_TO_by_executor_to_Excel()
+        Sub export_TObyExecutor_toExcel()
             Dim cmd As SqlClient.SqlCommand
 
             Dim adapt As SqlClient.SqlDataAdapter
@@ -714,7 +782,7 @@ Namespace Kasbi
             createAndSendFileToByExecutor(ds, "TO_by_executor.xlsx")
         End Sub
 
-        Sub export_TO_Special_Rules_to_Excel()
+        Sub export_TOSpecialRules_toExcel()
             Dim cmd As SqlClient.SqlCommand
 
             Dim adapt As SqlClient.SqlDataAdapter
@@ -751,7 +819,7 @@ Namespace Kasbi
 
         End Sub
 
-        Sub export_removed_from_TO_to_Excel()
+        Sub export_removedFromTO_toExcel()
             Dim cmd As SqlClient.SqlCommand
 
             Dim adapt As SqlClient.SqlDataAdapter
@@ -786,6 +854,22 @@ Namespace Kasbi
 
         End Sub
 
+        Sub SendFile(savePath As String)
+            Dim file As IO.FileInfo
+            file = New System.IO.FileInfo(savePath)
+            If file.Exists Then
+                Response.Clear()
+                Response.AddHeader("Content-Disposition", "attachment; filename=" & file.Name)
+                Response.AddHeader("Content-Length", file.Length.ToString())
+                Response.ContentType = "application/octet-stream"
+                Response.WriteFile(savePath)
+                Response.End()
+            Else
+                Response.Write("This file does not exist.")
+            End If
+        End Sub
+
+
         Public Function IsFileInUse(filename As String) As Boolean
             Dim Locked As Boolean = False
             Try
@@ -802,17 +886,24 @@ Namespace Kasbi
 
 
         Protected Sub lnk_export_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles lnk_export.Click
+            If radioButtonListExport.SelectedValue.Length <> 0 Then
 
-            Select Case radioButtonListExport.SelectedValue
-                Case "toHistoryByEmployee"
-                    export_TO_by_executor()
-                Case "toHistoryByEmployeeExcel"
-                    export_TO_by_executor_to_Excel()
-                Case "removedFromTOExcel"
-                    export_removed_from_TO_to_Excel()
-                Case "toHistorySpecialRulesExcel"
-                    export_TO_Special_Rules_to_Excel()
-                Case Else
+                If toExcel.Checked Then
+                    Select Case radioButtonListExport.SelectedValue
+                        Case "warrantyHistory"
+                            export_warrantyHistory_toExcel()
+                        Case "notWorkHistory"
+                            export_notWorkHistory_toExcel()
+                        Case "standartHistory"
+                            export_standartHistory_toExcel()
+                        Case "toHistoryByEmployee"
+                            export_TObyExecutor_toExcel()
+                        Case "removedFromTO"
+                            export_removedFromTO_toExcel()
+                        Case "toHistorySpecialRules"
+                            export_TOspecialRules_toExcel()
+                    End Select
+                Else
                     export_customer()
                     export_sale()
                     export_history()
@@ -821,7 +912,31 @@ Namespace Kasbi
                     export_site()
                     export_user()
                     export_allcustomers()
-            End Select
+                End If
+
+            Else
+                msg.Text = "Выберите пункт для экспорта"
+            End If
+
+            'Select Case radioButtonListExport.SelectedValue
+            '    Case "toHistoryByEmployee"
+            '        export_TO_by_executor()
+            '    Case "toHistoryByEmployee"
+            '        export_TO_by_executor_to_Excel()
+            '    Case "removedFromTO"
+            '        export_removed_from_TO_to_Excel()
+            '    Case "toHistorySpecialRules"
+            '        export_TO_Special_Rules_to_Excel()
+            '    Case Else
+            '        export_customer()
+            '        export_sale()
+            '        export_history()
+            '        export_docs()
+            '        export_ostatki()
+            '        export_site()
+            '        export_user()
+            '        export_allcustomers()
+            'End Select
 
         End Sub
 

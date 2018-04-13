@@ -93,7 +93,7 @@
 									<asp:TemplateColumn HeaderText="÷ена">
 										<ItemStyle HorizontalAlign="center" Font-Bold=true></ItemStyle>
 										<ItemTemplate>
-											<%#DataBinder.Eval(Container.DataItem, "price")%> р.
+											<%#DataBinder.Eval(Container.DataItem, "price")%>
 										</ItemTemplate>
 									</asp:TemplateColumn>
 																																									
