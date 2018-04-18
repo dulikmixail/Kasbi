@@ -72,12 +72,11 @@ Namespace Kasbi
                 radioButtonListExport.Items.FindByValue("toHistorySpecialRules").Enabled = False
             End If
 
-            If Not radioButtonListExport.SelectedValue = "removedFromTO" And Not radioButtonListExport.SelectedValue = "toHistorySpecialRules" And toExcel.Checked Then
+            If Not radioButtonListExport.SelectedValue = "removedFromTO" And Not radioButtonListExport.SelectedValue = "toHistorySpecialRules" And toExcel.Checked Or radioButtonListExport.SelectedValue = "toHistoryByEmployee" Then
                 lstEmployee.Visible = True
             Else
                 lstEmployee.Visible = False
             End If
-
 
 
             If Not IsPostBack Then
@@ -903,14 +902,20 @@ Namespace Kasbi
                             export_TOspecialRules_toExcel()
                     End Select
                 Else
-                    export_customer()
-                    export_sale()
-                    export_history()
-                    export_docs()
-                    export_ostatki()
-                    export_site()
-                    export_user()
-                    export_allcustomers()
+                    Select Case radioButtonListExport.SelectedValue
+                        Case "toHistoryByEmployee"
+                            export_TO_by_executor()
+                        Case Else
+                            export_customer()
+                            export_sale()
+                            export_history()
+                            export_docs()
+                            export_ostatki()
+                            export_site()
+                            export_user()
+                            export_allcustomers()
+                    End Select
+
                 End If
 
             Else
