@@ -104,8 +104,8 @@ Namespace Kasbi
         Dim query
 
         Private Overloads Sub Page_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
-            Dim customer_sys_id%, sale_sys_id%, sub_num%, doc_path$, good_sys_id%, history_id, rebilling%, vid_plateza%, d%
-            Dim customer_sys_id_s, good_sys_id_s As String
+            Dim customer_sys_id%, sale_sys_id%, sub_num%, doc_path$, good_sys_id%, history_id, rebilling%, vid_plateza%
+            Dim customer_sys_id_s, good_sys_id_s, d As String
             Dim begin_date As System.DateTime, end_date As DateTime
             Dim doc_type(0) As Integer
             Dim path$
@@ -124,7 +124,7 @@ Namespace Kasbi
                 history_id = GetPageParam("h")
                 rebilling = GetPageParam("rebilling")
                 vid_plateza = GetPageParam("vidplateza")
-                d = GetPageParam("d")
+                d = Request.QueryString("d")
                 If (doc_type(0) = 10) Then
                     Dim dataStream As Stream = Request.InputStream
                     Dim reader As StreamReader = New StreamReader(dataStream)
