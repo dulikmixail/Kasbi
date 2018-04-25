@@ -91,20 +91,20 @@ Namespace service
 
                 For k As Integer = 0 To drs.Length - 1
 
-                    If k Mod 2 = 0 Then
-                        paste_Part1(drs, k, withDate, dateAkt)
-                    Else
+                    'If k Mod 2 = 0 Then
+                    paste_Part1(drs, k, withDate, dateAkt)
+                        'Else
                         paste_Part2(drs, k, withDate, dateAkt)
                         empty_Part2()
-                        If k <> (drs.Length - 1) Then
-                            With _wrdDoc.Sections(1).Range
-                                .Collapse(WdCollapseDirection.wdCollapseEnd)
-                                .InsertBreak(WdBreakType.wdPageBreak)
-                                .Collapse(WdCollapseDirection.wdCollapseEnd)
-                                .Paste()
-                            End With
-                        End If
+                    If k <> (drs.Length - 1) Then
+                        With _wrdDoc.Sections(1).Range
+                            .Collapse(WdCollapseDirection.wdCollapseEnd)
+                            .InsertBreak(WdBreakType.wdPageBreak)
+                            .Collapse(WdCollapseDirection.wdCollapseEnd)
+                            .Paste()
+                        End With
                     End If
+                    'End If
                 Next
                 If drs.Length Mod 2 = 1 Then
                     clear_Part2()

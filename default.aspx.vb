@@ -1,6 +1,7 @@
 Imports System.IO
 Imports Microsoft.Office.Interop.Excel
 Imports Microsoft.VisualBasic.FileIO.FileSystem
+Imports Scripting
 
 Namespace Kasbi
 
@@ -67,15 +68,25 @@ Namespace Kasbi
             If toExcel.Checked Then
                 radioButtonListExport.Items.FindByValue("removedFromTO").Enabled = True
                 radioButtonListExport.Items.FindByValue("toHistorySpecialRules").Enabled = True
+                radioButtonListExport.Items.FindByValue("unpAndDogovor").Enabled = True
             Else
                 radioButtonListExport.Items.FindByValue("removedFromTO").Enabled = False
                 radioButtonListExport.Items.FindByValue("toHistorySpecialRules").Enabled = False
+                radioButtonListExport.Items.FindByValue("unpAndDogovor").Enabled = False
             End If
 
-            If Not radioButtonListExport.SelectedValue = "removedFromTO" And Not radioButtonListExport.SelectedValue = "toHistorySpecialRules" And toExcel.Checked Or radioButtonListExport.SelectedValue = "toHistoryByEmployee" Then
+            If Not radioButtonListExport.SelectedValue = "removedFromTO" And Not radioButtonListExport.SelectedValue = "toHistorySpecialRules" And Not radioButtonListExport.SelectedValue = "unpAndDogovor" And toExcel.Checked Or radioButtonListExport.SelectedValue = "toHistoryByEmployee" Then
                 lstEmployee.Visible = True
             Else
                 lstEmployee.Visible = False
+            End If
+
+            If radioButtonListExport.SelectedValue = "unpAndDogovor" Then
+                tbxBeginDate.Visible = False
+                tbxEndDate.Visible = False
+            Else
+                tbxBeginDate.Visible = True
+                tbxEndDate.Visible = True
             End If
 
 
@@ -706,6 +717,47 @@ Namespace Kasbi
             SendFile(savePath)
         End Sub
 
+        Sub createAndSendFileUnpAndDogovor(ds As DataSet, fileName As String)
+            Dim docPath, savePath As String
+            Dim drs() As Data.DataRow
+            Dim iFirstTableRow = 1
+            Dim fso As New FileSystemObject
+            Dim folder As String
+            Dim subFolder As String
+
+            Try
+                docPath = Server.MapPath("Templates\") & fileName
+                savePath = Server.MapPath("Docs") & "\TO\" & Session("User").sys_id & "\" & fileName
+                CopyFile(docPath, savePath, overwrite:=True)
+
+                oExcel = New ApplicationClass()
+                oExcel.DisplayAlerts = False
+                oBook = oExcel.Workbooks.Open(savePath)
+                oSheet = oBook.ActiveSheet
+
+                drs = ds.Tables(0).Select()
+
+                For i As Integer = 0 To drs.Length - 1
+                    oSheet.Cells(iFirstTableRow + i, 1).Value = drs(i).Item(0)
+                    oSheet.Cells(iFirstTableRow + i, 2).Value = drs(i).Item(1)
+                    oSheet.Cells(iFirstTableRow + i, 3).Value = drs(i).Item(2)
+
+                Next
+
+                oBook.Close(True, savePath, True)
+                oExcel.Quit()
+
+                SendFile(savePath)
+                oExcel.Quit()
+            Catch ex As Exception
+                oExcel.Quit()
+            End Try
+
+
+
+        End Sub
+
+
         Sub export_warrantyHistory_toExcel()
             export_history_toExcel(1, 0, 5)
         End Sub
@@ -817,6 +869,29 @@ Namespace Kasbi
 
         End Sub
 
+        Sub export_unpAndDogovor_toExcel()
+            Dim cmd As SqlClient.SqlCommand
+
+            Dim adapt As SqlClient.SqlDataAdapter
+            Dim ds As DataSet
+            Dim docPath As String
+            Dim file As IO.FileInfo
+            Dim fileNotBusy As Boolean
+            Dim dt As Data.DataTable
+            Dim drs() As Data.DataRow
+            cmd = New SqlClient.SqlCommand("get_unn_dogovor")
+            cmd.CommandType = CommandType.StoredProcedure
+            cmd.Parameters.Clear()
+
+            adapt = dbSQL.GetDataAdapter(cmd)
+            ds = New DataSet
+            adapt.Fill(ds)
+
+            createAndSendFileUnpAndDogovor(ds, "unn_dogovor.xlsx")
+
+        End Sub
+
+
         Sub export_removedFromTO_toExcel()
             Dim cmd As SqlClient.SqlCommand
 
@@ -873,7 +948,7 @@ Namespace Kasbi
             Try
                 'Open the file in a try block in exclusive mode.  
                 'If the file is in use, it will throw an IOException. 
-                Dim fs As FileStream = File.Open(filename, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None)
+                Dim fs As FileStream = IO.File.Open(filename, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None)
                 fs.Close()
                 ' If an exception is caught, it means that the file is in Use 
             Catch ex As IOException
@@ -899,7 +974,9 @@ Namespace Kasbi
                         Case "removedFromTO"
                             export_removedFromTO_toExcel()
                         Case "toHistorySpecialRules"
-                            export_TOspecialRules_toExcel()
+                            export_TOSpecialRules_toExcel()
+                        Case "unpAndDogovor"
+                            export_unpAndDogovor_toExcel()
                     End Select
                 Else
                     Select Case radioButtonListExport.SelectedValue

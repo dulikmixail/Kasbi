@@ -125,6 +125,7 @@
                 <asp:ListItem Value="toHistoryByEmployee">ТО по мастерам</asp:ListItem>
                 <asp:ListItem Value="removedFromTO" Enabled="False">ТО не проведено и снятые с ТО</asp:ListItem>
                 <asp:ListItem Value="toHistorySpecialRules" Enabled="False">Список ТО - исключение</asp:ListItem>
+                <asp:ListItem Value="unpAndDogovor" Enabled="False">УНП и договор</asp:ListItem>
 
                 </asp:RadioButtonList>
             </td>
