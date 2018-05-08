@@ -55,8 +55,8 @@ Namespace Kasbi.Reports
             Dim adapt As SqlClient.SqlDataAdapter
             Dim ds As DataSet
 
-            Dim startdate2 = DateTime.Parse(tbxBeginDate.Text + " 00:00:00")
-            Dim enddate2 = DateTime.Parse(tbxEndDate.Text + " 23:59:59")
+            startdate = DateTime.Parse(tbxBeginDate.Text + " 00:00:00")
+            endDate = DateTime.Parse(tbxEndDate.Text + " 23:59:59")
 
             cmd = New SqlClient.SqlCommand("get_kkm_skno_history")
             cmd.CommandType = CommandType.StoredProcedure

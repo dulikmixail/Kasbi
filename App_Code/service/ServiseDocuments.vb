@@ -1,8 +1,6 @@
 ﻿Imports Kasbi
-Imports Microsoft.VisualBasic
 Imports Microsoft.Office.Interop.Word
 Imports Microsoft.VisualBasic.FileIO.FileSystem
-Imports System.Diagnostics
 
 Namespace service
     Public Class ServiceDocuments
@@ -43,10 +41,11 @@ Namespace service
         End Sub
 
 
-        Public Function AktForTOandDolg(checkGoods As List(Of String), Optional withDate As Boolean = True, Optional dateAkt As DateTime = Nothing) As String
+        Public Function AktForTOandDolg(checkGoods As Hashtable, Optional withDate As Boolean = True, Optional dateAkt As DateTime = Nothing) As String
             Dim cmd As SqlClient.SqlCommand
             Dim adapt As SqlClient.SqlDataAdapter
             Dim ds As DataSet
+
 
             Dim docPath, savePath, filter As String
             Dim drs() As Data.DataRow
@@ -71,8 +70,14 @@ Namespace service
                     .Copy()
                 End With
 
+                filter = " "
                 If checkGoods.Count <> 0 Then
-                    filter = " WHERE good.good_sys_id IN (" & String.Join(",", checkGoods) & ") "
+                    Dim stringKeys As String = ""
+                    For Each key In checkGoods.Keys
+                        stringKeys &= key.ToString() & ","
+                    Next
+                    stringKeys = stringKeys.Remove(stringKeys.Length - 1, 1)
+                    filter = " WHERE good.good_sys_id IN (" & stringKeys & ") "
                 End If
 
                 cmd = New SqlClient.SqlCommand("prc_rpt_AktsTOAndDolg")
@@ -92,10 +97,10 @@ Namespace service
                 For k As Integer = 0 To drs.Length - 1
 
                     'If k Mod 2 = 0 Then
-                    paste_Part1(drs, k, withDate, dateAkt)
-                        'Else
-                        paste_Part2(drs, k, withDate, dateAkt)
-                        empty_Part2()
+                    paste_Part1(drs, k, withDate, dateAkt, checkGoods)
+                    'Else
+                    paste_Part2(drs, k, withDate, dateAkt, checkGoods)
+                    empty_Part2()
                     If k <> (drs.Length - 1) Then
                         With _wrdDoc.Sections(1).Range
                             .Collapse(WdCollapseDirection.wdCollapseEnd)
@@ -122,11 +127,11 @@ Namespace service
             Return savePath
         End Function
 
-        Private Sub paste_Part1(drs() As Data.DataRow, k As Integer, withDate As Boolean, dateAkt As DateTime)
+        Private Sub paste_Part1(drs() As Data.DataRow, k As Integer, withDate As Boolean, dateAkt As DateTime, checkGoods As Hashtable)
             If withDate Then
                 _wrdDoc.Bookmarks("Day1").Range.Text = dateAkt.ToString("dd")
             End If
-            _wrdDoc.Bookmarks("Counter1").Range.Text = k + 1
+            _wrdDoc.Bookmarks("Counter1").Range.Text = checkGoods.Item(drs(k).Item(0).ToString()).ToString()
             _wrdDoc.Bookmarks("NumAkt1").Range.Text = drs(k).Item(2).ToString().Trim() & "/" & dateAkt.Month
             _wrdDoc.Bookmarks("Month1_1").Range.Text = _monthReplacements1(dateAkt.ToString("MM"))
             _wrdDoc.Bookmarks("Month1_2").Range.Text = _monthReplacements2(dateAkt.ToString("MM"))
@@ -144,11 +149,11 @@ Namespace service
             _wrdDoc.Bookmarks("Master1").Range.Text = CurrentUser.Name
         End Sub
 
-        Private Sub paste_Part2(drs() As Data.DataRow, k As Integer, withDate As Boolean, dateAkt As DateTime)
+        Private Sub paste_Part2(drs() As Data.DataRow, k As Integer, withDate As Boolean, dateAkt As DateTime, checkGoods As Hashtable)
             If withDate Then
                 _wrdDoc.Bookmarks("Day2").Range.Text = dateAkt.ToString("dd")
             End If
-            _wrdDoc.Bookmarks("Counter2").Range.Text = k + 1
+            _wrdDoc.Bookmarks("Counter2").Range.Text = checkGoods.Item(drs(k).Item(0).ToString()).ToString()
             _wrdDoc.Bookmarks("NumAkt2").Range.Text = drs(k).Item(2).ToString().Trim() & "/" & dateAkt.Month
             _wrdDoc.Bookmarks("Month2_1").Range.Text = _monthReplacements1(dateAkt.ToString("MM"))
             _wrdDoc.Bookmarks("Month2_2").Range.Text = _monthReplacements2(dateAkt.ToString("MM"))

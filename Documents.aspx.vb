@@ -5607,8 +5607,8 @@ ExitFunction:
         End Function
 
         Private Function ProcessAktForTOandDolg(good_sys_id As String, d As String) As String
-            Dim checkGoods As List(Of String) = New List(Of String)
-            checkGoods.Add(good_sys_id)
+            Dim checkGoods As Hashtable = New Hashtable()
+            checkGoods.Add(good_sys_id.ToString(), " ")
             Return serviceDoc.AktForTOandDolg(checkGoods, True, Date.ParseExact(d, "ddMMyyyy", System.Globalization.DateTimeFormatInfo.InvariantInfo))
         End Function
 

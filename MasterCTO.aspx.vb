@@ -2,7 +2,6 @@ Imports System.Diagnostics
 Imports System.IO
 Imports service
 
-
 Namespace Kasbi
 
     Partial Class MasterCTO
@@ -671,20 +670,20 @@ Namespace Kasbi
                         cmd = New SqlClient.SqlCommand("insert_TO")
                         cmd.CommandType = CommandType.StoredProcedure
 
-                        cmd.Parameters.AddWithValue("@pi_good_sys_id", grdTO.DataKeys.Item(index))
-                        cmd.Parameters.AddWithValue("@pi_start_date", d)
-                        cmd.Parameters.AddWithValue("@pi_executor", Session("User").sys_id)
-                        cmd.Parameters.AddWithValue("@pi_close_date", closedate)
+                    cmd.Parameters.AddWithValue("@pi_good_sys_id", grdTO.DataKeys.Item(index))
+                    cmd.Parameters.AddWithValue("@pi_start_date", d)
+                    cmd.Parameters.AddWithValue("@pi_executor", Session("User").sys_id)
+                    cmd.Parameters.AddWithValue("@pi_close_date", closedate)
 
-                        adapt = dbSQL.GetDataAdapter(cmd)
-                        ds = New DataSet
-                        adapt.Fill(ds)
+                    adapt = dbSQL.GetDataAdapter(cmd)
+                    ds = New DataSet
+                    adapt.Fill(ds)
 
                     End If
 
-                Next
+            Next
 
-                Dim dv As DataView = New DataView(kkmDs.Tables(0))
+            Dim dv As DataView = New DataView(kkmDs.Tables(0))
                 Dim filter As String = String.Empty
                 If serviceTo.GetListToExeption().Count <> 0 Then
                     filter = "good_sys_id in (" & String.Join(", ", serviceTo.GetListStringGoodSysId()) & ")"
@@ -1080,7 +1079,7 @@ Namespace Kasbi
         End Sub
 
         Protected Sub lnk_aktForTOandDolgWithtDate_Click(sender As Object, e As EventArgs) Handles lnk_aktForTOandDolgWithtDate.Click
-            Dim checkGoods As List(Of String) = New List(Of String)
+            Dim checkGoods As Hashtable = New Hashtable
             Dim savePath As String
             checkGoods = FindCheckGoods()
             If checkGoods.Count > 0 Then
@@ -1090,7 +1089,7 @@ Namespace Kasbi
         End Sub
 
         Protected Sub lnk_aktForTOandDolgWithoutDate_Click(sender As Object, e As EventArgs) Handles lnk_aktForTOandDolgWithoutDate.Click
-            Dim checkGoods As List(Of String) = New List(Of String)
+            Dim checkGoods As Hashtable
             Dim savePath As String
             checkGoods = FindCheckGoods()
             If checkGoods.Count > 0 Then
@@ -1100,12 +1099,12 @@ Namespace Kasbi
         End Sub
 
 
-        Private Function FindCheckGoods() As List(Of String)
-            Dim checkGoods As List(Of String) = New List(Of String)
+        Private Function FindCheckGoods() As Hashtable
+            Dim checkGoods As Hashtable = New Hashtable
 
             For j = 0 To grdTO.Items.Count - 1
                 If CType(grdTO.Items(j).FindControl("cbxSelect"), WebControls.CheckBox).Checked Then
-                    checkGoods.Add(grdTO.DataKeys.Item(j).ToString())
+                    checkGoods.Add(grdTO.DataKeys.Item(j).ToString(), CType(grdTO.Items(j).FindControl("lblNumGood"), WebControls.HyperLink).Text)
                 End If
             Next
 
