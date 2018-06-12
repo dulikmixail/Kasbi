@@ -30,7 +30,7 @@ Namespace Kasbi.Admin
             Dim adapt As SqlClient.SqlDataAdapter
             Dim ds As DataSet
             Try
-                adapt = dbSQL.GetDataAdapter("select * from details order by is_detail desc, detail_name asc")
+                adapt = dbSQL.GetDataAdapter("select * from details order by in_stock desc, is_detail desc, detail_name asc")
                 ds = New DataSet
                 adapt.Fill(ds)
                 grdDetails.DataSource = ds.Tables(0).DefaultView
@@ -60,13 +60,14 @@ Namespace Kasbi.Admin
                     Exit Sub
                 End If
                 Dim cbxIsDetail As CheckBox = CType(e.Item.FindControl("cbxIsDetailNew"), CheckBox)
+                Dim cbxDisabled As CheckBox = CType(e.Item.FindControl("cbxDisabledNew"), CheckBox)
                 Dim tbxDetailNotation As TextBox = CType(e.Item.FindControl("tbxDetailNotationNew"), TextBox)
                 Dim tbxPrice As TextBox = CType(e.Item.FindControl("tbxPriceNew"), TextBox)
                 Dim tbxCostService As TextBox = CType(e.Item.FindControl("tbxCostServiceNew"), TextBox)
                 Dim tbxTotalSum As TextBox = CType(e.Item.FindControl("tbxTotalSumNew"), TextBox)
                 Dim tbxNormaHour As TextBox = CType(e.Item.FindControl("tbxNormaHourNew"), TextBox)
                 Try
-                    Dim sql$ = String.Format("INSERT INTO details (detail_name, is_detail, detail_notation, price, cost_service, total_sum,norma_hour) VALUES('{0}', {1}, '{2}', '{3}', '{4}', '{5}','{6}')", txtName.Text.Trim, CInt(cbxIsDetail.Checked), tbxDetailNotation.Text, tbxPrice.Text, tbxCostService.Text, tbxTotalSum.Text, tbxNormaHour.Text)
+                    Dim sql$ = String.Format("INSERT INTO details (detail_name, is_detail, detail_notation, price, cost_service, total_sum,norma_hour, in_stock) VALUES('{0}', {1}, '{2}', '{3}', '{4}', '{5}','{6}','{7}')", txtName.Text.Trim, CInt(cbxIsDetail.Checked), tbxDetailNotation.Text, Replace(tbxPrice.Text, ",", "."), Replace(tbxCostService.Text, ",", "."), Replace(tbxTotalSum.Text, ",", "."), Replace(tbxNormaHour.Text, ",", "."), CInt(cbxDisabled.Checked))
                     dbSQL.Execute(sql)
                     Bind()
                 Catch
@@ -100,6 +101,7 @@ Namespace Kasbi.Admin
 
             Dim tbxName As TextBox = CType(e.Item.FindControl("tbxNameEdit"), TextBox)
             Dim cbxIsDetail As CheckBox = CType(e.Item.FindControl("cbxIsDetailEdit"), CheckBox)
+            Dim cbxDisabled As CheckBox = CType(e.Item.FindControl("cbxDisabledEdit"), CheckBox)
             Dim tbxDetailNotation As TextBox = CType(e.Item.FindControl("tbxDetailNotationEdit"), TextBox)
             Dim tbxPrice As TextBox = CType(e.Item.FindControl("tbxPriceEdit"), TextBox)
             Dim tbxCostService As TextBox = CType(e.Item.FindControl("tbxCostServiceEdit"), TextBox)
@@ -107,7 +109,7 @@ Namespace Kasbi.Admin
             Dim tbxNormaHour As TextBox = CType(e.Item.FindControl("tbxNormaHourEdit"), TextBox)
 
             Try
-                sql = String.Format("update details set detail_name='{0}', is_detail={1}, detail_notation='{2}', price={3}, cost_service={4} , total_sum={5},norma_hour={6} where detail_id = {7}", tbxName.Text, CInt(cbxIsDetail.Checked), tbxDetailNotation.Text, tbxPrice.Text, tbxCostService.Text, tbxTotalSum.Text, tbxNormaHour.Text, grdDetails.DataKeys(e.Item.ItemIndex))
+                sql = String.Format("update details set detail_name='{0}', is_detail={1}, detail_notation='{2}', price={3}, cost_service={4} , total_sum={5},norma_hour={6},in_stock={8} where detail_id = {7}", tbxName.Text, CInt(cbxIsDetail.Checked), tbxDetailNotation.Text, Replace(tbxPrice.Text, ",", "."), Replace(tbxCostService.Text, ",", "."), Replace(tbxTotalSum.Text, ",", "."), Replace(tbxNormaHour.Text, ",", "."), grdDetails.DataKeys(e.Item.ItemIndex), CInt(cbxDisabled.Checked))
                 dbSQL.Execute(sql)
             Catch
                 msgError.Text = "Ошибка обновления записи!<br>" & Err.Description
@@ -133,7 +135,7 @@ Namespace Kasbi.Admin
 
         Protected Sub btnAddNormHour_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnAddNormHour.Click
             If txtNormHour.Text <> "" Then
-                dbSQL.Execute("update details set cost_service=ROUND(norma_hour*" & txtNormHour.Text & ", 2), total_sum=ROUND(price+norma_hour*" & txtNormHour.Text & ", 2)")
+                dbSQL.Execute("update details set cost_service=ROUND(norma_hour*" & Replace(txtNormHour.Text, ",", ".") & ", 2), total_sum=ROUND(price+norma_hour*" & Replace(txtNormHour.Text, ",", ".") & ", 2)")
                 Bind()
             End If
         End Sub

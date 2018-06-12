@@ -295,6 +295,7 @@ Namespace Kasbi
 
                 If dbSQL.Execute(cmd) = 1 Then
                     msgAddGood.Text = "Товар добавлен в базу"
+                    lstGoodType_SelectedIndexChanged(Me, Nothing)
                 Else
                     msgAddGood.Text = "Ошибка добавления товара<br>"
                 End If

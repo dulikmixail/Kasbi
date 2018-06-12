@@ -75,7 +75,7 @@ Namespace Kasbi
                 radioButtonListExport.Items.FindByValue("unpAndDogovor").Enabled = False
             End If
 
-            If Not radioButtonListExport.SelectedValue = "removedFromTO" And Not radioButtonListExport.SelectedValue = "toHistorySpecialRules" And Not radioButtonListExport.SelectedValue = "unpAndDogovor" And toExcel.Checked Or radioButtonListExport.SelectedValue = "toHistoryByEmployee" Then
+            If Not radioButtonListExport.SelectedValue = "removedFromTO" And Not radioButtonListExport.SelectedValue = "toHistorySpecialRules" And Not radioButtonListExport.SelectedValue = "unpAndDogovor" Then
                 lstEmployee.Visible = True
             Else
                 lstEmployee.Visible = False
@@ -338,31 +338,37 @@ Namespace Kasbi
                 cmd.Parameters.AddWithValue("@isWarranty", 1)
                 cmd.Parameters.AddWithValue("@isNotWork", 1)
                 cmd.Parameters.AddWithValue("@pi_state", 5)
+                cmd.Parameters.AddWithValue("@pi_employee_sys_id", lstEmployee.SelectedValue)
 
             ElseIf radioButtonListExport.SelectedValue = "warrantyHistory" Then
                 cmd.Parameters.AddWithValue("@isWarranty", 1)
                 cmd.Parameters.AddWithValue("@isNotWork", 0)
                 cmd.Parameters.AddWithValue("@pi_state", 5)
+                cmd.Parameters.AddWithValue("@pi_employee_sys_id", lstEmployee.SelectedValue)
 
             ElseIf radioButtonListExport.SelectedValue = "notWorkHistory" Then
                 cmd.Parameters.AddWithValue("@isWarranty", 0)
                 cmd.Parameters.AddWithValue("@isNotWork", 1)
                 cmd.Parameters.AddWithValue("@pi_state", 5)
+                cmd.Parameters.AddWithValue("@pi_employee_sys_id", lstEmployee.SelectedValue)
 
             ElseIf radioButtonListExport.SelectedValue = "standartHistory" Then
                 cmd.Parameters.AddWithValue("@isWarranty", 0)
                 cmd.Parameters.AddWithValue("@isNotWork", 0)
                 cmd.Parameters.AddWithValue("@pi_state", 5)
+                cmd.Parameters.AddWithValue("@pi_employee_sys_id", lstEmployee.SelectedValue)
 
             ElseIf radioButtonListExport.SelectedValue = "toHistory" Then
                 cmd.Parameters.AddWithValue("@isWarranty", 0)
                 cmd.Parameters.AddWithValue("@isNotWork", 0)
                 cmd.Parameters.AddWithValue("@pi_state", 1)
+                cmd.Parameters.AddWithValue("@pi_employee_sys_id", lstEmployee.SelectedValue)
 
             Else
                 cmd.Parameters.AddWithValue("@isWarranty", 0)
                 cmd.Parameters.AddWithValue("@isNotWork", 0)
                 cmd.Parameters.AddWithValue("@pi_state", 1)
+                cmd.Parameters.AddWithValue("@pi_employee_sys_id", lstEmployee.SelectedValue)
 
             End If
 
@@ -998,26 +1004,6 @@ Namespace Kasbi
             Else
                 msg.Text = "Выберите пункт для экспорта"
             End If
-
-            'Select Case radioButtonListExport.SelectedValue
-            '    Case "toHistoryByEmployee"
-            '        export_TO_by_executor()
-            '    Case "toHistoryByEmployee"
-            '        export_TO_by_executor_to_Excel()
-            '    Case "removedFromTO"
-            '        export_removed_from_TO_to_Excel()
-            '    Case "toHistorySpecialRules"
-            '        export_TO_Special_Rules_to_Excel()
-            '    Case Else
-            '        export_customer()
-            '        export_sale()
-            '        export_history()
-            '        export_docs()
-            '        export_ostatki()
-            '        export_site()
-            '        export_user()
-            '        export_allcustomers()
-            'End Select
 
         End Sub
 

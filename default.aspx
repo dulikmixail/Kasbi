@@ -108,17 +108,11 @@
             </td>
         </tr>
     </table>
-        
-
-
-   
     
     <table>
         <tr>
             <td>
-                
-
-                <asp:RadioButtonList ID="radioButtonListExport" runat="server" Font-Size="8pt" AutoPostBack="True" >
+                <asp:RadioButtonList ID="radioButtonListExport" runat="server" Font-Size="8pt" AutoPostBack="True">
                 <asp:ListItem Value="warrantyHistory">Гарантийные ремонты</asp:ListItem>
                 <asp:ListItem Value="notWorkHistory">Ремонты без стоимости работ</asp:ListItem>
                 <asp:ListItem Value="standartHistory">Платные ремонты</asp:ListItem>
@@ -126,7 +120,6 @@
                 <asp:ListItem Value="removedFromTO" Enabled="False">ТО не проведено и снятые с ТО</asp:ListItem>
                 <asp:ListItem Value="toHistorySpecialRules" Enabled="False">Список ТО - исключение</asp:ListItem>
                 <asp:ListItem Value="unpAndDogovor" Enabled="False">УНП и договор</asp:ListItem>
-
                 </asp:RadioButtonList>
             </td>
             <td>

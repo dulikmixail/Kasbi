@@ -155,6 +155,7 @@ Partial Class RepairMaster
             cmd.CommandTimeout = 0
 
             adapt = dbSQL.GetDataAdapter(cmd)
+
             ds = New DataSet
             adapt.Fill(ds)
 

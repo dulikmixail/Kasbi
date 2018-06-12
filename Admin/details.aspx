@@ -90,6 +90,20 @@
                                     </asp:CheckBox>
                                 </EditItemTemplate>
                             </asp:TemplateColumn>
+                            <asp:TemplateColumn HeaderText="В наличии">
+                                <HeaderStyle HorizontalAlign="Center"></HeaderStyle>
+                                <ItemStyle HorizontalAlign="Center"></ItemStyle>
+                                <FooterStyle HorizontalAlign="Center"></FooterStyle>
+                                <ItemTemplate>
+                                    <%# IIf(DataBinder.Eval(Container.DataItem, "in_stock"), "Да", "Нет")%>
+                                </ItemTemplate>
+                                <FooterTemplate>
+                                    <asp:CheckBox ID="cbxDisabledNew" runat="server" BorderWidth="1px"></asp:CheckBox>
+                                </FooterTemplate>
+                                <EditItemTemplate>
+                                    <asp:CheckBox ID="cbxDisabledEdit" runat="server" BorderWidth="1px" Checked='<%# DataBinder.Eval(Container.DataItem, "in_stock")%>'></asp:CheckBox>
+                                </EditItemTemplate>
+                            </asp:TemplateColumn>
                             <asp:TemplateColumn HeaderText="Цена детали">
                                 <HeaderStyle HorizontalAlign="Center"></HeaderStyle>
                                 <ItemTemplate>

@@ -41,8 +41,13 @@ Namespace Kasbi.Reports
         Private Sub LoadMasters()
             Dim adapt As SqlClient.SqlDataAdapter
             Dim ds As DataSet = New DataSet
+            Dim cmd As SqlClient.SqlCommand
             Try
-                adapt = dbSQL.GetDataAdapter("get_masters", True)
+                cmd = New SqlClient.SqlCommand("get_masters")
+                cmd.CommandType = CommandType.StoredProcedure
+                cmd.Parameters.AddWithValue("@pi_permissions", "1 4")
+                cmd.CommandTimeout = 0
+                adapt = dbSQL.GetDataAdapter(cmd)
                 ds = New DataSet
                 adapt.Fill(ds)
                 lbxExecutor.DataSource = ds.Tables(0).DefaultView
