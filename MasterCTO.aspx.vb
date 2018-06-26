@@ -29,7 +29,6 @@ Namespace Kasbi
         Dim to_made = 0
         Dim to_made_tmp = 0
         Dim to_made_cnd = 0
-
         Private serviceTo As ServiceTo = New ServiceTo()
         Private serviceDoc As ServiceDocuments = New ServiceDocuments()
 
@@ -658,7 +657,7 @@ Namespace Kasbi
 
                 'Проверяем корректность введенных данных
                 If Not serviceTo.CheckDate(d, tbxCloseDate.Text) Then
-                    msgCashregister.Text = serviceTo.GetLastExeption()
+                    msgCashregister.Text = serviceTo.GetTextStringAllExeption()
                     Exit Sub
                 End If
 
@@ -685,7 +684,7 @@ Namespace Kasbi
 
             Dim dv As DataView = New DataView(kkmDs.Tables(0))
                 Dim filter As String = String.Empty
-                If serviceTo.GetListToExeption().Count <> 0 Then
+                If serviceTo.HaveAnyExeption() Then
                     filter = "good_sys_id in (" & String.Join(", ", serviceTo.GetListStringGoodSysId()) & ")"
                 End If
 
@@ -695,7 +694,7 @@ Namespace Kasbi
                 grdError.DataKeyField = "good_sys_id"
                 grdError.DataBind()
 
-                If serviceTo.GetListToExeption().Count <> 0 Then
+                If serviceTo.HaveAnyExeption() Then
                     myModal.Style.Add("display", "block")
                 End If
             Else

@@ -1,3 +1,6 @@
+Imports Exeption
+Imports Service
+
 Namespace Kasbi
 
     Partial Class NewGood
@@ -12,6 +15,7 @@ Namespace Kasbi
         Protected WithEvents lblCashAll As System.Web.UI.WebControls.Label
         Protected WithEvents lblCashRest As System.Web.UI.WebControls.Label
         Dim sum, rest, outside As Integer
+        Private ReadOnly _serviceGood As ServiceGood = New ServiceGood()
 
 #Region " Web Form Designer Generated Code "
 
@@ -154,123 +158,33 @@ Namespace Kasbi
         Private Sub btnAdd_Click(ByVal sender As System.Object, ByVal e As System.Web.UI.ImageClickEventArgs) Handles btnAdd.Click
             Dim cmd As SqlClient.SqlCommand
             Try
-                msgAddGood.ForeColor = Color.Red
-                If txtGoodNumCashregister.Text.Trim.Length = 0 Then
-                    msgAddGood.Text = "Введите заводской номер"
-                    Exit Sub
-                End If
+                _serviceGood.CheckNumbers(txtGoodNumCashregister.Text.Trim, NumbersCashRegister.Number, lstGoodType.SelectedItem.Value)
+                _serviceGood.CheckNumbers(txtReestr.Text.Trim, NumbersCashRegister.Register, lstGoodType.SelectedItem.Value)
+                _serviceGood.CheckNumbers(txtPZU.Text.Trim, NumbersCashRegister.ROM, lstGoodType.SelectedItem.Value)
+                _serviceGood.CheckNumbers(txtMFP.Text.Trim, NumbersCashRegister.FiscalMemory, lstGoodType.SelectedItem.Value)
+                _serviceGood.CheckNumbers(txtCTO.Text.Trim, NumbersCashRegister.SC1, lstGoodType.SelectedItem.Value)
 
-                If txtReestr.Text.Trim.Length = 0 Then
-                    msgAddGood.Text = "Введите номер СК реестра"
-                    Exit Sub
-                End If
-
-                If txtPZU.Text.Trim.Length = 0 Then
-                    If Not dbSQL.ExecuteScalar("select name from good_type where good_type_sys_id='" & lstGoodType.SelectedItem.Value & "'").ToString.Contains("Касби-03МФ") Then
-                        msgAddGood.Text = "Введите номер ПЗУ реестра"
-                        Exit Sub
-                    End If
-                End If
-
-                If txtMFP.Text.Trim.Length = 0 Then
-                    msgAddGood.Text = "Введите номер МФП реестра"
-                    Exit Sub
-                End If
-
-                If txtCP.Visible = True Then
-                    If txtCP.Text.Trim.Length = 0 Then
-                        msgAddGood.Text = "Введите номер СК ЦП"
-                        Exit Sub
-                    End If
-                End If
-
-                If txtGoodNumCashregister.Text.Trim.Length = 8 Or txtGoodNumCashregister.Text.Trim.Length = 13 Then
-                    If dbSQL.ExecuteScalar("select count(*) from good where num_cashregister='" & txtGoodNumCashregister.Text.Trim & "' and good_type_sys_id='" & lstGoodType.SelectedValue & "'") > 0 Then
-                        msgAddGood.Text = "Введенный заводской номер уже занесен в базу "
-                        Exit Sub
-                    End If
-                Else
-                    msgAddGood.Text = "Введите корректный заводской номер "
-                    Exit Sub
-                End If
-
-                If txtReestr.Text.Trim.Length <> 11 Then
-                    msgAddGood.Text = "Введите корректный номер СК реестра "
-                    Exit Sub
-                Else
-
-                    If dbSQL.ExecuteScalar("select count(*) from good where num_control_reestr='" & txtReestr.Text.Trim & "'") > 0 Then
-                        msgAddGood.Text = "Введенный номер СК реестра уже занесен в базу "
-                        Exit Sub
-                    End If
-                End If
-
-                If txtPZU.Text.Trim.Length <> 11 Then
-                    If Not dbSQL.ExecuteScalar("select name from good_type where good_type_sys_id='" & lstGoodType.SelectedItem.Value & "'").ToString.Contains("Касби-03МФ") Then
-                        msgAddGood.Text = "Введите корректный номер СК ПЗУ "
-                        Exit Sub
-                    End If
-                Else
-                    If dbSQL.ExecuteScalar("select count(*) from good where num_control_pzu='" & txtPZU.Text.Trim & "'") > 0 Then
-                        msgAddGood.Text = "Введенный номер СК ПЗУ уже занесен в базу "
-                        Exit Sub
-                    End If
-                End If
-
-                If txtMFP.Text.Trim.Length <> 11 Then
-                    msgAddGood.Text = "Введите корректный номер СК МФП "
-                    Exit Sub
-                Else
-
-                    If dbSQL.ExecuteScalar("select count(*) from good where num_control_mfp='" & txtMFP.Text.Trim & "'") > 0 Then
-                        msgAddGood.Text = "Введенный номер СК МФП уже занесен в базу "
-                        Exit Sub
-                    End If
-                End If
-
-                If txtCTO.Text.Trim.Length <> 11 And txtCTO.Text.Trim.Length <> 0 Then
-                    msgAddGood.Text = "Введите корректный номер СК ЦТО "
-                    Exit Sub
-                Else
-                    If txtCTO.Text.Trim.Length = 11 Then
-                        If dbSQL.ExecuteScalar("select count(*) from good where num_control_cto='" & txtCTO.Text.Trim & "'") > 0 Then
-                            msgAddGood.Text = "Введенный номер СК ЦТО уже занесен в базу "
-                            Exit Sub
-                        End If
-                    End If
-                End If
                 If txtCTO2.Visible = True Then
-                    If txtCTO2.Text.Trim.Length <> 11 And txtCTO2.Text.Trim.Length <> 0 Then
-                        msgAddGood.Text = "Введите корректный номер СК ЦТО 2 "
-                        Exit Sub
-                    Else
-                        If txtCTO2.Text.Trim.Length = 11 Then
-                            If dbSQL.ExecuteScalar("select count(*) from good where num_control_cto2='" & txtCTO2.Text.Trim & "'") > 0 Then
-                                msgAddGood.Text = "Введенный номер СК ЦТО 2 уже занесен в базу "
-                                Exit Sub
-                            End If
-                        End If
-                    End If
+                    _serviceGood.CheckNumbers(txtCTO2.Text.Trim, NumbersCashRegister.SC2, lstGoodType.SelectedItem.Value)
                 End If
 
                 If txtCP.Visible = True Then
-                    If txtCP.Text.Trim.Length <> 11 Then
-                        msgAddGood.Text = "Введите корректный номер СК ЦП "
-                        Exit Sub
-                    Else
-                        If dbSQL.ExecuteScalar("select count(*) from good where num_control_cp='" & txtCP.Text.Trim & "'") > 0 Then
-                            msgAddGood.Text = "Введенный номер СК ЦП уже занесен в базу "
-                            Exit Sub
-                        End If
-                    End If
+                    _serviceGood.CheckNumbers(txtCP.Text.Trim, NumbersCashRegister.CPU, lstGoodType.SelectedItem.Value)
                 End If
+
                 Dim worker%
                 If lstWorker.Items.Count > 0 Then
                     worker = lstWorker.SelectedItem.Value
                 Else
-                    msgAddGood.Text = "Выберите ответственного за установку средств контроля "
+                    msgAddGood.Text = "Выберите ответственного за установку средств контроля. "
                     Exit Sub
                 End If
+                _serviceGood.CanAddGoodToDelivery(CInt(lstGoodDelivery.SelectedItem.Value), CInt(lstGoodType.SelectedItem.Value), 1)
+                If _serviceGood.HaveAnyExeption() Then
+                    msgAddGood.Text = _serviceGood.GetTextStringAllExeption()
+                    Exit Sub
+                End If
+
                 cmd = New SqlClient.SqlCommand("new_cashregister")
                 cmd.CommandType = CommandType.StoredProcedure
                 cmd.Parameters.AddWithValue("@pi_good_type_sys_id", lstGoodType.SelectedItem.Value)
@@ -299,23 +213,6 @@ Namespace Kasbi
                 Else
                     msgAddGood.Text = "Ошибка добавления товара<br>"
                 End If
-                '''Else
-                '''    Try
-                '''        q = CDbl(txtGoodQuantity.Text)
-                '''    Catch
-                '''        msgAddGood.Text = "Введите количество товара"
-                '''        Exit Sub
-                '''    End Try
-                '''    Exit Sub
-                '''    cmd = New SqlClient.SqlCommand("new_good", cn)
-                '''    cmd.CommandType = CommandType.StoredProcedure
-                '''    cmd.Parameters.Add("@pi_delivery_sys_id", lstGoodDelivery.SelectedItem.Value)
-                '''    cmd.Parameters.Add("@pi_good_type_sys_id", lstGoodType.SelectedItem.Value)
-                '''    cmd.Parameters.Add("@pi_param_str", txtGoodParamStr.Text.Replace("'", """"))
-                '''    cmd.Parameters.Add("@pi_param_num", q)
-                '''    cmd.Parameters.Add("@pi_info", txtGoodInfo.Text.Replace("'", """"))
-                '''    cmd.ExecuteNonQuery()
-                '''End If
                 msgAddGood.ForeColor = Color.Black
                 msgAddGood.Text = "Кассовый аппарат №" & txtGoodNumCashregister.Text.Trim & " добавлен в базу!"
             Catch

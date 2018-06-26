@@ -2,7 +2,7 @@
 Imports Microsoft.Office.Interop.Word
 Imports Microsoft.VisualBasic.FileIO.FileSystem
 
-Namespace service
+Namespace Service
     Public Class ServiceDocuments
         Inherits PageBase
 

@@ -1,17 +1,15 @@
-﻿Imports System.Collections.Generic
-Imports System.Runtime.InteropServices
-Imports System.Web.UI.WebControls.Expressions
+﻿Imports exeption
 Imports Kasbi
 
-Namespace service
+Namespace Service
     Public Class ServiceTo
-        Inherits PageBase
-        Private exeptionText As String = String.Empty
-        Private listToExeption As New List(Of ToExeption)
+        Inherits ServiceExeption
+        Implements IService
 
 
         Public Function CheckCashHistoryItem(ByVal idGood As Integer, ByVal closePeriod As DateTime, ByVal closeDateText As String) As Boolean
-            exeptionText = String.Empty
+            Dim exeption As ToExeption = New ToExeption(idGood, closePeriod.ToString(), closeDateText)
+
             Dim adapt As SqlClient.SqlDataAdapter
             Dim cmd As SqlClient.SqlCommand
             Dim ds As DataSet
@@ -32,40 +30,39 @@ Namespace service
                             Select Case state
                                 Case 1
                                     If closePeriod = enddate.AddMonths(-1) Then
-                                        exeptionText = "Закрываемый вами период уже закрыт"
+                                        exeption.AddTextToList("Закрываемый вами период уже закрыт.")
                                     End If
                                 Case 6
                                     If closePeriod < enddate Then
-                                        exeptionText = "Кассовый аппарат находиться на приостановке ТО"
+                                        exeption.AddTextToList("Кассовый аппарат находиться на приостановке ТО.")
                                     End If
                                 Case 2 To 3
-                                    exeptionText = "Кассовый аппарат уже снят с ТО"
+                                    exeption.AddTextToList("Кассовый аппарат уже снят с ТО.")
                             End Select
                         End With
                     Else
-                        exeptionText = "Нет постановки на ТО и договор не заключен"
+                        exeption.AddTextToList("Нет постановки на ТО и договор не заключен.")
                     End If
 
                 Catch
-                    exeptionText = Err.Description
+                    exeption.AddTextToList(Err.Description)
                 End Try
 
             End If
-            If String.IsNullOrEmpty(exeptionText) Then
-                Return True
-            Else
-                listToExeption.Add(New ToExeption(idGood, exeptionText, closePeriod.ToString(), closeDateText))
-                Return False
+
+            If exeption.HaveAnyText() Then
+                AddExeption(exeption)
             End If
+
+            Return Not HaveAnyExeption()
 
         End Function
 
         Public Function CheckDate(ByVal closePeriod As DateTime, ByVal closeDateText As String) As Boolean
-            exeptionText = String.Empty
+            Dim exeption As ToExeption = New ToExeption(Nothing, closePeriod.ToString(), closeDateText)
             Dim dNow, dStarPeriod, dEndPeriod, dToday As DateTime
             Dim firstDayOfPeriod As Integer = 3
             dNow = New Date(Now.Year, Now.Month, 1)
-
 
             dToday = DateTime.Today
             dStarPeriod = dToday
@@ -87,7 +84,7 @@ Namespace service
 
 
             If String.IsNullOrEmpty(closeDateText) Then
-                exeptionText = "Не выбрана дата выполнения"
+                exeption.AddTextToList("Не выбрана дата выполнения.")
             Else
                 Dim closeDate As DateTime = DateTime.Parse(closeDateText)
 
@@ -96,47 +93,52 @@ Namespace service
                 'ElseIf (closePeriod < dNow) Then
                 '    exeptionText = "Закрываемый вами период уже прошел. Проводить ТО можно только за текуший период (" & dNow.ToString("MMMM") & " " & dNow.ToString("yyyy") & ")"
                 If closePeriod <> New DateTime(closeDate.Year, closeDate.Month, 1) Then
-                    exeptionText = "Дата закрытия периода и дата выполнения имеют разные месяца"
+                    exeption.AddTextToList("Дата закрытия периода и дата выполнения имеют разные месяца.")
+
                 ElseIf closeDate > dToday Then
-                    exeptionText = "Вы собираетесь провести ТО днем, который еще не наступил."
+                    exeption.AddTextToList("Вы собираетесь провести ТО днем, который еще не наступил.")
                 ElseIf closePeriod < New DateTime(dStarPeriod.Year, dStarPeriod.Month, 1) Then
-                    exeptionText = "Закрываемый вами период уже прошел"
+                    exeption.AddTextToList("Закрываемый вами период уже прошел.")
                 ElseIf closePeriod > New DateTime(dEndPeriod.Year, dEndPeriod.Month, 1) Then
-                    exeptionText = "Закрываемый вами период еще не настал"
+                    exeption.AddTextToList("Закрываемый вами период еще не настал.")
                 ElseIf (dStarPeriod > closeDate Or closeDate > dEndPeriod) Then
-                    exeptionText = "Дата закрытия должна входить в отчетный период. Действующий отчетный период на данный момент с " & dStarPeriod.ToString("dd") & "." & dStarPeriod.ToString("MM") & "." & dStarPeriod.ToString("yy") & " по " & dEndPeriod.ToString("dd") & "." & dEndPeriod.ToString("MM") & "." & dEndPeriod.ToString("yy") & " включительно."
+                    exeption.AddTextToList("Дата закрытия должна входить в отчетный период. Действующий отчетный период на данный момент с " & dStarPeriod.ToString("dd") & "." & dStarPeriod.ToString("MM") & "." & dStarPeriod.ToString("yy") & " по " & dEndPeriod.ToString("dd") & "." & dEndPeriod.ToString("MM") & "." & dEndPeriod.ToString("yy") & " включительно.")
                 End If
             End If
 
-            Return String.IsNullOrEmpty(exeptionText)
+            If exeption.HaveAnyText() Then
+                AddExeption(exeption)
+            End If
+
+            Return Not exeption.HaveAnyText()
         End Function
 
-        Public Function GetLastExeption() As String
-            Return exeptionText
-        End Function
-
-        Public Function GetListToExeption() As List(Of ToExeption)
-            Return listToExeption
-        End Function
         Public Function GetListStringGoodSysId() As String()
-            Dim list As String() = New String(listToExeption.Count) {}
-            For j = 0 To listToExeption.Count - 1
-                list(j) = listToExeption(j).goodSysId.ToString()
+            Dim listExeption As List(Of IExeption) = GetListAllExeption()
+            Dim list As String() = New String(listExeption.Count) {}
+            Dim toExeption As ToExeption
+            For j = 0 To listExeption.Count - 1
+                toExeption = TryCast(listExeption(j), ToExeption)
+                list(j) = toExeption.GoodSysId.ToString()
             Next
             Return list
         End Function
 
         Public Function GetExeptionTextByGoodId(goodSysId As Integer) As String
-            For Each toExeption In listToExeption
-                If toExeption.goodSysId = goodSysId Then
-                    Return toExeption.text
+            Dim listExeption As List(Of IExeption) = GetListAllExeption()
+            Dim list As String() = New String(listExeption.Count) {}
+            Dim toExeption As ToExeption
+            Dim i As Integer = 0
+            For j = 0 To listExeption.Count - 1
+                toExeption = TryCast(listExeption(j), ToExeption)
+                If (toExeption.GoodSysId = goodSysId) Then
+                    list(i) = toExeption.GetAllTextString()
+                    i += 1
                 End If
             Next
-            Return ""
+            Return String.Join(" ", list)
         End Function
 
     End Class
-
-
 
 End Namespace

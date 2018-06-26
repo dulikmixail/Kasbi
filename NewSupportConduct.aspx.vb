@@ -545,7 +545,7 @@ Namespace Kasbi
 
                     d = New Date(lstYear.SelectedItem.Value, lstMonth.SelectedItem.Value, 1)
                     If Not serviceTo.CheckCashHistoryItem(iCash, d, txtCloseDate.Text) Then
-                        msgAddSupportConduct.Text = serviceTo.GetLastExeption()
+                        msgAddSupportConduct.Text = serviceTo.GetTextStringAllExeption()
                         Exit Sub
                     End If
 

@@ -193,7 +193,7 @@
                             <asp:TemplateColumn HeaderText="ТО" ItemStyle-HorizontalAlign="center">
                                 <ItemTemplate>
                                     <p>
-                                        <asp:HyperLink ID="lnkStatus" Target="_blank" runat="server" NavigateUrl='<%# GetAbsoluteUrl("NewSupportConduct2.aspx?" &amp; DataBinder.Eval(Container, "DataItem.good_sys_id")) %>'>Посмотреть</asp:HyperLink>
+                                        <asp:HyperLink ID="lnkStatus" Target="_blank" runat="server" NavigateUrl='<%# GetAbsoluteUrl("NewSupportConduct.aspx?" &amp; DataBinder.Eval(Container, "DataItem.good_sys_id")) %>'>Посмотреть</asp:HyperLink>
                                     </p>
                                 </ItemTemplate>
                             </asp:TemplateColumn>
@@ -573,7 +573,7 @@
                             <asp:TemplateColumn HeaderText="ТО" ItemStyle-HorizontalAlign="center">
                                 <ItemTemplate>
                                     <p>
-                                        <asp:HyperLink ID="lnkStatus" Target="_blank" runat="server" NavigateUrl='<%# GetAbsoluteUrl("NewSupportConduct2.aspx?" &amp; DataBinder.Eval(Container, "DataItem.good_sys_id")) %>'>Посмотреть</asp:HyperLink>
+                                        <asp:HyperLink ID="lnkStatus" Target="_blank" runat="server" NavigateUrl='<%# GetAbsoluteUrl("NewSupportConduct.aspx?" &amp; DataBinder.Eval(Container, "DataItem.good_sys_id")) %>'>Посмотреть</asp:HyperLink>
                                     </p>
                                 </ItemTemplate>
                             </asp:TemplateColumn>

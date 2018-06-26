@@ -69,7 +69,7 @@ Namespace Kasbi
             Const javascript = "javascript:"
             chkPayed.Attributes.Add("onclick", javascript & radiobuttons.ClientID & ".disabled=!" & chkPayed.ClientID & ".checked;")
             'lnkAccountant.Attributes.Add("onclick", "javascript:" & txtAccountant.ClientID & ".value=" & txtBoosLastName.ClientID & ".value + ' ' + " & txtBoosFirstName.ClientID & ".value + ' ' + " & txtBoosPatronymicName.ClientID & ".value;")
-            txtUNN.Attributes.Add("onchange", javascript & txtOKPO.ClientID & ".value=" & txtUNN.ClientID & ".value;")
+            'txtUNN.Attributes.Add("onchange", javascript & txtOKPO.ClientID & ".value=" & txtUNN.ClientID & ".value;")
             txtBoosLastName.Attributes.Add("onchange", javascript & txtAccountant.ClientID & ".value=" & txtBoosLastName.ClientID & ".value + ' ' + " & txtBoosFirstName.ClientID & ".value + ' ' + " & txtBoosPatronymicName.ClientID & ".value;")
             txtBoosFirstName.Attributes.Add("onchange", javascript & txtAccountant.ClientID & ".value=" & txtBoosLastName.ClientID & ".value + ' ' + " & txtBoosFirstName.ClientID & ".value + ' ' + " & txtBoosPatronymicName.ClientID & ".value;")
             txtBoosPatronymicName.Attributes.Add("onchange", javascript & txtAccountant.ClientID & ".value=" & txtBoosLastName.ClientID & ".value + ' ' + " & txtBoosFirstName.ClientID & ".value + ' ' + " & txtBoosPatronymicName.ClientID & ".value;")
@@ -101,14 +101,14 @@ Namespace Kasbi
                     If Request.QueryString.Count > 0 Then
                         customer_sys_id = GetPageParam(0)
                     Else
-                        customer_sys_id = Session("AddSaleForCustomer")
+                        'customer_sys_id = Session("AddSaleForCustomer")
                     End If
                 Catch
                     customer_sys_id = 0
                 End Try
 
 
-                Session("AddSaleForCustomer") = customer_sys_id
+                'Session("AddSaleForCustomer") = customer_sys_id
 
                 DisableCustomerPanel(Not GetCustomer())
                 TreeGroup.ExpandDepth = 1
@@ -223,11 +223,11 @@ Namespace Kasbi
                 Dim item As ListItem = lstSaler.Items.FindByValue(CurrentUser.sys_id)
                 If Not item Is Nothing Then item.Selected = True
 
-                Try
-                    customer_sys_id = Session("AddSaleForCustomer")
-                Catch
-                    customer_sys_id = 0
-                End Try
+                'Try
+                '    customer_sys_id = Session("AddSaleForCustomer")
+                'Catch
+                '    customer_sys_id = 0
+                'End Try
 
                 If customer_sys_id = 0 Then
                     lstManager.DataSource = ds.Tables(0).DefaultView

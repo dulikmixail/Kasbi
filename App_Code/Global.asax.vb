@@ -1,35 +1,39 @@
-Imports System.Web
+﻿Imports System.Web
+Imports System.Web.Http
+Imports System.Web.Mvc
+Imports System.Web.Optimization
+Imports System.Web.Routing
 Imports System.Web.SessionState
 
 
 Namespace Kasbi
 
 
-Public Class [Global]
+    Public Class [Global]
         Inherits System.Web.HttpApplication
 
 
 #Region " Component Designer Generated Code "
 
-    Public Sub New()
-        MyBase.New()
+        Public Sub New()
+            MyBase.New()
 
-        'This call is required by the Component Designer.
-        InitializeComponent()
+            'This call is required by the Component Designer.
+            InitializeComponent()
 
-        'Add any initialization after the InitializeComponent() call
+            'Add any initialization after the InitializeComponent() call
 
-    End Sub
+        End Sub
 
-    'Required by the Component Designer
-    Private components As System.ComponentModel.IContainer
+        'Required by the Component Designer
+        Private components As System.ComponentModel.IContainer
 
-    'NOTE: The following procedure is required by the Component Designer
-    'It can be modified using the Component Designer.
-    'Do not modify it using the code editor.
-    <System.Diagnostics.DebuggerStepThrough()> Private Sub InitializeComponent()
-        components = New System.ComponentModel.Container()
-    End Sub
+        'NOTE: The following procedure is required by the Component Designer
+        'It can be modified using the Component Designer.
+        'Do not modify it using the code editor.
+        <System.Diagnostics.DebuggerStepThrough()> Private Sub InitializeComponent()
+            components = New System.ComponentModel.Container()
+        End Sub
 
 #End Region
 
@@ -38,6 +42,12 @@ Public Class [Global]
             'Application("ConnectionString") = "data source=BY-MN-DBSRV;initial catalog=Ramok;persist security info=False;user id=WebDB;workstation id=BY-MN-DBSRV;packet size=4096;password=webdb;"
             'Application("ConnectionString") = "data source=192.168.11.14;initial catalog=Ramok;persist security info=False;user id=WebDB;workstation id=198.168.11.14;packet size=4096;password=webdb;"
             Config.OnApplicationStart("")
+
+            AreaRegistration.RegisterAllAreas()
+            GlobalConfiguration.Configure(AddressOf WebApiConfig.Register)
+            'FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters)
+            'RouteConfig.RegisterRoutes(RouteTable.Routes)
+            'BundleConfig.RegisterBundles(BundleTable.Bundles)
         End Sub
 
         Sub Session_Start(ByVal sender As Object, ByVal e As EventArgs)
@@ -66,6 +76,6 @@ Public Class [Global]
             ' Fires when the application ends
         End Sub
 
-End Class
+    End Class
 
 End Namespace

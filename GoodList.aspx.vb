@@ -1,37 +1,39 @@
+Imports Service
+
 Namespace Kasbi
 
-Partial Class GoodList
+    Partial Class GoodList
         Inherits PageBase
 
 #Region " Web Form Designer Generated Code "
 
-    'This call is required by the Web Form Designer.
-    <System.Diagnostics.DebuggerStepThrough()> Private Sub InitializeComponent()
+        'This call is required by the Web Form Designer.
+        <System.Diagnostics.DebuggerStepThrough()> Private Sub InitializeComponent()
 
-    End Sub
+        End Sub
 
-    Private Sub Page_Init(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Init
-        'CODEGEN: This method call is required by the Web Form Designer
-        'Do not modify it using the code editor.
-        InitializeComponent()
-    End Sub
+        Private Sub Page_Init(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Init
+            'CODEGEN: This method call is required by the Web Form Designer
+            'Do not modify it using the code editor.
+            InitializeComponent()
+        End Sub
 
 #End Region
-    Dim iType%, i%, j%
-    Protected WithEvents btnMain As System.Web.UI.WebControls.HyperLink
-    Protected WithEvents btnCustomers As System.Web.UI.WebControls.HyperLink
-    Protected WithEvents btnCTO As System.Web.UI.WebControls.HyperLink
-    Protected WithEvents btnCatalog As System.Web.UI.WebControls.HyperLink
-    Protected WithEvents btnDeliveries As System.Web.UI.WebControls.HyperLink
-    Protected WithEvents btnTO As System.Web.UI.WebControls.HyperLink
-    Protected WithEvents btnPricelists As System.Web.UI.WebControls.HyperLink
+        Dim iType%, i%, j%
+        Dim idDeliveryOld, idDeliveryNew, idGoodTypeOld, idGoodTypeNew As Integer
+        Protected WithEvents btnMain As System.Web.UI.WebControls.HyperLink
+        Protected WithEvents btnCustomers As System.Web.UI.WebControls.HyperLink
+        Protected WithEvents btnCTO As System.Web.UI.WebControls.HyperLink
+        Protected WithEvents btnCatalog As System.Web.UI.WebControls.HyperLink
+        Protected WithEvents btnDeliveries As System.Web.UI.WebControls.HyperLink
+        Protected WithEvents btnTO As System.Web.UI.WebControls.HyperLink
+        Protected WithEvents btnPricelists As System.Web.UI.WebControls.HyperLink
 
-
-    Const ClearString = "-------"
-    Dim isFind As Boolean = False
-    Const scTrue = "True"
-    Const scFalse = "False"
-
+        Const ClearString = "-------"
+        Dim isFind As Boolean = False
+        Const scTrue = "True"
+        Const scFalse = "False"
+        Private ReadOnly _serviceGood As ServiceGood = New ServiceGood()
 
         Private Overloads Sub Page_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
             txtFindGoodNum.Attributes.Add("onkeypress", "javascript:if(window.event.keyCode==13){isFind('1');}")
@@ -544,6 +546,8 @@ Partial Class GoodList
                             .Items.FindByValue(e.Item.DataItem("place_rn_id")).Selected = True
                         End If
                     End With
+                    'idDeliveryOld = CInt(CType(e.Item.FindControl("lstGoodDelivery"), DropDownList).SelectedItem.Value)
+                    'idGoodTypeOld = CInt(CType(e.Item.FindControl("lstGoodType"), DropDownList).SelectedItem.Value)
                 Catch
                     msgCashregister.Text = "Ошибка загрузки информации о поставках!<br>" & Err.Description
                 End Try
@@ -598,6 +602,11 @@ Partial Class GoodList
                 End If
                 Dim s15$ = CType(e.Item.FindControl("txtedtCP"), TextBox).Text.Replace("'", """")
                 Dim s16$ = CType(e.Item.FindControl("txtedtCTO2"), TextBox).Text.Replace("'", """")
+
+                'ПРОВЕРИТЬ ПОЗЖЕ
+                idDeliveryNew = CInt(s11)
+                idGoodTypeNew = CInt(s0)
+                _serviceGood.CheckTransferDelivery(idDeliveryOld, idDeliveryNew, idGoodTypeOld, idGoodTypeNew, 1)
 
                 Try
                     s1 = Replace(s1, ",", ".")
