@@ -949,7 +949,7 @@ Namespace Kasbi
 
                             doc = wrdApp.Documents.Open(docFullPath)
                             doc.Bookmarks("Boos").Range.Text = ds.Tables("sale").Rows(0)("proxy")
-                            doc.Bookmarks("Boos2").Range.Text = ds.Tables("sale").Rows(0)("proxy")
+                            doc.Bookmarks("Boos2").Range.Text = ""
                             doc.Bookmarks("CustomerAddress").Range.Text = ds.Tables("customer").Rows(0)("customer_address")
                             doc.Bookmarks("CustomerName").Range.Text = customer_name
                             doc.Bookmarks("Dogovor").Range.Text = dogovor
@@ -960,6 +960,7 @@ Namespace Kasbi
                             doc.Bookmarks("UNN2").Range.Text = unn
                             doc.Bookmarks("Date").Range.Text = sDate
                             doc.Bookmarks("Date2").Range.Text = sDate
+                            Dim sEmployee$ = dbSQL.ExecuteScalar("select work_type+' '+Name from Employee where sys_id='" & CStr(CurrentUser.sys_id) & "'")
                             doc.Bookmarks("Razreshil").Range.Text = ds.Tables("sale").Rows(0)("razreshil")
                             If ds.Tables("sale").Rows(0)("firm_sys_id") <> 1 Then
                                 doc.Bookmarks("FirmName1").Range.Text = ds.Tables("sale").Rows(0)("firm_name")
@@ -967,7 +968,7 @@ Namespace Kasbi
                                 doc.Bookmarks("Employee").Range.Text = ds.Tables("sale").Rows(0)("fio")
                             Else
                                 'кто сделал все это
-                                Dim sEmployee$ = dbSQL.ExecuteScalar("select Name from Employee where sys_id='" & CStr(CurrentUser.sys_id) & "'")
+
                                 If sEmployee Is Nothing OrElse sEmployee = String.Empty Then
                                 Else
                                     doc.Bookmarks("Employee").Range.Text = sEmployee
@@ -998,7 +999,7 @@ Namespace Kasbi
                                         r1.Cells(1).Range.Text = j - 1
                                         r1.Cells(2).Range.Text = ds.Tables("goods").Rows(i - 1)("good_name")
                                         r1.Cells(2).Range.InsertAfter(num_cash_str)
-                                        r1.Cells(2).Range.InsertAfter(vbCrLf & "Страна ввоза-" & ds.Tables("goods").Rows(i - 1)("country") & vbCrLf & ds.Tables("goods").Rows(i - 1)("pricelist"))
+                                        r1.Cells(2).Range.InsertAfter(vbCrLf & "Страна ввоза-" & ds.Tables("goods").Rows(i - 1)("country"))
 
                                         'r1.Cells(2).Range.InsertAfter(vbCrLf & "Страна ввоза-РФ" & vbCrLf & ds.Tables("goods").Rows(i - 1)("pricelist"))
                                         r1.Cells(3).Range.Text = ds.Tables("goods").Rows(i - 1)("units")
@@ -1066,28 +1067,13 @@ Namespace Kasbi
                                     Nadbavka = ds.Tables("goods").Rows(i)("nadbavka1")
                                 End If
 
-                                Try
-                                    If Not Nadbavka Then
-                                        'Информация о надбавке и т.д.
-                                        r1.Cells(10).Range.Text = "Цена производителя-импортера:" & ds.Tables("goods").Rows(i)("price_in") & vbCrLf & _
-                                        "Размер оптовой надбавки: 0"
-                                    Else
-                                        'Информация о надбавке и т.д.
-                                        r1.Cells(10).Range.Text = "Цена производителя-импортера:" & ds.Tables("goods").Rows(i)("price_in") & vbCrLf & _
-                                        "Размер оптовой надбавки: 20"
-                                    End If
-                                Catch
-                                End Try
-
                                 q = q + CDbl(ds.Tables("goods").Rows(i)("quantity"))
                             Next
 
                             r1.Cells(1).Range.Text = j - 1
                             r1.Cells(2).Range.Text = ds.Tables("goods").Rows(i - 1)("good_name")
                             r1.Cells(2).Range.InsertAfter(num_cash_str)
-                            r1.Cells(2).Range.InsertAfter(vbCrLf & "Страна ввоза-" & ds.Tables("goods").Rows(i - 1)("country") & vbCrLf & ds.Tables("goods").Rows(i - 1)("pricelist"))
-                            'r1.Cells(2).Range.InsertAfter(vbCrLf & "Страна ввоза-РФ" & vbCrLf & ds.Tables("goods").Rows(i - 1)("pricelist"))
-
+                            r1.Cells(2).Range.InsertAfter(vbCrLf & "Страна ввоза-" & ds.Tables("goods").Rows(i - 1)("country"))
 
                             If Not IsDBNull(ds.Tables("goods").Rows(i - 1)("units")) Then
                                 r1.Cells(3).Range.Text = ds.Tables("goods").Rows(i - 1)("units")
@@ -1095,7 +1081,6 @@ Namespace Kasbi
 
                             r1.Cells(4).Range.Text = q
 
-                            'If ds.Tables("goods").Rows(i - 1)("is_cashregister") Or iGoodType = 3 Or iGoodType = 6 Then
                             Nadbavka = False
                             If Not IsDBNull(ds.Tables("goods").Rows(i - 1)("nadbavka1")) Then
                                 Nadbavka = ds.Tables("goods").Rows(i - 1)("nadbavka1")
@@ -1234,7 +1219,7 @@ Namespace Kasbi
                                         'r1.Cells(1).Range.Text = j - 1
                                         r1.Cells(2).Range.Text = ds.Tables("goods").Rows(i - 1)("good_name")
                                         r1.Cells(2).Range.InsertAfter(num_cash_str)
-                                        r1.Cells(2).Range.InsertAfter(vbCrLf & "Страна ввоза-" & ds.Tables("goods").Rows(i - 1)("country") & vbCrLf & ds.Tables("goods").Rows(i - 1)("pricelist"))
+                                        r1.Cells(2).Range.InsertAfter(vbCrLf & "Страна ввоза-" & ds.Tables("goods").Rows(i - 1)("country"))
 
                                         'r1.Cells(2).Range.InsertAfter(vbCrLf & "Страна ввоза-РФ" & vbCrLf & ds.Tables("goods").Rows(i - 1)("pricelist"))
 
@@ -1323,7 +1308,7 @@ Namespace Kasbi
                             r1.Cells(1).Range.Text = j - 1
                             r1.Cells(2).Range.Text = ds.Tables("goods").Rows(i - 1)("good_name")
                             r1.Cells(2).Range.InsertAfter(num_cash_str)
-                            r1.Cells(2).Range.InsertAfter(vbCrLf & "Страна ввоза-" & ds.Tables("goods").Rows(i - 1)("country") & vbCrLf & ds.Tables("goods").Rows(i - 1)("pricelist"))
+                            r1.Cells(2).Range.InsertAfter(vbCrLf & "Страна ввоза-" & ds.Tables("goods").Rows(i - 1)("country"))
                             'r1.Cells(2).Range.InsertAfter(vbCrLf & "Страна ввоза-РФ" & vbCrLf & ds.Tables("goods").Rows(i - 1)("pricelist"))
 
                             If Not IsDBNull(ds.Tables("goods").Rows(i - 1)("units")) Then
@@ -2105,7 +2090,7 @@ ExitFunction:
                 cop = kop_arr(1)
             Else
                 s = kop_arr(0)
-                cop = ""
+                cop = "00"
             End If
             'Try
             '    cop = kop_arr(1)
@@ -2238,7 +2223,7 @@ ExitFunction:
             Summa_propis = txt$
 
 
-            If cop <> "" Then
+            If cop <> "00" Then
                 If cop.ToString.Length = 1 Then
                     cop = cop * 10
                 End If
@@ -2251,6 +2236,8 @@ ExitFunction:
                 'cop.ToString.Replace("рублей", "копеек")
                 'cop.ToString.ToLower()
                 Summa_propis = Summa_propis + " " + cop2
+            Else
+                Summa_propis += " 00 копеек"
             End If
 
         End Function
@@ -4428,7 +4415,7 @@ ExitFunction:
                     doc.Bookmarks("UNN2").Range.Text = unn
                     doc.Bookmarks("Date").Range.Text = dogovor '& " от " & sDate
                     doc.Bookmarks("Date2").Range.Text = GetRussianDate(Now)
-                    doc.Bookmarks("Razreshil").Range.Text = "Яско Владимир Федорович" 'ds.Tables("sale").Rows(0)("razreshil")
+                    doc.Bookmarks("Razreshil").Range.Text = "Яско Владимир Федорович!" 'ds.Tables("sale").Rows(0)("razreshil")
                     'If ds.Tables("sale").Rows(0)("firm_sys_id") <> 1 Then
                     '    doc.Bookmarks("FirmName1").Range.Text = ds.Tables("sale").Rows(0)("firm_name")
                     '    doc.Bookmarks("Rekvisit").Range.Text = ds.Tables("sale").Rows(0)("rekvisit")

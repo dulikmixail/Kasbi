@@ -33,7 +33,7 @@ Namespace Kasbi.Admin
             Dim ds As DataSet
 
             Try
-                adapt = dbSQL.GetDataAdapter("select * from employee left outer join roles on employee.role_id=roles.role_id order by Name")
+                adapt = dbSQL.GetDataAdapter("select * from employee left outer join roles on employee.role_id=roles.role_id order by inactive, Name")
                 ds = New DataSet
                 adapt.Fill(ds)
                 grdUsers.DataSource = ds.Tables(0).DefaultView
