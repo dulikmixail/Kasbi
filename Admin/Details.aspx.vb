@@ -67,7 +67,7 @@ Namespace Kasbi.Admin
                 Dim tbxTotalSum As TextBox = CType(e.Item.FindControl("tbxTotalSumNew"), TextBox)
                 Dim tbxNormaHour As TextBox = CType(e.Item.FindControl("tbxNormaHourNew"), TextBox)
                 Try
-                    Dim sql$ = String.Format("INSERT INTO details (detail_name, is_detail, detail_notation, price, cost_service, total_sum,norma_hour, in_stock) VALUES('{0}', {1}, '{2}', '{3}', '{4}', '{5}','{6}','{7}')", txtName.Text.Trim, CInt(cbxIsDetail.Checked), tbxDetailNotation.Text, Replace(tbxPrice.Text, ",", "."), Replace(tbxCostService.Text, ",", "."), Replace(tbxTotalSum.Text, ",", "."), Replace(tbxNormaHour.Text, ",", "."), CInt(cbxDisabled.Checked))
+                    Dim sql$ = String.Format("INSERT INTO details (detail_name, is_detail, detail_notation, price, cost_service, total_sum,norma_hour, in_stock) VALUES('{0}', {1}, '{2}', '{3}', '{4}', '{5}','{6}','{7}')", txtName.Text.Trim, Int(cbxIsDetail.Checked), tbxDetailNotation.Text, Replace(tbxPrice.Text, ",", "."), Replace(tbxCostService.Text, ",", "."), Replace(tbxTotalSum.Text, ",", "."), Replace(tbxNormaHour.Text, ",", "."), Int(cbxDisabled.Checked))
                     dbSQL.Execute(sql)
                     Bind()
                 Catch

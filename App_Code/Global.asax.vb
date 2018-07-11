@@ -4,6 +4,7 @@ Imports System.Web.Mvc
 Imports System.Web.Optimization
 Imports System.Web.Routing
 Imports System.Web.SessionState
+Imports config
 
 
 Namespace Kasbi

@@ -4,20 +4,23 @@ Imports System.Linq
 Imports System.Net.Http.Headers
 Imports System.Web.Http
 
-Public Module WebApiConfig
-    Public Sub Register(ByVal config As HttpConfiguration)
-        ' Web API configuration and services
+Namespace config
 
-        ' Web API routes
-        config.MapHttpAttributeRoutes()
+    Public Module WebApiConfig
+        Public Sub Register(ByVal config As HttpConfiguration)
+            ' Web API configuration and services
 
-        config.Routes.MapHttpRoute(
-            name:="DefaultApi",
-            routeTemplate:="api/{controller}/{id}",
-            defaults:=New With {.id = RouteParameter.Optional}
-        )
+            ' Web API routes
+            config.MapHttpAttributeRoutes()
 
-        config.Formatters.JsonFormatter.SupportedMediaTypes.Add(New MediaTypeHeaderValue("text/html"))
+            config.Routes.MapHttpRoute(
+                name:="DefaultApi",
+                routeTemplate:="api/{controller}/{id}",
+                defaults:=New With {.id = RouteParameter.Optional}
+                )
 
-    End Sub
-End Module
+            config.Formatters.JsonFormatter.SupportedMediaTypes.Add(New MediaTypeHeaderValue("text/html"))
+
+        End Sub
+    End Module
+End Namespace

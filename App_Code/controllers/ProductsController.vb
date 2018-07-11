@@ -2,10 +2,9 @@
 Imports System.Collections.Generic
 Imports System.Linq
 Imports System.Net
-Imports System.Net.Http
 Imports System.Web.Http
 
-Namespace WebForms
+Namespace controllers
     Public Class ProductsController
         Inherits ApiController
 
@@ -24,6 +23,11 @@ Namespace WebForms
             .Name = "Hammer",
             .Category = "Hardware",
             .Price = 16.99D
+            }, New Product With {
+            .Id = 4,
+            .Name = "кубик рубик",
+            .Category = "Другое",
+            .Price = 6.99D
             }}
 
         Public Function GetAllProducts() As IEnumerable(Of Product)
