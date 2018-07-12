@@ -2074,16 +2074,8 @@ ExitFunction:
         End Function
 
         Overrides Function Summa_propis(ByVal s As String, Optional ByVal b As Boolean = True) As String
-            Dim ss@, txt$, n%, i%
-            Static triad(4) As Integer, numb1(19) As String, numb2(9) As String, numb3(9) As String
-            If s = 0 Then
-                Summa_propis = ""
-                Exit Function
-            End If
-
-
+            Dim sum_p_rub, sum_p_cop, cop As String
             Dim kop_arr = s.ToString.Split(",")
-            Dim cop
 
             If kop_arr.Length >= 2 Then
                 s = kop_arr(0)
@@ -2092,28 +2084,18 @@ ExitFunction:
                 s = kop_arr(0)
                 cop = "00"
             End If
-            'Try
-            '    cop = kop_arr(1)
-            '    If cop <> "" Then
-            '        s = kop_arr(0)
-            '    End If
-            '    'MsgBox(cop)
-            'Catch ex As Exception
+            sum_p_rub = Summa_propis_rub(s, b)
+            sum_p_cop = Summa_propis_cop(cop, b)
+            Return sum_p_rub & " " & sum_p_cop
+        End Function
 
-            'End Try
-
-            'If cop = "" Then
-            '    kop_arr = s.ToString.Split(".")
-            '    Try
-            '        cop = kop_arr(1)
-            '        If cop <> "" Then
-            '            s = kop_arr(0)
-            '        End If
-            '        'MsgBox(cop)
-            '    Catch ex As Exception
-            '    End Try
-            'End If
-
+        Private Function Summa_propis_rub(ByVal s As String, Optional ByVal b As Boolean = True) As String
+            Dim ss@, txt$, n%, i%
+            Static triad(4) As Integer, numb1(19) As String, numb2(9) As String, numb3(9) As String
+            If s = 0 Then
+                Summa_propis_rub = ""
+                Exit Function
+            End If
 
             ss@ = s
             triad(1) = ss@ - Int(ss@ / 1000) * 1000
@@ -2167,7 +2149,7 @@ ExitFunction:
             txt$ = ""
             If ss@ <> 0 Then
                 'n% = MsgBox("Сумма выходит за границы формата", 16, "Сумма прописью")
-                Summa_propis = ""
+                Summa_propis_rub = ""
                 Exit Function
             End If
             For i% = 4 To 1 Step -1
@@ -2220,26 +2202,24 @@ ExitFunction:
                 End If
             End If
             txt$ = UCase$(Left$(txt$, 1)) & Mid$(txt$, 2)
-            Summa_propis = txt$
+            Summa_propis_rub = txt$
+        End Function
 
-
+        Private Function Summa_propis_cop(ByVal cop As String, Optional ByVal b As Boolean = True) As String
+            Dim cop2 As String = ""
             If cop <> "00" Then
                 If cop.ToString.Length = 1 Then
                     cop = cop * 10
                 End If
-                Dim cop2 As String = ""
-                cop2 = Summa_propis(cop).ToLower().Replace("рублей", "копеек")
+                cop2 = Summa_propis_rub(cop, b).ToLower().Replace("рублей", "копеек")
                 cop2 = cop2.Replace("рубль", "копейка")
                 cop2 = cop2.Replace("рубля", "копейки")
                 cop2 = cop2.Replace("один ", "одна ")
                 cop2 = cop2.Replace("два ", "две ")
-                'cop.ToString.Replace("рублей", "копеек")
-                'cop.ToString.ToLower()
-                Summa_propis = Summa_propis + " " + cop2
             Else
-                Summa_propis += " 00 копеек"
+                cop2 = " 00 копеек"
             End If
-
+            Return cop2
         End Function
 
         Public Overrides Function GetRussianDate(ByVal d As Date) As String

@@ -54,7 +54,6 @@ Namespace Kasbi
                 chkUseDate.Attributes.Add("onkeypress", s)
                 chkUseDate.Attributes.Add("onclick", s)
                 Try
-
                     If Request.Cookies("Ramok") Is Nothing Then
                         Dim c As HttpCookie = New HttpCookie("Ramok")
                         c.Values.Add("GoodFilterPanel", scFalse)
@@ -200,9 +199,6 @@ Namespace Kasbi
                         Response.Redirect(GetAbsoluteUrl("~/NewSupportConduct.aspx?" & sEmployee))
                     End If
                 End If
-
-                'If (numcashregister <> 0 And txtFindGoodNum.Text = "") Or Len(Session("FilterGood")) < 80 And Len(Session("FilterGood")) > 1 Then
-                'If numcashregister = 0 And txtFindGoodNum.Text <> Str(numcashregister) Then numcashregister = Session("num_cash")
                 cmd = New SqlClient.SqlCommand("get_cashregisters_list_by_num_cashregister")
                 cmd.CommandType = CommandType.StoredProcedure
                 cmd.CommandTimeout = 0
@@ -606,7 +602,7 @@ Namespace Kasbi
                 'опнбепхрэ онгфе
                 idDeliveryNew = CInt(s11)
                 idGoodTypeNew = CInt(s0)
-                _serviceGood.CheckTransferDelivery(idDeliveryOld, idDeliveryNew, idGoodTypeOld, idGoodTypeNew, 1)
+                '_serviceGood.CheckTransferDelivery(idDeliveryOld, idDeliveryNew, idGoodTypeOld, idGoodTypeNew, 1)
 
                 Try
                     s1 = Replace(s1, ",", ".")

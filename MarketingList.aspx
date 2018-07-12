@@ -22,7 +22,6 @@ function isFind()
 	}
 -->
     </script>
-
     <meta content="Microsoft Visual Studio.NET 7.0" name="GENERATOR">
     <meta content="Visual Basic 7.0" name="CODE_LANGUAGE">
     <meta content="JavaScript" name="vs_defaultClientScript">
@@ -113,8 +112,6 @@ function isFind()
                                 ID="pnlFilter" Style="border-top: #cc9933 1px solid; margin-top: 10px; z-index: 103;
                                 margin-bottom: -8px; border-bottom: #cc9933 1px solid" runat="server">
                                 <p style="margin-top: 8px; margin-bottom: 9px">
-
-
 <br />
 
                     <asp:DataGrid ID="grdCustomers" runat="server" Width="98%" AutoGenerateColumns="False"
@@ -189,11 +186,6 @@ function isFind()
                             </asp:TemplateColumn>                                                                                                                                                                                                   
                         </Columns>
                     </asp:DataGrid>
-
-
-
-
-
                                 </p>
                             </asp:Panel>
                         <p>
