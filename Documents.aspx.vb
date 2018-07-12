@@ -961,7 +961,7 @@ Namespace Kasbi
                             doc.Bookmarks("Date").Range.Text = sDate
                             doc.Bookmarks("Date2").Range.Text = sDate
                             Dim sEmployee$ = dbSQL.ExecuteScalar("select work_type+' '+Name from Employee where sys_id='" & CStr(CurrentUser.sys_id) & "'")
-                            doc.Bookmarks("Razreshil").Range.Text = ds.Tables("sale").Rows(0)("razreshil")
+                            doc.Bookmarks("Razreshil").Range.Text = sEmployee
                             If ds.Tables("sale").Rows(0)("firm_sys_id") <> 1 Then
                                 doc.Bookmarks("FirmName1").Range.Text = ds.Tables("sale").Rows(0)("firm_name")
                                 'doc.Bookmarks("Rekvisit").Range.Text = ds.Tables("sale").Rows(0)("rekvisit")
