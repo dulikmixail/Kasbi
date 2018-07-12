@@ -199,9 +199,7 @@ Namespace Service
                     End If
                     Exit Select
                 Case NumbersCashRegister.SC1
-                    If IsEmptyString(number) Then
-                        exeption.AddTextToList("Введите номер СК ЦТО.")
-                    Else
+                    If Not IsEmptyString(number) Then
                         If number.Length = 11 Or number.Length = 0 Then
                             If dbSQL.ExecuteScalar("select count(*) from good where num_control_cto='" & number & "'") > 0 Then
                                 exeption.AddTextToList("Введенный номер СК ЦТО уже занесен в базу.")
@@ -212,9 +210,7 @@ Namespace Service
                     End If
                     Exit Select
                 Case NumbersCashRegister.SC2
-                    If IsEmptyString(number) Then
-                        exeption.AddTextToList("Введите номер СК ЦТО 2.")
-                    Else
+                    If Not IsEmptyString(number) Then
                         If number.Length = 11 And number.Length = 0 Then
                             If dbSQL.ExecuteScalar("select count(*) from good where num_control_cto2='" & number & "'") > 0 Then
                                 exeption.AddTextToList("Введенный номер СК ЦТО 2 уже занесен в базу.")
