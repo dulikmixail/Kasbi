@@ -2073,9 +2073,10 @@ ExitFunction:
 
         End Function
 
-        Overrides Function Summa_propis(ByVal s As String, Optional ByVal b As Boolean = True) As String
+        Overrides Function Summa_propis(ByVal s As String, Optional ByVal b As Boolean = True, Optional ByVal b_cop As Boolean = True) As String
             Dim sum_p_rub, sum_p_cop, cop As String
             Dim kop_arr = s.ToString.Split(",")
+            sum_p_cop = String.Empty
 
             If kop_arr.Length >= 2 Then
                 s = kop_arr(0)
@@ -2085,8 +2086,11 @@ ExitFunction:
                 cop = "00"
             End If
             sum_p_rub = Summa_propis_rub(s, b)
-            sum_p_cop = Summa_propis_cop(cop, b)
-            Return sum_p_rub & " " & sum_p_cop
+            If (b_cop) Then
+                sum_p_cop = " " & Summa_propis_cop(cop, b)
+
+            End If
+            Return sum_p_rub & sum_p_cop
         End Function
 
         Private Function Summa_propis_rub(ByVal s As String, Optional ByVal b As Boolean = True) As String
@@ -2943,8 +2947,8 @@ ExitFunction:
                             Dim itog_out = ds.Tables("cash").Rows(n)("itog_out")
                             itog_in = itog_in.ToString.Replace(".", ",")
                             itog_out = itog_out.ToString.Replace(".", ",")
-                            doc.Bookmarks("Itog_In").Range.Text = itog_in & "(" & IIf(Summa_propis(itog_in) = "", "ноль", Summa_propis(itog_in)) & ")"
-                            doc.Bookmarks("Itog_Out").Range.Text = itog_out & "(" & IIf(Summa_propis(itog_out) = "", "ноль", Summa_propis(itog_out)) & ")"
+                            doc.Bookmarks("Itog_In").Range.Text = itog_in & "(" & IIf(Summa_propis(itog_in, True, False) = "", "ноль", Summa_propis(itog_in, True, False)) & ")"
+                            doc.Bookmarks("Itog_Out").Range.Text = itog_out & "(" & IIf(Summa_propis(itog_out, True, False) = "", "ноль", Summa_propis(itog_out, True, False)) & ")"
                             If ds.Tables("cash").Rows(n)("garantia_repair") = 0 Then
                                 doc.Bookmarks("Repair_info").Range.Text = ds.Tables("cash").Rows(n)("info")
                             Else

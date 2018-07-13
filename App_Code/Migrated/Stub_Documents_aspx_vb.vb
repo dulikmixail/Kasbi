@@ -15,7 +15,7 @@ Namespace Kasbi
 
         Public MustOverride Function ProcessDocuments(ByVal num_doc() As Integer, ByVal customer As Integer, ByVal sale As Integer, Optional ByVal rebill As Integer = 0, Optional ByVal sub_num As Integer = -1, Optional ByVal isRefresh As Boolean = True) As Boolean
 
-        Public MustOverride Function Summa_propis(ByVal s As String, Optional ByVal b As Boolean = True) As String
+        Public MustOverride Function Summa_propis(ByVal s As String, Optional ByVal b As Boolean = True, Optional ByVal b_cop As Boolean = True) As String
 
         Public MustOverride Function GetRussianDate(ByVal d As Date) As String
 
