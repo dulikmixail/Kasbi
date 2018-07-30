@@ -90,8 +90,6 @@ Namespace Service
                 ds = New DataSet
                 adapt.Fill(ds)
 
-
-
                 drs = ds.Tables(0).Select()
 
                 For k As Integer = 0 To drs.Length - 1
@@ -138,11 +136,7 @@ Namespace Service
             _wrdDoc.Bookmarks("NumDog1").Range.Text = drs(k).Item(7).ToString()
             _wrdDoc.Bookmarks("Works1").Range.Text = drs(k).Item(1).ToString()
             _wrdDoc.Bookmarks("NumCash1").Range.Text = drs(k).Item(2).ToString().Trim()
-            If InStr(drs(k).Item(6).ToString(), "ТО1") <> 0 Then
-                _wrdDoc.Bookmarks("NDS1").Range.Text = "15.00 (пятнадцать) рублей 00 копеек, в т. ч. НДС (20%) 2.50 (два рубля 50 копеек)."
-            Else
-                _wrdDoc.Bookmarks("NDS1").Range.Text = "7.00 (семь) рублей 50 копеек, в т. ч. НДС (20%) 1.25 (один рубль 25 копеек)."
-            End If
+            paste_Summa_TO(drs, k, 1)
             _wrdDoc.Bookmarks("DateDolg1").Range.Text = DateTime.Today.ToString("dd.MM.yy")
             _wrdDoc.Bookmarks("Dolg1").Range.Text = drs(k).Item(10).ToString()
             _wrdDoc.Bookmarks("Customer1").Range.Text = drs(k).Item(9).ToString()
@@ -160,15 +154,25 @@ Namespace Service
             _wrdDoc.Bookmarks("NumDog2").Range.Text = drs(k).Item(7).ToString()
             _wrdDoc.Bookmarks("Works2").Range.Text = drs(k).Item(1).ToString()
             _wrdDoc.Bookmarks("NumCash2").Range.Text = drs(k).Item(2).ToString().Trim()
-            If InStr(drs(k).Item(6).ToString(), "ТО1") <> 0 Then
-                _wrdDoc.Bookmarks("NDS2").Range.Text = "15.00 (пятнадцать) рублей 00 копеек, в т. ч. НДС (20%) 2.50 (два рубля 50 копеек)."
-            Else
-                _wrdDoc.Bookmarks("NDS2").Range.Text = "7.00 (семь) рублей 50 копеек, в т. ч. НДС (20%) 1.25 (один рубль 25 копеек)."
-            End If
+            paste_Summa_TO(drs, k, 2)
             _wrdDoc.Bookmarks("DateDolg2").Range.Text = DateTime.Today.ToString("dd.MM.yy")
             _wrdDoc.Bookmarks("Dolg2").Range.Text = drs(k).Item(10).ToString()
             _wrdDoc.Bookmarks("Customer2").Range.Text = drs(k).Item(9).ToString()
             _wrdDoc.Bookmarks("Master2").Range.Text = CurrentUser.Name
+        End Sub
+
+        Private Sub paste_Summa_TO(drs() As Data.DataRow, k As Integer, num As Integer)
+            If InStr(drs(k).Item(6).ToString(), "ТО1") <> 0 Then
+                _wrdDoc.Bookmarks("NDS" & num).Range.Text = "15.00 (пятнадцать) рублей 00 копеек, в т. ч. НДС (20%) 2.50 (два рубля 50 копеек)."
+            ElseIf InStr(drs(k).Item(6).ToString(), "ТО2") <> 0 Then
+                _wrdDoc.Bookmarks("NDS" & num).Range.Text = "7.00 (семь) рублей 50 копеек, в т. ч. НДС (20%) 1.25 (один рубль 25 копеек)."
+            ElseIf InStr(drs(k).Item(6).ToString(), "ТО3") <> 0 Then
+                _wrdDoc.Bookmarks("NDS" & num).Range.Text = "9.00 (девять) рублей 60 копеек, в т. ч. НДС (20%) 1.60 (один рубль 60 копеек)."
+            ElseIf InStr(drs(k).Item(6).ToString(), "ТО4") <> 0 Then
+                _wrdDoc.Bookmarks("NDS" & num).Range.Text = "24.00 (двадцать четыре) рубля 00 копеек, в т. ч. НДС (20%) 4.00 (четыре рубля 00 копеек)."
+            ElseIf InStr(drs(k).Item(6).ToString(), "ТО5") <> 0 Then
+                _wrdDoc.Bookmarks("NDS" & num).Range.Text = "6.00 (шесть) рублей 00 копеек, в т. ч. НДС (20%) 1.00 (один рубль 00 копеек)."
+            End If
         End Sub
         Private Sub clear_Part2()
             _wrdDoc.Bookmarks("Akt2_body").Range.Text = " "

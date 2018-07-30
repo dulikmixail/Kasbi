@@ -759,8 +759,6 @@ Namespace Kasbi
                 oExcel.Quit()
             End Try
 
-
-
         End Sub
 
 
