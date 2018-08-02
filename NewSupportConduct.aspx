@@ -207,6 +207,8 @@
                                             
                                             <asp:CheckBox ID="chkDelayTO" runat="server" CssClass="text02" AutoPostBack="True"
                                                 Text="Приостановка ТО"></asp:CheckBox>
+                                            <asp:CheckBox ID="autoAktAboutRevomeFromTO" runat="server" CssClass="text02" AutoPostBack="True" Checked="True"
+                                                          Text="С формированием ремонтного Акта о снятии с ТО"></asp:CheckBox>
                                             <hr>
                                         </td>
                                     </tr>

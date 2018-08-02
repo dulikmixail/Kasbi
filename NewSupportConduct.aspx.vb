@@ -63,7 +63,7 @@ Namespace Kasbi
                 'If sFilter = "" Then
                 '    Session("CustomerTOFilter") = "False"
                 'End If
-
+                autoAktAboutRevomeFromTO.Checked = True
                 Session("CustFilter") = ""
 
                 Parameters.Value = 0
@@ -732,6 +732,72 @@ Namespace Kasbi
                             cmd.Parameters.AddWithValue("@state", 2)
                         End If
                         dbSQL.Execute(cmd)
+                        If autoAktAboutRevomeFromTO.Checked Then
+                            Try
+                                Const cost As Integer = 5
+                                Const txtNewInfo As String = "Снятие c техничекого обслуживания"
+                                Const repareInInfo As String = "Акт был сформирован при снятии с ТО"
+                                Const normaHour As Double = 0.18
+                                Const detailID As Integer = 167
+
+                                Dim akt$ = GetNewAktNumber()
+                                If akt Is Nothing Then
+                                    akt = ""
+                                End If
+                                cmd = New SqlClient.SqlCommand("new_repair_and_new_repair_info")
+                                cmd.Parameters.AddWithValue("@pi_good_sys_id", iCash)
+                                cmd.Parameters.AddWithValue("@pi_owner_sys_id", CurrentCustomer)
+                                cmd.Parameters.AddWithValue("@pi_date_in", Now)
+                                cmd.Parameters.AddWithValue("@pi_date_out", Now)
+                                cmd.Parameters.AddWithValue("@pi_marka_cto_in", txtMarkaCTO_in.Text)
+                                cmd.Parameters.AddWithValue("@pi_marka_cto_out", txtMarkaCTO_out.Text)
+                                cmd.Parameters.AddWithValue("@pi_marka_pzu_in", txtMarkaPZU_in.Text)
+                                cmd.Parameters.AddWithValue("@pi_marka_pzu_out", txtMarkaPZU_out.Text)
+                                cmd.Parameters.AddWithValue("@pi_marka_mfp_in", txtMarkaMFP_in.Text)
+                                cmd.Parameters.AddWithValue("@pi_marka_mfp_out", txtMarkaMFP_out.Text)
+                                cmd.Parameters.AddWithValue("@pi_marka_reestr_in", txtMarkaReestr_in.Text)
+                                cmd.Parameters.AddWithValue("@pi_marka_reestr_out", txtMarkaReestr_out.Text)
+                                cmd.Parameters.AddWithValue("@pi_marka_cto2_in", txtMarkaCTO2_in.Text)
+                                cmd.Parameters.AddWithValue("@pi_marka_cto2_out", txtMarkaCTO2_out.Text)
+                                cmd.Parameters.AddWithValue("@pi_marka_cp_in", txtMarkaCP_in.Text)
+                                cmd.Parameters.AddWithValue("@pi_marka_cp_out", txtMarkaCP_out.Text)
+                                cmd.Parameters.AddWithValue("@pi_zreport_in", txtZReportIn.Text)
+                                cmd.Parameters.AddWithValue("@pi_zreport_out", txtZReportOut.Text)
+                                cmd.Parameters.AddWithValue("@pi_itog_in", txtItogIn.Text)
+                                cmd.Parameters.AddWithValue("@pi_itog_out", txtItogOut.Text)
+                                cmd.Parameters.AddWithValue("@pi_details", "")
+                                cmd.Parameters.AddWithValue("@pi_akt", akt)
+                                cmd.Parameters.AddWithValue("@pi_summa", cost)
+                                cmd.Parameters.AddWithValue("@pi_info", txtNewInfo)
+                                cmd.Parameters.AddWithValue("@pi_repair_info", "")
+                                cmd.Parameters.AddWithValue("@pi_executor", lstWorker.SelectedValue)
+                                cmd.Parameters.AddWithValue("@pi_repair_in", 1)
+                                cmd.Parameters.AddWithValue("@updateUserID", CurrentUser.sys_id)
+                                cmd.Parameters.AddWithValue("@repare_in_info", repareInInfo)
+
+                                cmd.Parameters.AddWithValue("@pi_price", 0)
+                                cmd.Parameters.AddWithValue("@pi_quantity", 1)
+                                cmd.Parameters.AddWithValue("@pi_cost_service", cost)
+                                cmd.Parameters.AddWithValue("@pi_total_sum", cost)
+                                cmd.Parameters.AddWithValue("@pi_norma_hour", normaHour)
+                                cmd.Parameters.AddWithValue("@pi_detail_id", detailID)
+                                cmd.CommandType = CommandType.StoredProcedure
+                                dbSQL.Execute(cmd)
+                                Dim historySysId As Integer = CInt(dbSQL.ExecuteScalar("SELECT TOP 1 sys_id FROM cash_history WHERE state = 5 ORDER BY sys_id DESC"))
+                                msgAddSupportConduct.Text = "Снятие произведено. Акт о выполненных работах сохранен в ремонтах. Акт скачан, вы можете его открыть!"
+
+                                Dim strRequest$ = "<script language=JavaScript>window.open('documents.aspx?t=32&c=" & CurrentCustomer & "&g=" & iCash & "&h=" & historySysId & "','_new','');</script>"
+                                Dim cstype As Type = Me.[GetType]()
+                                Dim csname1 As [String] = "PopupScript"
+                                Dim cs As ClientScriptManager = Page.ClientScript
+                                cs.RegisterStartupScript(cstype, csname1, strRequest$)
+
+                            Catch
+                                msgAddSupportConduct.Text = "Ошибка формирования акта о снятии!<br>" & Err.Description
+                                Exit Sub
+                            End Try
+
+                        End If
                     Catch
                         msgAddSupportConduct.Text = Err.Description
                     End Try
@@ -846,6 +912,35 @@ Namespace Kasbi
                 LoadGoodInfo()
             End If
         End Sub
+
+        Function GetNewAktNumber() As String
+            Dim cmd As SqlClient.SqlCommand
+            Dim adapt As SqlClient.SqlDataAdapter
+            Dim ds As DataSet
+
+            CurrentCustomer = Parameters.Value
+            'новый номер договора
+            Try
+                cmd = New SqlClient.SqlCommand("get_next_repair_akt")
+                cmd.Parameters.AddWithValue("@good_sys_id", iCash)
+                cmd.CommandType = CommandType.StoredProcedure
+                adapt = dbSQL.GetDataAdapter(cmd)
+                ds = New DataSet
+                adapt.Fill(ds)
+
+                Dim s
+                Dim num_cashregister
+                s = ds.Tables(0).Rows(0).Item("num_repairs")
+                num_cashregister = ds.Tables(0).Rows(0).Item("num_cashregister")
+                num_cashregister = Trim(num_cashregister)
+                s = s + 1
+
+                GetNewAktNumber = num_cashregister & "/" & Date.Now.Month & "/" & s
+            Catch
+                Return ""
+            End Try
+        End Function
+
 
         Function GetInfo(ByVal cust As Integer, Optional ByVal flag As Boolean = True) As String
             Dim adapt As SqlClient.SqlDataAdapter
@@ -1454,6 +1549,7 @@ Namespace Kasbi
                 chkDelayTO.Visible = True
                 pnlSupport.Visible = False
                 SectionTOName.Text = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Проведение технического обслуживания"
+                autoAktAboutRevomeFromTO.Visible = False
             ElseIf rbTO.SelectedIndex = 2 And chkDelayTO.Checked = True Then
                 pnlConduct.Visible = False
                 pnlDelay.Visible = True
@@ -1461,6 +1557,7 @@ Namespace Kasbi
                 pnlSupport.Visible = False
                 chkDelayTO.Visible = True
                 SectionTOName.Text = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Приостановка технического обслуживания"
+                autoAktAboutRevomeFromTO.Visible = False
             ElseIf rbTO.SelectedIndex = 1 Then
                 pnlConduct.Visible = False
                 pnlDelay.Visible = False
@@ -1468,6 +1565,7 @@ Namespace Kasbi
                 pnlSupport.Visible = False
                 chkDelayTO.Visible = False
                 SectionTOName.Text = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Снятие с технического обслуживания"
+                autoAktAboutRevomeFromTO.Visible = True
             ElseIf rbTO.SelectedIndex = 0 Then
                 pnlConduct.Visible = False
                 pnlDelay.Visible = False
@@ -1479,6 +1577,7 @@ Namespace Kasbi
                 txtCustomerFind.Text = ""
                 LoadCustomerList()
                 SectionTOName.Text = "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Постановка на техническое обслуживание"
+                autoAktAboutRevomeFromTO.Visible = False
             End If
         End Sub
 

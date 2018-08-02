@@ -469,8 +469,13 @@ Partial Class CashOwners
                     isLabelShow = False
                 Else
                     s = s & Format(e.Item.DataItem("date_out"), "dd.MM.yyyy")
+
+                    'CType(e.Item.FindControl("lnkActRepairRealization"), HyperLink).Text = "Акт о проведении ремонта"
+                    'CType(e.Item.FindControl("lnkActRepairRealization"), HyperLink).NavigateUrl = GetAbsoluteUrl("documents.aspx?t=32&c=" & e.Item.DataItem("owner_sys_id") & "&g=" & e.Item.DataItem("good_sys_id") & "&h=" & e.Item.DataItem("sys_id"))
+
                     CType(e.Item.FindControl("lnkRepairAct"), HyperLink).Text = "Акт"
                     CType(e.Item.FindControl("lnkRepairAct"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?c=" & e.Item.DataItem("owner_sys_id") & "&s=" & e.Item.DataItem("sale_sys_id") & "&t=16&g=" & e.Item.DataItem("good_sys_id") & "&h=" & e.Item.DataItem("sys_id"))
+
                     CType(e.Item.FindControl("btnDeleteRepairDoc"), LinkButton).Text = "Удалить<br>документы"
                     isLabelShow = True
                 End If

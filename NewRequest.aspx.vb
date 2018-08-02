@@ -525,11 +525,11 @@ Namespace Kasbi
                     'проверяем УНН на присутствие в базе
                     Dim dublicate = dbSQL.ExecuteScalar("SELECT unn FROM customer WHERE unn='" & txtUNN.Text & "'")
                     If dublicate <> "" Then
-                        msgAddCustomer.Text = "Ошибка! В базе уже есть клиент с таким УНН!<br>"
+                        msgAddCustomer.Text = "Ошибка! В базе уже есть клиент с таким УНП!<br>"
                         Exit Sub
                     End If
                     If txtUNN.Text.Trim.Length > 9 Or txtUNN.Text.Trim.Length < 9 Then
-                        msgAddCustomer.Text = "Ошибка! Вы ввели неверный УНН!<br>"
+                        msgAddCustomer.Text = "Ошибка! Вы ввели неверный УНП!<br>"
                         Exit Sub
                     End If
 

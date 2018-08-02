@@ -186,16 +186,12 @@ Namespace Service
                     End If
                     Exit Select
                 Case NumbersCashRegister.CPU
-                    If IsEmptyString(number) Then
-                        exeption.AddTextToList("Введите номер СК ЦП.")
-                    Else
-                        If number.Length = 11 Then
-                            If dbSQL.ExecuteScalar("select count(*) from good where num_control_cp='" & number & "'") > 0 Then
-                                exeption.AddTextToList("Введенный номер СК ЦП уже занесен в базу.")
-                            End If
-                        Else
-                            exeption.AddTextToList("Введите корректный номер СК ЦП.")
+                    If number.Length = 11 Then
+                        If dbSQL.ExecuteScalar("select count(*) from good where num_control_cp='" & number & "'") > 0 Then
+                            exeption.AddTextToList("Введенный номер СК ЦП уже занесен в базу.")
                         End If
+                    Else
+                        exeption.AddTextToList("Введите корректный номер СК ЦП.")
                     End If
                     Exit Select
                 Case NumbersCashRegister.SC1

@@ -2199,6 +2199,126 @@ ExitFunction:
                 End If
             Next i%
             If b Then
+                txt$ = txt$ + "бел. руб."
+            End If
+            txt$ = UCase$(Left$(txt$, 1)) & Mid$(txt$, 2)
+            Summa_propis_rub = txt$
+        End Function
+
+        Private Function Summa_propis_cop(ByVal cop As String, Optional ByVal b As Boolean = True) As String
+            If b Then
+                Return cop & " коп."
+            Else
+                Return cop
+            End If
+        End Function
+
+        Private Function Summa_propis_rub_OLD(ByVal s As String, Optional ByVal b As Boolean = True) As String
+            Dim ss@, txt$, n%, i%
+            Static triad(4) As Integer, numb1(19) As String, numb2(9) As String, numb3(9) As String
+            If s = 0 Then
+                Summa_propis_rub_OLD = ""
+                Exit Function
+            End If
+
+            ss@ = s
+            triad(1) = ss@ - Int(ss@ / 1000) * 1000
+            ss@ = Int(ss@ / 1000)
+            triad(2) = ss@ - Int(ss@ / 1000) * 1000
+            ss@ = Int(ss@ / 1000)
+            triad(3) = ss@ - Int(ss@ / 1000) * 1000
+            ss@ = Int(ss@ / 1000)
+            triad(4) = ss@ - Int(ss@ / 1000) * 1000
+            ss@ = Int(ss@ / 1000)
+            numb1(0) = ""
+            numb1(1) = "один "
+            numb1(2) = "два "
+            numb1(3) = "три "
+            numb1(4) = "четыре "
+            numb1(5) = "п€ть "
+            numb1(6) = "шесть "
+            numb1(7) = "семь "
+            numb1(8) = "восемь "
+            numb1(9) = "дев€ть "
+            numb1(10) = "дес€ть "
+            numb1(11) = "одиннадцать "
+            numb1(12) = "двенадцать "
+            numb1(13) = "тринадцать "
+            numb1(14) = "четырнадцать "
+            numb1(15) = "п€тнадцать "
+            numb1(16) = "шестнадцать "
+            numb1(17) = "семнадцать "
+            numb1(18) = "восемнадцать "
+            numb1(19) = "дев€тнадцать "
+            numb2(0) = ""
+            numb2(1) = ""
+            numb2(2) = "двадцать "
+            numb2(3) = "тридцать "
+            numb2(4) = "сорок "
+            numb2(5) = "п€тьдес€т "
+            numb2(6) = "шестьдес€т "
+            numb2(7) = "семьдес€т "
+            numb2(8) = "восемьдес€т "
+            numb2(9) = "дев€носто "
+            numb3(0) = ""
+            numb3(1) = "сто "
+            numb3(2) = "двести "
+            numb3(3) = "триста "
+            numb3(4) = "четыреста "
+            numb3(5) = "п€тьсот "
+            numb3(6) = "шестьсот "
+            numb3(7) = "семьсот "
+            numb3(8) = "восемьсот "
+            numb3(9) = "дев€тьсот "
+            txt$ = ""
+            If ss@ <> 0 Then
+                'n% = MsgBox("—умма выходит за границы формата", 16, "—умма прописью")
+                Summa_propis_rub_OLD = ""
+                Exit Function
+            End If
+            For i% = 4 To 1 Step -1
+                n% = 0
+                If triad(i%) > 0 Then
+                    n% = Int(triad(i%) / 100)
+                    txt$ = txt$ & numb3(n%)
+                    n% = Int((triad(i%) - n% * 100) / 10)
+                    txt$ = txt$ & numb2(n%)
+                    If n% < 2 Then
+                        n% = triad(i%) - (Int(triad(i%) / 10) - n%) * 10
+                    Else
+                        n% = triad(i%) - Int(triad(i%) / 10) * 10
+                    End If
+                    Select Case n%
+                        Case 1
+                            If i% = 2 Then txt$ = txt$ & "одна " Else txt$ = txt$ & "один "
+                        Case 2
+                            If i% = 2 Then txt$ = txt$ & "две " Else txt$ = txt$ & "два "
+                        Case Else
+                            txt$ = txt$ & numb1(n%)
+                    End Select
+                    Select Case i%
+                        Case 2
+                            If n% = 0 Or n% > 4 Then
+                                txt$ = txt$ + "тыс€ч "
+                            Else
+                                If n% = 1 Then txt$ = txt$ + "тыс€ча " Else txt$ = txt$ + "тыс€чи "
+                            End If
+                        Case 3
+                            If n% = 0 Or n% > 4 Then
+                                txt$ = txt$ + "миллионов "
+                            Else
+                                If n% = 1 Then txt$ = txt$ + "миллион " Else txt$ = txt$ + "миллиона "
+                            End If
+                        Case 4
+                            If n% = 0 Or n% > 4 Then
+                                txt$ = txt$ + "миллиардов "
+                            Else
+                                If n% = 1 Then txt$ = txt$ + "миллиард " Else txt$ = txt$ + "миллиарда "
+                            End If
+                    End Select
+                End If
+            Next i%
+            If b Then
                 If n% = 0 Or n% > 4 Then
                     txt$ = txt$ + "рублей"
                 Else
@@ -2206,10 +2326,10 @@ ExitFunction:
                 End If
             End If
             txt$ = UCase$(Left$(txt$, 1)) & Mid$(txt$, 2)
-            Summa_propis_rub = txt$
+            Summa_propis_rub_OLD = txt$
         End Function
 
-        Private Function Summa_propis_cop(ByVal cop As String, Optional ByVal b As Boolean = True) As String
+        Private Function Summa_propis_cop_OLD(ByVal cop As String, Optional ByVal b As Boolean = True) As String
             Dim cop2 As String = ""
             If cop <> "00" Then
                 If cop.ToString.Length = 1 Then
@@ -4143,7 +4263,7 @@ ExitFunction:
             adapt.Fill(ds, "customer")
 
             If ds.Tables("customer").Rows.Count = 0 Then GoTo ExitFunction
-            Dim sEmployee$ = dbSQL.ExecuteScalar("select Name from Employee where sys_id='" & CStr(CurrentUser.sys_id) & "'")
+            Dim sEmployee$ = dbSQL.ExecuteScalar("select Name from Employee where sys_id='" & ds.Tables("RepairRealizationAct").Rows(0)("executor") & "'")
             If sEmployee Is Nothing OrElse sEmployee = String.Empty Then
                 sEmployee = ""
             End If
@@ -4211,6 +4331,7 @@ ExitFunction:
                     'кто сделал все это
 
                     doc.Bookmarks("master1").Range.Text = sEmployee
+                    doc.Bookmarks("work_type").Range.Text = dbSQL.ExecuteScalar("select ISNULL(work_type, '') from employee where sys_id =" & ds.Tables("RepairRealizationAct").Rows(0)("executor")).ToString()
 
                     dogovor = ds.Tables("RepairRealizationAct").Rows(0)("dogovor")
                     sDate = ""

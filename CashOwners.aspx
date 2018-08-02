@@ -300,6 +300,8 @@
                                     <asp:TemplateColumn HeaderText="Документы">
                                         <ItemTemplate>
                                             <asp:HyperLink ID="lnkRepairAct" runat="server" Target="_blank" Text="Акт"></asp:HyperLink><br>
+                                            <%--<br>
+                                            <asp:HyperLink ID="lnkActRepairRealization" runat="server" Target="_blank"></asp:HyperLink><br>--%>
                                             <br>
                                             <asp:LinkButton ID="btnDeleteRepairDoc" runat="server" CommandName="Delete"></asp:LinkButton>
                                         </ItemTemplate>

@@ -602,7 +602,7 @@ Namespace Kasbi
                             trace = "tr5"
                             doc.Bookmarks("Registration").Range.Text = registration
                             doc.Bookmarks("CustomerName").Range.Text = customer_name
-                            doc.Bookmarks("Customer").Range.Text = customer_name & ", " & ds.Tables("customer").Rows(0)("customer_address") & ", " & ds.Tables("customer").Rows(0)("bank") & ", смм:" & customer_unn & ", " & text_phones
+                            doc.Bookmarks("Customer").Range.Text = customer_name & ", " & ds.Tables("customer").Rows(0)("customer_address") & ", " & ds.Tables("customer").Rows(0)("bank") & ", смо:" & customer_unn & ", " & text_phones
                             doc.Bookmarks("BoosName").Range.Text = boos_name
                             doc.Bookmarks("Dogovor").Range.Text = dogovor
                             'doc.Bookmarks("Dogovor2").Range.Text = dogovor
@@ -780,7 +780,7 @@ Namespace Kasbi
                             doc.Bookmarks("Accountant").Range.Text = accountant
                             doc.Bookmarks("AccountantName").Range.Text = accountant
                             doc.Bookmarks("UNN").Range.Text = unn
-                            doc.Bookmarks("Bank").Range.Text = ds.Tables("customer").Rows(0)("bank") & ", смм:" & customer_unn
+                            doc.Bookmarks("Bank").Range.Text = ds.Tables("customer").Rows(0)("bank") & ", смо:" & customer_unn
                             doc.Bookmarks("Branch").Range.Text = ds.Tables("customer").Rows(0)("branch")
                             doc.Bookmarks("Registration").Range.Text = registration
                             doc.Bookmarks("TaxInspection").Range.Text = ds.Tables("customer").Rows(0)("tax_inspection")
@@ -926,7 +926,7 @@ Namespace Kasbi
                             doc.Bookmarks("CustomerAddress").Range.Text = ds.Tables("customer").Rows(0)("customer_address")
                             doc.Bookmarks("CustomerName").Range.Text = customer_name
                             doc.Bookmarks("Dogovor").Range.Text = dogovor
-                            Dim s$ = ds.Tables("customer").Rows(0)("bank") & ", смм:" & customer_unn
+                            Dim s$ = ds.Tables("customer").Rows(0)("bank") & ", смо:" & customer_unn
                             If s.Trim.Length = 0 Then s = "МЕР"
                             'doc.Bookmarks("Bank").Range.Text = s
                             doc.Bookmarks("UNN1").Range.Text = unn
@@ -1151,7 +1151,7 @@ Namespace Kasbi
                             doc.Bookmarks("Massa1").Range.Text = ""
                             'doc.Bookmarks("Massa2").Range.Text = ""
 
-                            Dim s$ = customer_name & " , " & ds.Tables("customer").Rows(0)("customer_address") & " , " & ds.Tables("customer").Rows(0)("bank") & ", смм:" & customer_unn
+                            Dim s$ = customer_name & " , " & ds.Tables("customer").Rows(0)("customer_address") & " , " & ds.Tables("customer").Rows(0)("bank") & ", смо:" & customer_unn
 
                             If s.Trim.Length = 0 Then s = "МЕР"
 

@@ -100,7 +100,7 @@ Namespace Kasbi.Admin
 
                 Dim sale_1cnum 'номер накладной продажи
                 Dim sale_date 'дата продажи
-                Dim client_unn 'УНН покупателя
+                Dim client_unn 'УНП покупателя
                 Dim manager 'Менеджер
 
                 Dim sale_deliverycode 'код поставки
@@ -144,7 +144,7 @@ Namespace Kasbi.Admin
                                     End If
                                 Next
                                 'Смотрим вся ли инфа
-                                'Проверяем УНН
+                                'Проверяем УНП
                                 If supplier_name = "" Then
                                     node_error = 1
                                     text_error &= "Поставка id " & delivery_1cnum & ": Нет названия у поставщика<br>"
@@ -379,13 +379,13 @@ Namespace Kasbi.Admin
                                 'Проверяем УНН
                                 If client_unn = "" Then
                                     node_error = 1
-                                    text_error &= "Продажа id " & sale_1cnum & ": Нет УНН у клиента<br>"
+                                    text_error &= "Продажа id " & sale_1cnum & ": Нет УНП у клиента<br>"
                                 End If
                                 'Проверяем наличие УНН в Касби
                                 customer_sys_id = dbSQL.ExecuteScalar("SELECT customer_sys_id FROM customer WHERE unn ='" & client_unn & "'")
                                 If customer_sys_id = "" Then
                                     node_error = 1
-                                    text_error &= "Продажа id " & sale_1cnum & ": не найден клиент с УНН '" & client_unn & "'<br>"
+                                    text_error &= "Продажа id " & sale_1cnum & ": не найден клиент с УНП '" & client_unn & "'<br>"
                                 End If
                                 'Проверяем наличие менеджера
                                 manager_id = dbSQL.ExecuteScalar("SELECT sys_id FROM employee WHERE Name ='" & manager & "'")
