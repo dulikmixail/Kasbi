@@ -2088,7 +2088,6 @@ ExitFunction:
             sum_p_rub = Summa_propis_rub(s, b)
             If (b_cop) Then
                 sum_p_cop = " " & Summa_propis_cop(cop, b)
-
             End If
             Return sum_p_rub & sum_p_cop
         End Function
@@ -2206,6 +2205,10 @@ ExitFunction:
         End Function
 
         Private Function Summa_propis_cop(ByVal cop As String, Optional ByVal b As Boolean = True) As String
+            If cop.Length = 1 Then
+                cop = cop & "0"
+            End If
+
             If b Then
                 Return cop & " коп."
             Else
