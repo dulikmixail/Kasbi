@@ -104,11 +104,11 @@ Namespace Kasbi
                 lblCaptionNumbers.Visible = b
 
                 s = Trim(reader("marka"))
-                If reader("good_type_sys_id") = Config.Kasbi04_ID Then
-                    sTmp = Trim(reader("num_control_cto2"))
+                'If reader("good_type_sys_id") = Config.Kasbi04_ID Then
+                sTmp = Trim(reader("num_control_cto2"))
                     s = s & " / " & sTmp
                     lblCaptionMarka.Text = "Ã‡ÍË ÷“Œ/÷“Œ2:"
-                End If
+                'End If
                 b = s.Length > 0
                 If b Then lblMarka.Text = s
                 lblMarka.Visible = b
@@ -376,9 +376,9 @@ Namespace Kasbi
                 CType(e.Item.FindControl("lblDates"), Label).Text = s
 
                 s = "&nbsp;—  ÷“Œ :" & e.Item.DataItem("marka_cto_in") & " / " & e.Item.DataItem("marka_cto_out") & "<br>"
-                If (e.Item.DataItem("good_type_sys_id")) = Config.Kasbi04_ID Then
-                    s = s & "&nbsp;—  ÷“Œ2 :" & e.Item.DataItem("marka_cto2_in") & " / " & e.Item.DataItem("marka_cto2_out") & "<br>"
-                End If
+                'If (e.Item.DataItem("good_type_sys_id")) = Config.Kasbi04_ID Then
+                s = s & "&nbsp;—  ÷“Œ2 :" & e.Item.DataItem("marka_cto2_in") & " / " & e.Item.DataItem("marka_cto2_out") & "<br>"
+                'End If
                 s = s & "&nbsp;—  –ÂÂÒÚ‡ :" & e.Item.DataItem("marka_reestr_in") & " / " & e.Item.DataItem("marka_reestr_out") & "<br>"
                 s = s & "&nbsp;—  œ«” :" & e.Item.DataItem("marka_pzu_in") & " / " & e.Item.DataItem("marka_pzu_out") & "<br>"
                 s = s & "&nbsp;—  Ã‘œ :" & e.Item.DataItem("marka_mfp_in") & " / " & e.Item.DataItem("marka_mfp_out") & "<br>"

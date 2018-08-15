@@ -252,21 +252,22 @@ Namespace Kasbi
             Else
                 txtPZU.Visible = False
             End If
+            txtCTO2.Visible = True
+            lblCTO2.Visible = True
 
-
-            If lstGoodType.SelectedItem.Value = Config.Kasbi04_ID Then
-                txtCTO2.Visible = True
-                lblCTO2.Visible = True
-                'txtCP.Visible = True
-                'lblCP.Visible = True
-                txtGoodNumCashregister.MaxLength = 13
-            Else
-                txtCTO2.Visible = False
-                lblCTO2.Visible = False
-                ' txtCP.Visible = False
-                ' lblCP.Visible = False
-                txtGoodNumCashregister.MaxLength = 13
-            End If
+            'If lstGoodType.SelectedItem.Value = Config.Kasbi04_ID Then
+            '    txtCTO2.Visible = True
+            '    lblCTO2.Visible = True
+            '    'txtCP.Visible = True
+            '    'lblCP.Visible = True
+            '    txtGoodNumCashregister.MaxLength = 13
+            'Else
+            '    txtCTO2.Visible = False
+            '    lblCTO2.Visible = False
+            '    ' txtCP.Visible = False
+            '    ' lblCP.Visible = False
+            '    txtGoodNumCashregister.MaxLength = 13
+            'End If
 
             If rbtnKKM_Type.SelectedIndex = 0 Then
                 Try

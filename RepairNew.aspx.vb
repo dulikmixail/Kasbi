@@ -104,18 +104,19 @@ Partial Class RepairNew
                 s = Trim(reader("marka_cto_out"))
                 txtNewMarkaCTOIn.Text = Trim(reader("marka_cto_in"))
                 txtNewMarkaCTOOut.Text = s
-                If reader("good_type_sys_id") = Config.Kasbi04_ID Or reader("good_type_sys_id") = 1119 Then
-                    sTmp = Trim(reader("marka_cto2_out"))
-                    txtNewMarkaCTO2In.Text = Trim(reader("marka_cto2_in"))
-                    txtNewMarkaCTO2Out.Text = sTmp
-                    s = s & " / " & sTmp
-                    lblCaptionMarka.Text = "Ìàðêè ÖÒÎ/ÖÒÎ2:"
-                Else
-                    txtNewMarkaCTO2In.Visible = False
-                    txtNewMarkaCTO2Out.Visible = False
-                    lblCaptionCTO2.Visible = False
-                End If
+                'If reader("good_type_sys_id") = Config.Kasbi04_ID Or reader("good_type_sys_id") = 1119 Then
+                sTmp = Trim(reader("marka_cto2_out"))
+                txtNewMarkaCTO2In.Text = Trim(reader("marka_cto2_in"))
+                txtNewMarkaCTO2Out.Text = sTmp
+                s = s & " / " & sTmp
+                lblCaptionMarka.Text = "Ìàðêè ÖÒÎ/ÖÒÎ2:"
+                'Else
+                '    txtNewMarkaCTO2In.Visible = False
+                '    txtNewMarkaCTO2Out.Visible = False
+                '    lblCaptionCTO2.Visible = False
+                'End If
                 b = s.Length > 0
+
                 If b Then lblMarka.Text = s
                 lblMarka.Visible = b
                 lblCaptionMarka.Visible = b
