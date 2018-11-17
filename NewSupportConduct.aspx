@@ -213,7 +213,7 @@
                                         </td>
                                     </tr>
                                     
-                                    <tr class="SubTitleTextbox" >
+                                    <%--<tr class="SubTitleTextbox" >
                                         <td colspan="3" >
                                             <br />
                                             СКНО
@@ -232,7 +232,7 @@
                                             
                                             <hr>
                                         </td>
-                                    </tr>
+                                    </tr>--%>
 
                                 </table>
                             </td>
@@ -677,8 +677,8 @@
                                             <asp:DropDownList ID="cmbSalesInfo" runat="server" Width="305px" AutoPostBack="true">
                                             </asp:DropDownList>
                                             <asp:Label ID="lblDogovor" runat="server" CssClass="text02">Договор:&nbsp;</asp:Label><asp:TextBox
-                                                ID="txtDogovor" runat="server" Width="45px" BackColor="#F6F8FC" MaxLength="10"
-                                                ToolTip="Введите номер договора и поддоговора через слэш (/)" BorderWidth="1px"></asp:TextBox></td>
+                                                ID="txtDogovor" runat="server" Width="90px" BackColor="#F6F8FC" MaxLength="10"
+                                                ToolTip="Введите номер договора и поддоговора через слэш (/)" BorderWidth="1px" ReadOnly="True"></asp:TextBox></td>
                                     </tr>
                                     <tr>
                                     </tr>

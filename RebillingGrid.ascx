@@ -21,11 +21,12 @@
 					<td class="SectionRow" width="50">&nbsp;&nbsp;<asp:hyperlink id="lnkDogovor_Na_TO" Runat="server" Target="_blank">Договор&nbsp;на&nbsp;тех.&nbsp;обслуживание</asp:hyperlink></td>
                     <td class="SectionRow" width="50">&nbsp;&nbsp;<asp:hyperlink id="lnkDogovor_Na_TO_Dop" Runat="server" Target="_blank">Дополнение&nbsp;к&nbsp;договору&nbsp;на&nbsp;ТО</asp:hyperlink></td>
 				    <td class="SectionRow">
-				        <asp:HyperLink ID="lnkDogovor_Na_TO_2" runat="server" Target="_blank">Договор&nbsp;на&nbsp;тех.&nbsp;обслуживание (НОВЫЙ)</asp:HyperLink>
-                        
+				        <asp:HyperLink ID="lnkDogovor_Na_TO_2" runat="server" Target="_blank">Договор&nbsp;на&nbsp;тех.&nbsp;обслуживание (2 редакция)</asp:HyperLink>
+				        <asp:HyperLink ID="lnkDogovor_Na_TO_3" runat="server" Target="_blank">Договор&nbsp;на&nbsp;тех.&nbsp;обслуживание (3 редакция)</asp:HyperLink>
 				    </td>
 				    <td class="SectionRow">
-				        <asp:HyperLink ID="lnkDogovor_Na_TO_Dop_2" runat="server" Target="_blank">Дополнение&nbsp;к&nbsp;договору&nbsp;на&nbsp;ТО (НОВЫЙ)</asp:HyperLink>
+				        <asp:HyperLink ID="lnkDogovor_Na_TO_Dop_2" runat="server" Target="_blank">Дополнение&nbsp;к&nbsp;договору&nbsp;на&nbsp;ТО (2 редакция)</asp:HyperLink>
+				        <asp:HyperLink ID="lnkReestr_kass_na_TO" runat="server" Target="_blank">Реестр&nbsp;касс&nbsp;на&nbsp;ТО</asp:HyperLink>
 				    </td>
 				    
 					<td class="SectionRow" width="400">&nbsp;&nbsp;<asp:hyperlink id="lnkZayavlenie_IMNS" Runat="server" Target="_blank">Заявление&nbsp;в&nbsp;ИМНС</asp:hyperlink></td>

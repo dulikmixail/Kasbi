@@ -107,9 +107,9 @@
                                 </td>
                             </tr>
                             <tr class="TitleTextbox">
-                                <td class="SubTitleTextbox" align="left" colspan="2">
+                                <td class="SubTitleTextbox" align="left" colspan="3">
                                     &nbsp;</td>
-                                <td class="SubTitleTextbox" align="left" colspan="4">
+                                <td class="SubTitleTextbox" align="left" colspan="3">
                                     Название</td>
                                 <td class="SubTitleTextbox" align="left">
                                     УНП</td>
@@ -119,12 +119,12 @@
                             <tr>
                                 <td class="SectionRow" align="left">
                                     &nbsp;</td>
-                                <td class="SectionRow" align="left">
+                                <td class="SectionRow" align="left" colspan="2">
                                     <asp:TextBox ID="txtCustomerAbr" runat="server" ToolTip="Введите аббревиатуру организации (только для организаций)"
-                                        MaxLength="50" BackColor="#F6F8FC" BorderWidth="1px" Width="100px"></asp:TextBox>
+                                        MaxLength="50" BackColor="#F6F8FC" BorderWidth="1px" Width="85%"></asp:TextBox>
                                     <asp:Label ID="btnCustomerAbr" Style="cursor: hand" runat="server" ForeColor="SteelBlue"
                                         Font-Bold="True" Font-Size="10pt">...</asp:Label></td>
-                                <td class="SectionRow" align="left" colspan="4">
+                                <td class="SectionRow" align="left" colspan="3">
                                     <asp:TextBox ID="txtCustomerName" runat="server" ToolTip="Введите название организации (только для организаций)"
                                         MaxLength="90" BackColor="#F6F8FC" BorderWidth="1px" Width="100%"></asp:TextBox></td>
                                 <td class="SectionRow" align="right">
@@ -443,7 +443,7 @@
                     <asp:ListBox ID="lstCity" runat="server" BackColor="#F6F8FC" BorderWidth="1px" Width="129px"
                         CssClass="hiddencitylist1" Rows="10"></asp:ListBox>
                     <asp:ListBox ID="lstCustomerAbr" runat="server" BackColor="#F6F8FC" BorderWidth="1px"
-                        Width="100px" CssClass="hiddencitylist2" Rows="10"></asp:ListBox>
+                        Width="400px" CssClass="hiddencitylist2" Rows="10"></asp:ListBox>
                 </td>
             </tr>
             <tr>

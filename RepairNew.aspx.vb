@@ -1,41 +1,59 @@
+Imports System.Data.SqlClient
 Imports System.Globalization
 Imports System.Threading
+Imports Models.Sms.Sending.Response
+Imports Models.Sms.Statusing.Response
+Imports Newtonsoft.Json
+Imports Service
 
 
 Namespace Kasbi
-
-Partial Class RepairNew
+    Partial Class RepairNew
         Inherits PageBase
 
 #Region " Web Form Designer Generated Code "
 
-    'This call is required by the Web Form Designer.
-    <System.Diagnostics.DebuggerStepThrough()> Private Sub InitializeComponent()
+        'This call is required by the Web Form Designer.
+        <System.Diagnostics.DebuggerStepThrough()>
+        Private Sub InitializeComponent()
+        End Sub
 
-    End Sub
         Protected WithEvents lnkTTNRepair As System.Web.UI.WebControls.LinkButton
-    Protected WithEvents lnkActRepairRealization As System.Web.UI.WebControls.LinkButton
-    Protected WithEvents RequiredFieldValidator2 As System.Web.UI.WebControls.RequiredFieldValidator
-    Protected WithEvents lblDateFormat3 As System.Web.UI.WebControls.Label
-    Protected WithEvents CompareValidator1 As System.Web.UI.WebControls.CompareValidator
+        Protected WithEvents lnkActRepairRealization As System.Web.UI.WebControls.LinkButton
+        Protected WithEvents RequiredFieldValidator2 As System.Web.UI.WebControls.RequiredFieldValidator
+        Protected WithEvents lblDateFormat3 As System.Web.UI.WebControls.Label
+        Protected WithEvents CompareValidator1 As System.Web.UI.WebControls.CompareValidator
 
 
-    Private Sub Page_Init(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Init
-        'CODEGEN: This method call is required by the Web Form Designer
-        'Do not modify it using the code editor.
-        InitializeComponent()
-    End Sub
+        Private Sub Page_Init(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Init
+            'CODEGEN: This method call is required by the Web Form Designer
+            'Do not modify it using the code editor.
+            InitializeComponent()
+        End Sub
 
 #End Region
 
-    Dim sCaptionAddSupport As String = "Поставить на ТО"
-    Dim CurrentCustomer%, iNewCust%
-    Dim iCash%, iCashHistory%
-    Dim sCaptionRemoveSupport As String = "Снять с ТО"
-    Dim d As Kasbi.Documents
+        Dim sCaptionAddSupport As String = "Поставить на ТО"
+        Dim iNewCust%, iCash%, iCashHistory%
+        Private CurrentCustomer%
+        Private NumCashRegister As String = String.Empty
+        Dim sCaptionRemoveSupport As String = "Снять с ТО"
+        Dim smsType As Integer = 1
+        Dim d As Kasbi.Documents
         Const ClearString$ = "-------"
 
+        Dim _serviceSkno As ServiceSkno = New ServiceSkno()
+
+
+        Private _serviceSms As ServiceSms = New ServiceSms()
+
         Private Overloads Sub Page_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
+            If CurrentUser.is_admin
+                cbxEtitSmsSend.Visible = True
+            Else
+                cbxEtitSmsSend.Visible = False
+            End If
+            cbxEtitSmsSend_CheckedChanged(Nothing, Nothing)
             Try
                 iCash = Request.Params("cash")
                 iCashHistory = Request.Params("hc")
@@ -46,16 +64,174 @@ Partial Class RepairNew
             Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture("ru-Ru")
             If Not IsPostBack Then
                 Session("CustFilter") = ""
-                LoadExecutor()
                 LoadRepairInfo()
                 LoadGoodInfo()
                 LoadCustomerList()
+                'LoadRepairBads()
+                LoadSmsTelNotice()
+                LoadSmsHistory()
+                LoadSKNOInfo()
+                'Try
+                '    _serviceSms.UpdateStatusesByIdCashHistory(iCashHistory)
+                'Catch ex As Exception
+                '    msgNew.Text = "Ошибка обновления статусов СМС!<br>" & Err.Description
+                '    Exit Sub
+                'End Try
             End If
         End Sub
 
-        Sub LoadGoodInfo()
+        Function IsNewRepair(idCashHistory As Integer) As Boolean
+            Using reader As SqlClient.SqlDataReader = dbSQL.GetReader("SELECT CASE WHEN repairdate_out IS NULL THEN 1 ELSE 0 END As is_new FROM cash_history WHERE sys_id = " & idCashHistory)
+                If reader.HasRows
+                    While reader.Read
+                        Return Convert.ToBoolean(reader("is_new"))
+                    End While
+                    Else
+                        Return True
+                End If
+            End Using
+            Return True
+        End Function
+
+        Private Sub LoadSKNOInfo()
+            Try
+                If CurrentUser.is_admin
+                    cbxNeadSKNO.Enabled = True
+                Else
+                    cbxNeadSKNO.Enabled = False
+                End If
+
+                If Session("rule29") = 1 Or CurrentUser.is_admin Then
+                    pnlSKNO.Visible = True
+                Else
+                    pnlSKNO.Visible = False
+                    If cbxNeadSKNO.Checked
+                        lblErrorInfo.Text &= "(Нет прав на установку СКНО!)"
+                    End If
+                End If
+                cbxNeadSKNO_CheckedChanged(Nothing, Nothing)
+            Catch
+                msg.Text = "Ошибка загрузки информации о установке СКНО!1<br>" & Err.Description
+                Exit Sub
+            End Try
+        End Sub
+
+        Private Sub LoadSmsHistory()
+            Dim cmd As SqlCommand
+            Dim ds As DataSet = New DataSet()
+            Dim adapt As SqlDataAdapter
+                    
+            _serviceSms.UpdateStatuses()
+
+            Try
+                cmd = New SqlClient.SqlCommand("get_sms_status_history")
+                cmd.Parameters.AddWithValue("@pi_hc_sys_id", iCashHistory)
+                cmd.CommandType = CommandType.StoredProcedure
+                adapt = dbSQL.GetDataAdapter(cmd)
+                adapt.Fill(ds)
+
+                grdSmsHistory.DataSource = ds
+                grdSmsHistory.DataBind()
+            Catch
+                msg.Text = "Ошибка загрузки истории отправленных СМС!<br>" & Err.Description
+                Exit Sub
+            End Try
+        End Sub
+
+        Private Sub LoadSmsTelNotice()
+            Dim reader As SqlDataReader =
+                    dbSQL.GetReader("SELECT tel_notice FROM cash_history ch, repair_history rh WHERE ch.repair_history_sys_id = rh.repair_history_sys_id AND ch.sys_id = " & iCashHistory)
+            If reader.Read
+                If IsDbNull(reader("tel_notice")) Then
+                    txtPhoneNumber.Text = "Нет номера"
+                    cbxSmsSend.Checked = False
+                Else
+                    txtPhoneNumber.Text = reader("tel_notice").ToString()
+                End If
+            End If
+
+            reader.Close()
+            lblPhoneNumber.Text = txtPhoneNumber.Text
+
+            Dim countSms As Integer =
+                    Convert.ToInt32(
+                        dbSQL.ExecuteScalar(
+                            "SELECT COUNT(*) AS count FROM sms_send ss INNER JOIN sms_status_history ssh ON ss.sms_sys_id=ssh.sms_sys_id WHERE sms_status IN ('Queued','Sent', 'Delivered') AND hc_sys_id = " &
+                            iCashHistory))
+            IF countSms > 0
+                cbxSmsSend.Checked = False
+            End If
+        End Sub
+
+        Private Sub SetTxtSmsText()
+            Dim repairTotalSumWithNds As Double = 0, dolg As Double = 0
+            Dim reader As SqlClient.SqlDataReader
+            Try
+                Dim customerSysId As String = String.Empty
+                If lstCustomers.Items.Count > 0
+                    customerSysId = lstCustomers.SelectedItem.Value
+                Else
+                    customerSysId = CurrentCustomer.ToString()
+                End If
+                Dim cmd As SqlClient.SqlCommand =
+                        New SqlClient.SqlCommand(
+                            "SELECT CASE WHEN dolg IS NULL THEN 0 ELSE dolg END dolg FROM customer WHERE customer_sys_id = " &
+                            customerSysId)
+                reader = dbSQL.GetReader(cmd)
+                If reader.Read Then
+                    Double.TryParse(reader("dolg"), dolg)
+                End If
+                reader.Close()
+
+            Catch ex As Exception
+                msg.Text = "Ошибка загрузки информации о товаре!(1)<br>" & Err.Description
+                reader.Close()
+            End Try
+            Dim isWorkNotCall As Boolean =
+                    CType(
+                        grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl(
+                            "cbxWorkNotCall"),
+                        CheckBox).Checked
+            Dim isGarantia As Boolean =
+                    CType(
+                        grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl("cbxGarantia"),
+                        CheckBox).Checked
+            Dim rows As DataRowCollection = GetDataSetRepairInfo().Tables(0).Rows
+            If rows.Count > 0
+                Dim sum As Double = 0
+                For Each row As DataRow In rows
+                    IF isWorkNotCall
+                        Double.TryParse(row("price").ToString(), sum)
+                    Else
+                        Double.TryParse(row("total_sum").ToString(), sum)
+                    End If
+                    repairTotalSumWithNds += Math.Round(sum*1.2, 2)
+                Next
+            End If
+
+            Dim smsText As String
+
+            If cbxNeadSKNO.Checked
+                smsType = 3
+                smsText = "Ваше СКНО готово. Приезжайте на установку. Тел. +375291502047"
+            Else
+                smsType = 2
+                smsText = "Ваш ККМ " & Trim(lblCash.Text) &
+                          " готов." &
+                          IIf(isGarantia, " Гарантийный ремонт.",
+                              " Сумма ремонта " & repairTotalSumWithNds & "р.").ToString() &
+                          IIf(dolg > 0, " Общий долг: " & dolg & "р.", "").ToString()
+            End If
+
+            txtSmsText.Text = smsText
+            lblSmsText.Text = txtSmsText.Text
+        End Sub
+
+
+        Private Sub LoadGoodInfo()
             Dim cmd As SqlClient.SqlCommand
             Dim reader As SqlClient.SqlDataReader
+            Dim executorId As Integer = 0 
 
             Try
                 cmd = New SqlClient.SqlCommand("get_cash_repair_history")
@@ -64,11 +240,17 @@ Partial Class RepairNew
                 cmd.CommandType = CommandType.StoredProcedure
                 reader = dbSQL.GetReader(cmd)
                 If Not reader.Read Then
-                    msg.Text = "Ошибка загрузки информации о товаре!<br>"
+                    msg.Text = "Ошибка загрузки информации о товаре!(2)<br>"
                     Exit Sub
                 End If
+
+                If Not IsDBNull(reader("executor_id"))
+                    executorId = Convert.ToInt32(reader("executor_id"))
+                End If
+
                 lblCashType.Text = reader("good_name") & "&nbsp;&nbsp;"
                 lblCash.Text = "№" & reader("num_cashregister")
+                NumCashRegister = reader("num_cashregister")
                 Dim s$, sTmp$
                 Dim b As Boolean
 
@@ -129,6 +311,9 @@ Partial Class RepairNew
                 txtNewDetails.Text = Trim(reader("details"))
                 txtNewInfo.Text = Trim(reader("info"))
                 txtNewRepairInfo.Text = Trim(reader("repair_info"))
+                txtStorageNumber.Text = Trim(reader("storage_number"))
+                txtRepairBadsInfo.Text = Trim(reader("repair_bads_info")) & Environment.NewLine & "Общая стоимость: " &
+                                         Trim(reader("repair_bads_sum_itog"))
 
                 's = Trim(reader("date_created"))
                 'b = s.Length > 0
@@ -172,28 +357,38 @@ Partial Class RepairNew
                 'End If
                 'lblCaptionSale.Visible = b
 
-                lblRepairDateIn.Text = Format(reader("repairdate_in"), "dd.MM.yyyy HH:mm")
+
+                If IsDBNull(reader("repairdate_in"))
+                    lblRepairDateIn.Text = DateTime.Now.ToString("dd.MM.yyyy HH:mm")
+                Else
+                    lblRepairDateIn.Text = Format(reader("repairdate_in"), "dd.MM.yyyy HH:mm")
+                End If
 
                 If IsDBNull(reader("repairdate_out")) Then
-                    tbxRepairDateOut.Text = DateTime.Now.ToShortDateString()
+                    tbxRepairDateOut.Text = String.Empty
                 Else
-                    tbxRepairDateOut.Text = CDate(reader("repairdate_out")).ToShortDateString()
+                    tbxRepairDateOut.Text = CDate(reader("repairdate_out")).ToString("dd.MM.yyyy HH:mm")
                 End If
 
                 Try
-                    CType(grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl("cbxWorkNotCall"), CheckBox).Checked = reader("workNotCall")
-                    CType(grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl("cbxGarantia"), CheckBox).Checked = reader("garantia_repair")
+                    CType(
+                        grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl(
+                            "cbxWorkNotCall"),
+                        CheckBox).Checked = reader("workNotCall")
+                    CType(
+                        grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl("cbxGarantia"),
+                        CheckBox).Checked = reader("garantia_repair")
                 Catch
-                    msg.Text = "Ошибка загрузки информации о товаре!<br>" & Err.Description
+                    msg.Text = "Ошибка загрузки информации о товаре!(3)<br>" & Err.Description
 
                 End Try
 
-                Try
-                    lstWorker.Items.FindByValue(reader("executor_id")).Selected = True
-                Catch
-                    lstWorker.SelectedIndex = 0
-                    'msg.Text = "Ошибка загрузки информации о товаре!<br>" & Err.Description
-                End Try
+                'Try
+                '    lstWorker.Items.FindByValue(reader("executor_id")).Selected = True
+                'Catch
+                '    lstWorker.SelectedIndex = 0
+                '    'msg.Text = "Ошибка загрузки информации о товаре!<br>" & Err.Description
+                'End Try
 
                 If Not IsDBNull(reader("garantia")) Then
                     lblGarantia.Text = reader("garantia")
@@ -239,59 +434,129 @@ Partial Class RepairNew
                     txtNewAkt.Text = reader("akt")
                 End If
 
+                If Not IsDBNull(reader("nead_SKNO")) Then
+                    cbxNeadSKNO.Checked = Convert.ToBoolean(reader("nead_SKNO"))
+                End If
+
+                'Грузим инфу об установке СКНО
+                txtRegistrationNumberSKNO.Text = reader("registration_number_skno").ToString()
+                txtSerialNumberSKNO.Text = reader("serial_number_skno").ToString()
+                txtComment.Text = reader("comment_skno").ToString()
+
                 reader.Close()
+                LoadExecutor(executorId)
                 ShowRepairImage()
             Catch
-                msg.Text = "Ошибка загрузки информации о товаре!<br>" & Err.Description
+                msg.Text = "Ошибка загрузки информации о товаре!(4)<br>" & Err.Description
                 reader.Close()
                 Exit Sub
             End Try
             RecalcCost(Nothing, Nothing)
         End Sub
 
-        Sub LoadRepairInfo()
+        Private Function GetDataSetRepairInfo() As DataSet
             Dim cmd As SqlClient.SqlCommand
             Dim adapt As SqlClient.SqlDataAdapter
-            Dim ds As DataSet
-
+            Dim ds As DataSet = New DataSet()
 
             Try
                 cmd = New SqlClient.SqlCommand("get_repair_info")
                 cmd.Parameters.AddWithValue("@pi_hc_sys_id", iCashHistory)
                 cmd.CommandType = CommandType.StoredProcedure
                 adapt = dbSQL.GetDataAdapter(cmd)
-                ds = New DataSet
                 adapt.Fill(ds)
 
-                grdDetails.DataSource = ds
-                grdDetails.DataKeyField = "detail_id"
-                grdDetails.DataBind()
             Catch
-                msg.Text = "Ошибка загрузки информации о товаре!<br>" & Err.Description
-                Exit Sub
+                msg.Text = "Ошибка загрузки информации о товаре!(5)<br>" & Err.Description
+                Return ds
             End Try
+            Return ds
+        End Function
+
+        Private Sub LoadRepairInfo()
+            grdDetails.DataSource = GetDataSetRepairInfo()
+            grdDetails.DataKeyField = "detail_id"
+            grdDetails.DataBind()
         End Sub
 
-        Sub LoadExecutor()
+        Private Sub LoadExecutor(executorIdFromRepair As Integer)
             Dim adapt As SqlClient.SqlDataAdapter
             Dim ds As DataSet
             Try
+
                 adapt = dbSQL.GetDataAdapter("get_salers", True)
                 ds = New DataSet
                 adapt.Fill(ds)
 
-                lstWorker.DataSource = ds
-                lstWorker.DataTextField = "name"
-                lstWorker.DataValueField = "sys_id"
-                lstWorker.DataBind()
-                lstWorker.Items.Insert(0, New ListItem(ClearString, "0"))
-                lstWorker.SelectedIndex = -1
+                BindLstWorker(lstWorker, ds, executorIdFromRepair)
+                'BindLstWorker(lstWorkerSKNO, ds, executorIdFromRepair)
 
             Catch
                 msgNew.Text = "Ошибка формирования списков!<br>" & Err.Description
                 Exit Sub
             End Try
         End Sub
+
+        Private Sub BindLstWorker (list As DropDownList, ds As DataSet, executorIdFromRepair As Integer)
+            With list
+                .DataSource = ds
+                .DataTextField = "name"
+                .DataValueField = "sys_id"
+                .DataBind()
+                .Items.Insert(0, New ListItem(ClearString, "0"))
+                .SelectedIndex = - 1
+                If IsNewRepair (iCashHistory) Or executorIdFromRepair = 0
+                    .Items.FindByValue(CurrentUser.sys_id.ToString()).Selected = True
+                Else
+                    .Items.FindByValue(executorIdFromRepair.ToString()).Selected = True
+                End If
+            End With
+        End Sub
+
+        'Sub LoadRepairBads()
+        '    Dim cmd As SqlClient.SqlCommand
+        '    Dim adapt As SqlClient.SqlDataAdapter
+        '    Dim ds As DataSet
+        '    Try
+        '        adapt = dbSQL.GetDataAdapter("")
+        '        ds = New DataSet
+        '        adapt.Fill(ds)
+        '        Dim dt As DataTable = ds.Tables(0)
+        '        Dim repare_in_info As String = String.Empty,
+        '            min_itog As Double = 0,
+        '            max_itog As Double = 0,
+        '            price_from As Double = 0,
+        '            price_to As Double = 0,
+        '            show_max_itog As Boolean = True
+        '        For Each dr As DataRow In dt.Rows
+        '            If IsDBNull(dr("price_from"))
+        '                price_from = 0
+        '            Else
+        '                price_from = dr("price_from")
+        '            End If
+        '            If IsDBNull(dr("price_to"))
+        '                price_to = 0
+        '                show_max_itog = False
+        '            Else
+        '                price_to = dr("price_to")
+        '            End If
+        '            min_itog += price_from
+        '            max_itog += price_to
+
+        '            repare_in_info &= dr("name") & " (от " & price_from &
+        '                              IIf(price_to <> 0, " до " & price_to, "") & " руб.), " & Environment.NewLine
+        '        Next
+
+        '        txtRepairBadsInfo.Text = repare_in_info
+        '        If min_itog <> 0 And max_itog <> 0
+        '            txtRepairBadsInfo.Text &= "Общая стоимость: от " & min_itog &
+        '                                      IIf(show_max_itog, " до " & max_itog, "").ToString() & " руб"
+        '        End If
+        '    Catch
+        '        msgNew.Text = "Ошибка формирования списка типичных неисправностей!<br>" & Err.Description
+        '        Exit Sub
+        '    End Try
+        'End Sub
 
         Function GetInfo(ByVal cust As Integer, Optional ByVal flag As Boolean = True) As String
             Dim adapt As SqlClient.SqlDataAdapter
@@ -408,11 +673,12 @@ Partial Class RepairNew
             End Try
         End Sub
 
-        Private Sub lnkCustomerFind_KKMRequest_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles lnkCustomerFind.Click
+        Private Sub lnkCustomerFind_KKMRequest_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) _
+            Handles lnkCustomerFind.Click
             Dim str$ = txtCustomerFind.Text
 
             If Trim(str).Length = 0 Then LoadCustomerList() : Exit Sub
-            If str.IndexOf("'") > -1 Then Exit Sub
+            If str.IndexOf("'") > - 1 Then Exit Sub
             Dim s$ = " (customer_name like '%" & str & "%')"
             LoadCustomerList(s)
             Session("CustFilter") = s
@@ -438,8 +704,12 @@ Partial Class RepairNew
             Dim WorkNotCall As Boolean = False
             Dim Garantia As Boolean = False
 
-            WorkNotCall = CType(grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl("cbxWorkNotCall"), CheckBox).Checked
-            Garantia = CType(grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl("cbxGarantia"), CheckBox).Checked
+            WorkNotCall =
+                CType(grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl("cbxWorkNotCall"),
+                      CheckBox).Checked
+            Garantia =
+                CType(grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl("cbxGarantia"),
+                      CheckBox).Checked
             For j = 0 To grdDetails.Items.Count - 1
                 Try
                     Quantity = CDbl(CType(grdDetails.Items(j).FindControl("lblQuantity"), Label).Text)
@@ -447,15 +717,18 @@ Partial Class RepairNew
                     Quantity = CDbl(CType(grdDetails.Items(j).FindControl("txtQuantity"), TextBox).Text)
                 End Try
 
-                Price = Price + Quantity * CDbl(CType(grdDetails.Items(j).FindControl("lblPrice"), Label).Text)
-                NormaHour = NormaHour + Quantity * CDbl(CType(grdDetails.Items(j).FindControl("lblNormaHour"), Label).Text)
+                Price = Price + Quantity*CDbl(CType(grdDetails.Items(j).FindControl("lblPrice"), Label).Text)
+                NormaHour = NormaHour +
+                            Quantity*CDbl(CType(grdDetails.Items(j).FindControl("lblNormaHour"), Label).Text)
 
                 If WorkNotCall = True Then
                     Cost_Service = Cost_Service + 0
-                    TotalSum = TotalSum + Quantity * CDbl(CType(grdDetails.Items(j).FindControl("lblPrice"), Label).Text)
+                    TotalSum = TotalSum + Quantity*CDbl(CType(grdDetails.Items(j).FindControl("lblPrice"), Label).Text)
                 Else
-                    Cost_Service = Cost_Service + Quantity * CDbl(CType(grdDetails.Items(j).FindControl("lblCostService"), Label).Text)
-                    TotalSum = TotalSum + Quantity * CDbl(CType(grdDetails.Items(j).FindControl("lblTotalSum"), Label).Text)
+                    Cost_Service = Cost_Service +
+                                   Quantity*CDbl(CType(grdDetails.Items(j).FindControl("lblCostService"), Label).Text)
+                    TotalSum = TotalSum +
+                               Quantity*CDbl(CType(grdDetails.Items(j).FindControl("lblTotalSum"), Label).Text)
                 End If
 
                 If (CType(grdDetails.Items(j).FindControl("cbxIsDetail"), CheckBox).Checked) Then
@@ -472,21 +745,40 @@ Partial Class RepairNew
                 End If
             Next
             If Garantia = 0 Then
-                CType(grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl("lblTotalPrice"), Label).Text = CStr(Price)
-                CType(grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl("lblTotalCostService"), Label).Text = CStr(Cost_Service)
-                CType(grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl("lblTotalAllSum"), Label).Text = CStr(TotalSum)
-                CType(grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl("lblTotalNormaHour"), Label).Text = CStr(NormaHour)
+                CType(grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl("lblTotalPrice"),
+                      Label).Text = CStr(Price)
+                CType(
+                    grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl(
+                        "lblTotalCostService"),
+                    Label).Text = CStr(Cost_Service)
+                CType(grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl("lblTotalAllSum"),
+                      Label).Text = CStr(TotalSum)
+                CType(
+                    grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl(
+                        "lblTotalNormaHour"),
+                    Label).Text = CStr(NormaHour)
             Else
-                CType(grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl("lblTotalPrice"), Label).Text = "0"
-                CType(grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl("lblTotalCostService"), Label).Text = "0"
-                CType(grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl("lblTotalAllSum"), Label).Text = "0"
-                CType(grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl("lblTotalNormaHour"), Label).Text = "0"
+                CType(grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl("lblTotalPrice"),
+                      Label).Text = "0"
+                CType(
+                    grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl(
+                        "lblTotalCostService"),
+                    Label).Text = "0"
+                CType(grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl("lblTotalAllSum"),
+                      Label).Text = "0"
+                CType(
+                    grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl(
+                        "lblTotalNormaHour"),
+                    Label).Text = "0"
             End If
             txtNewDetails.Text = Details.TrimStart(",")
             txtNewInfo.Text = Works.TrimStart(",")
+            SetTxtSmsText()
         End Sub
 
-        Private Sub grdDetails_ItemDataBound(ByVal sender As Object, ByVal e As System.Web.UI.WebControls.DataGridItemEventArgs) Handles grdDetails.ItemDataBound
+        Private Sub grdDetails_ItemDataBound(ByVal sender As Object,
+                                             ByVal e As System.Web.UI.WebControls.DataGridItemEventArgs) _
+            Handles grdDetails.ItemDataBound
             If e.Item.ItemType = ListItemType.Footer Then
                 Dim lst As DropDownList = CType(e.Item.FindControl("lstAddDetail"), DropDownList)
                 Dim cmd As SqlClient.SqlCommand
@@ -515,15 +807,16 @@ Partial Class RepairNew
                 CType(e.Item.FindControl("lblTotalNormaHour"), Label).Text = "0"
 
             ElseIf e.Item.ItemType = ListItemType.Item Or e.Item.ItemType = ListItemType.AlternatingItem Then
-                CType(e.Item.FindControl("cmdDelete"), ImageButton).Attributes.Add("onclick", "return confirm('Вы действительно хотите удалить деталь из ремонта?');")
+                CType(e.Item.FindControl("cmdDelete"), ImageButton).Attributes.Add("onclick",
+                                                                                   "return confirm('Вы действительно хотите удалить деталь из ремонта?');")
             End If
-
-
-
         End Sub
 
         Sub LoadDetailInfo(ByVal sender As Object, ByVal e As System.EventArgs)
-            Dim lst As DropDownList = CType(grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl("lstAddDetail"), DropDownList)
+            Dim lst As DropDownList =
+                    CType(
+                        grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl("lstAddDetail"),
+                        DropDownList)
             Dim reader As SqlClient.SqlDataReader
             If lst.SelectedIndex > 0 Then
                 Try
@@ -532,11 +825,25 @@ Partial Class RepairNew
                         msg.Text = "Ошибка загрузки информации о деталях!<br>"
                         Exit Sub
                     End If
-                    CType(grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl("txtAddQuantity"), TextBox).Text = "1"
-                    CType(grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl("lblAddPrice"), Label).Text = CStr(IIf(IsDBNull(reader("price")), 0, reader("price")))
-                    CType(grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl("lblAddCostService"), Label).Text = CStr(IIf(IsDBNull(reader("cost_service")), 0, reader("cost_service")))
-                    CType(grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl("lblAddTotalSum"), Label).Text = CStr(IIf(IsDBNull(reader("total_sum")), 0, reader("total_sum")))
-                    CType(grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl("lblAddTotalNormaHour"), Label).Text = CStr(IIf(IsDBNull(reader("norma_hour")), 0, reader("norma_hour")))
+                    CType(
+                        grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl(
+                            "txtAddQuantity"),
+                        TextBox).Text = "1"
+                    CType(
+                        grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl("lblAddPrice"),
+                        Label).Text = CStr(IIf(IsDBNull(reader("price")), 0, reader("price")))
+                    CType(
+                        grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl(
+                            "lblAddCostService"),
+                        Label).Text = CStr(IIf(IsDBNull(reader("cost_service")), 0, reader("cost_service")))
+                    CType(
+                        grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl(
+                            "lblAddTotalSum"),
+                        Label).Text = CStr(IIf(IsDBNull(reader("total_sum")), 0, reader("total_sum")))
+                    CType(
+                        grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl(
+                            "lblAddTotalNormaHour"),
+                        Label).Text = CStr(IIf(IsDBNull(reader("norma_hour")), 0, reader("norma_hour")))
                     reader.Close()
                 Catch
                     msg.Text = "Ошибка загрузки информации о деталях!<br>" & Err.Description
@@ -544,29 +851,64 @@ Partial Class RepairNew
                     Exit Sub
                 End Try
             Else
-                CType(grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl("txtAddQuantity"), TextBox).Text = ""
-                CType(grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl("lblAddPrice"), Label).Text = ""
-                CType(grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl("lblAddCostService"), Label).Text = ""
-                CType(grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl("lblAddTotalSum"), Label).Text = ""
-                CType(grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl("lblAddTotalNormaHour"), Label).Text = ""
+                CType(grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl("txtAddQuantity"),
+                      TextBox).Text = ""
+                CType(grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl("lblAddPrice"),
+                      Label).Text = ""
+                CType(
+                    grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl(
+                        "lblAddCostService"),
+                    Label).Text = ""
+                CType(grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl("lblAddTotalSum"),
+                      Label).Text = ""
+                CType(
+                    grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl(
+                        "lblAddTotalNormaHour"),
+                    Label).Text = ""
             End If
         End Sub
 
-        Private Sub grdDetails_ItemCommand(ByVal source As Object, ByVal e As System.Web.UI.WebControls.DataGridCommandEventArgs) Handles grdDetails.ItemCommand
+        Private Sub grdDetails_ItemCommand(ByVal source As Object,
+                                           ByVal e As System.Web.UI.WebControls.DataGridCommandEventArgs) _
+            Handles grdDetails.ItemCommand
             If e.CommandName = "AddDetail" Then
                 Dim cmd As SqlClient.SqlCommand
-                Dim price As Double, cost_service As Double, total_sum As Double, norma_hour As Double, quantity As Integer
+                Dim price As Double,
+                    cost_service As Double,
+                    total_sum As Double,
+                    norma_hour As Double,
+                    quantity As Integer
                 Dim iDetailID As Integer
                 Try
                     iDetailID = CType(e.Item.FindControl("lstAddDetail"), DropDownList).SelectedItem.Value()
                     If iDetailID <= 0 Then
                         Exit Sub
                     End If
-                    quantity = CType(grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl("txtAddQuantity"), TextBox).Text
-                    price = CType(grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl("lblAddPrice"), Label).Text
-                    cost_service = CType(grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl("lblAddCostService"), Label).Text
-                    total_sum = CType(grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl("lblAddTotalSum"), Label).Text
-                    norma_hour = CType(grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl("lblAddTotalNormaHour"), Label).Text
+                    quantity =
+                        CType(
+                            grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl(
+                                "txtAddQuantity"),
+                            TextBox).Text
+                    price =
+                        CType(
+                            grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl(
+                                "lblAddPrice"),
+                            Label).Text
+                    cost_service =
+                        CType(
+                            grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl(
+                                "lblAddCostService"),
+                            Label).Text
+                    total_sum =
+                        CType(
+                            grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl(
+                                "lblAddTotalSum"),
+                            Label).Text
+                    norma_hour =
+                        CType(
+                            grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl(
+                                "lblAddTotalNormaHour"),
+                            Label).Text
 
                     cmd = New SqlClient.SqlCommand("add_detail_to_repair")
                     cmd.CommandType = CommandType.StoredProcedure
@@ -579,11 +921,25 @@ Partial Class RepairNew
                     cmd.Parameters.AddWithValue("@pi_detail_id", iDetailID)
                     dbSQL.Execute(cmd)
 
-                    CType(grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl("txtAddQuantity"), TextBox).Text = ""
-                    CType(grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl("lblAddPrice"), Label).Text = ""
-                    CType(grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl("lblAddCostService"), Label).Text = ""
-                    CType(grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl("lblAddTotalSum"), Label).Text = ""
-                    CType(grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl("lblAddTotalNormaHour"), Label).Text = ""
+                    CType(
+                        grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl(
+                            "txtAddQuantity"),
+                        TextBox).Text = ""
+                    CType(
+                        grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl("lblAddPrice"),
+                        Label).Text = ""
+                    CType(
+                        grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl(
+                            "lblAddCostService"),
+                        Label).Text = ""
+                    CType(
+                        grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl(
+                            "lblAddTotalSum"),
+                        Label).Text = ""
+                    CType(
+                        grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl(
+                            "lblAddTotalNormaHour"),
+                        Label).Text = ""
 
                 Catch
                     msg.Text = "Ошибка добавления детали в ремонт!<br>" & Err.Description
@@ -594,12 +950,17 @@ Partial Class RepairNew
             End If
         End Sub
 
-        Private Sub grdDetails_EditCommand(ByVal source As Object, ByVal e As System.Web.UI.WebControls.DataGridCommandEventArgs) Handles grdDetails.EditCommand
+        Private Sub grdDetails_EditCommand(ByVal source As Object,
+                                           ByVal e As System.Web.UI.WebControls.DataGridCommandEventArgs) _
+            Handles grdDetails.EditCommand
             grdDetails.EditItemIndex = CInt(e.Item.ItemIndex)
             LoadRepairInfo()
+            RecalcCost(Nothing, Nothing)
         End Sub
 
-        Private Sub grdDetails_DeleteCommand(ByVal source As Object, ByVal e As System.Web.UI.WebControls.DataGridCommandEventArgs) Handles grdDetails.DeleteCommand
+        Private Sub grdDetails_DeleteCommand(ByVal source As Object,
+                                             ByVal e As System.Web.UI.WebControls.DataGridCommandEventArgs) _
+            Handles grdDetails.DeleteCommand
             Dim cmd As SqlClient.SqlCommand
             Try
                 cmd = New SqlClient.SqlCommand("remove_detail_from_repair")
@@ -614,20 +975,26 @@ Partial Class RepairNew
                     msg.Text = "Ошибка удаления записи!<br>" & Err.Description
                 End If
             End Try
-            grdDetails.EditItemIndex = -1
+            grdDetails.EditItemIndex = - 1
+            LoadRepairInfo()
+            RecalcCost(Nothing, Nothing)
+        End Sub
+
+        Private Sub grdDetails_CancelCommand(ByVal source As Object,
+                                             ByVal e As System.Web.UI.WebControls.DataGridCommandEventArgs) _
+            Handles grdDetails.CancelCommand
+            grdDetails.EditItemIndex = - 1
             LoadRepairInfo()
         End Sub
 
-        Private Sub grdDetails_CancelCommand(ByVal source As Object, ByVal e As System.Web.UI.WebControls.DataGridCommandEventArgs) Handles grdDetails.CancelCommand
-            grdDetails.EditItemIndex = -1
-            LoadRepairInfo()
-        End Sub
-
-        Private Sub grdDetails_UpdateCommand(ByVal source As Object, ByVal e As System.Web.UI.WebControls.DataGridCommandEventArgs) Handles grdDetails.UpdateCommand
+        Private Sub grdDetails_UpdateCommand(ByVal source As Object,
+                                             ByVal e As System.Web.UI.WebControls.DataGridCommandEventArgs) _
+            Handles grdDetails.UpdateCommand
             Dim cmd As SqlClient.SqlCommand
             Dim price As Double, cost_service As Double, total_sum As Double, norma_hour As Double, quantity As Integer
 
-            quantity = CLng(CType(e.Item.FindControl("txtQuantity"), TextBox).Text) 'CType(grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl("txtQuantity"), TextBox).Text
+            quantity = CLng(CType(e.Item.FindControl("txtQuantity"), TextBox).Text) _
+            'CType(grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl("txtQuantity"), TextBox).Text
             price = CLng(CType(e.Item.FindControl("lblPrice"), Label).Text)
             cost_service = CLng(CType(e.Item.FindControl("lblCostService"), Label).Text)
             total_sum = CLng(CType(e.Item.FindControl("lblTotalSum"), Label).Text)
@@ -646,11 +1013,12 @@ Partial Class RepairNew
             Catch
                 msg.Text = "Ошибка обновления записи!<br>" & Err.Description
             End Try
-            grdDetails.EditItemIndex = -1
+            grdDetails.EditItemIndex = - 1
             LoadRepairInfo()
         End Sub
 
-        Private Sub lstCustomers_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles lstCustomers.SelectedIndexChanged
+        Private Sub lstCustomers_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) _
+            Handles lstCustomers.SelectedIndexChanged
 
             If lstCustomers.SelectedItem.Value > 0 Then
                 lblCustInfo.Text = "<br>" & GetInfo(lstCustomers.SelectedItem.Value)
@@ -658,20 +1026,27 @@ Partial Class RepairNew
                 lblCustInfo.Text = ""
             End If
             Session("Customer") = lstCustomers.SelectedItem.Value
+            SetTxtSmsText()
         End Sub
 
-        Private Sub btnCancel_Click(ByVal sender As System.Object, ByVal e As System.Web.UI.ImageClickEventArgs) Handles btnCancel.Click
+        Private Sub btnCancel_Click(ByVal sender As System.Object, ByVal e As System.Web.UI.ImageClickEventArgs) _
+            Handles btnCancel.Click
             Response.Redirect(GetAbsoluteUrl("~/Repair.aspx?" & iCash))
         End Sub
 
-        Private Sub btnSave_Click(ByVal sender As Object, ByVal e As System.Web.UI.ImageClickEventArgs) Handles btnSave.Click
+        Private Sub btnSave_Click(ByVal sender As Object, ByVal e As System.Web.UI.ImageClickEventArgs) _
+            Handles btnSave.Click
             iCash = GetPageParam("cash")
             iCashHistory = GetPageParam("hc")
 
-
             Dim iCost As Long
             Try
-                iCost = CLng(CType(grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl("lblTotalAllSum"), Label).Text)
+                iCost =
+                    CLng(
+                        CType(
+                            grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl(
+                                "lblTotalAllSum"),
+                            Label).Text)
             Catch
                 msgNew.Text = "Введите корректно сумму ремонта"
                 Exit Sub
@@ -680,8 +1055,12 @@ Partial Class RepairNew
             Dim WorkNotCall As Boolean = False
             Dim Garantia As Boolean = False
 
-            WorkNotCall = CType(grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl("cbxWorkNotCall"), CheckBox).Checked
-            Garantia = CType(grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl("cbxGarantia"), CheckBox).Checked
+            WorkNotCall =
+                CType(grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl("cbxWorkNotCall"),
+                      CheckBox).Checked
+            Garantia =
+                CType(grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl("cbxGarantia"),
+                      CheckBox).Checked
 
             Dim cmd As SqlClient.SqlCommand
             'CurrentCustomer = Parameters.Value
@@ -701,10 +1080,24 @@ Partial Class RepairNew
                 Exit Sub
             End If
 
+            If grdDetails.Items.Count = 0 Then
+                msgNew.Text = "Не добавлены детали и/или работы!"
+                Exit Sub
+            End If
+            If String.IsNullOrEmpty(txtStorageNumber.Text) And IsNewRepair(iCashHistory) Then
+                msgNew.Text = "Не введено место хранения!"
+                Exit Sub
+            End If
+
+            If (String.IsNullOrEmpty(Trim(txtPhoneNumber.Text)) Or Trim(txtPhoneNumber.Text) = "Нет номера")  And cbxSmsSend.Checked 
+                msgNew.Text = "Введите номер для отправки СМС!"
+                Exit Sub
+            End If
+
             Dim d1, d2 As DateTime
             Dim s1 As String()
-            If tbxRepairDateOut.Text = String.Empty Then
-                d2 = DateTime.MinValue
+            If tbxRepairDateOut.Text = String.Empty OR tbxRepairDateOut.Text = "??.??.????" Then
+                d2 = Now
             Else
                 d2 = CDate(tbxRepairDateOut.Text)
             End If
@@ -724,13 +1117,15 @@ Partial Class RepairNew
                 End If
             End If
 
+            SetTxtSmsText()
+
             Try
                 cmd = New SqlClient.SqlCommand("update_repair")
                 cmd.Parameters.AddWithValue("@pi_sys_id", iCashHistory)
                 cmd.Parameters.AddWithValue("@pi_good_sys_id", iCash)
                 cmd.Parameters.AddWithValue("@pi_owner_sys_id", cust)
                 cmd.Parameters.AddWithValue("@pi_date_in", d1)
-                cmd.Parameters.AddWithValue("@pi_date_out", IIf(d2 = DateTime.MinValue, DBNull.Value, d2)) 'IIf(chkDateOut.Checked, d2, DBNull.Value))
+                cmd.Parameters.AddWithValue("@pi_date_out", d2)
                 cmd.Parameters.AddWithValue("@pi_marka_cto_in", txtNewMarkaCTOIn.Text)
                 cmd.Parameters.AddWithValue("@pi_marka_cto_out", txtNewMarkaCTOOut.Text)
                 cmd.Parameters.AddWithValue("@pi_marka_pzu_in", txtNewMarkaPZUIn.Text)
@@ -756,6 +1151,7 @@ Partial Class RepairNew
                 cmd.Parameters.AddWithValue("@pi_workNotCall", WorkNotCall)
                 cmd.Parameters.AddWithValue("@pi_garantia", Garantia)
                 cmd.Parameters.AddWithValue("@updateUserID", CurrentUser.sys_id)
+                cmd.Parameters.AddWithValue("@pi_storage_number", txtStorageNumber.Text)
                 cmd.CommandType = CommandType.StoredProcedure
                 dbSQL.Execute(cmd)
 
@@ -775,6 +1171,48 @@ Partial Class RepairNew
                 txtNewInfo.Text = ""
                 txtNewRepairInfo.Text = ""
                 ShowRepairImage()
+
+                'Установка статуса Необхожимо установить СКНО
+                Dim stateRepair As Integer = 3
+
+
+                If cbxNeadSKNO.Checked
+                    cmd = New SqlClient.SqlCommand("insert_or_update_skno_history")
+                    cmd.CommandType = CommandType.StoredProcedure
+                    If tbxRepairDateOut.Text = String.Empty OR tbxRepairDateOut.Text = "??.??.????" Then
+                        cmd.Parameters.AddWithValue("@pi_create_date", Now)
+                    End If
+                    cmd.Parameters.AddWithValue("@pi_date_update", Now)
+                    cmd.Parameters.AddWithValue("@pi_comment", txtComment.Text)
+                    cmd.Parameters.AddWithValue("@pi_state_skno", 1)
+                    cmd.Parameters.AddWithValue("@pi_executor", lstWorker.SelectedItem.Value)
+                    cmd.Parameters.AddWithValue("@pi_update_user_id", CurrentUser.sys_id)
+                    cmd.Parameters.AddWithValue("@pi_registration_number_skno", txtRegistrationNumberSKNO.Text)
+                    cmd.Parameters.AddWithValue("@pi_serial_number_skno", txtSerialNumberSKNO.Text)
+                    cmd.Parameters.AddWithValue("@pi_cash_history_sys_id", iCashHistory)
+                    dbSQL.Execute(cmd)
+
+                End If
+                If _
+                    cbxNeadSKNO.Checked And Trim(txtRegistrationNumberSKNO.Text).Length = 0 And
+                    Trim(txtSerialNumberSKNO.Text).Length = 0
+                    stateRepair = 5
+                Else
+                   
+                End If
+
+                'Установка статуса Отремонтирован и готов к выдаче
+                cmd = New SqlCommand("set_state_repair")
+                cmd.Parameters.AddWithValue("@pi_state_repair", stateRepair)
+                cmd.Parameters.AddWithValue("@pi_good_sys_id", iCash)
+                cmd.CommandType = CommandType.StoredProcedure
+                dbSQL.Execute(cmd)
+
+                If cbxSmsSend.Checked
+                    Dim smsText = txtSmsText.Text
+                    Dim phoneNumber As String = txtPhoneNumber.Text
+                    _serviceSms.SendOneSmsWithInsertSmsHistory(phoneNumber,smsText,iCashHistory,CurrentUser.sys_id,smsType)
+                End If
             Catch
                 msgNew.Text = "Ошибка сохранения информации о ремонте!<br>" & Err.Description
                 Exit Sub
@@ -782,16 +1220,39 @@ Partial Class RepairNew
             Response.Redirect(GetAbsoluteUrl("~/Repair.aspx?" & iCash))
         End Sub
 
-        Private Sub chbRepairDateInEdit_CheckedChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles chbRepairDateInEdit.CheckedChanged
+        Private Sub chbRepairDateInEdit_CheckedChanged(ByVal sender As Object, ByVal e As System.EventArgs) _
+            Handles chbRepairDateInEdit.CheckedChanged
             If chbRepairDateInEdit.Checked = True Then
-                lblRepairDateIn.Visible = False 'Text = Format(reader("repairdate_in"), "dd.MM.yyyy HH:mm")
-                tbxRepairDateIn.Text = CDate(lblRepairDateIn.Text).ToShortDateString()
+                lblRepairDateIn.Visible = False 'Text = Format(reader("repairdate_in"), )
+                If lblRepairDateIn.Text = "??.??.????" Or String.IsNullOrEmpty(lblRepairDateIn.Text)
+                    tbxRepairDateIn.Text = DateTime.Now.ToString("dd.MM.yyyy HH:mm")
+                Else
+                    tbxRepairDateIn.Text = CDate(lblRepairDateIn.Text).ToString("dd.MM.yyyy HH:mm")
+                End If
                 pnlRepairDateIn.Visible = True
             Else
                 pnlRepairDateIn.Visible = False
                 lblRepairDateIn.Visible = True
             End If
         End Sub
-End Class
 
+        Private Sub cbxEtitSmsSend_CheckedChanged(ByVal sender As Object, ByVal e As System.EventArgs) _
+            Handles cbxEtitSmsSend.CheckedChanged
+            If cbxEtitSmsSend.Checked = True Then
+                txtPhoneNumber.Visible = True
+                txtSmsText.Visible = True
+                lblPhoneNumber.Visible = False
+                lblSmsText.Visible = False
+            Else
+                txtPhoneNumber.Visible = False
+                txtSmsText.Visible = False
+                lblPhoneNumber.Visible = True
+                lblSmsText.Visible = True
+            End If
+        End Sub
+        Protected Sub cbxNeadSKNO_CheckedChanged(sender As Object, e As EventArgs) Handles cbxNeadSKNO.CheckedChanged
+            pnlSKNO.Visible = cbxNeadSKNO.Checked
+            SetTxtSmsText()
+        End Sub
+    End Class
 End Namespace

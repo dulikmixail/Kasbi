@@ -42,8 +42,8 @@ Namespace Kasbi.Admin
         End Sub
 
         Private Sub grdDetails_ItemDataBound(ByVal sender As Object, ByVal e As System.Web.UI.WebControls.DataGridItemEventArgs) Handles grdDetails.ItemDataBound
-            If e.Item.ItemType = ListItemType.Item Or e.Item.ItemType = ListItemType.AlternatingItem Then
-                CType(e.Item.FindControl("cmdDelete"), ImageButton).Attributes.Add("onclick", "if (confirm('¬ы действительно хотите запись ?')){return true} else {return false};")
+            If e.Item.ItemType = ListItemType.Item Or e.Item.ItemType = ListItemType.AlternatingItem Then 
+                CType(e.Item.FindControl("cmdDelete"), ImageButton).Attributes.Add("onclick", "if (confirm('¬ы действительно хотите удалить запись? Ёто может привести к неккоректности хранимых данных')){return true} else {return false};")
                 If CurrentUser.is_admin = True Then
                     CType(e.Item.FindControl("cmdDelete"), ImageButton).Visible = True
                 Else

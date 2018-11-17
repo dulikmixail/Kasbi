@@ -1,3 +1,5 @@
+Imports Service
+
 Namespace Kasbi
 
     Partial Class NewRequest
@@ -9,6 +11,7 @@ Namespace Kasbi
         Dim dogovor$
         Dim isChangeMonth, isExpired, isCto As Boolean
         Dim m_goodsDS As DataSet
+        Private serviceSale As ServiceSale = New ServiceSale()
 
 
 #Region " Web Form Designer Generated Code "
@@ -335,7 +338,7 @@ Namespace Kasbi
                 Dim row As DataRow
                 For Each row In ds.Tables(0).Rows
                     Dim NewNode As TreeNode = New _
-                        TreeNode(row("group_name").ToString(), _
+                        TreeNode(row("group_name").ToString(),
                         row("good_group_sys_id").ToString())
                     NewNode.PopulateOnDemand = True
                     NewNode.SelectAction = TreeNodeSelectAction.SelectExpand
@@ -436,10 +439,13 @@ Namespace Kasbi
 
             Dim i As Int16
             Dim iCustomer, iSale As Integer
-            Dim s$, sKassir1$, sKassir2$, sPlace$, sSubDogovor$, dogovor%
+            Dim s$, sKassir1$, sKassir2$, sPlace$, dogovor%
             Dim ch() As Char = {"\", "/", ".", "-"}
             Dim sTmp As String
-            'определяем номер договора и поддоговора
+            Dim sSubDogovor As Integer
+
+
+            'определяем номер договора и приложения к договору
             'Try
             '    s = txtDogovor.Text
             '    i = s.IndexOfAny(ch)
@@ -461,11 +467,7 @@ Namespace Kasbi
             'End Try
 
 
-
-            '
             'проверяем можем ли мы заказать выбранный товар
-            '
-
             If GoodsDS.Tables(0).Rows.Count > 0 Then
                 Try
                     With GoodsDS.Tables(0)
@@ -494,7 +496,6 @@ Namespace Kasbi
                 customer_sys_id = 0
             End Try
 
-            sSubDogovor = ""
 
             isCto = CBool(dbSQL.ExecuteScalar("Select top 1 cto from customer where customer_sys_id = " & customer_sys_id))
             If (Not isCto) Then
@@ -608,6 +609,13 @@ Namespace Kasbi
                 End Try
             End If
 
+            'получаем номер приложения к договору
+            sSubDogovor = serviceSale.GetNextSaleDogovorByCustomer(iCustomer)
+            If serviceSale.HaveAnyExeption() Then
+                msgAddCustomer.Text = serviceSale.GetTextStringAllExeption()
+                Exit Sub
+            End If
+
             If GoodsDS.Tables(0).Rows.Count > 0 Then
                 'Нужно ли добавлять товары в последний из заказов
                 If chkAddToSale.Checked Then
@@ -703,7 +711,7 @@ Namespace Kasbi
                 isCto = CBool(dbSQL.ExecuteScalar("Select top 1 cto from customer where customer_sys_id = " & iCustomer))
                 If (Not isCto) Then
                     Try
-                        dbSQL.Execute("update customer set dogovor=unn where  customer_sys_id=" & iCustomer)
+                        dbSQL.Execute("update customer set dogovor=unn where dogovor!=unn and customer_sys_id=" & iCustomer)
                     Catch
                         msgAddCustomer.Text = "Ошибка обновления номера договора!<br>" & Err.Description
                     End Try
@@ -886,7 +894,7 @@ Namespace Kasbi
 
             Try
                 reader = dbSQL.GetReader("Select name, address from bank where bank_sys_id='" & bank_id & "'")
-                    If reader.Read() Then
+                If reader.Read() Then
                     BankName = reader.Item(0)
                     BankAddress = reader.Item(1)
                 Else
@@ -1021,9 +1029,9 @@ Namespace Kasbi
                 s = Session("SelectedDate")
                 If s Is Nothing Then
                     Session("SelectedDate") = Now
-                    Calendar.Text = DateTime.Parse(Now).ToString("dd.MM.yyyy")
+                    calendar.Text = DateTime.Parse(Now).ToString("dd.MM.yyyy")
                 Else
-                    Calendar.Text = DateTime.Parse(Session("SelectedDate")).ToString("dd.MM.yyyy")
+                    calendar.Text = DateTime.Parse(Session("SelectedDate")).ToString("dd.MM.yyyy")
                     'If Not isChangeMonth Then calendar.VisibleDate = calendar.SelectedDate
                 End If
             Catch

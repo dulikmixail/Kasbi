@@ -27,7 +27,7 @@
 <body onscroll="javascript:document.all['scrollPos'].value=document.body.scrollTop;"
     bottommargin="0" leftmargin="0" topmargin="0" onload="javascript:document.body.scrollTop=document.all['scrollPos'].value;"
     rightmargin="0">
-    <form id="frmRepairList" method="post" runat="server">
+    <form id="frmRepairList" method="post" runat="server" DefaultButton="lnkFind" DefaultFocus="txtFindGoodNum">
         <uc1:Header ID="Header1" runat="server"></uc1:Header>
         <table class="PageTitle" cellspacing="1" cellpadding="2" width="100%" border="0">
             <tr>
@@ -49,7 +49,7 @@
                         <td>Номер кассового аппарата:</td>
                         <td><asp:TextBox ID="txtFindGoodNum" runat="server" BorderWidth="1px" Height="18px" MaxLength="13" Width="150px"></asp:TextBox></td>
                         <td><asp:LinkButton ID="lnkFind" runat="server" CssClass="LinkButton">&nbsp;Найти&nbsp;</asp:LinkButton></td>
-                        <td width="500" align="right"><asp:LinkButton ID="lnkFindRepair" runat="server" CssClass="LinkButton">&nbsp;Показать аппараты, которые были в ремонте&nbsp;</asp:LinkButton></td>
+                        <td width="500" align="right"><asp:LinkButton ID="lnkFindRepair" runat="server" CssClass="LinkButton">&nbsp;Показать аппараты, которые в ремонте&nbsp;</asp:LinkButton></td>
                     </tr>
                 </table>
                 <br />
@@ -83,13 +83,22 @@
                            <asp:TemplateColumn HeaderText="Плательщик / Владелец" SortExpression="payerInfo"> 
                                 <ItemTemplate>
                                     <asp:Label ID="lblGoodOwner" runat="server"></asp:Label>
+                                    <asp:ImageButton ID="imgAlertCustomer" Style="margin-right: 4px" runat="server" ImageUrl="Images\sign.gif"
+                                                     Enabled="False"></asp:ImageButton>
                                 </ItemTemplate>
                             </asp:TemplateColumn>
+                            <asp:TemplateColumn HeaderText="Долг" SortExpression="dolg"> 
+                                <ItemTemplate>
+                                    <asp:Label ID="lblDolg" runat="server"></asp:Label>
+                                </ItemTemplate>
+                            </asp:TemplateColumn>
+
                             <asp:TemplateColumn HeaderText="Товар" SortExpression="good_name" > 
                                 <ItemTemplate>
                                     <asp:Label ID="lbledtGoodName" runat="server" Text='<%# DataBinder.Eval(Container, "DataItem.good_name") %>'>
                                     </asp:Label>
                                 </ItemTemplate>
+                                <ItemStyle HorizontalAlign="Center"></ItemStyle>
                             </asp:TemplateColumn>
                             <asp:TemplateColumn HeaderText="№" SortExpression="num_cashregister" > 
                                   <ItemTemplate>
@@ -97,7 +106,6 @@
                                         NavigateUrl='<%# "CashOwners.aspx?" &amp; DataBinder.Eval(Container, "DataItem.good_sys_id") &amp; "&amp;cashowner="&amp; DataBinder.Eval(Container, "DataItem.payer_sys_id")%>'>
                                     </asp:HyperLink>
                                     <p style="margin-top: 5px; margin-bottom: 0px" align="center">
-                                        <asp:HyperLink ID="imgAlert" Target="_blank" runat="server" CssClass="CutImageLink" ImageUrl="Images/sign.gif"></asp:HyperLink>
                                         <asp:HyperLink ID="imgSupport" Target="_blank" runat="server" CssClass="CutImageLink" ImageUrl="Images/support.gif"
                                          ToolTip="На техобслуживании">
                                         </asp:HyperLink>
@@ -109,18 +117,36 @@
                                             ImageUrl="Images/repaired.gif" ToolTip="Побывал в ремонте">
                                         </asp:HyperLink></p>
                                 </ItemTemplate>
+                                <ItemStyle HorizontalAlign="Center"></ItemStyle>
                             </asp:TemplateColumn>
+                            <asp:TemplateColumn HeaderText="Место хранения" SortExpression="num_cashregister" > 
+                                <ItemTemplate>
+                                    <asp:Label ID="lblStorageNumber" runat="server" Text='<%# DataBinder.Eval(Container, "DataItem.storage_number") %>'>
+                                    </asp:Label>
+                                </ItemTemplate>
+                                <ItemStyle HorizontalAlign="Center"></ItemStyle>
+                            </asp:TemplateColumn>
+
                             <asp:TemplateColumn HeaderText="№ СК изг./ЦТО" SortExpression="num_control_cto" > 
                                 <HeaderStyle Font-Underline="True"></HeaderStyle>
                                 <ItemTemplate>
                                     <asp:Label ID="lbledtControl" runat="server" Text='<%# DataBinder.Eval(Container, "DataItem.num_control_reestr") & "<br>" & DataBinder.Eval(Container, "DataItem.num_control_pzu") & "<br>" & DataBinder.Eval(Container, "DataItem.num_control_mfp")& "<br>" & DataBinder.Eval(Container, "DataItem.num_control_cp")& "<br>" & DataBinder.Eval(Container, "DataItem.num_control_cto")& "<br>" & DataBinder.Eval(Container, "DataItem.num_control_cto2")%>'>
                                     </asp:Label>
                                 </ItemTemplate>
+                                <ItemStyle HorizontalAlign="Center"></ItemStyle>
                             </asp:TemplateColumn>
+                            <%--<asp:TemplateColumn HeaderText="Описание неисправности" SortExpression="num_control_cto" > 
+                                <HeaderStyle Font-Underline="True"></HeaderStyle>
+                                <ItemTemplate>
+                                    <asp:Label ID="lblRepairBadsList" runat="server" Text='<%# DataBinder.Eval(Container, "DataItem.repair_bads_list") %>'>
+                                    </asp:Label>
+                                </ItemTemplate>
+                                <ItemStyle HorizontalAlign="Center"></ItemStyle>
+                            </asp:TemplateColumn>--%>
                             <asp:TemplateColumn HeaderText="Место установки" SortExpression="place_rn_id"> 
                                 <HeaderStyle Font-Underline="True"></HeaderStyle>
                                 <ItemTemplate>
-                                    <asp:Label ID="lbledtPlace" runat="server" Text='<%# DataBinder.Eval(Container, "DataItem.set_place")%>'>
+                                    <asp:Label ID="lbledtPlace" runat="server" Text='<%# DataBinder.Eval(Container, "DataItem.set_place") %>'>
                                     </asp:Label>
                                     <br>
                                     <asp:Label CssClass="SubTitleEditbox" ID="lblPlaceRegion" runat="server" Text='Район установки:'></asp:Label>
@@ -129,23 +155,13 @@
                                         </asp:Label></b>
                                 </ItemTemplate>
                             </asp:TemplateColumn>
-                            <asp:TemplateColumn HeaderText="Долг" SortExpression="dolg"> 
-                                <ItemTemplate>
-                                    <asp:Label ID="lblDolg" runat="server"></asp:Label>
-                                </ItemTemplate>
-                            </asp:TemplateColumn>
                             <asp:TemplateColumn HeaderText="Операции">
                                 <ItemTemplate>
-                                 
-                                 
-                                    
-                                   <asp:LinkButton ID="lnkSetRepair" runat="server">Принять&nbsp;в&nbsp;ремонт<br /></asp:LinkButton>
+                                   <asp:LinkButton ID="lnkSetRepair" runat="server">Принять&nbsp;в&nbsp;ремонт!<br /></asp:LinkButton>
+                                    <asp:LinkButton ID="lnkActivateRepair" runat="server">Взять&nbsp;в&nbsp;работу на ремонт!<br /></asp:LinkButton>
                                    <asp:LinkButton ID="lnkOutRepair" runat="server">Отдать&nbsp;владельцу<br /></asp:LinkButton>
-                                   <asp:LinkButton ID="lnkEditRepair" runat="server">Редактировать&nbsp;ремонт<br /> </asp:LinkButton>
-                                   <asp:LinkButton ID="lnkStatus" runat="server">История&nbsp;ремонтов<br /> </asp:LinkButton>
-                                    
-                                    
-                                    
+                                   <asp:LinkButton ID="lnkEditRepair" runat="server">Редактировать&nbsp;ремонт!<br /> </asp:LinkButton>
+                                   <asp:LinkButton ID="lnkStatus" runat="server">История&nbsp;ремонтов!<br/> </asp:LinkButton>
                                 </ItemTemplate>
                             </asp:TemplateColumn>
                             <asp:TemplateColumn HeaderText="Последнее ТО" SortExpression="repair">
@@ -154,12 +170,24 @@
                                 </ItemTemplate>
                                 <ItemStyle HorizontalAlign="Center" />
                             </asp:TemplateColumn>
-                            <asp:TemplateColumn HeaderText="Последний ремонт" SortExpression="cto_master">
+                            <asp:TemplateColumn HeaderText="Последнее принятие в ремонт" SortExpression="cto_master">
                                 <ItemTemplate>
-                                    <asp:Label ID="lblCto_master" runat="server"  Text='<%# DataBinder.Eval(Container, "DataItem.cto_master")%>'></asp:Label>
+                                    <asp:Label ID="lblReception" runat="server"></asp:Label>
                                 </ItemTemplate>
                                 <ItemStyle HorizontalAlign="Center" />
-                            </asp:TemplateColumn>                            
+                            </asp:TemplateColumn>   
+                            <asp:TemplateColumn HeaderText="Последний ремонт" SortExpression="cto_master">
+                                <ItemTemplate>
+                                    <asp:Label ID="lblCto_master" runat="server" ></asp:Label>
+                                </ItemTemplate>
+                                <ItemStyle HorizontalAlign="Center" />
+                            </asp:TemplateColumn>  
+                            <asp:TemplateColumn HeaderText="Последняя выдача из ремонта" SortExpression="cto_master">
+                                <ItemTemplate>
+                                    <asp:Label ID="lblIssue" runat="server"></asp:Label>
+                                </ItemTemplate>
+                                <ItemStyle HorizontalAlign="Center" />
+                            </asp:TemplateColumn>  
                         </Columns>
                     </asp:DataGrid>
                                     

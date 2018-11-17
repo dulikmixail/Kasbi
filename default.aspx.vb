@@ -1,7 +1,12 @@
 Imports System.IO
 Imports Microsoft.Office.Interop.Excel
 Imports Microsoft.VisualBasic.FileIO.FileSystem
+Imports Models.Sms.Sending.Request
+Imports Models.Sms.Sending.Response
+Imports Models.Sms.Statusing.Response
+Imports Newtonsoft.Json
 Imports Scripting
+Imports Service
 
 Namespace Kasbi
 
@@ -195,6 +200,8 @@ Namespace Kasbi
 
 
         End Sub
+
+
 
         Protected Sub lnksetRepair_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles lnksetRepair.Click
             If lstcash.SelectedIndex >= 0 Then
@@ -1006,5 +1013,27 @@ Namespace Kasbi
         End Sub
 
 
+        Protected Sub testSms_OnClick(sender As Object, e As EventArgs)
+            Dim serviceSms As ServiceSms = New ServiceSms()
+            Dim result As SmsSendingResponse = serviceSms.SendSameSms(New List(Of String) From {"375294010101", "375294010102"}, "Тестовое СМС 1")
+            Dim smsStatusing As SmsStatusingResponse = serviceSms.GetSmsStatusingBySmsSendingResponse(result)
+            System.Diagnostics.Debug.WriteLine(JsonConvert.SerializeObject(smsStatusing))
+            'Dim result1 As String = serviceSms.GetJsonManySmsWithSameText(New List(Of String) From{"375297561519","375296936700"},"Тестовое СМС 2", DateTime.Now.AddDays(1))
+            'Dim result2 As String = serviceSms.GetJsonManySmsWithDifferentText(New Dictionary(Of String, String) From 
+            '                                                                      {
+            '                                                                      {"375297561519", "Текст 1"},
+            '                                                                      {"375296936700", "Текст 2"}
+            '                                                                      }
+            '                                                                   )
+            'Dim result3 As String = serviceSms.GetJsonManySmsWithDifferentText(New Dictionary(Of String, String) From 
+            '                                                                      {
+            '                                                                      {"375297561519", "Текст 3"},
+            '                                                                      {"375296936700", "Текст 4"}
+            '                                                                      },
+            '                                                                   DateTime.Now.AddDays(5)
+            '                                                                   )
+
+            Dim stop1 As Boolean = True
+        End Sub
     End Class
 End Namespace

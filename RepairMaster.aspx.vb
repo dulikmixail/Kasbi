@@ -1,9 +1,9 @@
+Imports System.Data.SqlClient
 Imports System.Globalization
 Imports System.Threading
 
 Namespace Kasbi
-
-Partial Class RepairMaster
+    Partial Class RepairMaster
         Inherits PageBase
 
         Dim i
@@ -11,22 +11,26 @@ Partial Class RepairMaster
         Dim to_made = 0
         Dim customer
         Dim iCash
+        Dim _smsSender As SmsSender = New SmsSender()
+
 #Region " Web Form Designer Generated Code "
 
-    'This call is required by the Web Form Designer.
-    <System.Diagnostics.DebuggerStepThrough()> Private Sub InitializeComponent()
+        'This call is required by the Web Form Designer.250,210,210
+        <System.Diagnostics.DebuggerStepThrough()>
+        Private Sub InitializeComponent()
+        End Sub
 
-    End Sub
-    Protected WithEvents msg As System.Web.UI.WebControls.Label
-    Protected WithEvents txtFindGoodSetPlace As System.Web.UI.WebControls.TextBox
-    Protected WithEvents Label2 As System.Web.UI.WebControls.Label
+        Protected WithEvents msg As System.Web.UI.WebControls.Label
+        Protected WithEvents txtFindGoodSetPlace As System.Web.UI.WebControls.TextBox
+        Protected WithEvents Label2 As System.Web.UI.WebControls.Label
 
 
-    Private Sub Page_Init(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Init
-        'CODEGEN: This method call is required by the Web Form Designer
-        'Do not modify it using the code editor.
-        InitializeComponent()
-    End Sub
+        Private Sub Page_Init(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Init
+            'CODEGEN: This method call is required by the Web Form Designer
+            'Do not modify it using the code editor.
+            InitializeComponent()
+        End Sub
+
 #End Region
 
         Protected Sub Page_Load1(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
@@ -38,7 +42,36 @@ Partial Class RepairMaster
             If type = "outrepair" Then
                 'Выдача аппарата с ремонта
                 query = dbSQL.ExecuteScalar("UPDATE good SET inrepair=null WHERE good_sys_id='" & iCash & "'")
+
+                Dim cmd As SqlCommand = New SqlCommand("set_state_repair")
+                cmd.Parameters.AddWithValue("@pi_state_repair", 0)
+                cmd.Parameters.AddWithValue("@pi_good_sys_id", icash)
+                cmd.CommandType = CommandType.StoredProcedure
+                dbSQL.Execute(cmd)
+
+                cmd = New SqlCommand("update_repair_issue")
+                cmd.Parameters.AddWithValue("@pi_issue_date", Now)
+                cmd.Parameters.AddWithValue("@pi_issuer_sys_id", CurrentUser.sys_id)
+                cmd.Parameters.AddWithValue("@pi_good_sys_id", iCash)
+                cmd.CommandType = CommandType.StoredProcedure
+                dbSQL.Execute(cmd)
+
                 Response.Redirect(GetAbsoluteUrl("~/RepairMaster.aspx"))
+            ElseIf type = "activaterepair" Then
+                Dim cmd As SqlCommand = New SqlCommand("set_state_repair")
+                cmd.Parameters.AddWithValue("@pi_state_repair", 2)
+                cmd.Parameters.AddWithValue("@pi_good_sys_id", iCash)
+                cmd.CommandType = CommandType.StoredProcedure
+                dbSQL.Execute(cmd)
+
+                cmd = New SqlCommand("update_repairdate_in")
+                cmd.Parameters.AddWithValue("@pi_repairdate_in", Now)
+                cmd.Parameters.AddWithValue("@pi_executor", CurrentUser.sys_id)
+                cmd.Parameters.AddWithValue("@pi_good_sys_id", iCash)
+                cmd.CommandType = CommandType.StoredProcedure
+                dbSQL.Execute(cmd)
+
+                bind(Session("repair-filter"))
             ElseIf type = "setrepair" Then
                 'Принятие ККМ в ремонт
                 Dim cmd As SqlClient.SqlCommand
@@ -49,7 +82,10 @@ Partial Class RepairMaster
                 End If
 
                 If customer = "" Then
-                    customer = dbSQL.ExecuteScalar("SELECT sale.customer_sys_id FROM sale INNER JOIN good ON sale.sale_sys_id = good.sale_sys_id WHERE  (good.good_sys_id = " & iCash & ")")
+                    customer =
+                        dbSQL.ExecuteScalar(
+                            "SELECT sale.customer_sys_id FROM sale INNER JOIN good ON sale.sale_sys_id = good.sale_sys_id WHERE  (good.good_sys_id = " &
+                            iCash & ")")
                 End If
 
                 cmd = New SqlClient.SqlCommand("new_repair")
@@ -87,8 +123,16 @@ Partial Class RepairMaster
 
                 query = dbSQL.ExecuteScalar("Update good SET inrepair='1' WHERE good_sys_id='" & iCash & "'")
 
+                cmd = New SqlCommand("set_state_repair")
+                cmd.Parameters.AddWithValue("@pi_state_repair", 1)
+                cmd.Parameters.AddWithValue("@pi_good_sys_id", icash)
+                cmd.CommandType = CommandType.StoredProcedure
+                dbSQL.Execute(cmd)
 
-                query = dbSQL.ExecuteScalar("SELECT top 1 sys_id FROM cash_history WHERE good_sys_id='" & iCash & "' AND state='5' ORDER BY sys_id DESC")
+                query =
+                    dbSQL.ExecuteScalar(
+                        "SELECT top 1 sys_id FROM cash_history WHERE good_sys_id='" & iCash &
+                        "' AND state='5' ORDER BY sys_id DESC")
                 Response.Redirect(GetAbsoluteUrl("~/RepairNew.aspx?cash=" & iCash & "&hc=" & query))
             ElseIf type = "" And iCash <> "" Then
 
@@ -97,6 +141,7 @@ Partial Class RepairMaster
             If Not IsPostBack Then
                 If Session("repair-filter") = "" Then Session("repair-filter") = " where good.inrepair='1' "
                 bind(Session("repair-filter"))
+                _smsSender.GetRepairInfo()
             End If
         End Sub
 
@@ -148,7 +193,7 @@ Partial Class RepairMaster
             grdRepair.Visible = False
 
             grdRepair.Visible = True
-            cmd = New SqlClient.SqlCommand("get_repair_master")
+            cmd = New SqlClient.SqlCommand("get_repair_master2")
             cmd.CommandType = CommandType.StoredProcedure
             cmd.Parameters.AddWithValue("@pi_filter", filter)
 
@@ -159,12 +204,14 @@ Partial Class RepairMaster
             ds = New DataSet
             adapt.Fill(ds)
 
-            If ViewState("goodsort") = "" Then
-                ds.Tables(0).DefaultView.Sort = "good_sys_id DESC "
-                ViewState("goodsort") = "good_sys_id DESC "
-            Else
-                ds.Tables(0).DefaultView.Sort = ViewState("goodsort") & ", good_sys_id ASC "
-            End If
+            'If ViewState("goodsort") = "" Then
+            '    ds.Tables(0).DefaultView.Sort = "good_sys_id DESC "
+            '    ViewState("goodsort") = "good_sys_id DESC "
+            'Else
+            '    ds.Tables(0).DefaultView.Sort = ViewState("goodsort") & ", good_sys_id ASC "
+            'End If
+
+            ds.Tables(0).DefaultView.Sort = " state_repair, repairdate_in DESC"
 
             grdRepair.DataSource = ds.Tables(0).DefaultView
             grdRepair.DataKeyField = "good_sys_id"
@@ -172,13 +219,25 @@ Partial Class RepairMaster
             Session("KKM_ds") = ds
         End Sub
 
-        Protected Sub grdRepair_ItemDataBound(ByVal sender As Object, ByVal e As System.Web.UI.WebControls.DataGridItemEventArgs) Handles grdRepair.ItemDataBound
+        Protected Sub grdRepair_ItemDataBound(ByVal sender As Object,
+                                              ByVal e As System.Web.UI.WebControls.DataGridItemEventArgs) _
+            Handles grdRepair.ItemDataBound
             Dim s$ = ""
+            Dim isSlowRepair As Boolean = False
+            Const daysBeforeSendingSms = 7
 
             If e.Item.ItemType = ListItemType.Item Or e.Item.ItemType = ListItemType.AlternatingItem Then
                 If Not IsDBNull(e.Item.DataItem("payerInfo")) Then
                     s = e.Item.DataItem("payerInfo")
                     CType(e.Item.FindControl("lblGoodOwner"), Label).Text = s
+                End If
+                If Not IsDBNull(e.Item.DataItem("alert")) AndAlso e.Item.DataItem("alert") = 1 Then
+                    e.Item.FindControl("imgAlertCustomer").Visible = True
+                    If Not IsDBNull(e.Item.DataItem("info")) AndAlso Trim(e.Item.DataItem("info")).Length > 0 Then
+                        CType(e.Item.FindControl("imgAlertCustomer"), ImageButton).ToolTip = e.Item.DataItem("info")
+                    End If
+                Else
+                    e.Item.FindControl("imgAlertCustomer").Visible = False
                 End If
 
                 i = i + 1
@@ -191,7 +250,10 @@ Partial Class RepairMaster
                 CType(e.Item.FindControl("lblDolg"), Label).Text = s
 
                 If Not IsDBNull(e.Item.DataItem("lastTO")) Then
-                    CType(e.Item.FindControl("lblLastTO"), Label).Text = "<b>" + GetRussianDate(e.Item.DataItem("lastTO")) + "</b><br><br>" + e.Item.DataItem("lastTOMaster")
+                    CType(e.Item.FindControl("lblLastTO"), Label).Text = "<b>" +
+                                                                         GetRussianDate(e.Item.DataItem("lastTO")) +
+                                                                         "</b><br><br>" +
+                                                                         e.Item.DataItem("lastTOMaster")
                     e.Item.BackColor = Drawing.Color.FromArgb(210, 210, 210)
                 Else
                     CType(e.Item.FindControl("lblLastTO"), Label).Text = "ТО не проводилось"
@@ -199,13 +261,8 @@ Partial Class RepairMaster
                 '
                 'Картинки
                 '
-                If Not IsDBNull(e.Item.DataItem("alert")) Then
-                    s = CStr(e.Item.DataItem("alert"))
-                End If
-
-                e.Item.FindControl("imgAlert").Visible = s.Length > 0
-                If s.Length > 0 Then CType(e.Item.FindControl("imgAlert"), HyperLink).ToolTip = s
-                e.Item.FindControl("imgSupport").Visible = Not IsDBNull(e.Item.DataItem("support")) AndAlso e.Item.DataItem("support") = "1"
+                e.Item.FindControl("imgSupport").Visible = Not IsDBNull(e.Item.DataItem("support")) AndAlso
+                                                           e.Item.DataItem("support") = "1"
 
                 Dim b As Boolean = e.Item.DataItem("repair")
                 e.Item.FindControl("imgRepair").Visible = b
@@ -213,34 +270,71 @@ Partial Class RepairMaster
                 If b Then
                     Dim i As Integer = CInt(e.Item.DataItem("repaired"))
                     If i > 1 Then
-                        CType(e.Item.FindControl("imgRepair"), HyperLink).ToolTip = "В ремонте. До этого в ремонте был " & i - 1 & " раз(а)"
+                        CType(e.Item.FindControl("imgRepair"), HyperLink).ToolTip =
+                            "В ремонте. До этого в ремонте был " & i - 1 & " раз(а)"
                     Else
-                        CType(e.Item.FindControl("imgRepair"), HyperLink).ToolTip = "В ремонте. До этого в ремонте не был"
+                        CType(e.Item.FindControl("imgRepair"), HyperLink).ToolTip =
+                            "В ремонте. До этого в ремонте не был"
                     End If
                 End If
 
                 e.Item.FindControl("imgRepaired").Visible = Not (b OrElse CInt(e.Item.DataItem("repaired")) = 0)
                 If e.Item.FindControl("imgRepaired").Visible Then
-                    CType(e.Item.FindControl("imgRepaired"), HyperLink).ToolTip = "Был в ремонте " & CInt(e.Item.DataItem("repaired")) & " раз(а)"
+                    CType(e.Item.FindControl("imgRepaired"), HyperLink).ToolTip = "Был в ремонте " &
+                                                                                  CInt(e.Item.DataItem("repaired")) &
+                                                                                  " раз(а)"
                 End If
 
-                'Дата ремонта и мастер
+                'Дата принятия и приемщик
 
-                If Not IsDBNull(e.Item.DataItem("repairdate_in")) Then
-                    s = "<b>" & Format(e.Item.DataItem("repairdate_in"), "dd.MM.yyyy HH:mm") & " / "
+                If IsDBNull(e.Item.DataItem("reception_date")) Then
+                    s = "??.??.????"
+                Else
+                    s = "<b>" & Format(e.Item.DataItem("reception_date"), "dd.MM.yyyy HH:mm")
+                End If
+                If Not IsDBNull(e.Item.DataItem("receptionist_name")) Then
+                    s &= "</b><br>" & e.Item.DataItem("receptionist_name")
+                End If
+                CType(e.Item.FindControl("lblReception"), Label).Text = s
+
+
+                'Дата ремонта и мастер
+                If IsDBNull(e.Item.DataItem("repairdate_in")) Then
+                    s = "??.??.????"
+                Else
+                    s = "<b>" & Format(e.Item.DataItem("repairdate_in"), "dd.MM.yyyy HH:mm")
+
                 End If
 
                 If IsDBNull(e.Item.DataItem("repairdate_out")) Then
-                    s = s & "??.??.????"
+                    s &= " / " & "??.??.????"
                 Else
-                    s = s & Format(e.Item.DataItem("repairdate_out"), "dd.MM.yyyy")
+                    s &= " / " & Format(e.Item.DataItem("repairdate_out"), "dd.MM.yyyy HH:mm")
+                    Dim repairdateOut As DateTime = Date.Parse(e.Item.DataItem("repairdate_out").ToString())
+                    If repairdateOut.AddDays(daysBeforeSendingSms) < Now
+                        isSlowRepair = True
+                    End If
                 End If
 
                 If Not IsDBNull(e.Item.DataItem("executor")) Then
-                    s = s & "</b><br>" & e.Item.DataItem("executor")
+                    s &= "</b><br>" & e.Item.DataItem("executor")
                 End If
 
                 CType(e.Item.FindControl("lblCto_master"), Label).Text = s
+
+
+                'Дата выдачи и человек который выдал
+
+                If IsDBNull(e.Item.DataItem("issue_date")) Then
+                    s = "??.??.????"
+                Else
+                    s = "<b>" & Format(e.Item.DataItem("issue_date"), "dd.MM.yyyy HH:mm")
+                End If
+                If Not IsDBNull(e.Item.DataItem("issuer_name")) Then
+                    s &= "</b><br>" & e.Item.DataItem("issuer_name")
+                End If
+                CType(e.Item.FindControl("lblIssue"), Label).Text = s
+
 
                 '
                 'If Not IsDBNull(e.Item.DataItem("stateTO")) Then
@@ -252,31 +346,108 @@ Partial Class RepairMaster
                 '
                 'Если открыт ремонт
                 '
-                If e.Item.DataItem("repair") = 1 Then
-                    e.Item.BackColor = Drawing.Color.FromArgb(250, 210, 210)
 
-                    CType(e.Item.FindControl("lnkSetRepair"), LinkButton).Visible = False
-                    CType(e.Item.FindControl("lnkOutRepair"), LinkButton).Visible = False
+                Select Case e.Item.DataItem("state_repair")
+                    Case 1
+                        e.Item.BackColor = Drawing.Color.FromArgb(215, 245, 255)
 
-                    CType(e.Item.FindControl("lnkEditRepair"), LinkButton).PostBackUrl = "RepairNew.aspx?cash=" & e.Item.DataItem("good_sys_id") & "&hc=" & e.Item.DataItem("hc_id")
-                    CType(e.Item.FindControl("lnkStatus"), LinkButton).PostBackUrl = "Repair.aspx?" & e.Item.DataItem("good_sys_id")
-                Else
-                    CType(e.Item.FindControl("lnkEditRepair"), LinkButton).Visible = False
-
-                    CType(e.Item.FindControl("lnkOutRepair"), LinkButton).PostBackUrl = "?a=outrepair&id=" & e.Item.DataItem("good_sys_id")
-                    CType(e.Item.FindControl("lnkSetRepair"), LinkButton).PostBackUrl = "SetRepair.aspx?id=" & e.Item.DataItem("good_sys_id") & "&customer=" & e.Item.DataItem("payer_sys_id")
-                    CType(e.Item.FindControl("lnkStatus"), LinkButton).PostBackUrl = "Repair.aspx?" & e.Item.DataItem("good_sys_id")
-
-                    If e.Item.DataItem("inrepair") = 0 Then
+                        CType(e.Item.FindControl("lnkSetRepair"), LinkButton).Visible = False
+                        CType(e.Item.FindControl("lnkActivateRepair"), LinkButton).PostBackUrl =
+                            "?a=activaterepair&id=" & e.Item.DataItem("good_sys_id")
                         CType(e.Item.FindControl("lnkOutRepair"), LinkButton).Visible = False
-                    End If
-                End If
+                        CType(e.Item.FindControl("lnkEditRepair"), LinkButton).Visible = False
+                        CType(e.Item.FindControl("lnkStatus"), LinkButton).PostBackUrl = "Repair.aspx?" &
+                                                                                         e.Item.DataItem("good_sys_id").
+                                                                                             ToString()
+                    Case 2
+                        e.Item.BackColor = Drawing.Color.FromArgb(255, 255, 205)
 
+                        CType(e.Item.FindControl("lnkSetRepair"), LinkButton).Visible = False
+                        CType(e.Item.FindControl("lnkActivateRepair"), LinkButton).Visible = False
+                        CType(e.Item.FindControl("lnkOutRepair"), LinkButton).Visible = False
+                        CType(e.Item.FindControl("lnkEditRepair"), LinkButton).PostBackUrl = "RepairNew.aspx?cash=" &
+                                                                                             e.Item.DataItem(
+                                                                                                 "good_sys_id") &
+                                                                                             "&hc=" &
+                                                                                             e.Item.DataItem("hc_id")
+                        CType(e.Item.FindControl("lnkStatus"), LinkButton).PostBackUrl = "Repair.aspx?" &
+                                                                                         e.Item.DataItem("good_sys_id").
+                                                                                             ToString()
+                    Case 3
+                        e.Item.BackColor = Drawing.Color.FromArgb(155, 255, 155)
+                        If isSlowRepair
+                            e.Item.BackColor = Drawing.Color.FromArgb(255, 171, 171)
+                        End If
+
+                        CType(e.Item.FindControl("lnkSetRepair"), LinkButton).Visible = False
+                        CType(e.Item.FindControl("lnkActivateRepair"), LinkButton).Visible = False
+                        CType(e.Item.FindControl("lnkOutRepair"), LinkButton).PostBackUrl = "?a=outrepair&id=" &
+                                                                                            e.Item.DataItem(
+                                                                                                "good_sys_id")
+                        CType(e.Item.FindControl("lnkEditRepair"), LinkButton).Visible = False
+                        CType(e.Item.FindControl("lnkStatus"), LinkButton).PostBackUrl = "Repair.aspx?" &
+                                                                                         e.Item.DataItem("good_sys_id").
+                                                                                             ToString()
+                    Case 5
+                        e.Item.BackColor = Drawing.Color.FromArgb(255, 225, 155)
+                        CType(e.Item.FindControl("lnkSetRepair"), LinkButton).Visible = False
+                        CType(e.Item.FindControl("lnkActivateRepair"), LinkButton).Visible = False
+                        CType(e.Item.FindControl("lnkOutRepair"), LinkButton).Visible = False
+                        CType(e.Item.FindControl("lnkEditRepair"), LinkButton).PostBackUrl = "RepairNew.aspx?cash=" &
+                                                                                             e.Item.DataItem(
+                                                                                                 "good_sys_id") &
+                                                                                             "&hc=" &
+                                                                                             e.Item.DataItem("hc_id")
+                        CType(e.Item.FindControl("lnkStatus"), LinkButton).PostBackUrl = "Repair.aspx?" &
+                                                                                         e.Item.DataItem("good_sys_id").
+                                                                                             ToString()
+
+                    Case Else
+                        CType(e.Item.FindControl("lnkSetRepair"), LinkButton).PostBackUrl = "SetRepair.aspx?id=" &
+                                                                                            e.Item.DataItem(
+                                                                                                "good_sys_id") &
+                                                                                            "&customer=" &
+                                                                                            e.Item.DataItem(
+                                                                                                "payer_sys_id")
+                        CType(e.Item.FindControl("lnkActivateRepair"), LinkButton).Visible = False
+                        CType(e.Item.FindControl("lnkEditRepair"), LinkButton).Visible = False
+                        CType(e.Item.FindControl("lnkOutRepair"), LinkButton).Visible = False
+                        CType(e.Item.FindControl("lnkStatus"), LinkButton).PostBackUrl = "Repair.aspx?" &
+                                                                                         e.Item.DataItem("good_sys_id")
+                End Select
+                'If e.Item.DataItem("repair") = 1 Then
+                '    e.Item.BackColor = Drawing.Color.FromArgb(217, 243, 254)
+
+                '    CType(e.Item.FindControl("lnkSetRepair"), LinkButton).Visible = False
+                '    CType(e.Item.FindControl("lnkOutRepair"), LinkButton).Visible = False
+                '    CType(e.Item.FindControl("lnkEditRepair"), LinkButton).PostBackUrl = "RepairNew.aspx?cash=" &
+                '                                                                         e.Item.DataItem("good_sys_id") &
+                '                                                                         "&hc=" &
+                '                                                                         e.Item.DataItem("hc_id")
+                '    CType(e.Item.FindControl("lnkStatus"), LinkButton).PostBackUrl = "Repair.aspx?" &
+                '                                                                     e.Item.DataItem("good_sys_id")
+                'Else
+                '    CType(e.Item.FindControl("lnkEditRepair"), LinkButton).Visible = False
+                '    CType(e.Item.FindControl("lnkOutRepair"), LinkButton).PostBackUrl = "?a=outrepair&id=" &
+                '                                                                        e.Item.DataItem("good_sys_id")
+                '    CType(e.Item.FindControl("lnkSetRepair"), LinkButton).PostBackUrl = "SetRepair.aspx?id=" &
+                '                                                                        e.Item.DataItem("good_sys_id") &
+                '                                                                        "&customer=" &
+                '                                                                        e.Item.DataItem("payer_sys_id")
+                '    CType(e.Item.FindControl("lnkStatus"), LinkButton).PostBackUrl = "Repair.aspx?" &
+                '                                                                     e.Item.DataItem("good_sys_id")
+
+                '    If e.Item.DataItem("inrepair") = 0 Then
+                '        CType(e.Item.FindControl("lnkOutRepair"), LinkButton).Visible = False
+                '    End If
+                'End If
             End If
         End Sub
 
         Public Function GetRussianDate(ByVal d As Date) As String
-            Dim m() As String = {" Янв ", " Фев ", " Мар ", " Апр ", " Май ", " Июн ", " Июл ", " Авг ", " Сен ", " Окт ", " Ноя ", " Дек "}
+            Dim m() As String =
+                    {" Янв ", " Фев ", " Мар ", " Апр ", " Май ", " Июн ", " Июл ", " Авг ", " Сен ", " Окт ", " Ноя ",
+                     " Дек "}
             GetRussianDate = m(Month(d) - 1) & Year(d) & "г."
         End Function
 
@@ -286,7 +457,8 @@ Partial Class RepairMaster
             findgood()
         End Sub
 
-        Protected Sub lnkFindRepair_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles lnkFindRepair.Click
+        Protected Sub lnkFindRepair_Click(ByVal sender As Object, ByVal e As System.EventArgs) _
+            Handles lnkFindRepair.Click
             Dim filter
 
             filter = " where good.inrepair='1' "
@@ -296,6 +468,5 @@ Partial Class RepairMaster
             grdRepair.CurrentPageIndex = 0
             bind(filter)
         End Sub
-
     End Class
 End Namespace

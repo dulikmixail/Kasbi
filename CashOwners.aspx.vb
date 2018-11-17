@@ -61,7 +61,7 @@ Partial Class CashOwners
             Dim reader As SqlClient.SqlDataReader
 
             Try
-                cmd = New SqlClient.SqlCommand("get_skno_history")
+                cmd = New SqlClient.SqlCommand("get_last_skno_history")
                 cmd.Parameters.AddWithValue("@pi_good_sys_id", iCash)
                 cmd.CommandType = CommandType.StoredProcedure
                 reader = dbSQL.GetReader(cmd)

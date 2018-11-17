@@ -37,6 +37,7 @@ Namespace Kasbi.Admin
        
         Protected Sub lnk_clear_repair_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles lnk_clear_repair.Click
             dbSQL.ExecuteScalar("UPDATE good SET inrepair=null where good_sys_id NOT IN (SELECT DISTINCT good_sys_id FROM cash_history WHERE repairdate_out IS NULL AND state = 5)")
+            dbSQL.ExecuteScalar("UPDATE good SET state_repair=null where good_sys_id NOT IN (SELECT DISTINCT good_sys_id FROM cash_history WHERE repairdate_out IS NULL AND state = 5)")
         End Sub
 
     End Class

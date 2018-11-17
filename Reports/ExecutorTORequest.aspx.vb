@@ -36,9 +36,13 @@ Namespace Kasbi.Reports
             Dim adapt As SqlClient.SqlDataAdapter
             Dim ds As DataSet = New DataSet
             Try
-                adapt = dbSQL.GetDataAdapter("get_masters", True)
+                Dim cmd = New SqlClient.SqlCommand("get_employee_by_role_id")
+                cmd.CommandType = CommandType.StoredProcedure
+                cmd.Parameters.AddWithValue("@pi_role_id", 0)
+                adapt = dbSQL.GetDataAdapter(cmd)
                 ds = New DataSet
                 adapt.Fill(ds)
+                ds.Tables(0).DefaultView.Sort = "Name"
                 lbxExecutor.DataSource = ds.Tables(0).DefaultView
                 lbxExecutor.DataValueField = "sys_id"
                 lbxExecutor.DataTextField = "Name"
@@ -76,8 +80,8 @@ Namespace Kasbi.Reports
             Dim drs() As DataRow
             Dim iFirstTableRow = 2
 
-            docPath = Server.MapPath("~") & "\Templates\TO_by_executor.xlsx"
-            savePath = Server.MapPath("~") & "\Docs\TO\" & Session("User").sys_id & "\" & fileName
+            docPath = Server.MapPath("~") & "Templates\TO_by_executor.xlsx"
+            savePath = Server.MapPath("~") & "Docs\TO\" & Session("User").sys_id & "\" & fileName
             CopyFile(docPath, savePath, overwrite:=True)
 
             oExcel = New ApplicationClass()

@@ -31,40 +31,75 @@
             <tr>
                 <td align="center">
                     <asp:DataGrid ID="grdRepairBads" runat="server" ShowFooter="True" AutoGenerateColumns="False"
-                        Width="75%" PageSize="14" AllowPaging="True"  BorderColor="#CC9966" BorderWidth="1px">
+                        Width="75%" AllowPaging="False"  BorderColor="#CC9966" BorderWidth="1px">
                         <AlternatingItemStyle CssClass="alternativeitemGrid"></AlternatingItemStyle>
                         <ItemStyle CssClass="itemGrid"></ItemStyle>
                         <HeaderStyle CssClass="headerGrid" ></HeaderStyle>
                         <FooterStyle CssClass="footerGrid"></FooterStyle>
                         <Columns>
                             <asp:TemplateColumn HeaderText="Наименование">
+                                <HeaderStyle HorizontalAlign="Center" Width="70%"></HeaderStyle>
                                 <ItemTemplate>
                                     <%#DataBinder.Eval(Container, "DataItem.name")%>
                                 </ItemTemplate>
                                 <FooterTemplate>
-                                    <asp:TextBox Width="300" ID="txtName" runat="server" BorderWidth="1px" BackColor="#F6F8FC"></asp:TextBox>
+                                    <asp:TextBox ID="txtName" runat="server" BorderWidth="1px" BackColor="#F6F8FC" Width="100%"></asp:TextBox>
                                 </FooterTemplate>
                                 <EditItemTemplate>
-                                    <asp:TextBox Width="300" ID="txtNameEdit" runat="server" BorderWidth="1px" BackColor="#F6F8FC"
+                                    <asp:TextBox ID="txtNameEdit" runat="server" BorderWidth="1px" BackColor="#F6F8FC" Width="100%"
                                         Text='<%# DataBinder.Eval(Container, "DataItem.name") %>'>
                                     </asp:TextBox>
                                 </EditItemTemplate>
                             </asp:TemplateColumn>
-                            <asp:TemplateColumn HeaderText="Стоимость ремонта">
+                            <asp:TemplateColumn HeaderText="Начальная стоимость, руб">
+                                <HeaderStyle HorizontalAlign="Center" Width="5%"></HeaderStyle>
+                                <ItemStyle HorizontalAlign="Center"></ItemStyle>
+                                <FooterStyle HorizontalAlign="Center"></FooterStyle>
                                 <ItemTemplate>
-                                    <%# DataBinder.Eval(Container, "DataItem.price") %>
+                                    <%# DataBinder.Eval(Container, "DataItem.price_from") %>
                                 </ItemTemplate>
                                 <FooterTemplate>
-                                    <asp:TextBox Width="300" ID="txtValue" runat="server" BorderWidth="1px" BackColor="#F6F8FC"></asp:TextBox>
+                                    <asp:TextBox ID="txtPriceFrom" runat="server" BorderWidth="1px" BackColor="#F6F8FC"></asp:TextBox>
                                 </FooterTemplate>
                                 <EditItemTemplate>
-                                    <asp:TextBox Width="300" ID="txtValueEdit" runat="server" BorderWidth="1px" BackColor="#F6F8FC"
-                                        Text='<%# DataBinder.Eval(Container, "DataItem.price") %>'>
+                                    <asp:TextBox ID="txtPriceFromEdit" runat="server" BorderWidth="1px" BackColor="#F6F8FC"
+                                        Text='<%# DataBinder.Eval(Container, "DataItem.price_from") %>'>
                                     </asp:TextBox>
                                 </EditItemTemplate>
                             </asp:TemplateColumn>
+                            <asp:TemplateColumn HeaderText="Конечная стоимость, руб">
+                                <HeaderStyle HorizontalAlign="Center" Width="5%"></HeaderStyle>
+                                <ItemStyle HorizontalAlign="Center"></ItemStyle>
+                                <FooterStyle HorizontalAlign="Center"></FooterStyle>
+                                <ItemTemplate>
+                                    <%# DataBinder.Eval(Container, "DataItem.price_to") %>
+                                </ItemTemplate>
+                                <FooterTemplate>
+                                    <asp:TextBox ID="txtPriceTo" runat="server" BorderWidth="1px" BackColor="#F6F8FC"></asp:TextBox>
+                                </FooterTemplate>
+                                <EditItemTemplate>
+                                    <asp:TextBox ID="txtPriceToEdit" runat="server" BorderWidth="1px" BackColor="#F6F8FC"
+                                                 Text='<%# DataBinder.Eval(Container, "DataItem.price_to") %>'>
+                                    </asp:TextBox>
+                                </EditItemTemplate>
+                            </asp:TemplateColumn>
+                            <asp:TemplateColumn HeaderText="Деактивирован">
+                                <HeaderStyle HorizontalAlign="Center" Width="10%"></HeaderStyle>
+                                <ItemStyle HorizontalAlign="Center"></ItemStyle>
+                                <FooterStyle HorizontalAlign="Center"></FooterStyle>
+                                <ItemTemplate>
+                                    <%# IIf(DataBinder.Eval(Container.DataItem, "deleted"), "Да", "Нет")%>
+                                </ItemTemplate>
+                                <FooterTemplate>
+                                    <asp:CheckBox ID="cbxDisabledNew" runat="server" BorderWidth="1px"></asp:CheckBox>
+                                </FooterTemplate>
+                                <EditItemTemplate>
+                                    <asp:CheckBox ID="cbxDisabledEdit" runat="server" BorderWidth="1px" Checked='<%# DataBinder.Eval(Container.DataItem, "deleted")%>'></asp:CheckBox>
+                                </EditItemTemplate>
+                            </asp:TemplateColumn>
                             <asp:TemplateColumn>
-                                <FooterStyle HorizontalAlign="Center" Width=30></FooterStyle>
+                                <HeaderStyle HorizontalAlign="Center" Width="10%"></HeaderStyle>
+                                <FooterStyle HorizontalAlign="Center"></FooterStyle>
                                 <ItemStyle HorizontalAlign="Center"></ItemStyle>
                                 <ItemTemplate>
                                     <asp:ImageButton ID="cmdEdit" runat="server" CommandName="Edit" ToolTip="Изменить"

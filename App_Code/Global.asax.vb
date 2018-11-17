@@ -1,10 +1,12 @@
-﻿Imports System.Web
+﻿Imports System.Diagnostics
+Imports System.Web
 Imports System.Web.Http
 Imports System.Web.Mvc
 Imports System.Web.Optimization
 Imports System.Web.Routing
 Imports System.Web.SessionState
 Imports config
+Imports Jobs
 
 
 Namespace Kasbi
@@ -13,6 +15,9 @@ Namespace Kasbi
     Public Class [Global]
         Inherits System.Web.HttpApplication
 
+        ReadOnly _smsScheduler As SmsScheduler = New SmsScheduler()
+
+        
 
 #Region " Component Designer Generated Code "
 
@@ -46,6 +51,8 @@ Namespace Kasbi
 
             AreaRegistration.RegisterAllAreas()
             GlobalConfiguration.Configure(AddressOf WebApiConfig.Register)
+            'SmsSimplyScheduler.Start()
+            '_smsScheduler.Start()
             'FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters)
             'RouteConfig.RegisterRoutes(RouteTable.Routes)
             'BundleConfig.RegisterBundles(BundleTable.Bundles)
@@ -55,6 +62,7 @@ Namespace Kasbi
             ' Fires when the session is started
             Session.Timeout = 900
             Session("dbSQL") = New MSSqlDB()
+            Debug.WriteLine("Session_Start")
         End Sub
 
         Sub Application_BeginRequest(ByVal sender As Object, ByVal e As EventArgs)

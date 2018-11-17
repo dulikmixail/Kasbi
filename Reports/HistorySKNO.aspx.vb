@@ -1,4 +1,5 @@
-﻿Imports Microsoft.Office.Interop.Excel
+﻿Imports System.Runtime.InteropServices
+Imports Microsoft.Office.Interop.Excel
 Imports Microsoft.VisualBasic.FileIO.FileSystem
 
 Namespace Kasbi.Reports
@@ -21,7 +22,7 @@ Namespace Kasbi.Reports
         End Sub
 
         Private Sub InitComonents()
-            tbxBeginDate.Text = DateTime.Today.AddDays(-DateTime.Today.Day + 1).ToString("dd.MM.yyyy")
+            tbxBeginDate.Text = DateTime.Today.AddDays(- DateTime.Today.Day + 1).ToString("dd.MM.yyyy")
             tbxEndDate.Text = DateTime.Today.ToString("dd.MM.yyyy")
         End Sub
 
@@ -69,18 +70,20 @@ Namespace Kasbi.Reports
             adapt.Fill(ds)
 
             createAndSendFileHistorySKNO(ds, "kkm_skno_history.xlsx")
-
         End Sub
 
         Private Sub createAndSendFileHistorySKNO(ds As DataSet, fileName As String)
+            Dim oExcel As Microsoft.Office.Interop.Excel.Application
+            Dim oBook As Workbook
+            Dim oSheet As Worksheet
             Dim docPath, savePath As String
             Dim file As IO.FileInfo
             Dim drs() As DataRow
             Dim iFirstTableRow = 2
 
-            docPath = Server.MapPath("~") & "\Templates\" & fileName
-            savePath = Server.MapPath("~") & "\Docs\TO\" & Session("User").sys_id & "\" & fileName
-            CopyFile(docPath, savePath, overwrite:=True)
+            docPath = Server.MapPath("~") & "Templates\" & fileName
+            savePath = Server.MapPath("~") & "Docs\TO\" & Session("User").sys_id & "\" & fileName
+            CopyFile(docPath, savePath, overwrite := True)
 
             oExcel = New ApplicationClass()
             oExcel.DisplayAlerts = False
@@ -101,7 +104,6 @@ Namespace Kasbi.Reports
             oBook.Close(True, savePath, True)
             oExcel.Quit()
 
-
             file = New IO.FileInfo(savePath)
             If file.Exists Then
                 Response.Clear()
@@ -113,8 +115,6 @@ Namespace Kasbi.Reports
             Else
                 Response.Write("This file does not exist.")
             End If
-
         End Sub
     End Class
-
 End Namespace

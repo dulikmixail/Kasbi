@@ -22,6 +22,7 @@ Namespace Kasbi
         Protected WithEvents txtMarka_Cond_ZReport_out As System.Web.UI.WebControls.TextBox
         Protected WithEvents txtMarka_Cond_Itog_in As System.Web.UI.WebControls.TextBox
         Protected WithEvents txtMarka_Cond_Itog_out As System.Web.UI.WebControls.TextBox
+        Private serviceSale As ServiceSale = New ServiceSale()
 
 
         Private Sub Page_Init(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Init
@@ -73,45 +74,45 @@ Namespace Kasbi
                 rbTO_SelectedIndexChanged(Me, Nothing)
                 LoadGoodInfo()
                 LoadCustomerList()
-                LoadSKNOInfo()
+                'LoadSKNOInfo()
             End If
         End Sub
 
-        Sub LoadSKNOInfo()
-            Dim cmd As SqlClient.SqlCommand
-            Dim reader As SqlClient.SqlDataReader
+        'Sub LoadSKNOInfo()
+        '    Dim cmd As SqlClient.SqlCommand
+        '    Dim reader As SqlClient.SqlDataReader
 
-            Try
-                cmd = New SqlClient.SqlCommand("get_skno_history")
-                cmd.Parameters.AddWithValue("@pi_good_sys_id", iCash)
-                cmd.CommandType = CommandType.StoredProcedure
-                reader = dbSQL.GetReader(cmd)
+        '    Try
+        '        cmd = New SqlClient.SqlCommand("get_last_skno_history")
+        '        cmd.Parameters.AddWithValue("@pi_good_sys_id", iCash)
+        '        cmd.CommandType = CommandType.StoredProcedure
+        '        reader = dbSQL.GetReader(cmd)
 
-                rbSKNO.Visible = False
-                btnSaveSKNOInfo.Visible = False
-                If Session("rule29") = 1 Or CurrentUser.is_admin Then
-                    rbSKNO.Visible = True
-                    btnSaveSKNOInfo.Visible = True
-                End If
-                If Not reader.Read Then
-                    rbSKNO.SelectedValue = 0.ToString()
-                    lblSKNOExecutor.Visible = False
-                    lblSKNOExecutorInfo.Visible = False
-                Else
-                    If reader("state_SKNO") = 1 Then
-                        lblSupportSKNO.Text = ", установлено СКНО"
-                    End If
-                    rbSKNO.SelectedValue = reader("state_SKNO").ToString()
-                    lblSKNOExecutorInfo.Text = reader("executor").ToString()
-                End If
-                reader.Close()
-            Catch
-                msg.Text = "Ошибка загрузки информации о установке СКНО!1<br>" & Err.Description
-                reader.Close()
-                Exit Sub
-            End Try
+        '        rbSKNO.Visible = False
+        '        btnSaveSKNOInfo.Visible = False
+        '        If Session("rule29") = 1 Or CurrentUser.is_admin Then
+        '            rbSKNO.Visible = True
+        '            btnSaveSKNOInfo.Visible = True
+        '        End If
+        '        If Not reader.Read Then
+        '            rbSKNO.SelectedValue = 0.ToString()
+        '            lblSKNOExecutor.Visible = False
+        '            lblSKNOExecutorInfo.Visible = False
+        '        Else
+        '            If reader("state_SKNO") = 1 Then
+        '                lblSupportSKNO.Text = ", установлено СКНО"
+        '            End If
+        '            rbSKNO.SelectedValue = reader("state_SKNO").ToString()
+        '            lblSKNOExecutorInfo.Text = reader("executor").ToString()
+        '        End If
+        '        reader.Close()
+        '    Catch
+        '        msg.Text = "Ошибка загрузки информации о установке СКНО!1<br>" & Err.Description
+        '        reader.Close()
+        '        Exit Sub
+        '    End Try
 
-        End Sub
+        'End Sub
 
         Sub LoadGoodInfo()
             Dim cmd As SqlClient.SqlCommand
@@ -549,6 +550,11 @@ Namespace Kasbi
                         Exit Sub
                     End If
 
+                    If lstPlaceRegion.SelectedValue = ClearString
+                        msgAddSupportConduct.Text = "Выберите район установки!"
+                        Exit Sub
+                    End If
+
                     Try
                         cmd = New SqlClient.SqlCommand("insert_supportConduct")
                         cmd.CommandType = CommandType.StoredProcedure
@@ -736,7 +742,6 @@ Namespace Kasbi
                             Try
                                 Const cost As Integer = 5
                                 Const txtNewInfo As String = "Снятие c техничекого обслуживания"
-                                Const repareInInfo As String = "Акт был сформирован при снятии с ТО"
                                 Const normaHour As Double = 0.18
                                 Const detailID As Integer = 167
 
@@ -773,8 +778,7 @@ Namespace Kasbi
                                 cmd.Parameters.AddWithValue("@pi_executor", lstWorker.SelectedValue)
                                 cmd.Parameters.AddWithValue("@pi_repair_in", 1)
                                 cmd.Parameters.AddWithValue("@updateUserID", CurrentUser.sys_id)
-                                cmd.Parameters.AddWithValue("@repare_in_info", repareInInfo)
-
+                                cmd.Parameters.AddWithValue("@repare_in_info", DBNull.Value)
                                 cmd.Parameters.AddWithValue("@pi_price", 0)
                                 cmd.Parameters.AddWithValue("@pi_quantity", 1)
                                 cmd.Parameters.AddWithValue("@pi_cost_service", cost)
@@ -812,6 +816,11 @@ Namespace Kasbi
                     cust = lstCustomers.SelectedItem.Value
                     If cust = 0 Then
                         msgAddSupportConduct.Text = "Ошибка определения клиента!"
+                        Exit Sub
+                    End If
+
+                    If lstPlaceRegion.SelectedValue = ClearString
+                        msgAddSupportConduct.Text = "Выберите район установки!"
                         Exit Sub
                     End If
 
@@ -898,7 +907,7 @@ Namespace Kasbi
 
                         If dbSQL.Execute(cmd) <> 0 Then
                             Try
-                                dbSQL.Execute("update customer set dogovor=unn where  customer_sys_id=" & cust)
+                                dbSQL.Execute("update customer set dogovor=unn where dogovor!=unn and customer_sys_id=" & cust)
                             Catch
                                 msgAddSupportConduct.Text = "Ошибка обновления номера договора!<br>" & Err.Description
                             End Try
@@ -1522,24 +1531,6 @@ Namespace Kasbi
                 button.ToolTip = "Скрыть"
             End If
         End Sub
-        Private Sub btnSaveSKNOInfo_Click(ByVal sender As System.Object, ByVal e As System.Web.UI.ImageClickEventArgs) Handles btnSaveSKNOInfo.Click
-            Dim test As String = iCash
-            Dim cmd As SqlClient.SqlCommand
-            Dim adapt As SqlClient.SqlDataAdapter
-            Dim ds As DataSet
-
-            cmd = New SqlClient.SqlCommand("insert_skno_history")
-            cmd.CommandType = CommandType.StoredProcedure
-            cmd.Parameters.AddWithValue("@pi_good_sys_id", iCash)
-            cmd.Parameters.AddWithValue("@pi_state_skno", rbSKNO.SelectedValue)
-            cmd.Parameters.AddWithValue("@pi_executor", Session("User").sys_id)
-            cmd.Parameters.AddWithValue("@pi_comment", "")
-            adapt = dbSQL.GetDataAdapter(cmd)
-            ds = New DataSet
-            adapt.Fill(ds)
-
-        End Sub
-
 
         Private Sub rbTO_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles rbTO.SelectedIndexChanged
             If rbTO.SelectedIndex = 2 And chkDelayTO.Checked = False Then
@@ -1686,7 +1677,7 @@ Namespace Kasbi
 
         Function SaveRebillingInfo() As Integer
             Dim cmd As SqlClient.SqlCommand
-            Dim i%, sSubDogovor$, dogovor%, s$, iSale%
+            Dim i%, sSubDogovor%, dogovor%, s$, iSale%
             Dim param As SqlClient.SqlParameter
             Dim ch() As Char = {"\", "/", ".", "-"}
             Dim cust%
@@ -1701,16 +1692,19 @@ Namespace Kasbi
                 msgAddSupportConduct.Text = "Ошибка определения клиента!"
                 Exit Function
             End If
-            'определяем номер договора и поддоговора
+            'определяем номер договора
             If cmbSalesInfo.SelectedItem.Value = "0" Then
+
+                'получаем номер приложения к договору
+                sSubDogovor = serviceSale.GetNextSaleDogovorByCustomer(cust)
+                If serviceSale.HaveAnyExeption() Then
+                    msgAddSupportConduct.Text = serviceSale.GetTextStringAllExeption()
+                    Exit Function
+                End If
+
                 Try
                     s = txtDogovor.Text
                     i = s.IndexOfAny(ch)
-                    If i > 0 Then
-                        sSubDogovor = s.Substring(i)
-                    Else
-                        sSubDogovor = ""
-                    End If
                     If i > 0 Then
                         dogovor = CInt(s.Substring(0, i))
                     Else
@@ -1728,9 +1722,10 @@ Namespace Kasbi
                     cmd.Parameters.AddWithValue("@pi_firm_sys_id", 1)
                     cmd.Parameters.AddWithValue("@pi_info", DBNull.Value)
 
-                    Dim rebilling_date As DateTime = New DateTime
+                    Dim rebilling_date As DateTime = Now
                     Try
                         rebilling_date = DateTime.Parse(tbxSupportDate.Text)
+                        rebilling_date = rebilling_date.AddHours(Now.Hour).AddMinutes(Now.Minute).AddSeconds(Now.Second)
                     Catch
                         msgAddSupportConduct.Text = "Пожалуйста, введите корректное значение даты переоформления"
                         Exit Function
@@ -1739,7 +1734,7 @@ Namespace Kasbi
                     cmd.Parameters.AddWithValue("@pi_sale_date", rebilling_date)
                     cmd.Parameters.AddWithValue("@pi_state", 4)
                     cmd.Parameters.AddWithValue("@pi_type", 1)
-                    cmd.Parameters.AddWithValue("@pi_dogovor", "")
+                    cmd.Parameters.AddWithValue("@pi_dogovor", sSubDogovor)
                     cmd.Parameters.AddWithValue("@pi_proxy", "")
                     param = New SqlClient.SqlParameter
                     param.Direction = ParameterDirection.Output

@@ -1,3 +1,5 @@
+Imports System.Data.SqlClient
+
 Namespace Kasbi
 
     Partial Class Repair
@@ -51,7 +53,7 @@ Namespace Kasbi
             Dim reader As SqlClient.SqlDataReader
 
             Try
-                cmd = New SqlClient.SqlCommand("get_skno_history")
+                cmd = New SqlClient.SqlCommand("get_last_skno_history")
                 cmd.Parameters.AddWithValue("@pi_good_sys_id", iCash)
                 cmd.CommandType = CommandType.StoredProcedure
                 reader = dbSQL.GetReader(cmd)
@@ -195,7 +197,7 @@ Namespace Kasbi
                 ShowRepairImage()
             Catch
                 msg.Text = "Ошибка загрузки информации о товаре!<br>" & Err.Description
-                reader.Close()
+                'reader.Close()
                 Exit Sub
             End Try
 
@@ -305,6 +307,11 @@ Namespace Kasbi
                 ShowRepairImage()
 
                 Dim query = dbSQL.ExecuteScalar("Update good SET inrepair='1' WHERE good_sys_id='" & iCash & "'")
+                cmd  = New SqlCommand("set_state_repair")
+                cmd.Parameters.AddWithValue("@pi_state_repair", 1)
+                cmd.Parameters.AddWithValue("@pi_good_sys_id", icash)
+                cmd.CommandType = CommandType.StoredProcedure
+                dbSQL.Execute(cmd)
 
             Catch
                 msgHistory.Text = "Ошибка добавления информации о ремонте!<br>" & Err.Description
@@ -331,7 +338,13 @@ Namespace Kasbi
                 End If
                 CType(e.Item.FindControl("lblUpdateRec"), Label).Text = s
 
-                s = Format(e.Item.DataItem("date_in"), "dd.MM.yyyy HH:mm") & " / "
+                If IsDBNull(e.Item.DataItem("date_in"))
+                    s = "??.??.????"
+                Else
+                    s = Format(e.Item.DataItem("date_in"), "dd.MM.yyyy HH:mm")
+                End If
+                s &= " / "
+
                 If IsDBNull(e.Item.DataItem("date_out")) Then
                     s = s & "??.??.????"
                     isLabelShow = False
@@ -339,7 +352,7 @@ Namespace Kasbi
                     CType(e.Item.FindControl("lnkActRepairIN_OUT"), HyperLink).NavigateUrl = GetAbsoluteUrl("documents.aspx?t=31&c=" & e.Item.DataItem("owner_sys_id") & "&g=" & e.Item.DataItem("good_sys_id") & "&h=" & e.Item.DataItem("sys_id"))
 
                 Else
-                    s = s & Format(e.Item.DataItem("date_out"), "dd.MM.yyyy ")
+                    s = s & Format(e.Item.DataItem("date_out"), "dd.MM.yyyy HH:mm")
                     CType(e.Item.FindControl("lnkActRepairIN_OUT"), HyperLink).Text = "Акт о принятии в ремонт"
                     CType(e.Item.FindControl("lnkActRepairIN_OUT"), HyperLink).NavigateUrl = GetAbsoluteUrl("documents.aspx?t=31&c=" & e.Item.DataItem("owner_sys_id") & "&g=" & e.Item.DataItem("good_sys_id") & "&h=" & e.Item.DataItem("sys_id"))
                     Dim sale%
@@ -469,6 +482,12 @@ Namespace Kasbi
                     dbSQL.Execute(cmd)
 
                     Dim query = dbSQL.ExecuteScalar("UPDATE good SET inrepair=null WHERE good_sys_id='" & iCash & "'")
+
+                    cmd = New SqlCommand("set_state_repair")
+                    cmd.Parameters.AddWithValue("@pi_state_repair", 0)
+                    cmd.Parameters.AddWithValue("@pi_good_sys_id", icash)
+                    cmd.CommandType = CommandType.StoredProcedure
+                    dbSQL.Execute(cmd)
                 Catch
                     msgHistory.Text = "Ошибка удаления записи!<br>" & Err.Description
                 End Try

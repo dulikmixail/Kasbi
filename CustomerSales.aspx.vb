@@ -1,4 +1,5 @@
 Imports System.Collections.Generic
+Imports Service
 
 Namespace Kasbi
 
@@ -139,15 +140,14 @@ Namespace Kasbi
             Dim readerSales As SqlClient.SqlDataReader
             Dim ctrl As Kasbi.Sale 'ASP.sale_ascx 
             Dim ctrl1 As Kasbi.RebillingGrid 'ASP.rebillinggrid_ascx 
-            Dim s$, sale%, sDogovor$, sDogovorOld$
-            Dim support, cto, dogovorIsVisible, dogovorOldIsVisible, dogovorDopdIsVisible As Boolean
+            Dim s$, sale%, sDogovor$, sDogovorOld$, subDogovor$, dopStr$
+            Dim support, cto, dogovorIsVisible, dogovorOldIsVisible, dogovorDopdIsVisible, dogovor3IsVisible As Boolean
             Dim controls As New List(Of Control)
             Dim saleHaveCashregCount As Integer = 0
             sDogovorOld = ""
             sDogovor = ""
-
-
-
+            subDogovor = ""
+            dopStr = ""
 
             Try
                 cmdSales = New SqlClient.SqlCommand("get_sales_by_customer")
@@ -158,16 +158,52 @@ Namespace Kasbi
                 While readerSales.Read
                     sDogovorOld = sDogovor
                     sale = readerSales.Item("sale_sys_id")
-                    sDogovor = readerSales.Item("subdogovor")
-                    If sDogovor.Trim.Length > 0 Then
-                        sDogovor = readerSales.Item("dogovor") & sDogovor
+                    sDogovor = readerSales.Item("dogovor")
+                    subDogovor = readerSales.Item("subdogovor")
+                    'If sDogovor.Trim.Length > 0 Then
+                    '    sDogovor = readerSales.Item("dogovor") & sDogovor
+                    'Else
+                    '    sDogovor = readerSales.Item("dogovor")
+                    'End If
+                    If readerSales.Item("is_have_cashregister") = 1 Then
+                        If DateTime.Parse(readerSales.Item("sale_date").ToString()) > DateTime.Parse("04.09.2018") Then
+                            dogovorIsVisible = False
+                            dogovorDopdIsVisible = False
+                            dogovorOldIsVisible = False
+                            dogovor3IsVisible = True
+                            dopStr = " и приложению №" & subDogovor
+                        Else
+                            If DateTime.Parse(readerSales.Item("sale_date").ToString()) > DateTime.Parse("20.02.2018") Then
+                                If saleHaveCashregCount = 0 Then
+                                    dogovorIsVisible = True
+                                    dogovorDopdIsVisible = False
+                                    dogovorOldIsVisible = False
+                                    dogovor3IsVisible = False
+                                    saleHaveCashregCount += 1
+                                Else
+                                    dogovorIsVisible = False
+                                    dogovorDopdIsVisible = True
+                                    dogovorOldIsVisible = False
+                                    dogovor3IsVisible = False
+                                End If
+                            Else
+                                dogovorIsVisible = False
+                                dogovorDopdIsVisible = False
+                                dogovorOldIsVisible = True
+                                dogovor3IsVisible = False
+                            End If
+
+                        End If
                     Else
-                        sDogovor = readerSales.Item("dogovor")
+                        dogovorIsVisible = False
+                        dogovorDopdIsVisible = False
+                        dogovorOldIsVisible = False
+                        dogovor3IsVisible = False
                     End If
 
                     Dim b, rebill As Boolean
                     If readerSales.Item("state") = 1 Then
-                        s = "&nbsp;Заказ №" & sDogovor
+                        s = "&nbsp;Заказ к договору №" & sDogovor & dopStr
                         'b = readerSales.Item("cto") <> 1
                         If readerSales.Item("type") = 0 Then
                             b = True
@@ -176,47 +212,22 @@ Namespace Kasbi
                         End If
                         rebill = False
                     ElseIf readerSales.Item("state") = 4 Then
-                        s = "&nbsp;Переоформление №" & sDogovor
+                        s = "&nbsp;Переоформление к договору №" & sDogovor & dopStr
                         b = False
                         rebill = True
                     Else
-                        s = "&nbsp;Продажа №" & sDogovor
+                        s = "&nbsp;Продажа к договору №" & sDogovor & dopStr
                         If readerSales.Item("type") = 1 Then
-                            s = s & "(без/нал)"
+                            s = s & " (без/нал)"
                         ElseIf readerSales.Item("type") = 3 Then
-                            s = s & "(сберкасса)"
+                            s = s & " (сберкасса)"
                         Else
-                            s = s & "(наличные)"
+                            s = s & " (наличные)"
                         End If
                         b = False
                         rebill = False
                     End If
 
-
-
-                    If readerSales.Item("is_have_cashregister") = 1 Then
-                        If DateTime.Parse(readerSales.Item("sale_date").ToString()) > DateTime.Parse("20.02.2018") Then
-                            If saleHaveCashregCount = 0 Then
-                                dogovorIsVisible = True
-                                dogovorDopdIsVisible = False
-                                dogovorOldIsVisible = False
-                                saleHaveCashregCount += 1
-                            Else
-                                dogovorIsVisible = False
-                                dogovorDopdIsVisible = True
-                                dogovorOldIsVisible = False
-                            End If
-                        Else
-                            dogovorIsVisible = False
-                            dogovorDopdIsVisible = False
-                            dogovorOldIsVisible = True
-                        End If
-
-                    Else
-                        dogovorIsVisible = False
-                        dogovorDopdIsVisible = False
-                        dogovorOldIsVisible = False
-                    End If
 
                     If rebill Then
                         ctrl1 = CType(LoadControl("~/RebillingGrid.ascx"), Kasbi.RebillingGrid)
@@ -249,6 +260,14 @@ Namespace Kasbi
                             CType(ctrl1.FindControl("lnkDogovor_Na_TO_Dop_2"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?rebilling=1&c=" & cust & "&s=" & sale & "&t=59")
                         Else
                             CType(ctrl1.FindControl("lnkDogovor_Na_TO_Dop_2"), HyperLink).Visible = False
+                        End If
+
+                        If dogovor3IsVisible Then
+                            CType(ctrl1.FindControl("lnkDogovor_Na_TO_3"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?rebilling=1&c=" & cust & "&s=" & sale & "&t=61")
+                            CType(ctrl1.FindControl("lnkReestr_kass_na_TO"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?rebilling=1&c=" & cust & "&s=" & sale & "&t=62")
+                        Else
+                            CType(ctrl1.FindControl("lnkDogovor_Na_TO_3"), HyperLink).Visible = False
+                            CType(ctrl1.FindControl("lnkReestr_kass_na_TO"), HyperLink).Visible = False
                         End If
                         CType(ctrl1.FindControl("lnkSpisok_KKM"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?rebilling=1&c=" & cust & "&s=" & sale & "&t=7")
                         CType(ctrl1.FindControl("lnkZayavlenie_IMNS"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?rebilling=1&c=" & cust & "&s=" & sale & "&t=18")
@@ -296,6 +315,15 @@ Namespace Kasbi
                         Else
                             CType(ctrl.FindControl("lnkDogovor_Na_TO_Dop_2"), HyperLink).Visible = False
                         End If
+
+                        If dogovor3IsVisible Then
+                            CType(ctrl.FindControl("lnkDogovor_Na_TO_3"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?rebilling=0&c=" & cust & "&s=" & sale & "&t=61")
+                            CType(ctrl.FindControl("lnkReestr_kass_na_TO"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?rebilling=0&c=" & cust & "&s=" & sale & "&t=62")
+                        Else
+                            CType(ctrl.FindControl("lnkDogovor_Na_TO_3"), HyperLink).Visible = False
+                            CType(ctrl.FindControl("lnkReestr_kass_na_TO"), HyperLink).Visible = False
+                        End If
+
 
                         CType(ctrl.FindControl("lnkSpisok_KKM"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?c=" & cust & "&s=" & sale & "&t=7")
 

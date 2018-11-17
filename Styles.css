@@ -457,9 +457,9 @@ A.LinkButtonExport:hover
 .hiddencitylist2
 {
 	display: none;
-	left: 130px;
+	left: 260px;
 	position: absolute;
-	top: 240px;
+	top: 235px;
 }
 .hiddencitylist3
 {
@@ -656,6 +656,11 @@ td.HeaderPage
 
 .buttonCalendar:focus > .calendar {
     display: table;
+}
+
+.errorInfo {
+    color: red;
+    font-style: italic;
 }
 
 /*date pije*/
