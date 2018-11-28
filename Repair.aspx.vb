@@ -259,65 +259,65 @@ Namespace Kasbi
             End Try
         End Function
 
-        Private Sub lnkRepairIN_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles lnkRepairIN.Click
+        'Private Sub lnkRepairIN_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles lnkRepairIN.Click
 
-            Dim cmd As SqlClient.SqlCommand
-            CurrentCustomer = Parameters.Value
-            Try
-                Dim akt$ = GetNewAktNumber()
-                If akt Is Nothing Then
-                    akt = ""
-                End If
+        '    Dim cmd As SqlClient.SqlCommand
+        '    CurrentCustomer = Parameters.Value
+        '    Try
+        '        Dim akt$ = GetNewAktNumber()
+        '        If akt Is Nothing Then
+        '            akt = ""
+        '        End If
 
-                cmd = New SqlClient.SqlCommand("new_repair")
-                cmd.Parameters.AddWithValue("@pi_good_sys_id", iCash)
-                cmd.Parameters.AddWithValue("@pi_owner_sys_id", CurrentCustomer)
-                cmd.Parameters.AddWithValue("@pi_date_in", Now)
-                cmd.Parameters.AddWithValue("@pi_date_out", DBNull.Value)
-                cmd.Parameters.AddWithValue("@pi_marka_cto_in", "")
-                cmd.Parameters.AddWithValue("@pi_marka_cto_out", "")
-                cmd.Parameters.AddWithValue("@pi_marka_pzu_in", "")
-                cmd.Parameters.AddWithValue("@pi_marka_pzu_out", "")
-                cmd.Parameters.AddWithValue("@pi_marka_mfp_in", "")
-                cmd.Parameters.AddWithValue("@pi_marka_mfp_out", "")
-                cmd.Parameters.AddWithValue("@pi_marka_reestr_in", "")
-                cmd.Parameters.AddWithValue("@pi_marka_reestr_out", "")
-                cmd.Parameters.AddWithValue("@pi_marka_cto2_in", "")
-                cmd.Parameters.AddWithValue("@pi_marka_cto2_out", "")
-                cmd.Parameters.AddWithValue("@pi_marka_cp_in", "")
-                cmd.Parameters.AddWithValue("@pi_marka_cp_out", "")
-                cmd.Parameters.AddWithValue("@pi_zreport_in", "")
-                cmd.Parameters.AddWithValue("@pi_zreport_out", "")
-                cmd.Parameters.AddWithValue("@pi_itog_in", "")
-                cmd.Parameters.AddWithValue("@pi_itog_out", "")
-                cmd.Parameters.AddWithValue("@pi_details", "")
-                cmd.Parameters.AddWithValue("@pi_akt", akt)
-                cmd.Parameters.AddWithValue("@pi_summa", "")
-                cmd.Parameters.AddWithValue("@pi_info", "")
-                cmd.Parameters.AddWithValue("@pi_repair_info", "")
-                cmd.Parameters.AddWithValue("@pi_executor", CurrentUser.sys_id)
-                cmd.Parameters.AddWithValue("@pi_repair_in", 1)
-                cmd.Parameters.AddWithValue("@updateUserID", CurrentUser.sys_id)
-                cmd.Parameters.AddWithValue("@repare_in_info", " ")
-                cmd.CommandType = CommandType.StoredProcedure
-                dbSQL.Execute(cmd)
-                msgHistory.Text = "Запись о ремонте успешно добавлена!"
+        '        cmd = New SqlClient.SqlCommand("new_repair")
+        '        cmd.Parameters.AddWithValue("@pi_good_sys_id", iCash)
+        '        cmd.Parameters.AddWithValue("@pi_owner_sys_id", CurrentCustomer)
+        '        cmd.Parameters.AddWithValue("@pi_date_in", Now)
+        '        cmd.Parameters.AddWithValue("@pi_date_out", DBNull.Value)
+        '        cmd.Parameters.AddWithValue("@pi_marka_cto_in", "")
+        '        cmd.Parameters.AddWithValue("@pi_marka_cto_out", "")
+        '        cmd.Parameters.AddWithValue("@pi_marka_pzu_in", "")
+        '        cmd.Parameters.AddWithValue("@pi_marka_pzu_out", "")
+        '        cmd.Parameters.AddWithValue("@pi_marka_mfp_in", "")
+        '        cmd.Parameters.AddWithValue("@pi_marka_mfp_out", "")
+        '        cmd.Parameters.AddWithValue("@pi_marka_reestr_in", "")
+        '        cmd.Parameters.AddWithValue("@pi_marka_reestr_out", "")
+        '        cmd.Parameters.AddWithValue("@pi_marka_cto2_in", "")
+        '        cmd.Parameters.AddWithValue("@pi_marka_cto2_out", "")
+        '        cmd.Parameters.AddWithValue("@pi_marka_cp_in", "")
+        '        cmd.Parameters.AddWithValue("@pi_marka_cp_out", "")
+        '        cmd.Parameters.AddWithValue("@pi_zreport_in", "")
+        '        cmd.Parameters.AddWithValue("@pi_zreport_out", "")
+        '        cmd.Parameters.AddWithValue("@pi_itog_in", "")
+        '        cmd.Parameters.AddWithValue("@pi_itog_out", "")
+        '        cmd.Parameters.AddWithValue("@pi_details", "")
+        '        cmd.Parameters.AddWithValue("@pi_akt", akt)
+        '        cmd.Parameters.AddWithValue("@pi_summa", "")
+        '        cmd.Parameters.AddWithValue("@pi_info", "")
+        '        cmd.Parameters.AddWithValue("@pi_repair_info", "")
+        '        cmd.Parameters.AddWithValue("@pi_executor", CurrentUser.sys_id)
+        '        cmd.Parameters.AddWithValue("@pi_repair_in", 1)
+        '        cmd.Parameters.AddWithValue("@updateUserID", CurrentUser.sys_id)
+        '        cmd.Parameters.AddWithValue("@repare_in_info", " ")
+        '        cmd.CommandType = CommandType.StoredProcedure
+        '        dbSQL.Execute(cmd)
+        '        msgHistory.Text = "Запись о ремонте успешно добавлена!"
 
-                BindGrid()
-                ShowRepairImage()
+        '        BindGrid()
+        '        ShowRepairImage()
 
-                Dim query = dbSQL.ExecuteScalar("Update good SET inrepair='1' WHERE good_sys_id='" & iCash & "'")
-                cmd  = New SqlCommand("set_state_repair")
-                cmd.Parameters.AddWithValue("@pi_state_repair", 1)
-                cmd.Parameters.AddWithValue("@pi_good_sys_id", icash)
-                cmd.CommandType = CommandType.StoredProcedure
-                dbSQL.Execute(cmd)
+        '        Dim query = dbSQL.ExecuteScalar("Update good SET inrepair='1' WHERE good_sys_id='" & iCash & "'")
+        '        cmd  = New SqlCommand("set_state_repair")
+        '        cmd.Parameters.AddWithValue("@pi_state_repair", 1)
+        '        cmd.Parameters.AddWithValue("@pi_good_sys_id", icash)
+        '        cmd.CommandType = CommandType.StoredProcedure
+        '        dbSQL.Execute(cmd)
 
-            Catch
-                msgHistory.Text = "Ошибка добавления информации о ремонте!<br>" & Err.Description
-                Exit Sub
-            End Try
-        End Sub
+        '    Catch
+        '        msgHistory.Text = "Ошибка добавления информации о ремонте!<br>" & Err.Description
+        '        Exit Sub
+        '    End Try
+        'End Sub
 
         Private Sub grdRepairs_ItemDataBound(ByVal sender As Object, ByVal e As System.Web.UI.WebControls.DataGridItemEventArgs) Handles grdRepairs.ItemDataBound
             Dim s$

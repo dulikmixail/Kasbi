@@ -151,7 +151,7 @@
 
 
 </asp:Label>
-        <asp:LinkButton runat="server" ID="testSms" OnClick="testSms_OnClick">Тест СМС</asp:LinkButton>
+        <%--<asp:LinkButton runat="server" ID="testSms" OnClick="testSms_OnClick">Тест СМС</asp:LinkButton>--%>
         <script language="javascript">
             jQuery(function () {
 

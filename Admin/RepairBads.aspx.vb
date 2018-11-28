@@ -28,7 +28,7 @@ Namespace Kasbi.Admin
             Dim adapter As SqlClient.SqlDataAdapter
             Dim ds As DataSet = New DataSet
             Try
-                adapter = dbSQL.GetDataAdapter("select * from repair_bads order by deleted, name")
+                adapter = dbSQL.GetDataAdapter("get_repair_bads", True)
                 adapter.Fill(ds)
                 grdRepairBads.DataSource = ds.Tables(0).DefaultView
                 grdRepairBads.DataKeyField = "repair_bads_sys_id"

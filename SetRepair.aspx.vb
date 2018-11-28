@@ -37,12 +37,12 @@ Namespace Kasbi
         Dim customer As String = ""
         Const ClearString$ = "-------"
         Private _serviceCustomer As ServiceCustomer = New ServiceCustomer()
+        Dim _validTelCode As List(Of String) = New List(Of String) From {"25", "29", "33", "44"}
 
         Private Overloads Sub Page_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
             icash = Request.Params(0)
             customer = dbSQL.ExecuteScalar(
-                "select top 1 owner_sys_id from cash_history where good_sys_id=" & icash &
-                " order by sys_id desc")
+                "select top 1 owner_sys_id from cash_history where good_sys_id=" & icash & " order by sys_id desc")
 
             customer = IIf(customer Is Nothing, "", customer).ToString()
 
@@ -85,7 +85,7 @@ Namespace Kasbi
                 lstTelephoneNotice.Visible = False
                 lblTelephoneNotice.Visible = False
             End If
-            If lstTelephoneNotice.Items.Count<=1 And lstTelephoneNotice.SelectedItem.Text = ClearString
+            If lstTelephoneNotice.Items.Count <= 1 And lstTelephoneNotice.SelectedItem.Text = ClearString
                 lstTelephoneNotice.Items.Clear()
                 lstTelephoneNotice.Items.Insert(0, New ListItem(ClearString, "0"))
                 lstTelephoneNotice.Visible = False
@@ -107,7 +107,9 @@ Namespace Kasbi
             Dim adapter As SqlClient.SqlDataAdapter
             Dim ds As DataSet = New DataSet
             Try
-                adapter = dbSQL.GetDataAdapter("select * from repair_bads WHERE deleted <> 1 order by name")
+                adapter =
+                    dbSQL.GetDataAdapter(
+                        "select *, LTRIM(STR(price_from, 10, 2)) AS price_from_fix, LTRIM(STR(price_to, 10, 2)) AS price_to_fix from repair_bads WHERE deleted <> 1 order by name")
                 adapter.Fill(ds)
                 grdRepairBads.DataSource = ds.Tables(0).DefaultView
                 grdRepairBads.DataKeyField = "repair_bads_sys_id"
@@ -187,6 +189,8 @@ Namespace Kasbi
                 lblErrors.Text = "Выберите плательщика ремонта!"
             ElseIf String.IsNullOrEmpty(txtTelephoneNotice.Text)
                 lblErrors.Text = "Вы не ввели номер телефона оповещения"
+            ElseIf Not _validTelCode.Contains(txtTelephoneNotice.Text.Substring(0, 2))
+                lblErrors.Text = "Введен некорректный мобильный телефон!"
             ElseIf String.IsNullOrEmpty(repairBadsList) And String.IsNullOrEmpty(txtName) And Not isNeadSKNO.Checked
                 lblErrors.Text = "Вы не выбрали или не ввели неисправность"
             ElseIf _
@@ -226,7 +230,7 @@ Namespace Kasbi
                 Dim j = 0
 
                 If String.IsNullOrEmpty(repairBadsList)
-                    repairBadsSumItog = ""
+                    repairBadsSumItog = "0 руб."
                 Else
                     ds = New DataSet()
                     adapt = dbSQL.GetDataAdapter(
@@ -244,21 +248,43 @@ Namespace Kasbi
                         End If
                         If IsDBNull(dr("price_to"))
                             priceTo = 0
-                            showMaxItog = False
                         Else
                             priceTo = dr("price_to")
+                        End If
+                        If priceFrom > 0 And priceTo <= 0
+                            showMaxItog = False
                         End If
                         minItog += priceFrom
                         maxItog += priceTo
 
-                        repairBadsInfo &= dr("name") & " (от " & priceFrom &
-                                          IIf(priceTo <> 0, " до " & priceTo, "") & " руб.), "
+                        Dim nameRepairBad As String = dr("name").ToString()
+                        nameRepairBad = nameRepairBad.Trim()
+                        If priceFrom <= 0 And priceTo <= 0
+                            repairBadsInfo &= nameRepairBad & " (0 руб.); "
+                        Else
+                            repairBadsInfo &= nameRepairBad & " (от " & priceFrom &
+                                              IIf(priceTo > 0, " до " & priceTo, "").ToString() & " руб.); "
+                        End If
+
                     Next
 
-                    If minItog <> 0 And maxItog <> 0
-                        repairBadsSumItog = "от " & minItog &
-                                            IIf(showMaxItog, " до " & maxItog, "").ToString() & " руб"
-                    End If
+
+                End If
+                If repairBadsInfo.Length > 1
+                    repairBadsInfo = repairBadsInfo.Substring(0, repairBadsInfo.Length - 2)
+                    repairBadsInfo &= ". "
+                End If
+
+
+                If minItog > 0 And maxItog > 0
+                    repairBadsSumItog = "от " & minItog &
+                                        IIf(showMaxItog, " до " & maxItog, "").ToString() & " руб."
+                Else
+                    repairBadsSumItog = "0 руб."
+                End If
+
+                If isNeadSKNO.Checked
+                    repairBadsInfo &= "Пометка: Необходимо установить СКНО."
                 End If
 
                 cmd = New SqlClient.SqlCommand("new_repair_and_repair_bads_info")
@@ -360,11 +386,13 @@ Namespace Kasbi
                 Catch ex As Exception
                 End Try
 
-
-                Dim strRequest$ = "<script>window.open('documents.aspx?t=31&c=" & lstCustomers.SelectedValue & "&g=" &
-                                  icash & "&h=" &
-                                  query & "','_new','');</script>"
+                Dim defectAktUrl As String = "documents.aspx?t=31&c=" & lstCustomers.SelectedValue.ToString() & "&g=" &
+                                             icash.ToString() & "&h=" & query.ToString()
+                Dim strRequest$ = "<script>window.open('" & defectAktUrl & "','_new','');</script>"
                 Page.ClientScript.RegisterStartupScript(Me.GetType(), "PopupScript", strRequest$)
+
+                lnkDefectAkt.NavigateUrl = GetAbsoluteUrl(defectAktUrl)
+                lnkDefectAkt.Visible = True
 '                Response.Redirect(GetAbsoluteUrl("~/documents.aspx?t=31&c=" & customer & "&g=" & icash & "&h=" & query))
             End If
         End Sub

@@ -1,36 +1,36 @@
 Namespace Kasbi
-
-Partial Class CashOwners
+    Partial Class CashOwners
         Inherits PageBase
-    Protected WithEvents btnMain As System.Web.UI.WebControls.HyperLink
-    Protected WithEvents btnCustomers As System.Web.UI.WebControls.HyperLink
-    Protected WithEvents btnCTO As System.Web.UI.WebControls.HyperLink
-    Protected WithEvents btnCatalog As System.Web.UI.WebControls.HyperLink
-    Protected WithEvents btnDeliveries As System.Web.UI.WebControls.HyperLink
-    Protected WithEvents btnPricelists As System.Web.UI.WebControls.HyperLink
-    Protected WithEvents btnTO As System.Web.UI.WebControls.HyperLink
-    Protected WithEvents btnSupport As System.Web.UI.WebControls.LinkButton
-    Protected WithEvents Label1 As System.Web.UI.WebControls.Label
-    Protected WithEvents btnRepair As System.Web.UI.WebControls.HyperLink
-    Protected WithEvents lstDayDismissal As System.Web.UI.WebControls.DropDownList
-    Protected WithEvents lstMonthDismissal As System.Web.UI.WebControls.DropDownList
-    Protected WithEvents lstYearDismissal As System.Web.UI.WebControls.DropDownList
+        Protected WithEvents btnMain As System.Web.UI.WebControls.HyperLink
+        Protected WithEvents btnCustomers As System.Web.UI.WebControls.HyperLink
+        Protected WithEvents btnCTO As System.Web.UI.WebControls.HyperLink
+        Protected WithEvents btnCatalog As System.Web.UI.WebControls.HyperLink
+        Protected WithEvents btnDeliveries As System.Web.UI.WebControls.HyperLink
+        Protected WithEvents btnPricelists As System.Web.UI.WebControls.HyperLink
+        Protected WithEvents btnTO As System.Web.UI.WebControls.HyperLink
+        Protected WithEvents btnSupport As System.Web.UI.WebControls.LinkButton
+        Protected WithEvents Label1 As System.Web.UI.WebControls.Label
+        Protected WithEvents btnRepair As System.Web.UI.WebControls.HyperLink
+        Protected WithEvents lstDayDismissal As System.Web.UI.WebControls.DropDownList
+        Protected WithEvents lstMonthDismissal As System.Web.UI.WebControls.DropDownList
+        Protected WithEvents lstYearDismissal As System.Web.UI.WebControls.DropDownList
 
 
 #Region " Web Form Designer Generated Code "
 
-    'This call is required by the Web Form Designer.
-    <System.Diagnostics.DebuggerStepThrough()> Private Sub InitializeComponent()
+        'This call is required by the Web Form Designer.
+        <System.Diagnostics.DebuggerStepThrough()>
+        Private Sub InitializeComponent()
+        End Sub
 
-    End Sub
-
-    Private Sub Page_Init(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Init
-        'CODEGEN: This method call is required by the Web Form Designer
-        'Do not modify it using the code editor.
-        InitializeComponent()
-    End Sub
+        Private Sub Page_Init(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Init
+            'CODEGEN: This method call is required by the Web Form Designer
+            'Do not modify it using the code editor.
+            InitializeComponent()
+        End Sub
 
 #End Region
+
         Dim iNumber%, iCash%
         Dim CurrentCustomer%, iNewCust%
         'Const ClearString = "-------"
@@ -76,7 +76,6 @@ Partial Class CashOwners
                 reader.Close()
                 Exit Sub
             End Try
-
         End Sub
 
         Sub LoadGoodInfo()
@@ -300,23 +299,30 @@ Partial Class CashOwners
         End Sub
 
         Public Function GetRussianDate(ByVal d As Date) As String
-            Dim m() As String = {" января ", " февраля ", " марта ", " апреля ", " мая ", " июня ", " июля ", " августа ", " сентября ", " октября ", " ноября ", " декабря "}
+            Dim m() As String =
+                    {" января ", " февраля ", " марта ", " апреля ", " мая ", " июня ", " июля ", " августа ",
+                     " сентября ", " октября ", " ноября ", " декабря "}
             GetRussianDate = Day(d) & m(Month(d) - 1) & Year(d) & "г."
         End Function
 
         Public Function GetRussianDateFull(ByVal d As Date) As String
-            Dim m() As String = {" января ", " февраля ", " марта ", " апреля ", " мая ", " июня ", " июля ", " августа ", " сентября ", " октября ", " ноября ", " декабря "}
+            Dim m() As String =
+                    {" января ", " февраля ", " марта ", " апреля ", " мая ", " июня ", " июля ", " августа ",
+                     " сентября ", " октября ", " ноября ", " декабря "}
             GetRussianDateFull = Day(d) & m(Month(d) - 1) & Year(d) & "г."
         End Function
 
-        Private Sub grdCashOwnerHistory_ItemDataBound(ByVal sender As Object, ByVal e As System.Web.UI.WebControls.DataGridItemEventArgs) Handles grdCashOwnerHistory.ItemDataBound
+        Private Sub grdCashOwnerHistory_ItemDataBound(ByVal sender As Object,
+                                                      ByVal e As System.Web.UI.WebControls.DataGridItemEventArgs) _
+            Handles grdCashOwnerHistory.ItemDataBound
             Dim s As String
 
             If e.Item.ItemType = ListItemType.Item Or e.Item.ItemType = ListItemType.AlternatingItem Then
 
                 'Dates
                 If Not IsDBNull(e.Item.DataItem("updateDate")) Then
-                    s = "Изменил:<br> " & e.Item.DataItem("updateUserID") & "<br>" & Format(e.Item.DataItem("updateDate"), "dd.MM.yyyy HH:mm")
+                    s = "Изменил:<br> " & e.Item.DataItem("updateUserID") & "<br>" &
+                        Format(e.Item.DataItem("updateDate"), "dd.MM.yyyy HH:mm")
                 Else
                     s = "Изменил:<br> " & e.Item.DataItem("updateUserID")
                 End If
@@ -343,19 +349,35 @@ Partial Class CashOwners
                             d = e.Item.DataItem("dismissal_date")
                             s = "Снят с ТО " & GetRussianDateFull(d) & "<br>"
                             CType(e.Item.FindControl("lnkAct"), HyperLink).Text = "Акт"
-                            CType(e.Item.FindControl("lnkAct"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?c=" & e.Item.DataItem("owner_sys_id") & "&s=" & e.Item.DataItem("sale_sys_id") & "&t=14&g=" & e.Item.DataItem("good_sys_id") & "&h=" & e.Item.DataItem("sys_id"))
+                            CType(e.Item.FindControl("lnkAct"), HyperLink).NavigateUrl =
+                                GetAbsoluteUrl(
+                                    "~/documents.aspx?c=" & e.Item.DataItem("owner_sys_id") & "&s=" &
+                                    e.Item.DataItem("sale_sys_id") & "&t=14&g=" & e.Item.DataItem("good_sys_id") & "&h=" &
+                                    e.Item.DataItem("sys_id"))
                             CType(e.Item.FindControl("btnDeleteDoc"), LinkButton).Text = "Удалить<br>документы"
                             CType(e.Item.FindControl("lnkTehZaklyuchenie"), HyperLink).Text = "Тех. закл."
-                            CType(e.Item.FindControl("lnkTehZaklyuchenie"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?c=" & e.Item.DataItem("owner_sys_id") & "&s=" & e.Item.DataItem("sale_sys_id") & "&t=19&g=" & e.Item.DataItem("good_sys_id") & "&h=" & e.Item.DataItem("sys_id"))
+                            CType(e.Item.FindControl("lnkTehZaklyuchenie"), HyperLink).NavigateUrl =
+                                GetAbsoluteUrl(
+                                    "~/documents.aspx?c=" & e.Item.DataItem("owner_sys_id") & "&s=" &
+                                    e.Item.DataItem("sale_sys_id") & "&t=19&g=" & e.Item.DataItem("good_sys_id") & "&h=" &
+                                    e.Item.DataItem("sys_id"))
                             CType(e.Item.FindControl("lnkLetter_IMNS"), HyperLink).Text = "(Письмо имнс)"
-                            CType(e.Item.FindControl("lnkLetter_IMNS"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?c=" & e.Item.DataItem("owner_sys_id") & "&s=" & e.Item.DataItem("sale_sys_id") & "&t=55&g=" & e.Item.DataItem("good_sys_id") & "&h=" & e.Item.DataItem("sys_id") & "&addp=4")
+                            CType(e.Item.FindControl("lnkLetter_IMNS"), HyperLink).NavigateUrl =
+                                GetAbsoluteUrl(
+                                    "~/documents.aspx?c=" & e.Item.DataItem("owner_sys_id") & "&s=" &
+                                    e.Item.DataItem("sale_sys_id") & "&t=55&g=" & e.Item.DataItem("good_sys_id") & "&h=" &
+                                    e.Item.DataItem("sys_id") & "&addp=4")
 
-                            s = s & "&nbsp;СК ЦТО :" & e.Item.DataItem("marka_cto_in") & " / " & e.Item.DataItem("marka_cto_out") & "<br>"
+                            s = s & "&nbsp;СК ЦТО :" & e.Item.DataItem("marka_cto_in") & " / " &
+                                e.Item.DataItem("marka_cto_out") & "<br>"
                             If (e.Item.DataItem("good_type_sys_id")) = Config.Kasbi04_ID Then
-                                s = s & "&nbsp;СК ЦТО2 :" & e.Item.DataItem("marka_cto2_in") & " / " & e.Item.DataItem("marka_cto2_out") & "<br>"
+                                s = s & "&nbsp;СК ЦТО2 :" & e.Item.DataItem("marka_cto2_in") & " / " &
+                                    e.Item.DataItem("marka_cto2_out") & "<br>"
                             End If
-                            s = s & "Z-отчет :" & e.Item.DataItem("zreport_in") & " / " & e.Item.DataItem("zreport_out") & "<br>"
-                            s = s & "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Итог :" & e.Item.DataItem("itog_in") & " / " & e.Item.DataItem("itog_out") & "<br>"
+                            s = s & "Z-отчет :" & e.Item.DataItem("zreport_in") & " / " & e.Item.DataItem("zreport_out") &
+                                "<br>"
+                            s = s & "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Итог :" & e.Item.DataItem("itog_in") & " / " &
+                                e.Item.DataItem("itog_out") & "<br>"
                         Else
                             s = ""
                         End If
@@ -367,54 +389,94 @@ Partial Class CashOwners
                             d = e.Item.DataItem("dismissal_date")
                             s = "Снят с ТО и в ИМНС " & GetRussianDateFull(d) & "<br>"
                             CType(e.Item.FindControl("lnkAct"), HyperLink).Text = "Акт"
-                            CType(e.Item.FindControl("lnkAct"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?c=" & e.Item.DataItem("owner_sys_id") & "&s=" & e.Item.DataItem("sale_sys_id") & "&t=15&g=" & e.Item.DataItem("good_sys_id") & "&h=" & e.Item.DataItem("sys_id"))
+                            CType(e.Item.FindControl("lnkAct"), HyperLink).NavigateUrl =
+                                GetAbsoluteUrl(
+                                    "~/documents.aspx?c=" & e.Item.DataItem("owner_sys_id") & "&s=" &
+                                    e.Item.DataItem("sale_sys_id") & "&t=15&g=" & e.Item.DataItem("good_sys_id") & "&h=" &
+                                    e.Item.DataItem("sys_id"))
                             CType(e.Item.FindControl("btnDeleteDoc"), LinkButton).Text = "Удалить<br>документы"
                             CType(e.Item.FindControl("lnkTehZaklyuchenie"), HyperLink).Text = "Тех. закл."
-                            CType(e.Item.FindControl("lnkTehZaklyuchenie"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?c=" & e.Item.DataItem("owner_sys_id") & "&s=" & e.Item.DataItem("sale_sys_id") & "&t=20&g=" & e.Item.DataItem("good_sys_id") & "&h=" & e.Item.DataItem("sys_id"))
+                            CType(e.Item.FindControl("lnkTehZaklyuchenie"), HyperLink).NavigateUrl =
+                                GetAbsoluteUrl(
+                                    "~/documents.aspx?c=" & e.Item.DataItem("owner_sys_id") & "&s=" &
+                                    e.Item.DataItem("sale_sys_id") & "&t=20&g=" & e.Item.DataItem("good_sys_id") & "&h=" &
+                                    e.Item.DataItem("sys_id"))
                             CType(e.Item.FindControl("lnkLetter_IMNS"), HyperLink).Text = "(Письмо имнс)"
-                            CType(e.Item.FindControl("lnkLetter_IMNS"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?c=" & e.Item.DataItem("owner_sys_id") & "&s=" & e.Item.DataItem("sale_sys_id") & "&t=55&g=" & e.Item.DataItem("good_sys_id") & "&h=" & e.Item.DataItem("sys_id") & "&addp=4")
+                            CType(e.Item.FindControl("lnkLetter_IMNS"), HyperLink).NavigateUrl =
+                                GetAbsoluteUrl(
+                                    "~/documents.aspx?c=" & e.Item.DataItem("owner_sys_id") & "&s=" &
+                                    e.Item.DataItem("sale_sys_id") & "&t=55&g=" & e.Item.DataItem("good_sys_id") & "&h=" &
+                                    e.Item.DataItem("sys_id") & "&addp=4")
                             CType(e.Item.FindControl("lnkZayav"), HyperLink).Text = "(Заявление на снятие)"
-                            CType(e.Item.FindControl("lnkZayav"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?c=" & e.Item.DataItem("owner_sys_id") & "&s=" & e.Item.DataItem("sale_sys_id") & "&t=56&g=" & e.Item.DataItem("good_sys_id") & "&h=" & e.Item.DataItem("sys_id") & "&addp=4")
+                            CType(e.Item.FindControl("lnkZayav"), HyperLink).NavigateUrl =
+                                GetAbsoluteUrl(
+                                    "~/documents.aspx?c=" & e.Item.DataItem("owner_sys_id") & "&s=" &
+                                    e.Item.DataItem("sale_sys_id") & "&t=56&g=" & e.Item.DataItem("good_sys_id") & "&h=" &
+                                    e.Item.DataItem("sys_id") & "&addp=4")
 
-                            s = s & "&nbsp;СК ЦТО :" & e.Item.DataItem("marka_cto_in") & " / " & e.Item.DataItem("marka_cto_out") & "<br>"
+                            s = s & "&nbsp;СК ЦТО :" & e.Item.DataItem("marka_cto_in") & " / " &
+                                e.Item.DataItem("marka_cto_out") & "<br>"
                             If (e.Item.DataItem("good_type_sys_id")) = Config.Kasbi04_ID Then
-                                s = s & "&nbsp;СК ЦТО2 :" & e.Item.DataItem("marka_cto2_in") & " / " & e.Item.DataItem("marka_cto2_out") & "<br>"
+                                s = s & "&nbsp;СК ЦТО2 :" & e.Item.DataItem("marka_cto2_in") & " / " &
+                                    e.Item.DataItem("marka_cto2_out") & "<br>"
                             End If
-                            s = s & "Z-отчет :" & e.Item.DataItem("zreport_in") & " / " & e.Item.DataItem("zreport_out") & "<br>"
-                            s = s & "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Итог :" & e.Item.DataItem("itog_in") & " / " & e.Item.DataItem("itog_out") & "<br>"
+                            s = s & "Z-отчет :" & e.Item.DataItem("zreport_in") & " / " & e.Item.DataItem("zreport_out") &
+                                "<br>"
+                            s = s & "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Итог :" & e.Item.DataItem("itog_in") & " / " &
+                                e.Item.DataItem("itog_out") & "<br>"
                         Else
                             s = ""
                         End If
 
                         CType(e.Item.FindControl("lblStatus"), Label).Text = s
-                        ElseIf e.Item.DataItem("state") = 4 Then
-                            'постановка на ТО
-                            If Not IsDBNull(e.Item.DataItem("support_date")) Then
-                                d = e.Item.DataItem("support_date")
-                                s = "Поставлен на ТО " & GetRussianDateFull(d) & "<br>"
-                                CType(e.Item.FindControl("lnkAct"), HyperLink).Text = "Акт"
-                                CType(e.Item.FindControl("lnkAct"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?c=" & e.Item.DataItem("owner_sys_id") & "&s=" & e.Item.DataItem("sale_sys_id") & "&t=11&g=" & e.Item.DataItem("good_sys_id") & "&h=" & e.Item.DataItem("sys_id"))
-                                CType(e.Item.FindControl("lnkTehZaklyuchenie"), HyperLink).Text = "Тех. закл."
-                                CType(e.Item.FindControl("lnkTehZaklyuchenie"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?c=" & e.Item.DataItem("owner_sys_id") & "&s=" & e.Item.DataItem("sale_sys_id") & "&t=12&g=" & e.Item.DataItem("good_sys_id") & "&h=" & e.Item.DataItem("sys_id"))
-                                CType(e.Item.FindControl("lnkDogovor_Na_TO"), HyperLink).Text = "Дог. на ТО"
-                                CType(e.Item.FindControl("lnkDogovor_Na_TO"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?c=" & e.Item.DataItem("owner_sys_id") & "&s=" & e.Item.DataItem("sale_sys_id") & "&t=13&g=" & e.Item.DataItem("good_sys_id") & "&h=" & e.Item.DataItem("sys_id"))
+                    ElseIf e.Item.DataItem("state") = 4 Then
+                        'постановка на ТО
+                        If Not IsDBNull(e.Item.DataItem("support_date")) Then
+                            d = e.Item.DataItem("support_date")
+                            s = "Поставлен на ТО " & GetRussianDateFull(d) & "<br>"
+                            CType(e.Item.FindControl("lnkAct"), HyperLink).Text = "Акт"
+                            CType(e.Item.FindControl("lnkAct"), HyperLink).NavigateUrl =
+                                GetAbsoluteUrl(
+                                    "~/documents.aspx?c=" & e.Item.DataItem("owner_sys_id") & "&s=" &
+                                    e.Item.DataItem("sale_sys_id") & "&t=11&g=" & e.Item.DataItem("good_sys_id") & "&h=" &
+                                    e.Item.DataItem("sys_id"))
+                            CType(e.Item.FindControl("lnkTehZaklyuchenie"), HyperLink).Text = "Тех. закл."
+                            CType(e.Item.FindControl("lnkTehZaklyuchenie"), HyperLink).NavigateUrl =
+                                GetAbsoluteUrl(
+                                    "~/documents.aspx?c=" & e.Item.DataItem("owner_sys_id") & "&s=" &
+                                    e.Item.DataItem("sale_sys_id") & "&t=12&g=" & e.Item.DataItem("good_sys_id") & "&h=" &
+                                    e.Item.DataItem("sys_id"))
+                            CType(e.Item.FindControl("lnkDogovor_Na_TO"), HyperLink).Text = "Дог. на ТО"
+                            CType(e.Item.FindControl("lnkDogovor_Na_TO"), HyperLink).NavigateUrl =
+                                GetAbsoluteUrl(
+                                    "~/documents.aspx?c=" & e.Item.DataItem("owner_sys_id") & "&s=" &
+                                    e.Item.DataItem("sale_sys_id") & "&t=13&g=" & e.Item.DataItem("good_sys_id") & "&h=" &
+                                    e.Item.DataItem("sys_id"))
                             CType(e.Item.FindControl("lnkLetter_IMNS"), HyperLink).Text = "(Письмо имнс)"
-                            CType(e.Item.FindControl("lnkLetter_IMNS"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?c=" & e.Item.DataItem("owner_sys_id") & "&s=" & e.Item.DataItem("sale_sys_id") & "&t=55&g=" & e.Item.DataItem("good_sys_id") & "&h=" & e.Item.DataItem("sys_id") & "&addp=2")
+                            CType(e.Item.FindControl("lnkLetter_IMNS"), HyperLink).NavigateUrl =
+                                GetAbsoluteUrl(
+                                    "~/documents.aspx?c=" & e.Item.DataItem("owner_sys_id") & "&s=" &
+                                    e.Item.DataItem("sale_sys_id") & "&t=55&g=" & e.Item.DataItem("good_sys_id") & "&h=" &
+                                    e.Item.DataItem("sys_id") & "&addp=2")
 
 
                             CType(e.Item.FindControl("btnDeleteDoc"), LinkButton).Text = "Удалить<br>документы"
-                            s = s & "&nbsp;СК ЦТО :" & e.Item.DataItem("marka_cto_in") & " / " & e.Item.DataItem("marka_cto_out") & "<br>"
+                            s = s & "&nbsp;СК ЦТО :" & e.Item.DataItem("marka_cto_in") & " / " &
+                                e.Item.DataItem("marka_cto_out") & "<br>"
                             If (e.Item.DataItem("good_type_sys_id")) = Config.Kasbi04_ID Then
-                                s = s & "&nbsp;СК ЦТО2 :" & e.Item.DataItem("marka_cto2_in") & " / " & e.Item.DataItem("marka_cto2_out") & "<br>"
+                                s = s & "&nbsp;СК ЦТО2 :" & e.Item.DataItem("marka_cto2_in") & " / " &
+                                    e.Item.DataItem("marka_cto2_out") & "<br>"
                             End If
-                            s = s & "Z-отчет :" & e.Item.DataItem("zreport_in") & " / " & e.Item.DataItem("zreport_out") & "<br>"
-                            s = s & "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Итог :" & e.Item.DataItem("itog_in") & " / " & e.Item.DataItem("itog_out") & "<br>"
+                            s = s & "Z-отчет :" & e.Item.DataItem("zreport_in") & " / " & e.Item.DataItem("zreport_out") &
+                                "<br>"
+                            s = s & "&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Итог :" & e.Item.DataItem("itog_in") & " / " &
+                                e.Item.DataItem("itog_out") & "<br>"
                         Else
                             s = ""
                         End If
 
                         CType(e.Item.FindControl("lblStatus"), Label).Text = s
-                        End If
+                    End If
 
                 End If
                 ' Информация о плательщике ТО
@@ -425,7 +487,8 @@ Partial Class CashOwners
 
                 CType(e.Item.FindControl("lnkPayer"), HyperLink).Text = s
                 If (e.Item.DataItem("state") = 4) Then
-                    CType(e.Item.FindControl("lnkPayer"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/CustomerSales.aspx?" & e.Item.DataItem("owner_sys_id"))
+                    CType(e.Item.FindControl("lnkPayer"), HyperLink).NavigateUrl =
+                        GetAbsoluteUrl("~/CustomerSales.aspx?" & e.Item.DataItem("owner_sys_id"))
                 End If
                 ' Информация о исполнителе
                 s = ""
@@ -447,7 +510,9 @@ Partial Class CashOwners
             End If
         End Sub
 
-        Private Sub grdRepairs_ItemDataBound(ByVal sender As Object, ByVal e As System.Web.UI.WebControls.DataGridItemEventArgs) Handles grdRepairs.ItemDataBound
+        Private Sub grdRepairs_ItemDataBound(ByVal sender As Object,
+                                             ByVal e As System.Web.UI.WebControls.DataGridItemEventArgs) _
+            Handles grdRepairs.ItemDataBound
             Dim s$
 
             If e.Item.ItemType = ListItemType.Item Or e.Item.ItemType = ListItemType.AlternatingItem Then
@@ -457,13 +522,17 @@ Partial Class CashOwners
 
                 'Dates
                 If Not IsDBNull(e.Item.DataItem("updateDate")) Then
-                    s = "Изменил:<br> " & e.Item.DataItem("updateUserID") & "<br>" & Format(e.Item.DataItem("updateDate"), "dd.MM.yyyy HH:mm")
+                    s = "Изменил:<br> " & e.Item.DataItem("updateUserID") & "<br>" &
+                        Format(e.Item.DataItem("updateDate"), "dd.MM.yyyy HH:mm")
                 Else
                     s = "Изменил:<br> " & e.Item.DataItem("updateUserID")
                 End If
                 CType(e.Item.FindControl("lblUpdateRec1"), Label).Text = s
-
-                s = Format(e.Item.DataItem("date_in"), "dd.MM.yyyy") & " / "
+                If IsDBNull(e.Item.DataItem("date_in"))
+                    s = "??.??.????" & " / "
+                Else
+                    s = Format(e.Item.DataItem("date_in"), "dd.MM.yyyy") & " / "
+                End If
                 If IsDBNull(e.Item.DataItem("date_out")) Then
                     s = s & "??.??.????"
                     isLabelShow = False
@@ -474,23 +543,34 @@ Partial Class CashOwners
                     'CType(e.Item.FindControl("lnkActRepairRealization"), HyperLink).NavigateUrl = GetAbsoluteUrl("documents.aspx?t=32&c=" & e.Item.DataItem("owner_sys_id") & "&g=" & e.Item.DataItem("good_sys_id") & "&h=" & e.Item.DataItem("sys_id"))
 
                     CType(e.Item.FindControl("lnkRepairAct"), HyperLink).Text = "Акт"
-                    CType(e.Item.FindControl("lnkRepairAct"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?c=" & e.Item.DataItem("owner_sys_id") & "&s=" & e.Item.DataItem("sale_sys_id") & "&t=16&g=" & e.Item.DataItem("good_sys_id") & "&h=" & e.Item.DataItem("sys_id"))
+                    CType(e.Item.FindControl("lnkRepairAct"), HyperLink).NavigateUrl =
+                        GetAbsoluteUrl(
+                            "~/documents.aspx?c=" & e.Item.DataItem("owner_sys_id") & "&s=" &
+                            e.Item.DataItem("sale_sys_id") & "&t=16&g=" & e.Item.DataItem("good_sys_id") & "&h=" &
+                            e.Item.DataItem("sys_id"))
 
                     CType(e.Item.FindControl("btnDeleteRepairDoc"), LinkButton).Text = "Удалить<br>документы"
                     isLabelShow = True
                 End If
                 CType(e.Item.FindControl("lblDates"), Label).Text = s
-                s = "&nbsp;СК ЦТО :" & e.Item.DataItem("marka_cto_in") & " / " & e.Item.DataItem("marka_cto_out") & "<br>"
+                s = "&nbsp;СК ЦТО :" & e.Item.DataItem("marka_cto_in") & " / " & e.Item.DataItem("marka_cto_out") &
+                    "<br>"
                 If (e.Item.DataItem("good_type_sys_id")) = Config.Kasbi04_ID Then
-                    s = s & "&nbsp;СК ЦТО2 :" & e.Item.DataItem("marka_cto2_in") & " / " & e.Item.DataItem("marka_cto2_out") & "<br>"
+                    s = s & "&nbsp;СК ЦТО2 :" & e.Item.DataItem("marka_cto2_in") & " / " &
+                        e.Item.DataItem("marka_cto2_out") & "<br>"
                 End If
-                s = s & "&nbsp;СК Реестра :" & e.Item.DataItem("marka_reestr_in") & " / " & e.Item.DataItem("marka_reestr_out") & "<br>"
-                s = s & "&nbsp;СК ПЗУ :" & e.Item.DataItem("marka_pzu_in") & " / " & e.Item.DataItem("marka_pzu_out") & "<br>"
-                s = s & "&nbsp;СК МФП :" & e.Item.DataItem("marka_mfp_in") & " / " & e.Item.DataItem("marka_mfp_out") & "<br>"
+                s = s & "&nbsp;СК Реестра :" & e.Item.DataItem("marka_reestr_in") & " / " &
+                    e.Item.DataItem("marka_reestr_out") & "<br>"
+                s = s & "&nbsp;СК ПЗУ :" & e.Item.DataItem("marka_pzu_in") & " / " & e.Item.DataItem("marka_pzu_out") &
+                    "<br>"
+                s = s & "&nbsp;СК МФП :" & e.Item.DataItem("marka_mfp_in") & " / " & e.Item.DataItem("marka_mfp_out") &
+                    "<br>"
                 'If (e.Item.DataItem("good_type_sys_id")) = Config.Kasbi04_ID Then
-                s = s & "&nbsp;СК ЦП :" & e.Item.DataItem("marka_cp_in") & " / " & e.Item.DataItem("marka_cp_out") & "<br>"
+                s = s & "&nbsp;СК ЦП :" & e.Item.DataItem("marka_cp_in") & " / " & e.Item.DataItem("marka_cp_out") &
+                    "<br>"
                 'End If
-                s = s & "&nbsp;Z-отчет :" & e.Item.DataItem("zreport_in") & " / " & e.Item.DataItem("zreport_out") & "<br>"
+                s = s & "&nbsp;Z-отчет :" & e.Item.DataItem("zreport_in") & " / " & e.Item.DataItem("zreport_out") &
+                    "<br>"
                 s = s & "&nbsp;Итог :" & e.Item.DataItem("itog_in") & " / " & e.Item.DataItem("itog_out") & "<br>"
                 CType(e.Item.FindControl("lblStatus"), Label).Text = s
 
@@ -523,7 +603,9 @@ Partial Class CashOwners
                 'CType(e.Item.FindControl("lblItogOut"), Label).Text = e.Item.DataItem("itog_out")
 
                 'Summa
-                CType(e.Item.FindControl("lblCost"), Label).Text = IIf(IsDBNull(e.Item.DataItem("summa")) Or e.Item.DataItem("summa") = "", "по гарантии", CStr(e.Item.DataItem("summa")))
+                CType(e.Item.FindControl("lblCost"), Label).Text =
+                    IIf(IsDBNull(e.Item.DataItem("summa")) Or e.Item.DataItem("summa") = "", "по гарантии",
+                        CStr(e.Item.DataItem("summa")))
                 'ProcessControl(e.Item, "summa", "Cost", bOneOfAll, isLabelShow)
                 'исполнитель
                 'ProcessControl(e.Item, "executor", "Executor", bOneOfAll, isLabelShow)
@@ -604,7 +686,7 @@ Partial Class CashOwners
                             s = s & sTmp & "<br>"
                         End If
 
-                       
+
                     End With
                 End If
             Catch
@@ -613,15 +695,18 @@ Partial Class CashOwners
             GetInfo = s
         End Function
 
-        Private Sub btnExpand1_Click(ByVal sender As System.Object, ByVal e As System.Web.UI.ImageClickEventArgs) Handles btnExpand1.Click
+        Private Sub btnExpand1_Click(ByVal sender As System.Object, ByVal e As System.Web.UI.ImageClickEventArgs) _
+            Handles btnExpand1.Click
             Expand(pnlOwnerHistory_body, btnExpand1)
         End Sub
 
-        Private Sub btnExpand2_Click(ByVal sender As System.Object, ByVal e As System.Web.UI.ImageClickEventArgs) Handles btnExpand2.Click
+        Private Sub btnExpand2_Click(ByVal sender As System.Object, ByVal e As System.Web.UI.ImageClickEventArgs) _
+            Handles btnExpand2.Click
             Expand(pnlRepairInfo_body, btnExpand2)
         End Sub
 
-        Private Sub Expand(ByVal section As System.Web.UI.WebControls.Panel, ByVal button As System.Web.UI.WebControls.ImageButton)
+        Private Sub Expand(ByVal section As System.Web.UI.WebControls.Panel,
+                           ByVal button As System.Web.UI.WebControls.ImageButton)
             If section.Visible = True Then
                 section.Visible = False
                 button.ImageUrl = "Images/collapsed.gif"
@@ -633,7 +718,9 @@ Partial Class CashOwners
             End If
         End Sub
 
-        Private Sub grdCashOwnerHistory_DeleteCommand(ByVal source As System.Object, ByVal e As System.Web.UI.WebControls.DataGridCommandEventArgs) Handles grdCashOwnerHistory.DeleteCommand
+        Private Sub grdCashOwnerHistory_DeleteCommand(ByVal source As System.Object,
+                                                      ByVal e As System.Web.UI.WebControls.DataGridCommandEventArgs) _
+            Handles grdCashOwnerHistory.DeleteCommand
             Dim docs As New Kasbi.Migrated_Documents
             Try
                 docs.DeleteHistoryDocument(grdCashOwnerHistory.DataKeys(e.Item.ItemIndex))
@@ -643,7 +730,9 @@ Partial Class CashOwners
             End Try
         End Sub
 
-        Private Sub grdRepairs_DeleteCommand(ByVal source As System.Object, ByVal e As System.Web.UI.WebControls.DataGridCommandEventArgs) Handles grdRepairs.DeleteCommand
+        Private Sub grdRepairs_DeleteCommand(ByVal source As System.Object,
+                                             ByVal e As System.Web.UI.WebControls.DataGridCommandEventArgs) _
+            Handles grdRepairs.DeleteCommand
             Dim docs As New Kasbi.Migrated_Documents
             Try
                 docs.DeleteHistoryDocument(grdRepairs.DataKeys(e.Item.ItemIndex))
@@ -660,7 +749,5 @@ Partial Class CashOwners
             End If
             Response.Redirect(GetAbsoluteUrl("~/GoodList.aspx"))
         End Sub
-
-End Class
-
+    End Class
 End Namespace

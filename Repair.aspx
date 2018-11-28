@@ -125,7 +125,7 @@
                     </table>
                 </td>
             </tr>
-            <tr class="Unit">
+            <%--<tr class="Unit">
                 <td class="Unit" colspan="2">
                     &nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;Прием ККМ в ремонт
                 </td>
@@ -136,7 +136,7 @@
                         <asp:Image runat="server" ID="Image2" ImageUrl="Images/sel.gif" Style="z-index: 103;
                             position: relative; left: 10;"></asp:Image>
                         &nbsp;Принять ККМ в ремонт&nbsp;</asp:LinkButton></td>
-            </tr>
+            </tr>--%>
             <tr>
                 <td colspan="3" height="5">
                     &nbsp;</td>

@@ -56,14 +56,14 @@
                                 <ItemStyle HorizontalAlign="Center"></ItemStyle>
                                 <FooterStyle HorizontalAlign="Center"></FooterStyle>
                                 <ItemTemplate>
-                                    <%# DataBinder.Eval(Container, "DataItem.price_from") %>
+                                    <%# DataBinder.Eval(Container, "DataItem.price_from_fix").ToString() %>
                                 </ItemTemplate>
                                 <FooterTemplate>
                                     <asp:TextBox ID="txtPriceFrom" runat="server" BorderWidth="1px" BackColor="#F6F8FC"></asp:TextBox>
                                 </FooterTemplate>
                                 <EditItemTemplate>
                                     <asp:TextBox ID="txtPriceFromEdit" runat="server" BorderWidth="1px" BackColor="#F6F8FC"
-                                        Text='<%# DataBinder.Eval(Container, "DataItem.price_from") %>'>
+                                        Text='<%# DataBinder.Eval(Container, "DataItem.price_from_fix").ToString() %>'>
                                     </asp:TextBox>
                                 </EditItemTemplate>
                             </asp:TemplateColumn>
@@ -72,14 +72,14 @@
                                 <ItemStyle HorizontalAlign="Center"></ItemStyle>
                                 <FooterStyle HorizontalAlign="Center"></FooterStyle>
                                 <ItemTemplate>
-                                    <%# DataBinder.Eval(Container, "DataItem.price_to") %>
+                                    <%#DataBinder.Eval(Container, "DataItem.price_to_fix").ToString() %>
                                 </ItemTemplate>
                                 <FooterTemplate>
                                     <asp:TextBox ID="txtPriceTo" runat="server" BorderWidth="1px" BackColor="#F6F8FC"></asp:TextBox>
                                 </FooterTemplate>
                                 <EditItemTemplate>
                                     <asp:TextBox ID="txtPriceToEdit" runat="server" BorderWidth="1px" BackColor="#F6F8FC"
-                                                 Text='<%# DataBinder.Eval(Container, "DataItem.price_to") %>'>
+                                                 Text='<%# DataBinder.Eval(Container, "DataItem.price_to_fix").ToString() %>'>
                                     </asp:TextBox>
                                 </EditItemTemplate>
                             </asp:TemplateColumn>

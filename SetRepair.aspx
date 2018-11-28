@@ -73,7 +73,7 @@ CodeFile="SetRepair.aspx.vb" %>
             <td class="SectionRowLabel" align="left">Телефон оповещения: </td>
             <td class="SectionRow" colspan="3" align="center">
                 <asp:TextBox ID="txtTelephoneNotice" runat="server" ToolTip="Введите телефон оповещения" BackColor="#F6F8FC" Width="100%" MaxLength="250" BorderWidth="1px"/>
-                <ajaxToolkit:MaskedEditValidator ID="txtTelephoneNotice_MaskedEditValidator" runat="server" ControlExtender="txtTelephoneNotice_MaskedEditExtender" ControlToValidate="txtTelephoneNotice" Display="Dynamic" EmptyValueBlurredText="*" ErrorMessage="Пожалуста введите корректный номер телефона." InvalidValueBlurredMessage="Пожалуста введите корректныйй номер телефона." InvalidValueMessage="Пожалуста введите корректынй номер телефона." IsValidEmpty="True" ValidationExpression="^\d{9}$" ValidationGroup="GroupName">+375 (99) 999-99-99</ajaxToolkit:MaskedEditValidator>
+                <ajaxToolkit:MaskedEditValidator ID="txtTelephoneNotice_MaskedEditValidator" runat="server" ControlExtender="txtTelephoneNotice_MaskedEditExtender" ControlToValidate="txtTelephoneNotice" Display="Dynamic" EmptyValueBlurredText="*" ErrorMessage="Введен некорректный мобильный телефон!" InvalidValueBlurredMessage="Введен некорректный мобильный телефон!" InvalidValueMessage="Введен некорректный мобильный телефон!" IsValidEmpty="True" ValidationExpression="^(29|25|44|33)(\d{7})$" ValidationGroup="GroupName">+375 (99) 999-99-99</ajaxToolkit:MaskedEditValidator>
                 <ajaxToolkit:MaskedEditExtender ID="txtTelephoneNotice_MaskedEditExtender" runat="server" BehaviorID="txtTelephoneNotice_MaskedEditExtender" TargetControlID="txtTelephoneNotice" Mask="+375 (99) 999-99-99" MaskType="Number" MessageValidatorTip="True" ErrorTooltipEnabled="True" ClearTextOnInvalid="True" ClearMaskOnLostFocus="True" AutoComplete="False"/>
             </td>
         </tr>
@@ -121,14 +121,13 @@ CodeFile="SetRepair.aspx.vb" %>
                                     </asp:TemplateColumn>
                                     <asp:TemplateColumn HeaderText="Стоимость ремонта">
                                         <ItemTemplate>
-                                            <asp:Label runat="server" ID="lblRepairSum" Text='<%# IIf(
-                    IsDBNull(DataBinder.Eval(Container.DataItem, "price_from")) And
-                    IsDBNull(DataBinder.Eval(Container.DataItem, "price_to")),
+                                            <asp:Label runat="server" ID="lblRepairSum" Text='<%# IIf(Convert.ToDouble(DataBinder.Eval(Container.DataItem, "price_from_fix").ToString().Replace(".",","))<=0 And
+                    Convert.ToDouble(DataBinder.Eval(Container.DataItem, "price_to_fix").ToString().Replace(".",",")<=0),
                     "0 руб",
-                    IIf(Not IsDBNull(DataBinder.Eval(Container.DataItem, "price_from")),
-                        "от " & DataBinder.Eval(Container.DataItem, "price_from"), "") &
-                    IIf(Not IsDBNull(DataBinder.Eval(Container.DataItem, "price_to")),
-                        " до " & DataBinder.Eval(Container.DataItem, "price_to"), "") & " руб.")%>'>
+                    IIf(Not IsDBNull(DataBinder.Eval(Container.DataItem, "price_from_fix")),
+                        "от " & DataBinder.Eval(Container.DataItem, "price_from_fix"), "") &
+                    IIf(Not IsDBNull(DataBinder.Eval(Container.DataItem, "price_from_fix")) And Convert.ToDouble(DataBinder.Eval(Container.DataItem, "price_to_fix").ToString().Replace(".",","))>0,
+                        " до " & DataBinder.Eval(Container.DataItem, "price_to_fix"), "") & " руб.")%>'>
                                             </asp:Label>
                                         </ItemTemplate>
                                         <ItemStyle Width="25%"></ItemStyle>
@@ -151,6 +150,12 @@ CodeFile="SetRepair.aspx.vb" %>
             <td class="SectionRowLabel" align="left">Необходимо установить СКНО?:</td>
             <td>
                 <asp:CheckBox runat="server" ID="isNeadSKNO" Checked="False"/>
+            </td>
+        </tr>
+        <tr>
+            <td class="SectionRowLabel" align="left">Документы:</td>
+            <td class="SectionRowLabel">
+                <asp:HyperLink runat="server" ID="lnkDefectAkt" Target="_blank" Text="Акт о принятии в ремонт" Visible="False"></asp:HyperLink>
             </td>
         </tr>
         <tr>

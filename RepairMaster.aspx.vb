@@ -11,6 +11,7 @@ Namespace Kasbi
         Dim to_made = 0
         Dim customer
         Dim iCash
+        Dim iCashHistory
         Dim _smsSender As SmsSender = New SmsSender()
 
 #Region " Web Form Designer Generated Code "
@@ -37,6 +38,8 @@ Namespace Kasbi
             Dim type = Request.Params(0)
             iCash = Request.Params(1)
             customer = Request.Params(2)
+            iCashHistory = Request.Params("hc")
+
             Dim query
 
             If type = "outrepair" Then
@@ -72,6 +75,7 @@ Namespace Kasbi
                 dbSQL.Execute(cmd)
 
                 bind(Session("repair-filter"))
+                Response.Redirect("RepairNew.aspx?cash=" & iCash.ToString() & "&hc=" & iCashHistory.ToString())
             ElseIf type = "setrepair" Then
                 'Принятие ККМ в ремонт
                 Dim cmd As SqlClient.SqlCommand
@@ -353,7 +357,7 @@ Namespace Kasbi
 
                         CType(e.Item.FindControl("lnkSetRepair"), LinkButton).Visible = False
                         CType(e.Item.FindControl("lnkActivateRepair"), LinkButton).PostBackUrl =
-                            "?a=activaterepair&id=" & e.Item.DataItem("good_sys_id")
+                            "?a=activaterepair&id=" & e.Item.DataItem("good_sys_id").ToString() & "&hc=" & e.Item.DataItem("hc_id").ToString()
                         CType(e.Item.FindControl("lnkOutRepair"), LinkButton).Visible = False
                         CType(e.Item.FindControl("lnkEditRepair"), LinkButton).Visible = False
                         CType(e.Item.FindControl("lnkStatus"), LinkButton).PostBackUrl = "Repair.aspx?" &
