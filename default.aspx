@@ -29,30 +29,30 @@
                     &nbsp;Главная</td>
             </tr>
         </table>
-        <table width="100%" style="font-size:12">
+        <table width="100%" style="font-size:12px">
             <tr>
                 <td valign="top">
                     <asp:HyperLink ID="btnNew" runat="server" EnableViewState="False" CssClass="PanelHider"
                         NavigateUrl="NewRequest.aspx">
                         <asp:Image runat="server" ID="imgSelNew" ImageUrl="Images/sel.gif" Style="z-index: 103;
-                            position: relative; left: 10;"></asp:Image>&nbsp;Новый клиент</asp:HyperLink>
+                            position: relative; left: 10px;"></asp:Image>&nbsp;Новый клиент</asp:HyperLink>
                             
                     <asp:HyperLink ID="lnkNeopl" runat="server" EnableViewState="False" CssClass="PanelHider" NavigateUrl="SalesNeopl.aspx"><br><br><br><br>
                     <asp:Image runat="server" ID="Image3" ImageUrl="Images/sel.gif" Style="z-index: 103;
-                                        position: relative; left: 10;"></asp:Image>&nbsp; <span style="color:red">Неоплаченные заказы        <br>
+                                        position: relative; left: 10px;"></asp:Image>&nbsp; <span style="color:red">Неоплаченные заказы        <br>
                     <br></span>
                     </asp:HyperLink>
         
 
                         <asp:HyperLink ID="lnkMain" runat="server" EnableViewState="False" CssClass="PanelHider" NavigateUrl="Main.aspx"><br><br>
                         <asp:Image runat="server" ID="Image2" ImageUrl="Images/sel.gif" Style="z-index: 103;
-                                            position: relative; left: 10;"></asp:Image>&nbsp; Информация о товарах на складе<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; и продажах ККМ
+                                            position: relative; left: 10px;"></asp:Image>&nbsp; Информация о товарах на складе<br>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;&nbsp; и продажах ККМ
                         </asp:HyperLink>
                         
                         
                                 <asp:HyperLink ID="lnkMakeInvoice" runat="server" EnableViewState="False" CssClass="PanelHider" NavigateUrl="MakeInvoice.aspx"><br><br>
                         <asp:Image runat="server" ID="Image8" ImageUrl="Images/sel.gif" Style="z-index: 103;
-                                            position: relative; left: 10;"></asp:Image>&nbsp; Сформировать счет
+                                            position: relative; left: 10px;"></asp:Image>&nbsp; Сформировать счет
                         </asp:HyperLink>
                 </td>
 <%--                <td valign="top">

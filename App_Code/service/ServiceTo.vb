@@ -62,8 +62,9 @@ Namespace Service
             Dim exeption As ToExeption = New ToExeption(Nothing, closePeriod.ToString(), closeDateText)
             Dim dStarPeriod, dEndPeriod, dToday As DateTime
             Dim firstDayOfPeriod As Integer = 3
+            Dim dayCorrector As Integer = 0
 
-            dToday = Now
+            dToday = Today
             'задаем начальный период
             dStarPeriod = dToday
             'задаем конечный период
@@ -72,6 +73,7 @@ Namespace Service
             If (dToday.DayOfWeek = firstDayOfPeriod) Then
                 dStarPeriod = dStarPeriod.AddDays(-1)
                 dEndPeriod = dEndPeriod.AddDays(1)
+                dayCorrector = -1
             End If
             'ищем начало отчетного периода, в данном случае это Среда
             While (dStarPeriod.DayOfWeek <> firstDayOfPeriod)
@@ -91,7 +93,8 @@ Namespace Service
                 ElseIf closePeriod > New DateTime(dEndPeriod.Year, dEndPeriod.Month, 1) Then
                     exeption.AddTextToList("Закрываемый вами период еще не настал.")
                 ElseIf (dStarPeriod > closeDate Or closeDate > dEndPeriod) Then
-                    exeption.AddTextToList("Дата закрытия должна входить в отчетный период. Действующий отчетный период на данный момент с " & dStarPeriod.ToString("dd") & "." & dStarPeriod.ToString("MM") & "." & dStarPeriod.ToString("yy") & " по " & dEndPeriod.ToString("dd") & "." & dEndPeriod.ToString("MM") & "." & dEndPeriod.ToString("yy") & " включительно.")
+                    Dim dateCorector As Date = dEndPeriod.AddDays(dayCorrector)
+                    exeption.AddTextToList("Дата закрытия должна входить в отчетный период. Действующий отчетный период на данный момент с " & dStarPeriod.ToString("dd") & "." & dStarPeriod.ToString("MM") & "." & dStarPeriod.ToString("yy") & " по " & dateCorector.ToString("dd") & "." & dateCorector.ToString("MM") & "." & dateCorector.ToString("yy") & " включительно.")
                 End If
             End If
 
