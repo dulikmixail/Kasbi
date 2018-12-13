@@ -144,8 +144,6 @@
         <asp:Panel
             ID="pnlRepairDateIn" runat="server" Visible="False">
             <asp:TextBox ID="tbxRepairDateIn" runat="server" BorderWidth="1px" BackColor="#F6F8FC"></asp:TextBox>
-            <%--<a href="javascript:showdatepicker('tbxRepairDateIn', 0, false,'DD.MM.YYYY')"><img id="imgRepairDateIn"
-                                                    alt="Date Picker" src="Images/cal_date_picker.gif" border="0"></a>--%>
             <asp:RequiredFieldValidator ID="Requiredfieldvalidator1" runat="server" CssClass="ErrorMessage"
                                         ErrorMessage="Дата приема в ремонт " ControlToValidate="tbxRepairDateIn" Display="Static">
                 *
@@ -159,6 +157,7 @@
     </td>
     <td class="SectionRow" colspan="5">
         Дата выдачи из ремонта:&nbsp;&nbsp;
+        <asp:Label ID="lblRepairDateOut" runat="server" CssClass="text02"></asp:Label>
         <asp:TextBox ID="tbxRepairDateOut" runat="server" BorderWidth="1px" BackColor="#F6F8FC"></asp:TextBox>
         <%--<a href="javascript:showdatepicker('tbxRepairDateOut', 0, false,'DD.MM.YYYY')">
                                             <img id="imgRepairDateOut" alt="Date Picker" src="Images/cal_date_picker.gif" border="0"></a>--%>

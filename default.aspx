@@ -55,7 +55,7 @@
                                             position: relative; left: 10;"></asp:Image>&nbsp; Сформировать счет
                         </asp:HyperLink>
                 </td>
-                <td valign="top">
+<%--                <td valign="top">
                     Введите серийный номер:<br />
                     <br />
                     <asp:TextBox ID="txtRequest" runat="server"></asp:TextBox> &nbsp;&nbsp;&nbsp;&nbsp;&nbsp; <asp:LinkButton CssClass="PanelHider" ID="lnk_search_cash" Text="найти" runat="server" /> <br />
@@ -71,31 +71,21 @@
                     <asp:Image runat="server" ID="Image7" ImageUrl="Images/sel.gif" Style="z-index: 103;
                                         position: relative; left: 10;"></asp:Image>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;<asp:LinkButton CssClass="PanelHider" ID="lnkShowRepair" Text="Показать оборудование в ремонте" runat="server" />        
                     
-                </td>
+                </td>--%>
                 <td valign="top">
                     <asp:HyperLink ID="lnkBookKeeping" runat="server" EnableViewState="False" CssClass="PanelHider" NavigateUrl="BookKeeping.aspx"> <asp:Image runat="server" ID="Image5" ImageUrl="Images/sel.gif" Style="z-index: 103; position: relative; left: 10;"></asp:Image>&nbsp;Бухгалтерия</asp:HyperLink>
                 </td>                
             </tr>
         </table>
-        
-
-        
-        
-<br /><br />
-<asp:HyperLink ID="HyperLink2" runat="server" EnableViewState="False" CssClass="PanelHider" NavigateUrl="IBANConverter.aspx"> <asp:Image runat="server" ID="Image9" ImageUrl="Images/sel.gif" Style="z-index: 103; position: relative; left: 10;"></asp:Image>&nbsp;IBAN конвертер</asp:HyperLink>
-        <br /><br />
-        
-
-        <table id="tblLinks" cellspacing="0" cellpadding="0" width="100%" runat="server">
-            <tr>
-                <td>
-                    <asp:Label ID="msg" runat="server" Font-Bold="True" ForeColor="Red" EnableViewState="False"></asp:Label>
-                </td>
-            </tr>
-        </table>
-
-<asp:Label ID="lblExport" runat="server" Visible="true">
-    <br /><br /><br /><br /><br /><br /><br /><br /><br /><br />
+        <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
+<asp:Panel ID="pnlExport" runat="server" Visible="true">
+    <table id="tblLinks" cellspacing="0" cellpadding="0" width="100%" runat="server" height="20px" style="margin: 5px 10px">
+        <tr>
+            <td>
+                <asp:Label ID="msg" runat="server" Font-Bold="True" ForeColor="Red" EnableViewState="False" Visible="True"></asp:Label>
+            </td>
+        </tr>
+    </table>
     <table>
         <tr>
             <td>
@@ -123,7 +113,7 @@
                 </asp:RadioButtonList>
             </td>
             <td>
-                <asp:ListBox runat="server" ID="lstEmployee" Rows="7" Width="250px" Visible="False" AutoPostBack="True"/>
+                <asp:ListBox runat="server" ID="lstEmployee" Rows="10" Width="300px" Visible="False" AutoPostBack="True"/>
             </td>
         </tr>
     </table>
@@ -150,7 +140,7 @@
 										EnableClientScript="False" Display="Dynamic" Type="Date" Operator="DataTypeCheck">Пожалуйста, введите корректные значение начальной даты</asp:comparevalidator>
 
 
-</asp:Label>
+</asp:Panel>
         <%--<asp:LinkButton runat="server" ID="testSms" OnClick="testSms_OnClick">Тест СМС</asp:LinkButton>--%>
         <script language="javascript">
             jQuery(function () {

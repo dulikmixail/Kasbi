@@ -1,4 +1,5 @@
 Imports System.IO
+Imports System.Windows.Forms
 Imports Microsoft.Office.Interop.Excel
 Imports Microsoft.VisualBasic.FileIO.FileSystem
 Imports Models.Sms.Sending.Request
@@ -9,7 +10,6 @@ Imports Scripting
 Imports Service
 
 Namespace Kasbi
-
     Partial Class frmDefault
         Inherits PageBase
         Protected WithEvents Hyperlink1 As System.Web.UI.WebControls.HyperLink
@@ -23,14 +23,16 @@ Namespace Kasbi
         Protected WithEvents lblSaleCTO As System.Web.UI.WebControls.Label
         Protected WithEvents repGoodTypes As System.Web.UI.WebControls.Repeater
 
+        Private ReadOnly _serviceExport As ServiceExport = New ServiceExport()
+
         Dim startdate
         Dim enddate
 
 #Region " Web Form Designer Generated Code "
 
         'This call is required by the Web Form Designer.
-        <System.Diagnostics.DebuggerStepThrough()> Private Sub InitializeComponent()
-
+        <System.Diagnostics.DebuggerStepThrough()>
+        Private Sub InitializeComponent()
         End Sub
 
         Private Sub Page_Init(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Init
@@ -40,6 +42,7 @@ Namespace Kasbi
         End Sub
 
 #End Region
+
         Dim query
         Dim countRest% = 0
         Dim groupName$ = ""
@@ -47,6 +50,7 @@ Namespace Kasbi
         Dim WithEvents oExcel As Microsoft.Office.Interop.Excel.Application
         Dim WithEvents oBook As Workbook
         Dim WithEvents oSheet As Worksheet
+        Const NotHaveData As String = "Íåò äàííûõ äëÿ ýêñïîðòà!"
 
         Protected Sub Page_Load1(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
             'Îãðàíè÷åíèå ïðàâ
@@ -59,7 +63,7 @@ Namespace Kasbi
             End If
 
             If CurrentUser.permissions <> 4 Then
-                lblExport.Visible = False
+                pnlExport.Visible = False
             End If
 
             If Session("rule3") = "0" Then
@@ -80,7 +84,10 @@ Namespace Kasbi
                 radioButtonListExport.Items.FindByValue("unpAndDogovor").Enabled = False
             End If
 
-            If Not radioButtonListExport.SelectedValue = "removedFromTO" And Not radioButtonListExport.SelectedValue = "toHistorySpecialRules" And Not radioButtonListExport.SelectedValue = "unpAndDogovor" Then
+            If _
+                Not radioButtonListExport.SelectedValue = "removedFromTO" And
+                Not radioButtonListExport.SelectedValue = "toHistorySpecialRules" And
+                Not radioButtonListExport.SelectedValue = "unpAndDogovor" Then
                 lstEmployee.Visible = True
             Else
                 lstEmployee.Visible = False
@@ -96,13 +103,12 @@ Namespace Kasbi
 
 
             If Not IsPostBack Then
-                lstcash.Visible = False
+                'lstcash.Visible = False
 
                 tbxBeginDate.Text = Date.Now.Day & "." & Date.Now.Month & "." & Date.Now.Year
                 tbxEndDate.Text = Date.Now.Day & "." & Date.Now.Month & "." & Date.Now.Year
                 load_employee()
             End If
-
         End Sub
 
         Sub load_employee()
@@ -126,125 +132,120 @@ Namespace Kasbi
             End Try
         End Sub
 
-        Protected Sub lnk_search_cash_Click(sender As Object, e As EventArgs) Handles lnk_search_cash.Click
+        'Protected Sub lnk_search_cash_Click(sender As Object, e As EventArgs) Handles lnk_search_cash.Click
 
-            If txtRequest.Text.Trim.Length > 5 Then
-
-
-                Dim cmd As SqlClient.SqlCommand
-                Dim rs As SqlClient.SqlDataReader
-
-                cmd = New SqlClient.SqlCommand("select num_cashregister,num_control_reestr,num_control_pzu,num_control_mfp,good_sys_id from good where num_cashregister LIKE '%" & txtRequest.Text.Trim & "%' ORDER BY good_sys_id")
-                'cmd.CommandType = CommandType.StoredProcedure
-                rs = dbSQL.GetReader(cmd)
-
-                lstcash.Visible = True
-                lstcash.Items.Clear()
-
-                Dim i = 0
-
-                While rs.Read
-                    'MsgBox(rs(1))
-                    lstcash.Items.Add("¹" & rs(0) & " " & rs(1) & " " & rs(2) & " " & rs(3))
-                    i = i + 1
-                End While
-
-                If i = 0 Then
-                    lstcash.Visible = False
-                End If
+        '    If txtRequest.Text.Trim.Length > 5 Then
 
 
-                rs.Close()
+        '        Dim cmd As SqlClient.SqlCommand
+        '        Dim rs As SqlClient.SqlDataReader
+
+        '        cmd = New SqlClient.SqlCommand("select num_cashregister,num_control_reestr,num_control_pzu,num_control_mfp,good_sys_id from good where num_cashregister LIKE '%" & txtRequest.Text.Trim & "%' ORDER BY good_sys_id")
+        '        'cmd.CommandType = CommandType.StoredProcedure
+        '        rs = dbSQL.GetReader(cmd)
+
+        '        lstcash.Visible = True
+        '        lstcash.Items.Clear()
+
+        '        Dim i = 0
+
+        '        While rs.Read
+        '            'MsgBox(rs(1))
+        '            lstcash.Items.Add("¹" & rs(0) & " " & rs(1) & " " & rs(2) & " " & rs(3))
+        '            i = i + 1
+        '        End While
+
+        '        If i = 0 Then
+        '            lstcash.Visible = False
+        '        End If
 
 
-            Else
-                lstcash.Items.Clear()
-                lstcash.Visible = False
-            End If
-
-        End Sub
-
-        Protected Sub btnRequest_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnRequest.Click
-
-            If lstcash.SelectedIndex >= 0 Then
-
-                Dim cmd As SqlClient.SqlCommand
-                Dim rs As SqlClient.SqlDataReader
-
-                cmd = New SqlClient.SqlCommand("select num_cashregister,num_control_reestr,num_control_pzu,num_control_mfp,good_sys_id from good where num_cashregister LIKE '%" & txtRequest.Text.Trim & "%' ORDER BY good_sys_id")
-                'cmd.CommandType = CommandType.StoredProcedure
-                rs = dbSQL.GetReader(cmd)
-
-                Dim i = 0
-
-                While rs.Read
-                    If i = lstcash.SelectedIndex Then
-                        good_sys_id = rs(4)
-                    End If
-                    i = i + 1
-                End While
-
-                rs.Close()
+        '        rs.Close()
 
 
-                If good_sys_id > 0 Then
-                    Session("repair-filter") = " where good.good_sys_id=" & good_sys_id & " "
-                    Response.Redirect(GetAbsoluteUrl("~/RepairMaster.aspx"))
-                End If
+        '    Else
+        '        lstcash.Items.Clear()
+        '        lstcash.Visible = False
+        '    End If
+
+        'End Sub
+
+        'Protected Sub btnRequest_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnRequest.Click
+
+        '    If lstcash.SelectedIndex >= 0 Then
+
+        '        Dim cmd As SqlClient.SqlCommand
+        '        Dim rs As SqlClient.SqlDataReader
+
+        '        cmd = New SqlClient.SqlCommand("select num_cashregister,num_control_reestr,num_control_pzu,num_control_mfp,good_sys_id from good where num_cashregister LIKE '%" & txtRequest.Text.Trim & "%' ORDER BY good_sys_id")
+        '        'cmd.CommandType = CommandType.StoredProcedure
+        '        rs = dbSQL.GetReader(cmd)
+
+        '        Dim i = 0
+
+        '        While rs.Read
+        '            If i = lstcash.SelectedIndex Then
+        '                good_sys_id = rs(4)
+        '            End If
+        '            i = i + 1
+        '        End While
+
+        '        rs.Close()
 
 
-
-            End If
-
-
-
-
-        End Sub
+        '        If good_sys_id > 0 Then
+        '            Session("repair-filter") = " where good.good_sys_id=" & good_sys_id & " "
+        '            Response.Redirect(GetAbsoluteUrl("~/RepairMaster.aspx"))
+        '        End If
 
 
-
-        Protected Sub lnksetRepair_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles lnksetRepair.Click
-            If lstcash.SelectedIndex >= 0 Then
-
-                Dim cmd As SqlClient.SqlCommand
-                Dim rs As SqlClient.SqlDataReader
-
-                cmd = New SqlClient.SqlCommand("select num_cashregister,num_control_reestr,num_control_pzu,num_control_mfp,good_sys_id from good where num_cashregister LIKE '%" & txtRequest.Text.Trim & "%' ORDER BY good_sys_id")
-                'cmd.CommandType = CommandType.StoredProcedure
-                rs = dbSQL.GetReader(cmd)
-
-                Dim i = 0
-
-                While rs.Read
-                    If i = lstcash.SelectedIndex Then
-                        good_sys_id = rs(4)
-                    End If
-                    i = i + 1
-                End While
-
-                rs.Close()
+        '    End If
 
 
-                If good_sys_id > 0 Then
-                    Response.Redirect(GetAbsoluteUrl("~/SetRepair.aspx?id=" & good_sys_id))
-                End If
+        'End Sub
 
 
+        'Protected Sub lnksetRepair_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles lnksetRepair.Click
+        '    If lstcash.SelectedIndex >= 0 Then
 
-            End If
+        '        Dim cmd As SqlClient.SqlCommand
+        '        Dim rs As SqlClient.SqlDataReader
+
+        '        cmd = New SqlClient.SqlCommand("select num_cashregister,num_control_reestr,num_control_pzu,num_control_mfp,good_sys_id from good where num_cashregister LIKE '%" & txtRequest.Text.Trim & "%' ORDER BY good_sys_id")
+        '        'cmd.CommandType = CommandType.StoredProcedure
+        '        rs = dbSQL.GetReader(cmd)
+
+        '        Dim i = 0
+
+        '        While rs.Read
+        '            If i = lstcash.SelectedIndex Then
+        '                good_sys_id = rs(4)
+        '            End If
+        '            i = i + 1
+        '        End While
+
+        '        rs.Close()
 
 
-            'query = dbSQL.ExecuteScalar("SELECT good_sys_id FROM good WHERE num_cashregister='" & txtRequest.Text.Trim & "'")
+        '        If good_sys_id > 0 Then
+        '            Response.Redirect(GetAbsoluteUrl("~/SetRepair.aspx?id=" & good_sys_id))
+        '        End If
 
-            'If Not query Is DBNull.Value And query > 1 Then
-            'Response.Redirect(GetAbsoluteUrl("~/SetRepair.aspx?id=" & query))
-            'End If
-        End Sub
 
-        Protected Sub lnkShowRepair_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles lnkShowRepair.Click
-            Session("repair-filter") = " where good.inrepair='1' "
-            Response.Redirect(GetAbsoluteUrl("~/RepairMaster.aspx"))
-        End Sub
+        '    End If
+
+
+        '    'query = dbSQL.ExecuteScalar("SELECT good_sys_id FROM good WHERE num_cashregister='" & txtRequest.Text.Trim & "'")
+
+        '    'If Not query Is DBNull.Value And query > 1 Then
+        '    'Response.Redirect(GetAbsoluteUrl("~/SetRepair.aspx?id=" & query))
+        '    'End If
+        'End Sub
+
+        'Protected Sub lnkShowRepair_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles lnkShowRepair.Click
+        '    Session("repair-filter") = " where good.inrepair='1' "
+        '    Response.Redirect(GetAbsoluteUrl("~/RepairMaster.aspx"))
+        'End Sub
 
         Sub export_customer()
             Try
@@ -264,7 +265,8 @@ Namespace Kasbi
                 cmd.Parameters.AddWithValue("@date_end", enddate)
                 rs = dbSQL.GetReader(cmd)
 
-                FileOpen(1, Server.MapPath("XML") & "\new_customer.xml", OpenMode.Output, OpenAccess.Write, OpenShare.LockWrite)
+                FileOpen(1, Server.MapPath("XML") & "\new_customer.xml", OpenMode.Output, OpenAccess.Write,
+                         OpenShare.LockWrite)
                 PrintLine(1, "<?xml version='1.0' encoding='windows-1251' ?>")
                 PrintLine(1, "<Customers>")
                 While rs.Read
@@ -298,7 +300,8 @@ Namespace Kasbi
                 cmd.Parameters.AddWithValue("@date_end", enddate)
                 rs = dbSQL.GetReader(cmd)
 
-                FileOpen(1, Server.MapPath("XML") & "\new_sales.xml", OpenMode.Output, OpenAccess.Write, OpenShare.LockWrite)
+                FileOpen(1, Server.MapPath("XML") & "\new_sales.xml", OpenMode.Output, OpenAccess.Write,
+                         OpenShare.LockWrite)
                 PrintLine(1, "<?xml version='1.0' encoding='windows-1251' ?>")
                 PrintLine(1, "<Sales>")
 
@@ -320,9 +323,9 @@ Namespace Kasbi
             'Try
             Dim cmd As SqlClient.SqlCommand
             Dim rs As SqlClient.SqlDataReader
-            Dim f As IO.File
-            Dim fs As IO.FileStream
             Dim i% = 0
+            Dim cashHistories As ArrayList = New ArrayList()
+            Dim row As String = String.Empty
 
             startdate = DateTime.Parse(tbxBeginDate.Text)
             enddate = DateTime.Parse(tbxEndDate.Text)
@@ -380,29 +383,34 @@ Namespace Kasbi
             End If
 
             rs = dbSQL.GetReader(cmd)
-            'MsgBox(lbxExecutor.SelectedValue)
-            FileOpen(1, Server.MapPath("XML") & "\new_history.xml", OpenMode.Output, OpenAccess.Write, OpenShare.LockWrite)
-            PrintLine(1, "<?xml version='1.0' encoding='windows-1251' ?>")
-            PrintLine(1, "<history>")
-            While rs.Read
-                Print(1, rs(0))
-                i = i + 1
-            End While
-            PrintLine(1)
-            PrintLine(1, "</history>")
+            If rs.HasRows
+                FileOpen(1, Server.MapPath("XML") & "\new_history.xml", OpenMode.Output, OpenAccess.Write,
+                         OpenShare.LockWrite)
+                PrintLine(1, "<?xml version='1.0' encoding='windows-1251' ?>")
+                PrintLine(1, "<history>")
+                While rs.Read
+                    row = rs(0).ToString()
+                    cashHistories = ParseCashHistoryRow(row)
+                    Print(1, row)
+                    i = i + 1
+                End While
+                PrintLine(1)
+                PrintLine(1, "</history>")
 
-            FileClose(1)
-            rs.Close()
-            'Catch
-            ' End Try
+                FileClose(1)
+                rs.Close()
+            Else
+                rs.Close()
+                ShowNotHaveData()
+            End If
+
+            _serviceExport.LockCashHistory(cashHistories, ExportType.OneC)
         End Sub
 
         Sub export_docs()
             Try
                 Dim cmd As SqlClient.SqlCommand
                 Dim rs As SqlClient.SqlDataReader
-                Dim f As IO.File
-                Dim fs As IO.FileStream
                 Dim i% = 0
 
                 Dim query
@@ -413,7 +421,8 @@ Namespace Kasbi
                 cmd.Parameters.AddWithValue("@date", Date.Today)
                 rs = dbSQL.GetReader(cmd)
 
-                FileOpen(1, Server.MapPath("XML") & "\new_docs.xml", OpenMode.Output, OpenAccess.Write, OpenShare.LockWrite)
+                FileOpen(1, Server.MapPath("XML") & "\new_docs.xml", OpenMode.Output, OpenAccess.Write,
+                         OpenShare.LockWrite)
                 PrintLine(1, "<?xml version='1.0' encoding='windows-1251' ?>")
                 PrintLine(1, "<docs>")
                 While rs.Read
@@ -433,15 +442,14 @@ Namespace Kasbi
             Try
                 Dim cmd As SqlClient.SqlCommand
                 Dim rs As SqlClient.SqlDataReader
-                Dim f As IO.File
-                Dim fs As IO.FileStream
                 Dim i% = 0
 
                 cmd = New SqlClient.SqlCommand("get_xml_ostatki_cash")
                 cmd.CommandType = CommandType.StoredProcedure
                 rs = dbSQL.GetReader(cmd)
 
-                FileOpen(1, Server.MapPath("XML") & "\ostatki.xml", OpenMode.Output, OpenAccess.Write, OpenShare.LockWrite)
+                FileOpen(1, Server.MapPath("XML") & "\ostatki.xml", OpenMode.Output, OpenAccess.Write,
+                         OpenShare.LockWrite)
                 PrintLine(1, "<?xml version='1.0' encoding='windows-1251' ?>")
                 PrintLine(1, "<ostatki>")
                 While rs.Read
@@ -483,15 +491,14 @@ Namespace Kasbi
             Try
                 Dim cmd As SqlClient.SqlCommand
                 Dim rs As SqlClient.SqlDataReader
-                Dim f As IO.File
-                Dim fs As IO.FileStream
                 Dim i% = 0
 
                 cmd = New SqlClient.SqlCommand("get_good_forexport")
                 cmd.CommandType = CommandType.StoredProcedure
                 rs = dbSQL.GetReader(cmd)
 
-                FileOpen(1, Server.MapPath("XML") & "\export_for_site.xml", OpenMode.Output, OpenAccess.Write, OpenShare.LockWrite)
+                FileOpen(1, Server.MapPath("XML") & "\export_for_site.xml", OpenMode.Output, OpenAccess.Write,
+                         OpenShare.LockWrite)
                 PrintLine(1, "<?xml version='1.0' encoding='windows-1251' ?>")
                 PrintLine(1, "<goods>")
                 While rs.Read
@@ -511,15 +518,14 @@ Namespace Kasbi
             Try
                 Dim cmd As SqlClient.SqlCommand
                 Dim rs As SqlClient.SqlDataReader
-                Dim f As IO.File
-                Dim fs As IO.FileStream
                 Dim i% = 0
 
                 cmd = New SqlClient.SqlCommand("select * from employee for xml auto")
                 'cmd.CommandType = CommandType.StoredProcedure
                 rs = dbSQL.GetReader(cmd)
 
-                FileOpen(1, Server.MapPath("XML") & "\employee.xml", OpenMode.Output, OpenAccess.Write, OpenShare.LockWrite)
+                FileOpen(1, Server.MapPath("XML") & "\employee.xml", OpenMode.Output, OpenAccess.Write,
+                         OpenShare.LockWrite)
                 PrintLine(1, "<?xml version='1.0' encoding='windows-1251' ?>")
                 PrintLine(1, "<goods>")
                 While rs.Read
@@ -539,15 +545,14 @@ Namespace Kasbi
             Try
                 Dim cmd As SqlClient.SqlCommand
                 Dim rs As SqlClient.SqlDataReader
-                Dim f As IO.File
-                Dim fs As IO.FileStream
                 Dim i% = 0
 
                 cmd = New SqlClient.SqlCommand("select * from customer for xml auto")
                 'cmd.CommandType = CommandType.StoredProcedure
                 rs = dbSQL.GetReader(cmd)
 
-                FileOpen(1, Server.MapPath("XML") & "\allcustomers.xml", OpenMode.Output, OpenAccess.Write, OpenShare.LockWrite)
+                FileOpen(1, Server.MapPath("XML") & "\allcustomers.xml", OpenMode.Output, OpenAccess.Write,
+                         OpenShare.LockWrite)
                 PrintLine(1, "<?xml version='1.0' encoding='windows-1251' ?>")
                 PrintLine(1, "<goods>")
                 While rs.Read
@@ -567,9 +572,9 @@ Namespace Kasbi
             'Try
             Dim cmd As SqlClient.SqlCommand
             Dim rs As SqlClient.SqlDataReader
-            Dim f As IO.File
-            Dim fs As IO.FileStream
             Dim i% = 0
+            Dim cashHistories As ArrayList = New ArrayList()
+            Dim row As String = String.Empty
 
             startdate = DateTime.Parse(tbxBeginDate.Text)
             enddate = DateTime.Parse(tbxEndDate.Text)
@@ -592,156 +597,51 @@ Namespace Kasbi
             cmd.Parameters.AddWithValue("@pi_employee_sys_id", lstEmployee.SelectedValue)
 
             rs = dbSQL.GetReader(cmd)
-            'MsgBox(lbxExecutor.SelectedValue)
-            FileOpen(1, Server.MapPath("XML") & "\new_history.xml", OpenMode.Output, OpenAccess.Write, OpenShare.LockWrite)
-            PrintLine(1, "<?xml version='1.0' encoding='windows-1251' ?>")
-            PrintLine(1, "<history>")
-            While rs.Read
-                Print(1, rs(0))
-                i = i + 1
-            End While
-            PrintLine(1)
-            PrintLine(1, "</history>")
+            If rs.HasRows
+                FileOpen(1, Server.MapPath("XML") & "\new_history.xml", OpenMode.Output, OpenAccess.Write,
+                         OpenShare.LockWrite)
+                PrintLine(1, "<?xml version='1.0' encoding='windows-1251' ?>")
+                PrintLine(1, "<history>")
+                While rs.Read
+                    row = rs(0).ToString()
+                    cashHistories = ParseCashHistoryRow(row)
+                    Print(1, row)
+                    i = i + 1
+                End While
+                PrintLine(1)
+                PrintLine(1, "</history>")
 
-            FileClose(1)
-            rs.Close()
+                FileClose(1)
+                rs.Close()
+            Else
+                rs.Close()
+                ShowNotHaveData()
+            End If
+            _serviceExport.LockCashHistory(cashHistories, ExportType.OneC)
+            'MsgBox(lbxExecutor.SelectedValue)
+
             'Catch
             ' End Try
-
         End Sub
+        Private Function ParseCashHistoryRow(row As String) As ArrayList
+            Dim matchCollection As MatchCollection
+            Dim cashHistories As ArrayList = New ArrayList()
 
-        Sub createAndSendFileHistory(ds As DataSet, fileName As String)
-            Dim docPath, savePath As String
-            Dim drs() As Data.DataRow
-            Dim iFirstTableRow = 4
-            docPath = Server.MapPath("Templates\") & fileName
-            savePath = Server.MapPath("Docs") & "\repair\" & Session("User").sys_id & "\" & fileName
-            CopyFile(docPath, savePath, overwrite:=True)
+            matchCollection = Regex.Matches(row, "(<cash_history sys_id="")([0-9]+?)("")")
+                    For Each match As Match In matchCollection
+                        cashHistories.Add(match.Groups.Item(2).Value)
+                    Next
+            Return cashHistories
+        End Function
 
-            oExcel = New ApplicationClass()
-            oExcel.DisplayAlerts = False
-            oBook = oExcel.Workbooks.Open(savePath)
-            oSheet = oBook.ActiveSheet
-
-            drs = ds.Tables(0).Select()
-
-            Dim selection As Range = oSheet.Range("A4:H4")
-            selection.Cut(selection.Offset(drs.Length, 0))
-
-            If lstEmployee.SelectedValue.Length <> 0 Then
-                oSheet.Cells(2, 1).Value = radioButtonListExport.SelectedItem.Text & " (" & tbxBeginDate.Text & " - " & tbxEndDate.Text & ") - " & lstEmployee.SelectedItem.Text
-            Else
-                oSheet.Cells(2, 1).Value = radioButtonListExport.SelectedItem.Text & " (" & tbxBeginDate.Text & " - " & tbxEndDate.Text & ")"
-            End If
-            For i As Integer = 0 To drs.Length - 1
-                oSheet.Cells(iFirstTableRow + i, 1).Value = i + 1
-                oSheet.Cells(iFirstTableRow + i, 2).Value = drs(i).Item(13)
-                oSheet.Cells(iFirstTableRow + i, 3).Value = drs(i).Item(18)
-                oSheet.Cells(iFirstTableRow + i, 4).Value = drs(i).Item(6)
-                oSheet.Cells(iFirstTableRow + i, 5).Value = drs(i).Item(4)
-                oSheet.Cells(iFirstTableRow + i, 6).Value = drs(i).Item(22)
-                oSheet.Cells(iFirstTableRow + i, 7).Value = drs(i).Item(21)
-                oSheet.Cells(iFirstTableRow + i, 8).Value = drs(i).Item(20)
-            Next
-
-            oSheet.Range("A" & iFirstTableRow & ":H" & iFirstTableRow + drs.Length).Borders.LineStyle = 1
-            oSheet.Cells(iFirstTableRow + drs.Length, 7).Value = oExcel.WorksheetFunction.Sum(oSheet.Range("G" & iFirstTableRow & ":G" & iFirstTableRow + drs.Length))
-            oSheet.Cells(iFirstTableRow + drs.Length, 8).Value = oExcel.WorksheetFunction.Sum(oSheet.Range("H" & iFirstTableRow & ":H" & iFirstTableRow + drs.Length))
-
-            oBook.Close(True, savePath, True)
-            oExcel.Quit()
-
-            SendFile(savePath)
-
-        End Sub
-
-        Sub createAndSendFileToByExecutor(ds As DataSet, fileName As String)
-            Dim docPath, savePath As String
-            Dim drs() As Data.DataRow
-            Dim iFirstTableRow = 2
-
-            docPath = Server.MapPath("Templates\") & "TO_by_executor.xlsx"
-            savePath = Server.MapPath("Docs") & "\TO\" & Session("User").sys_id & "\" & fileName
-            CopyFile(docPath, savePath, overwrite:=True)
-
-            oExcel = New ApplicationClass()
-            oExcel.DisplayAlerts = False
-            oBook = oExcel.Workbooks.Open(savePath)
-            oSheet = oBook.ActiveSheet
-
-            drs = ds.Tables(0).Select()
-
-            Dim selection As Range = oSheet.Range("B7:D13")
-            selection.Font.Size = 16
-            selection.Cut(selection.Offset(drs.Length, 0))
-
-            For i As Integer = 0 To drs.Length - 1
-                oSheet.Cells(iFirstTableRow + i, 1).Value = i + 1
-                oSheet.Cells(iFirstTableRow + i, 2).Value = drs(i).Item(0)
-                oSheet.Cells(iFirstTableRow + i, 3).Value = drs(i).Item(1)
-                oSheet.Cells(iFirstTableRow + i, 4).Value = drs(i).Item(2)
-                oSheet.Cells(iFirstTableRow + i, 5).Value = drs(i).Item(3)
-                oSheet.Cells(iFirstTableRow + i, 6).Value = drs(i).Item(5)
-                oSheet.Cells(iFirstTableRow + i, 7).Value = drs(i).Item(9)
-            Next
-
-            oSheet.Range("A" & iFirstTableRow & ":G" & drs.Length + 1).Borders.LineStyle = 1
-
-            oBook.Close(True, savePath, True)
-            oExcel.Quit()
-
-            SendFile(savePath)
-
-        End Sub
-
-        Sub createAndSendFileRemovedFromTo(ds As DataSet, fileName As String)
-            Dim docPath, savePath As String
-            Dim drs() As Data.DataRow
-            Dim iFirstTableRow = 2
-
-            docPath = Server.MapPath("Templates\") & "removed_from_TO.xlsx"
-            savePath = Server.MapPath("Docs") & "\TO\" & Session("User").sys_id & "\" & fileName
-            CopyFile(docPath, savePath, overwrite:=True)
-
-            oExcel = New ApplicationClass()
-            oExcel.DisplayAlerts = False
-            oBook = oExcel.Workbooks.Open(savePath)
-            oSheet = oBook.ActiveSheet
-
-            drs = ds.Tables(0).Select()
-
-            Dim selection As Range = oSheet.Range("B7:D13")
-            selection.Font.Size = 16
-            selection.Cut(selection.Offset(drs.Length, 0))
-
-            For i As Integer = 0 To drs.Length - 1
-                oSheet.Cells(iFirstTableRow + i, 1).Value = i + 1
-                oSheet.Cells(iFirstTableRow + i, 2).Value = drs(i).Item(3)
-                oSheet.Cells(iFirstTableRow + i, 3).Value = drs(i).Item(0)
-                oSheet.Cells(iFirstTableRow + i, 4).Value = drs(i).Item(1)
-                oSheet.Cells(iFirstTableRow + i, 5).Value = drs(i).Item(2)
-            Next
-
-            oSheet.Range("A" & iFirstTableRow & ":E" & drs.Length + 1).Borders.LineStyle = 1
-
-            oBook.Close(True, savePath, True)
-            oExcel.Quit()
-
-            SendFile(savePath)
-        End Sub
-
-        Sub createAndSendFileUnpAndDogovor(ds As DataSet, fileName As String)
-            Dim docPath, savePath As String
-            Dim drs() As Data.DataRow
-            Dim iFirstTableRow = 1
-            Dim fso As New FileSystemObject
-            Dim folder As String
-            Dim subFolder As String
-
-            Try
+        Private Sub CreateAndSendFileHistory(ds As DataSet, fileName As String)
+            If ds.Tables(0).Rows.Count > 0
+                Dim docPath, savePath As String
+                Dim drs() As Data.DataRow
+                Dim iFirstTableRow = 4
                 docPath = Server.MapPath("Templates\") & fileName
-                savePath = Server.MapPath("Docs") & "\TO\" & Session("User").sys_id & "\" & fileName
-                CopyFile(docPath, savePath, overwrite:=True)
+                savePath = Server.MapPath("Docs") & "\repair\" & Session("User").sys_id & "\" & fileName
+                CopyFile(docPath, savePath, overwrite := True)
 
                 oExcel = New ApplicationClass()
                 oExcel.DisplayAlerts = False
@@ -750,22 +650,165 @@ Namespace Kasbi
 
                 drs = ds.Tables(0).Select()
 
-                For i As Integer = 0 To drs.Length - 1
-                    oSheet.Cells(iFirstTableRow + i, 1).Value = drs(i).Item(0)
-                    oSheet.Cells(iFirstTableRow + i, 2).Value = drs(i).Item(1)
-                    oSheet.Cells(iFirstTableRow + i, 3).Value = drs(i).Item(2)
+                Dim selection As Range = oSheet.Range("A4:H4")
+                selection.Cut(selection.Offset(drs.Length, 0))
 
+                If lstEmployee.SelectedValue.Length <> 0 Then
+                    oSheet.Cells(2, 1).Value = radioButtonListExport.SelectedItem.Text & " (" & tbxBeginDate.Text &
+                                               " - " &
+                                               tbxEndDate.Text & ") - " & lstEmployee.SelectedItem.Text
+                Else
+                    oSheet.Cells(2, 1).Value = radioButtonListExport.SelectedItem.Text & " (" & tbxBeginDate.Text &
+                                               " - " &
+                                               tbxEndDate.Text & ")"
+                End If
+                For i As Integer = 0 To drs.Length - 1
+                    oSheet.Cells(iFirstTableRow + i, 1).Value = i + 1
+                    oSheet.Cells(iFirstTableRow + i, 2).Value = drs(i).Item(13)
+                    oSheet.Cells(iFirstTableRow + i, 3).Value = drs(i).Item(18)
+                    oSheet.Cells(iFirstTableRow + i, 4).Value = drs(i).Item(6)
+                    oSheet.Cells(iFirstTableRow + i, 5).Value = drs(i).Item(4)
+                    oSheet.Cells(iFirstTableRow + i, 6).Value = drs(i).Item(22)
+                    oSheet.Cells(iFirstTableRow + i, 7).Value = drs(i).Item(21)
+                    oSheet.Cells(iFirstTableRow + i, 8).Value = drs(i).Item(20)
                 Next
+
+                oSheet.Range("A" & iFirstTableRow & ":H" & iFirstTableRow + drs.Length).Borders.LineStyle = 1
+                oSheet.Cells(iFirstTableRow + drs.Length, 7).Value =
+                    oExcel.WorksheetFunction.Sum(oSheet.Range("G" & iFirstTableRow & ":G" & iFirstTableRow + drs.Length))
+                oSheet.Cells(iFirstTableRow + drs.Length, 8).Value =
+                    oExcel.WorksheetFunction.Sum(oSheet.Range("H" & iFirstTableRow & ":H" & iFirstTableRow + drs.Length))
 
                 oBook.Close(True, savePath, True)
                 oExcel.Quit()
 
                 SendFile(savePath)
-                oExcel.Quit()
-            Catch ex As Exception
-                oExcel.Quit()
-            End Try
+            Else
+                ShowNotHaveData()
+            End If
+        End Sub
 
+        Private Sub ÑreateAndSendFileToByExecutor(ds As DataSet, fileName As String)
+            If ds.Tables(0).Rows.Count > 0
+                Dim docPath, savePath As String
+                Dim drs() As Data.DataRow
+                Dim iFirstTableRow = 2
+
+                docPath = Server.MapPath("Templates\") & "TO_by_executor.xlsx"
+                savePath = Server.MapPath("Docs") & "\TO\" & Session("User").sys_id & "\" & fileName
+                CopyFile(docPath, savePath, overwrite := True)
+
+                oExcel = New ApplicationClass()
+                oExcel.DisplayAlerts = False
+                oBook = oExcel.Workbooks.Open(savePath)
+                oSheet = oBook.ActiveSheet
+
+                drs = ds.Tables(0).Select()
+
+                Dim selection As Range = oSheet.Range("B7:D13")
+                selection.Font.Size = 16
+                selection.Cut(selection.Offset(drs.Length, 0))
+
+                For i As Integer = 0 To drs.Length - 1
+                    oSheet.Cells(iFirstTableRow + i, 1).Value = i + 1
+                    oSheet.Cells(iFirstTableRow + i, 2).Value = drs(i).Item(0)
+                    oSheet.Cells(iFirstTableRow + i, 3).Value = drs(i).Item(1)
+                    oSheet.Cells(iFirstTableRow + i, 4).Value = drs(i).Item(2)
+                    oSheet.Cells(iFirstTableRow + i, 5).Value = drs(i).Item(3)
+                    oSheet.Cells(iFirstTableRow + i, 6).Value = drs(i).Item(5)
+                    oSheet.Cells(iFirstTableRow + i, 7).Value = drs(i).Item(9)
+                Next
+
+                oSheet.Range("A" & iFirstTableRow & ":G" & drs.Length + 1).Borders.LineStyle = 1
+
+                oBook.Close(True, savePath, True)
+                oExcel.Quit()
+
+                SendFile(savePath)
+            Else
+                ShowNotHaveData()
+            End If
+        End Sub
+
+        Private Sub CreateAndSendFileRemovedFromTo(ds As DataSet, fileName As String)
+            If ds.Tables(0).Rows.Count > 0
+                Dim docPath, savePath As String
+                Dim drs() As Data.DataRow
+                Dim iFirstTableRow = 2
+
+                docPath = Server.MapPath("Templates\") & "removed_from_TO.xlsx"
+                savePath = Server.MapPath("Docs") & "\TO\" & Session("User").sys_id & "\" & fileName
+                CopyFile(docPath, savePath, overwrite := True)
+
+                oExcel = New ApplicationClass()
+                oExcel.DisplayAlerts = False
+                oBook = oExcel.Workbooks.Open(savePath)
+                oSheet = oBook.ActiveSheet
+
+                drs = ds.Tables(0).Select()
+
+                Dim selection As Range = oSheet.Range("B7:D13")
+                selection.Font.Size = 16
+                selection.Cut(selection.Offset(drs.Length, 0))
+
+                For i As Integer = 0 To drs.Length - 1
+                    oSheet.Cells(iFirstTableRow + i, 1).Value = i + 1
+                    oSheet.Cells(iFirstTableRow + i, 2).Value = drs(i).Item(3)
+                    oSheet.Cells(iFirstTableRow + i, 3).Value = drs(i).Item(0)
+                    oSheet.Cells(iFirstTableRow + i, 4).Value = drs(i).Item(1)
+                    oSheet.Cells(iFirstTableRow + i, 5).Value = drs(i).Item(2)
+                Next
+
+                oSheet.Range("A" & iFirstTableRow & ":E" & drs.Length + 1).Borders.LineStyle = 1
+
+                oBook.Close(True, savePath, True)
+                oExcel.Quit()
+
+                SendFile(savePath)
+            Else
+                ShowNotHaveData()
+            End If
+        End Sub
+
+        Sub createAndSendFileUnpAndDogovor(ds As DataSet, fileName As String)
+            If ds.Tables(0).Rows.Count > 0
+                Dim docPath, savePath As String
+                Dim drs() As Data.DataRow
+                Dim iFirstTableRow = 1
+                Dim fso As New FileSystemObject
+                Dim folder As String
+                Dim subFolder As String
+
+                Try
+                    docPath = Server.MapPath("Templates\") & fileName
+                    savePath = Server.MapPath("Docs") & "\TO\" & Session("User").sys_id & "\" & fileName
+                    CopyFile(docPath, savePath, overwrite := True)
+
+                    oExcel = New ApplicationClass()
+                    oExcel.DisplayAlerts = False
+                    oBook = oExcel.Workbooks.Open(savePath)
+                    oSheet = oBook.ActiveSheet
+
+                    drs = ds.Tables(0).Select()
+
+                    For i As Integer = 0 To drs.Length - 1
+                        oSheet.Cells(iFirstTableRow + i, 1).Value = drs(i).Item(0)
+                        oSheet.Cells(iFirstTableRow + i, 2).Value = drs(i).Item(1)
+                        oSheet.Cells(iFirstTableRow + i, 3).Value = drs(i).Item(2)
+
+                    Next
+
+                    oBook.Close(True, savePath, True)
+                    oExcel.Quit()
+
+                    SendFile(savePath)
+                    oExcel.Quit()
+                Catch ex As Exception
+                    oExcel.Quit()
+                End Try
+            Else
+                ShowNotHaveData()
+            End If
         End Sub
 
 
@@ -780,7 +823,8 @@ Namespace Kasbi
         Sub export_standartHistory_toExcel()
             export_history_toExcel(0, 0, 5)
         End Sub
-        Sub export_history_toExcel(isWarranty As Integer, isNotWork As Integer, state As Integer)
+
+        Private Sub export_history_toExcel(isWarranty As Integer, isNotWork As Integer, state As Integer)
             Dim cmd As SqlClient.SqlCommand
             Dim adapt As SqlClient.SqlDataAdapter
             Dim ds As DataSet
@@ -808,7 +852,6 @@ Namespace Kasbi
             ds = New DataSet
             adapt.Fill(ds)
             createAndSendFileHistory(ds, "Repair_history.xlsx")
-
         End Sub
 
         Sub export_TObyExecutor_toExcel()
@@ -840,7 +883,7 @@ Namespace Kasbi
             ds = New DataSet
             adapt.Fill(ds)
 
-            createAndSendFileToByExecutor(ds, "TO_by_executor.xlsx")
+            ÑreateAndSendFileToByExecutor(ds, "TO_by_executor.xlsx")
         End Sub
 
         Sub export_TOSpecialRules_toExcel()
@@ -876,8 +919,7 @@ Namespace Kasbi
             ds = New DataSet
             adapt.Fill(ds)
 
-            createAndSendFileToByExecutor(ds, "TO_by_executor_sr.xlsx")
-
+            ÑreateAndSendFileToByExecutor(ds, "TO_by_executor_sr.xlsx")
         End Sub
 
         Sub export_unpAndDogovor_toExcel()
@@ -899,7 +941,6 @@ Namespace Kasbi
             adapt.Fill(ds)
 
             createAndSendFileUnpAndDogovor(ds, "unn_dogovor.xlsx")
-
         End Sub
 
 
@@ -935,7 +976,6 @@ Namespace Kasbi
             adapt.Fill(ds)
 
             createAndSendFileRemovedFromTo(ds, "removed_from_TO.xlsx")
-
         End Sub
 
         Sub SendFile(savePath As String)
@@ -959,7 +999,8 @@ Namespace Kasbi
             Try
                 'Open the file in a try block in exclusive mode.  
                 'If the file is in use, it will throw an IOException. 
-                Dim fs As FileStream = IO.File.Open(filename, FileMode.OpenOrCreate, FileAccess.ReadWrite, FileShare.None)
+                Dim fs As FileStream = IO.File.Open(filename, FileMode.OpenOrCreate, FileAccess.ReadWrite,
+                                                    FileShare.None)
                 fs.Close()
                 ' If an exception is caught, it means that the file is in Use 
             Catch ex As IOException
@@ -1009,9 +1050,11 @@ Namespace Kasbi
             Else
                 msg.Text = "Âûáåðèòå ïóíêò äëÿ ýêñïîðòà"
             End If
-
         End Sub
 
+        Private Sub ShowNotHaveData()
+            msg.Text = NotHaveData
+        End Sub
 
         'Protected Sub testSms_OnClick(sender As Object, e As EventArgs)
         '    Dim serviceSms As ServiceSms = New ServiceSms()

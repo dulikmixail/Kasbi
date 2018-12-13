@@ -1,16 +1,16 @@
 Imports service
 
 Namespace Kasbi
-
     Partial Class NewSupportConduct
         Inherits PageBase
 
 #Region " Web Form Designer Generated Code "
 
         'This call is required by the Web Form Designer.
-        <System.Diagnostics.DebuggerStepThrough()> Private Sub InitializeComponent()
-
+        <System.Diagnostics.DebuggerStepThrough()>
+        Private Sub InitializeComponent()
         End Sub
+
         Protected WithEvents lblCaptionKassir As System.Web.UI.WebControls.Label
         Protected WithEvents lblKassir As System.Web.UI.WebControls.Label
         Protected WithEvents Linkbutton2 As System.Web.UI.WebControls.LinkButton
@@ -32,14 +32,19 @@ Namespace Kasbi
         End Sub
 
 #End Region
+
         Dim iNumber%, iCash%
         Dim sCaptionRemoveSupport As String = "Снять с ТО"
         Dim sCaptionAddSupport As String = "Поставить на ТО"
         Dim CurrentCustomer%, iNewCust%
-        Const ClearString$ = "-------"
         Dim d As Documents
         Dim dogovor$
-        Private serviceTo As ServiceTo = New ServiceTo()
+        Private ReadOnly _serviceExport As ServiceExport = New ServiceExport()
+        Private ReadOnly _serviceTo As ServiceTo= New ServiceTo()
+        Const ClearString$ = "-------"
+        Const IgnoreLockCashHistory As Boolean = False
+        Const Err003 As String =
+            "ТО не может быть изменено/удалено, так как данные уже выгружены на портал в налоговую!"
 
         Private Overloads Sub Page_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
             Try
@@ -359,7 +364,9 @@ Namespace Kasbi
             Dim adapt As SqlClient.SqlDataAdapter
             Dim ds As DataSet
             Try
-                adapt = dbSQL.GetDataAdapter("select good_type_sys_id,name name from good_type where is_cashregister=1 order by name")
+                adapt =
+                    dbSQL.GetDataAdapter(
+                        "select good_type_sys_id,name name from good_type where is_cashregister=1 order by name")
                 ds = New DataSet
                 adapt.Fill(ds)
 
@@ -386,7 +393,7 @@ Namespace Kasbi
                 lstWorker.DataValueField = "sys_id"
                 lstWorker.DataBind()
                 lstWorker.Items.Insert(0, New ListItem(ClearString, "0"))
-                lstWorker.SelectedIndex = -1
+                lstWorker.SelectedIndex = - 1
                 Try
                     lstWorker.Items.FindByValue(CurrentUser.sys_id).Selected = True
                 Catch
@@ -457,7 +464,8 @@ Namespace Kasbi
             End Try
         End Sub
 
-        Private Sub cmbSalesInfo_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles cmbSalesInfo.SelectedIndexChanged
+        Private Sub cmbSalesInfo_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) _
+            Handles cmbSalesInfo.SelectedIndexChanged
 
             Dim adapt As SqlClient.SqlDataAdapter
             Dim ds As DataSet
@@ -494,7 +502,10 @@ Namespace Kasbi
             If cmbSalesInfo.SelectedItem.Value = "0" Then
                 'новый номер договора
                 Try
-                    adapt = dbSQL.GetDataAdapter("select case when dogovor is null then '' else dogovor end dogovor from sale where customer_sys_id=" & cust & " order by d DESC")
+                    adapt =
+                        dbSQL.GetDataAdapter(
+                            "select case when dogovor is null then '' else dogovor end dogovor from sale where customer_sys_id=" &
+                            cust & " order by d DESC")
                     ds = New DataSet
                     adapt.Fill(ds)
                     Dim ch() As Char = {"\", "/", ".", "-"}
@@ -523,7 +534,8 @@ Namespace Kasbi
             End If
         End Sub
 
-        Private Sub btnAdd_Click(ByVal sender As System.Object, ByVal e As System.Web.UI.ImageClickEventArgs) Handles btnAdd.Click
+        Private Sub btnAdd_Click(ByVal sender As System.Object, ByVal e As System.Web.UI.ImageClickEventArgs) _
+            Handles btnAdd.Click
             'Ограничение прав на добавление
             If Session("rule17") = "1" Then
 
@@ -545,8 +557,8 @@ Namespace Kasbi
 
 
                     d = New Date(lstYear.SelectedItem.Value, lstMonth.SelectedItem.Value, 1)
-                    If Not serviceTo.CheckCashHistoryItem(iCash, d, txtCloseDate.Text) Then
-                        msgAddSupportConduct.Text = serviceTo.GetTextStringAllExeption()
+                    If Not _serviceTo.CheckCashHistoryItem(iCash, d, txtCloseDate.Text) Then
+                        msgAddSupportConduct.Text = _serviceTo.GetTextStringAllExeption()
                         Exit Sub
                     End If
 
@@ -787,10 +799,16 @@ Namespace Kasbi
                                 cmd.Parameters.AddWithValue("@pi_detail_id", detailID)
                                 cmd.CommandType = CommandType.StoredProcedure
                                 dbSQL.Execute(cmd)
-                                Dim historySysId As Integer = CInt(dbSQL.ExecuteScalar("SELECT TOP 1 sys_id FROM cash_history WHERE state = 5 ORDER BY sys_id DESC"))
-                                msgAddSupportConduct.Text = "Снятие произведено. Акт о выполненных работах сохранен в ремонтах. Акт скачан, вы можете его открыть!"
+                                Dim historySysId As Integer =
+                                        CInt(
+                                            dbSQL.ExecuteScalar(
+                                                "SELECT TOP 1 sys_id FROM cash_history WHERE state = 5 ORDER BY sys_id DESC"))
+                                msgAddSupportConduct.Text =
+                                    "Снятие произведено. Акт о выполненных работах сохранен в ремонтах. Акт скачан, вы можете его открыть!"
 
-                                Dim strRequest$ = "<script language=JavaScript>window.open('documents.aspx?t=32&c=" & CurrentCustomer & "&g=" & iCash & "&h=" & historySysId & "','_new','');</script>"
+                                Dim strRequest$ = "<script language=JavaScript>window.open('documents.aspx?t=32&c=" &
+                                                  CurrentCustomer & "&g=" & iCash & "&h=" & historySysId &
+                                                  "','_new','');</script>"
                                 Dim cstype As Type = Me.[GetType]()
                                 Dim csname1 As [String] = "PopupScript"
                                 Dim cs As ClientScriptManager = Page.ClientScript
@@ -852,10 +870,14 @@ Namespace Kasbi
                         If (d > dNow) Then
                             msgAddSupportConduct.Text = "Дата постановки не может быть больше декущей даты"
                             Exit Sub
-                        ElseIf regex_en.Match(txtMarka_Cto_Sup_In.Text.Trim).Success Or regex_en.Match(txtMarka_Cto_Sup_Out.Text.Trim).Success Then
+                        ElseIf _
+                            regex_en.Match(txtMarka_Cto_Sup_In.Text.Trim).Success Or
+                            regex_en.Match(txtMarka_Cto_Sup_Out.Text.Trim).Success Then
                             msgAddSupportConduct.Text = "МН необходимо писать Кирилицей"
                             Exit Sub
-                        ElseIf txtMarka_Cto_Sup_In.Text.Trim <> "" And Not regex_ru.Match(txtMarka_Cto_Sup_In.Text.Trim).Success Then
+                        ElseIf _
+                            txtMarka_Cto_Sup_In.Text.Trim <> "" And
+                            Not regex_ru.Match(txtMarka_Cto_Sup_In.Text.Trim).Success Then
                             msgAddSupportConduct.Text = "Введите корректно СК ЦТО в поле ""до постановки"""
                             Exit Sub
                         ElseIf txtMarka_Cto_Sup_Out.Text.Trim() = "" Then
@@ -907,7 +929,8 @@ Namespace Kasbi
 
                         If dbSQL.Execute(cmd) <> 0 Then
                             Try
-                                dbSQL.Execute("update customer set dogovor=unn where dogovor!=unn and customer_sys_id=" & cust)
+                                dbSQL.Execute(
+                                    "update customer set dogovor=unn where dogovor!=unn and customer_sys_id=" & cust)
                             Catch
                                 msgAddSupportConduct.Text = "Ошибка обновления номера договора!<br>" & Err.Description
                             End Try
@@ -1018,7 +1041,8 @@ Namespace Kasbi
             GetInfo = s
         End Function
 
-        Private Sub lstCustomers_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles lstCustomers.SelectedIndexChanged
+        Private Sub lstCustomers_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) _
+            Handles lstCustomers.SelectedIndexChanged
             If lstCustomers.SelectedItem.Value > 0 Then
                 lblCustInfo.Text = "<br>" & GetInfo(lstCustomers.SelectedItem.Value)
             Else
@@ -1064,24 +1088,58 @@ Namespace Kasbi
             End Try
         End Sub
 
-        Private Sub grdSupportConductHistory_EditCommand(ByVal source As Object, ByVal e As System.Web.UI.WebControls.DataGridCommandEventArgs) Handles grdSupportConductHistory.EditCommand
-            grdSupportConductHistory.EditItemIndex = CInt(e.Item.ItemIndex)
+        Private Sub grdSupportConductHistory_EditCommand(ByVal source As Object,
+                                                         ByVal e As System.Web.UI.WebControls.DataGridCommandEventArgs) _
+            Handles grdSupportConductHistory.EditCommand
+            Dim cashHistorySysId As Integer = Convert.ToInt32(grdSupportConductHistory.DataKeys(e.Item.ItemIndex))
+            If CurrentUser.is_admin Or Not _serviceExport.IsLockCashHistory(cashHistorySysId) Or IgnoreLockCashHistory Then
+                grdSupportConductHistory.EditItemIndex = CInt(e.Item.ItemIndex)
+                GetHistory(iCash)
+            Else
+                msgAddSupportConduct.Text = Err003
+                Exit Sub
+            End If
+        End Sub
+
+        Private Sub grdSupportConductHistory_DeleteCommand(ByVal source As System.Object,
+                                                           ByVal e As System.Web.UI.WebControls.DataGridCommandEventArgs) _
+            Handles grdSupportConductHistory.DeleteCommand
+            Dim cashHistorySysId As Integer = Convert.ToInt32(grdSupportConductHistory.DataKeys(e.Item.ItemIndex))
+
+            'Ограничение прав на удаление
+            If CurrentUser.is_admin Or Not _serviceExport.IsLockCashHistory(cashHistorySysId) Or IgnoreLockCashHistory Then
+                Try
+                    dbSQL.Execute(
+                        "delete cash_history where sys_id = " & cashHistorySysId)
+                Catch
+                    msgSupportConductHistory.Text = "Ошибка удаления записи!<br>" & Err.Description
+                End Try
+                grdSupportConductHistory.EditItemIndex = - 1
+                LoadGoodInfo()
+            Else
+                msgAddSupportConduct.Text = Err003
+                Exit Sub
+            End If
+        End Sub
+
+        Private Sub grdSupportConductHistory_CancelCommand(ByVal source As Object,
+                                                           ByVal e As System.Web.UI.WebControls.DataGridCommandEventArgs) _
+            Handles grdSupportConductHistory.CancelCommand
+            grdSupportConductHistory.EditItemIndex = - 1
             GetHistory(iCash)
         End Sub
 
-        Private Sub grdSupportConductHistory_CancelCommand(ByVal source As Object, ByVal e As System.Web.UI.WebControls.DataGridCommandEventArgs) Handles grdSupportConductHistory.CancelCommand
-            grdSupportConductHistory.EditItemIndex = -1
-            GetHistory(iCash)
-        End Sub
-
-        Private Sub grdSupportConductHistory_ItemDataBound(ByVal sender As Object, ByVal e As System.Web.UI.WebControls.DataGridItemEventArgs) Handles grdSupportConductHistory.ItemDataBound
+        Private Sub grdSupportConductHistory_ItemDataBound(ByVal sender As Object,
+                                                           ByVal e As System.Web.UI.WebControls.DataGridItemEventArgs) _
+            Handles grdSupportConductHistory.ItemDataBound
             Dim s As String
             Dim d As Date
             If e.Item.ItemType = ListItemType.Item Or e.Item.ItemType = ListItemType.AlternatingItem Then
 
                 'Dates
                 If Not IsDBNull(e.Item.DataItem("updateDate")) Then
-                    s = "Изменил:<br> " & e.Item.DataItem("updateUserID").ToString() & "<br>" & Format(e.Item.DataItem("updateDate"), "dd.MM.yyyy HH:mm")
+                    s = "Изменил:<br> " & e.Item.DataItem("updateUserID").ToString() & "<br>" &
+                        Format(e.Item.DataItem("updateDate"), "dd.MM.yyyy HH:mm")
                 Else
                     s = "Изменил:<br> " & e.Item.DataItem("updateUserID").ToString()
                 End If
@@ -1102,21 +1160,37 @@ Namespace Kasbi
                             s = ""
                         End If
                         CType(e.Item.FindControl("lnkAkt_TO"), HyperLink).Text = "Акт ТО"
-                        CType(e.Item.FindControl("lnkAkt_TO"), HyperLink).NavigateUrl = "~/documents.aspx?" & "&t=60&g=" & e.Item.DataItem("good_sys_id") & "&d=" & Format(e.Item.DataItem("change_state_date"), "ddMMyyyy")
+                        CType(e.Item.FindControl("lnkAkt_TO"), HyperLink).NavigateUrl = "~/documents.aspx?" & "&t=60&g=" &
+                                                                                        e.Item.DataItem("good_sys_id") &
+                                                                                        "&d=" &
+                                                                                        Format(
+                                                                                            e.Item.DataItem(
+                                                                                                "change_state_date"),
+                                                                                            "ddMMyyyy")
                         CType(e.Item.FindControl("lblPeriod"), Label).Text = GetRussianDate(d)
                         s = "ТО проведено <br>"
-                        s = s & "&nbsp;СК ЦТО :" & e.Item.DataItem("marka_cto_in") & " / " & e.Item.DataItem("marka_cto_out") & "<br>"
-                        If (e.Item.DataItem("good_type_sys_id")) = Config.Kasbi04_ID Or (e.Item.DataItem("good_type_sys_id")) = 1119 Then
-                            s = s & "&nbsp;СК ЦТО2 :" & e.Item.DataItem("marka_cto2_in") & " / " & e.Item.DataItem("marka_cto2_out") & "<br>"
+                        s = s & "&nbsp;СК ЦТО :" & e.Item.DataItem("marka_cto_in") & " / " &
+                            e.Item.DataItem("marka_cto_out") & "<br>"
+                        If _
+                            (e.Item.DataItem("good_type_sys_id")) = Config.Kasbi04_ID Or
+                            (e.Item.DataItem("good_type_sys_id")) = 1119 Then
+                            s = s & "&nbsp;СК ЦТО2 :" & e.Item.DataItem("marka_cto2_in") & " / " &
+                                e.Item.DataItem("marka_cto2_out") & "<br>"
                         End If
-                        s = s & "&nbsp;СК Реестра :" & e.Item.DataItem("marka_reestr_in") & " / " & e.Item.DataItem("marka_reestr_out") & "<br>"
-                        s = s & "&nbsp;СК ПЗУ :" & e.Item.DataItem("marka_pzu_in") & " / " & e.Item.DataItem("marka_pzu_out") & "<br>"
-                        s = s & "&nbsp;СК МФП :" & e.Item.DataItem("marka_mfp_in") & " / " & e.Item.DataItem("marka_mfp_out") & "<br>"
+                        s = s & "&nbsp;СК Реестра :" & e.Item.DataItem("marka_reestr_in") & " / " &
+                            e.Item.DataItem("marka_reestr_out") & "<br>"
+                        s = s & "&nbsp;СК ПЗУ :" & e.Item.DataItem("marka_pzu_in") & " / " &
+                            e.Item.DataItem("marka_pzu_out") & "<br>"
+                        s = s & "&nbsp;СК МФП :" & e.Item.DataItem("marka_mfp_in") & " / " &
+                            e.Item.DataItem("marka_mfp_out") & "<br>"
                         'If (e.Item.DataItem("good_type_sys_id")) = Config.Kasbi04_ID Then
-                        s = s & "&nbsp;СК ЦП :" & e.Item.DataItem("marka_cp_in") & " / " & e.Item.DataItem("marka_cp_out") & "<br>"
+                        s = s & "&nbsp;СК ЦП :" & e.Item.DataItem("marka_cp_in") & " / " &
+                            e.Item.DataItem("marka_cp_out") & "<br>"
                         'End If
-                        s = s & "&nbsp;Z-отчет :" & e.Item.DataItem("zreport_in") & " / " & e.Item.DataItem("zreport_out") & "<br>"
-                        s = s & "&nbsp;Итог :" & e.Item.DataItem("itog_in") & " / " & e.Item.DataItem("itog_out") & "<br>"
+                        s = s & "&nbsp;Z-отчет :" & e.Item.DataItem("zreport_in") & " / " &
+                            e.Item.DataItem("zreport_out") & "<br>"
+                        s = s & "&nbsp;Итог :" & e.Item.DataItem("itog_in") & " / " & e.Item.DataItem("itog_out") &
+                            "<br>"
                         CType(e.Item.FindControl("lblStatus"), Label).Text = s
                     ElseIf e.Item.DataItem("state") = 6 Then
                         'приостановка ТО
@@ -1135,22 +1209,42 @@ Namespace Kasbi
                             d = e.Item.DataItem("dismissal_date")
                             s = "Снят с ТО " & GetRussianDateFull(d) & "<br>"
                             CType(e.Item.FindControl("lnkAct"), HyperLink).Text = "Акт"
-                            CType(e.Item.FindControl("lnkAct"), HyperLink).NavigateUrl = "documents.aspx?c=" & e.Item.DataItem("owner_sys_id") & "&s=" & e.Item.DataItem("sale_sys_id") & "&t=14&g=" & e.Item.DataItem("good_sys_id") & "&h=" & e.Item.DataItem("sys_id")
+                            CType(e.Item.FindControl("lnkAct"), HyperLink).NavigateUrl = "documents.aspx?c=" &
+                                                                                         e.Item.DataItem("owner_sys_id") &
+                                                                                         "&s=" &
+                                                                                         e.Item.DataItem("sale_sys_id") &
+                                                                                         "&t=14&g=" &
+                                                                                         e.Item.DataItem("good_sys_id") &
+                                                                                         "&h=" &
+                                                                                         e.Item.DataItem("sys_id")
                             CType(e.Item.FindControl("btnDeleteDoc"), LinkButton).Text = "Удалить<br>документы"
                             CType(e.Item.FindControl("lnkTehZaklyuchenie"), HyperLink).Text = "Тех. закл."
-                            CType(e.Item.FindControl("lnkTehZaklyuchenie"), HyperLink).NavigateUrl = "documents.aspx?c=" & e.Item.DataItem("owner_sys_id") & "&s=" & e.Item.DataItem("sale_sys_id") & "&t=19&g=" & e.Item.DataItem("good_sys_id") & "&h=" & e.Item.DataItem("sys_id")
-                            s = s & "&nbsp;СК ЦТО :" & e.Item.DataItem("marka_cto_in") & " / " & e.Item.DataItem("marka_cto_out") & "<br>"
-                            If (e.Item.DataItem("good_type_sys_id")) = Config.Kasbi04_ID Or (e.Item.DataItem("good_type_sys_id")) = 1119 Then
-                                s = s & "&nbsp;СК ЦТО2 :" & e.Item.DataItem("marka_cto2_in") & " / " & e.Item.DataItem("marka_cto2_out") & "<br>"
+                            CType(e.Item.FindControl("lnkTehZaklyuchenie"), HyperLink).NavigateUrl =
+                                "documents.aspx?c=" & e.Item.DataItem("owner_sys_id") & "&s=" &
+                                e.Item.DataItem("sale_sys_id") & "&t=19&g=" & e.Item.DataItem("good_sys_id") & "&h=" &
+                                e.Item.DataItem("sys_id")
+                            s = s & "&nbsp;СК ЦТО :" & e.Item.DataItem("marka_cto_in") & " / " &
+                                e.Item.DataItem("marka_cto_out") & "<br>"
+                            If _
+                                (e.Item.DataItem("good_type_sys_id")) = Config.Kasbi04_ID Or
+                                (e.Item.DataItem("good_type_sys_id")) = 1119 Then
+                                s = s & "&nbsp;СК ЦТО2 :" & e.Item.DataItem("marka_cto2_in") & " / " &
+                                    e.Item.DataItem("marka_cto2_out") & "<br>"
                             End If
-                            s = s & "&nbsp;СК Реестра :" & e.Item.DataItem("marka_reestr_in") & " / " & e.Item.DataItem("marka_reestr_out") & "<br>"
-                            s = s & "&nbsp;СК ПЗУ :" & e.Item.DataItem("marka_pzu_in") & " / " & e.Item.DataItem("marka_pzu_out") & "<br>"
-                            s = s & "&nbsp;СК МФП :" & e.Item.DataItem("marka_mfp_in") & " / " & e.Item.DataItem("marka_mfp_out") & "<br>"
+                            s = s & "&nbsp;СК Реестра :" & e.Item.DataItem("marka_reestr_in") & " / " &
+                                e.Item.DataItem("marka_reestr_out") & "<br>"
+                            s = s & "&nbsp;СК ПЗУ :" & e.Item.DataItem("marka_pzu_in") & " / " &
+                                e.Item.DataItem("marka_pzu_out") & "<br>"
+                            s = s & "&nbsp;СК МФП :" & e.Item.DataItem("marka_mfp_in") & " / " &
+                                e.Item.DataItem("marka_mfp_out") & "<br>"
                             'If (e.Item.DataItem("good_type_sys_id")) = Config.Kasbi04_ID Then
-                            s = s & "&nbsp;СК ЦП :" & e.Item.DataItem("marka_cp_in") & " / " & e.Item.DataItem("marka_cp_out") & "<br>"
+                            s = s & "&nbsp;СК ЦП :" & e.Item.DataItem("marka_cp_in") & " / " &
+                                e.Item.DataItem("marka_cp_out") & "<br>"
                             'End If
-                            s = s & "&nbsp;Z-отчет :" & e.Item.DataItem("zreport_in") & " / " & e.Item.DataItem("zreport_out") & "<br>"
-                            s = s & "&nbsp;Итог :" & e.Item.DataItem("itog_in") & " / " & e.Item.DataItem("itog_out") & "<br>"
+                            s = s & "&nbsp;Z-отчет :" & e.Item.DataItem("zreport_in") & " / " &
+                                e.Item.DataItem("zreport_out") & "<br>"
+                            s = s & "&nbsp;Итог :" & e.Item.DataItem("itog_in") & " / " & e.Item.DataItem("itog_out") &
+                                "<br>"
                         Else
                             s = ""
                         End If
@@ -1161,22 +1255,40 @@ Namespace Kasbi
                             d = e.Item.DataItem("dismissal_date")
                             s = "Снят с ТО и в ИМНС " & GetRussianDateFull(d) & "<br>"
                             CType(e.Item.FindControl("lnkAct"), HyperLink).Text = "Акт"
-                            CType(e.Item.FindControl("lnkAct"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?c=" & e.Item.DataItem("owner_sys_id") & "&s=" & e.Item.DataItem("sale_sys_id") & "&t=15&g=" & e.Item.DataItem("good_sys_id") & "&h=" & e.Item.DataItem("sys_id"))
+                            CType(e.Item.FindControl("lnkAct"), HyperLink).NavigateUrl =
+                                GetAbsoluteUrl(
+                                    "~/documents.aspx?c=" & e.Item.DataItem("owner_sys_id") & "&s=" &
+                                    e.Item.DataItem("sale_sys_id") & "&t=15&g=" & e.Item.DataItem("good_sys_id") & "&h=" &
+                                    e.Item.DataItem("sys_id"))
                             CType(e.Item.FindControl("btnDeleteDoc"), LinkButton).Text = "Удалить<br>документы"
                             CType(e.Item.FindControl("lnkTehZaklyuchenie"), HyperLink).Text = "Тех. закл."
-                            CType(e.Item.FindControl("lnkTehZaklyuchenie"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?c=" & e.Item.DataItem("owner_sys_id") & "&s=" & e.Item.DataItem("sale_sys_id") & "&t=20&g=" & e.Item.DataItem("good_sys_id") & "&h=" & e.Item.DataItem("sys_id"))
-                            s = s & "&nbsp;СК ЦТО :" & e.Item.DataItem("marka_cto_in") & " / " & e.Item.DataItem("marka_cto_out") & "<br>"
-                            If (e.Item.DataItem("good_type_sys_id")) = Config.Kasbi04_ID Or (e.Item.DataItem("good_type_sys_id")) = 1119 Then
-                                s = s & "&nbsp;СК ЦТО2 :" & e.Item.DataItem("marka_cto2_in") & " / " & e.Item.DataItem("marka_cto2_out") & "<br>"
+                            CType(e.Item.FindControl("lnkTehZaklyuchenie"), HyperLink).NavigateUrl =
+                                GetAbsoluteUrl(
+                                    "~/documents.aspx?c=" & e.Item.DataItem("owner_sys_id") & "&s=" &
+                                    e.Item.DataItem("sale_sys_id") & "&t=20&g=" & e.Item.DataItem("good_sys_id") & "&h=" &
+                                    e.Item.DataItem("sys_id"))
+                            s = s & "&nbsp;СК ЦТО :" & e.Item.DataItem("marka_cto_in") & " / " &
+                                e.Item.DataItem("marka_cto_out") & "<br>"
+                            If _
+                                (e.Item.DataItem("good_type_sys_id")) = Config.Kasbi04_ID Or
+                                (e.Item.DataItem("good_type_sys_id")) = 1119 Then
+                                s = s & "&nbsp;СК ЦТО2 :" & e.Item.DataItem("marka_cto2_in") & " / " &
+                                    e.Item.DataItem("marka_cto2_out") & "<br>"
                             End If
-                            s = s & "&nbsp;СК Реестра :" & e.Item.DataItem("marka_reestr_in") & " / " & e.Item.DataItem("marka_reestr_out") & "<br>"
-                            s = s & "&nbsp;СК ПЗУ :" & e.Item.DataItem("marka_pzu_in") & " / " & e.Item.DataItem("marka_pzu_out") & "<br>"
-                            s = s & "&nbsp;СК МФП :" & e.Item.DataItem("marka_mfp_in") & " / " & e.Item.DataItem("marka_mfp_out") & "<br>"
+                            s = s & "&nbsp;СК Реестра :" & e.Item.DataItem("marka_reestr_in") & " / " &
+                                e.Item.DataItem("marka_reestr_out") & "<br>"
+                            s = s & "&nbsp;СК ПЗУ :" & e.Item.DataItem("marka_pzu_in") & " / " &
+                                e.Item.DataItem("marka_pzu_out") & "<br>"
+                            s = s & "&nbsp;СК МФП :" & e.Item.DataItem("marka_mfp_in") & " / " &
+                                e.Item.DataItem("marka_mfp_out") & "<br>"
                             'If (e.Item.DataItem("good_type_sys_id")) = Config.Kasbi04_ID Then
-                            s = s & "&nbsp;СК ЦП :" & e.Item.DataItem("marka_cp_in") & " / " & e.Item.DataItem("marka_cp_out") & "<br>"
+                            s = s & "&nbsp;СК ЦП :" & e.Item.DataItem("marka_cp_in") & " / " &
+                                e.Item.DataItem("marka_cp_out") & "<br>"
                             'End If
-                            s = s & "&nbsp;Z-отчет :" & e.Item.DataItem("zreport_in") & " / " & e.Item.DataItem("zreport_out") & "<br>"
-                            s = s & "&nbsp;Итог :" & e.Item.DataItem("itog_in") & " / " & e.Item.DataItem("itog_out") & "<br>"
+                            s = s & "&nbsp;Z-отчет :" & e.Item.DataItem("zreport_in") & " / " &
+                                e.Item.DataItem("zreport_out") & "<br>"
+                            s = s & "&nbsp;Итог :" & e.Item.DataItem("itog_in") & " / " & e.Item.DataItem("itog_out") &
+                                "<br>"
                         Else
                             s = ""
                         End If
@@ -1187,24 +1299,46 @@ Namespace Kasbi
                             d = e.Item.DataItem("support_date")
                             s = "Поставлен на ТО " & GetRussianDateFull(d) & "<br>"
                             CType(e.Item.FindControl("lnkAct"), HyperLink).Text = "Акт"
-                            CType(e.Item.FindControl("lnkAct"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?c=" & e.Item.DataItem("owner_sys_id") & "&s=" & e.Item.DataItem("sale_sys_id") & "&t=11&g=" & e.Item.DataItem("good_sys_id") & "&h=" & e.Item.DataItem("sys_id"))
+                            CType(e.Item.FindControl("lnkAct"), HyperLink).NavigateUrl =
+                                GetAbsoluteUrl(
+                                    "~/documents.aspx?c=" & e.Item.DataItem("owner_sys_id") & "&s=" &
+                                    e.Item.DataItem("sale_sys_id") & "&t=11&g=" & e.Item.DataItem("good_sys_id") & "&h=" &
+                                    e.Item.DataItem("sys_id"))
                             CType(e.Item.FindControl("lnkTehZaklyuchenie"), HyperLink).Text = "Тех. закл."
-                            CType(e.Item.FindControl("lnkTehZaklyuchenie"), HyperLink).NavigateUrl = GetAbsoluteUrl("documents.aspx?c=" & e.Item.DataItem("owner_sys_id") & "&s=" & e.Item.DataItem("sale_sys_id") & "&t=12&g=" & e.Item.DataItem("good_sys_id") & "&h=" & e.Item.DataItem("sys_id"))
+                            CType(e.Item.FindControl("lnkTehZaklyuchenie"), HyperLink).NavigateUrl =
+                                GetAbsoluteUrl(
+                                    "documents.aspx?c=" & e.Item.DataItem("owner_sys_id") & "&s=" &
+                                    e.Item.DataItem("sale_sys_id") & "&t=12&g=" & e.Item.DataItem("good_sys_id") & "&h=" &
+                                    e.Item.DataItem("sys_id"))
                             CType(e.Item.FindControl("lnkDogovor_Na_TO"), HyperLink).Text = "Дог. на ТО"
-                            CType(e.Item.FindControl("lnkDogovor_Na_TO"), HyperLink).NavigateUrl = GetAbsoluteUrl("documents.aspx?c=" & e.Item.DataItem("owner_sys_id") & "&s=" & e.Item.DataItem("sale_sys_id") & "&t=13&g=" & e.Item.DataItem("good_sys_id") & "&h=" & e.Item.DataItem("sys_id"))
+                            CType(e.Item.FindControl("lnkDogovor_Na_TO"), HyperLink).NavigateUrl =
+                                GetAbsoluteUrl(
+                                    "documents.aspx?c=" & e.Item.DataItem("owner_sys_id") & "&s=" &
+                                    e.Item.DataItem("sale_sys_id") & "&t=13&g=" & e.Item.DataItem("good_sys_id") & "&h=" &
+                                    e.Item.DataItem("sys_id"))
                             CType(e.Item.FindControl("btnDeleteDoc"), LinkButton).Text = "Удалить<br>документы"
-                            s = s & "&nbsp;СК ЦТО :" & e.Item.DataItem("marka_cto_in") & " / " & e.Item.DataItem("marka_cto_out") & "<br>"
-                            If (e.Item.DataItem("good_type_sys_id")) = Config.Kasbi04_ID Or (e.Item.DataItem("good_type_sys_id")) = 1119 Then
-                                s = s & "&nbsp;СК ЦТО2 :" & e.Item.DataItem("marka_cto2_in") & " / " & e.Item.DataItem("marka_cto2_out") & "<br>"
+                            s = s & "&nbsp;СК ЦТО :" & e.Item.DataItem("marka_cto_in") & " / " &
+                                e.Item.DataItem("marka_cto_out") & "<br>"
+                            If _
+                                (e.Item.DataItem("good_type_sys_id")) = Config.Kasbi04_ID Or
+                                (e.Item.DataItem("good_type_sys_id")) = 1119 Then
+                                s = s & "&nbsp;СК ЦТО2 :" & e.Item.DataItem("marka_cto2_in") & " / " &
+                                    e.Item.DataItem("marka_cto2_out") & "<br>"
                             End If
-                            s = s & "&nbsp;СК Реестра :" & e.Item.DataItem("marka_reestr_in") & " / " & e.Item.DataItem("marka_reestr_out") & "<br>"
-                            s = s & "&nbsp;СК ПЗУ :" & e.Item.DataItem("marka_pzu_in") & " / " & e.Item.DataItem("marka_pzu_out") & "<br>"
-                            s = s & "&nbsp;СК МФП :" & e.Item.DataItem("marka_mfp_in") & " / " & e.Item.DataItem("marka_mfp_out") & "<br>"
+                            s = s & "&nbsp;СК Реестра :" & e.Item.DataItem("marka_reestr_in") & " / " &
+                                e.Item.DataItem("marka_reestr_out") & "<br>"
+                            s = s & "&nbsp;СК ПЗУ :" & e.Item.DataItem("marka_pzu_in") & " / " &
+                                e.Item.DataItem("marka_pzu_out") & "<br>"
+                            s = s & "&nbsp;СК МФП :" & e.Item.DataItem("marka_mfp_in") & " / " &
+                                e.Item.DataItem("marka_mfp_out") & "<br>"
                             'If (e.Item.DataItem("good_type_sys_id")) = Config.Kasbi04_ID Then
-                            s = s & "&nbsp;СК ЦП :" & e.Item.DataItem("marka_cp_in") & " / " & e.Item.DataItem("marka_cp_out") & "<br>"
+                            s = s & "&nbsp;СК ЦП :" & e.Item.DataItem("marka_cp_in") & " / " &
+                                e.Item.DataItem("marka_cp_out") & "<br>"
                             'End If
-                            s = s & "&nbsp;Z-отчет :" & e.Item.DataItem("zreport_in") & " / " & e.Item.DataItem("zreport_out") & "<br>"
-                            s = s & "&nbsp;Итог :" & e.Item.DataItem("itog_in") & " / " & e.Item.DataItem("itog_out") & "<br>"
+                            s = s & "&nbsp;Z-отчет :" & e.Item.DataItem("zreport_in") & " / " &
+                                e.Item.DataItem("zreport_out") & "<br>"
+                            s = s & "&nbsp;Итог :" & e.Item.DataItem("itog_in") & " / " & e.Item.DataItem("itog_out") &
+                                "<br>"
                         Else
                             s = ""
                         End If
@@ -1220,7 +1354,8 @@ Namespace Kasbi
                 End If
                 CType(e.Item.FindControl("lnkPayer"), HyperLink).Text = s
                 If (e.Item.DataItem("state") = 4) Then
-                    CType(e.Item.FindControl("lnkPayer"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/CustomerSales.aspx?" & e.Item.DataItem("owner_sys_id"))
+                    CType(e.Item.FindControl("lnkPayer"), HyperLink).NavigateUrl =
+                        GetAbsoluteUrl("~/CustomerSales.aspx?" & e.Item.DataItem("owner_sys_id"))
                 End If
                 ' Информация о исполнителе
                 s = ""
@@ -1345,67 +1480,98 @@ Namespace Kasbi
                     CType(e.Item.FindControl("txtDate"), TextBox).Visible = True
                 End If
                 'Marka CTO in
-                If Not IsDBNull(e.Item.DataItem("marka_cto_in")) AndAlso Trim(e.Item.DataItem("marka_cto_in")).Length > 0 Then
+                If _
+                    Not IsDBNull(e.Item.DataItem("marka_cto_in")) AndAlso
+                    Trim(e.Item.DataItem("marka_cto_in")).Length > 0 Then
                     CType(e.Item.FindControl("txtedtMarkaCTOIn"), TextBox).Text = Trim(e.Item.DataItem("marka_cto_in"))
                 End If
                 'Marka CTO out
 
-                If Not IsDBNull(e.Item.DataItem("marka_cto_out")) AndAlso Trim(e.Item.DataItem("marka_cto_out")).Length > 0 Then
+                If _
+                    Not IsDBNull(e.Item.DataItem("marka_cto_out")) AndAlso
+                    Trim(e.Item.DataItem("marka_cto_out")).Length > 0 Then
                     CType(e.Item.FindControl("txtedtMarkaCTOOut"), TextBox).Text = Trim(e.Item.DataItem("marka_cto_out"))
                 End If
 
                 'Marka CTO2 in
-                If (e.Item.DataItem("good_type_sys_id")) = Config.Kasbi04_ID Or (e.Item.DataItem("good_type_sys_id")) = 1119 Then
-                    If Not IsDBNull(e.Item.DataItem("marka_cto2_in")) AndAlso Trim(e.Item.DataItem("marka_cto2_in")).Length > 0 Then
-                        CType(e.Item.FindControl("txtedtMarkaCTO2In"), TextBox).Text = Trim(e.Item.DataItem("marka_cto2_in"))
+                If _
+                    (e.Item.DataItem("good_type_sys_id")) = Config.Kasbi04_ID Or
+                    (e.Item.DataItem("good_type_sys_id")) = 1119 Then
+                    If _
+                        Not IsDBNull(e.Item.DataItem("marka_cto2_in")) AndAlso
+                        Trim(e.Item.DataItem("marka_cto2_in")).Length > 0 Then
+                        CType(e.Item.FindControl("txtedtMarkaCTO2In"), TextBox).Text =
+                            Trim(e.Item.DataItem("marka_cto2_in"))
                     End If
                     'Marka CTO2 out
-                    If Not IsDBNull(e.Item.DataItem("marka_cto2_out")) AndAlso Trim(e.Item.DataItem("marka_cto2_out")).Length > 0 Then
-                        CType(e.Item.FindControl("txtedtMarkaCTO2Out"), TextBox).Text = Trim(e.Item.DataItem("marka_cto2_out"))
+                    If _
+                        Not IsDBNull(e.Item.DataItem("marka_cto2_out")) AndAlso
+                        Trim(e.Item.DataItem("marka_cto2_out")).Length > 0 Then
+                        CType(e.Item.FindControl("txtedtMarkaCTO2Out"), TextBox).Text =
+                            Trim(e.Item.DataItem("marka_cto2_out"))
                     End If
                 Else
                     CType(e.Item.FindControl("pnlMarkaCTO2"), Panel).Visible = False
                     'CType(e.Item.FindControl("pnlMarkaCP"), Panel).Visible = False
                 End If
                 'Marka Reestr in
-                If Not IsDBNull(e.Item.DataItem("marka_reestr_in")) AndAlso Trim(e.Item.DataItem("marka_reestr_in")).Length > 0 Then
-                    CType(e.Item.FindControl("txtedtMarkaReestrIn"), TextBox).Text = Trim(e.Item.DataItem("marka_reestr_in"))
+                If _
+                    Not IsDBNull(e.Item.DataItem("marka_reestr_in")) AndAlso
+                    Trim(e.Item.DataItem("marka_reestr_in")).Length > 0 Then
+                    CType(e.Item.FindControl("txtedtMarkaReestrIn"), TextBox).Text =
+                        Trim(e.Item.DataItem("marka_reestr_in"))
                 End If
                 'Marka Reestr out
-                If Not IsDBNull(e.Item.DataItem("marka_reestr_out")) AndAlso Trim(e.Item.DataItem("marka_reestr_out")).Length > 0 Then
-                    CType(e.Item.FindControl("txtedtMarkaReestrOut"), TextBox).Text = Trim(e.Item.DataItem("marka_reestr_out"))
+                If _
+                    Not IsDBNull(e.Item.DataItem("marka_reestr_out")) AndAlso
+                    Trim(e.Item.DataItem("marka_reestr_out")).Length > 0 Then
+                    CType(e.Item.FindControl("txtedtMarkaReestrOut"), TextBox).Text =
+                        Trim(e.Item.DataItem("marka_reestr_out"))
                 End If
                 'Marka PZU in
-                If Not IsDBNull(e.Item.DataItem("marka_pzu_in")) AndAlso Trim(e.Item.DataItem("marka_pzu_in")).Length > 0 Then
+                If _
+                    Not IsDBNull(e.Item.DataItem("marka_pzu_in")) AndAlso
+                    Trim(e.Item.DataItem("marka_pzu_in")).Length > 0 Then
                     CType(e.Item.FindControl("txtedtMarkaPZUIn"), TextBox).Text = Trim(e.Item.DataItem("marka_pzu_in"))
                 End If
                 'Marka PZU out
-                If Not IsDBNull(e.Item.DataItem("marka_pzu_out")) AndAlso Trim(e.Item.DataItem("marka_pzu_out")).Length > 0 Then
+                If _
+                    Not IsDBNull(e.Item.DataItem("marka_pzu_out")) AndAlso
+                    Trim(e.Item.DataItem("marka_pzu_out")).Length > 0 Then
                     CType(e.Item.FindControl("txtedtMarkaPZUOut"), TextBox).Text = Trim(e.Item.DataItem("marka_pzu_out"))
                 End If
                 'Marka MFP in
-                If Not IsDBNull(e.Item.DataItem("marka_mfp_in")) AndAlso Trim(e.Item.DataItem("marka_mfp_in")).Length > 0 Then
+                If _
+                    Not IsDBNull(e.Item.DataItem("marka_mfp_in")) AndAlso
+                    Trim(e.Item.DataItem("marka_mfp_in")).Length > 0 Then
                     CType(e.Item.FindControl("txtedtMarkaMFPIn"), TextBox).Text = Trim(e.Item.DataItem("marka_mfp_in"))
                 End If
                 'Marka MFP out
-                If Not IsDBNull(e.Item.DataItem("marka_mfp_out")) AndAlso Trim(e.Item.DataItem("marka_mfp_out")).Length > 0 Then
+                If _
+                    Not IsDBNull(e.Item.DataItem("marka_mfp_out")) AndAlso
+                    Trim(e.Item.DataItem("marka_mfp_out")).Length > 0 Then
                     CType(e.Item.FindControl("txtedtMarkaMFPOut"), TextBox).Text = Trim(e.Item.DataItem("marka_mfp_out"))
                 End If
                 'Marka CP in
-                If Not IsDBNull(e.Item.DataItem("marka_cp_in")) AndAlso Trim(e.Item.DataItem("marka_cp_in")).Length > 0 Then
+                If Not IsDBNull(e.Item.DataItem("marka_cp_in")) AndAlso Trim(e.Item.DataItem("marka_cp_in")).Length > 0 _
+                    Then
                     CType(e.Item.FindControl("txtedtMarkaCPIn"), TextBox).Text = Trim(e.Item.DataItem("marka_cp_in"))
                 End If
                 'Marka CP out
-                If Not IsDBNull(e.Item.DataItem("marka_cp_out")) AndAlso Trim(e.Item.DataItem("marka_cp_out")).Length > 0 Then
+                If _
+                    Not IsDBNull(e.Item.DataItem("marka_cp_out")) AndAlso
+                    Trim(e.Item.DataItem("marka_cp_out")).Length > 0 Then
                     CType(e.Item.FindControl("txtedtMarkaCPOut"), TextBox).Text = Trim(e.Item.DataItem("marka_cp_out"))
                 End If
 
                 'ZReport in
-                If Not IsDBNull(e.Item.DataItem("zreport_in")) AndAlso Trim(e.Item.DataItem("zreport_in")).Length > 0 Then
+                If Not IsDBNull(e.Item.DataItem("zreport_in")) AndAlso Trim(e.Item.DataItem("zreport_in")).Length > 0 _
+                    Then
                     CType(e.Item.FindControl("txtedtZReportIn"), TextBox).Text = Trim(e.Item.DataItem("zreport_in"))
                 End If
                 'ZReport out
-                If Not IsDBNull(e.Item.DataItem("zreport_out")) AndAlso Trim(e.Item.DataItem("zreport_out")).Length > 0 Then
+                If Not IsDBNull(e.Item.DataItem("zreport_out")) AndAlso Trim(e.Item.DataItem("zreport_out")).Length > 0 _
+                    Then
                     CType(e.Item.FindControl("txtedtZReportOut"), TextBox).Text = Trim(e.Item.DataItem("zreport_out"))
                 End If
                 'Itog in
@@ -1446,7 +1612,9 @@ Namespace Kasbi
             End If
         End Sub
 
-        Private Sub grdSupportConductHistory_UpdateCommand(ByVal source As Object, ByVal e As System.Web.UI.WebControls.DataGridCommandEventArgs) Handles grdSupportConductHistory.UpdateCommand
+        Private Sub grdSupportConductHistory_UpdateCommand(ByVal source As Object,
+                                                           ByVal e As System.Web.UI.WebControls.DataGridCommandEventArgs) _
+            Handles grdSupportConductHistory.UpdateCommand
             Dim cmd As SqlClient.SqlCommand
             Dim d As DateTime
             Dim s As String
@@ -1465,25 +1633,39 @@ Namespace Kasbi
                 cmd.CommandType = CommandType.StoredProcedure
                 cmd.Parameters.AddWithValue("@pi_sys_id", grdSupportConductHistory.DataKeys(e.Item.ItemIndex))
                 cmd.Parameters.AddWithValue("@pi_good_sys_id", iCash)
-                cmd.Parameters.AddWithValue("@pi_marka_cto_in", CType(e.Item.FindControl("txtedtMarkaCTOIn"), TextBox).Text)
-                cmd.Parameters.AddWithValue("@pi_marka_cto_out", CType(e.Item.FindControl("txtedtMarkaCTOOut"), TextBox).Text)
-                cmd.Parameters.AddWithValue("@pi_marka_pzu_in", CType(e.Item.FindControl("txtedtMarkaPZUIn"), TextBox).Text)
-                cmd.Parameters.AddWithValue("@pi_marka_pzu_out", CType(e.Item.FindControl("txtedtMarkaPZUOut"), TextBox).Text)
-                cmd.Parameters.AddWithValue("@pi_marka_mfp_in", CType(e.Item.FindControl("txtedtMarkaMFPIn"), TextBox).Text)
-                cmd.Parameters.AddWithValue("@pi_marka_mfp_out", CType(e.Item.FindControl("txtedtMarkaMFPOut"), TextBox).Text)
-                cmd.Parameters.AddWithValue("@pi_marka_reestr_in", CType(e.Item.FindControl("txtedtMarkaReestrIn"), TextBox).Text)
-                cmd.Parameters.AddWithValue("@pi_marka_reestr_out", CType(e.Item.FindControl("txtedtMarkaReestrOut"), TextBox).Text)
-                cmd.Parameters.AddWithValue("@pi_marka_cto2_in", CType(e.Item.FindControl("txtedtMarkaCTO2In"), TextBox).Text)
-                cmd.Parameters.AddWithValue("@pi_marka_cto2_out", CType(e.Item.FindControl("txtedtMarkaCTO2Out"), TextBox).Text)
-                cmd.Parameters.AddWithValue("@pi_marka_cp_in", CType(e.Item.FindControl("txtedtMarkaCPIn"), TextBox).Text)
-                cmd.Parameters.AddWithValue("@pi_marka_cp_out", CType(e.Item.FindControl("txtedtMarkaCPOut"), TextBox).Text)
+                cmd.Parameters.AddWithValue("@pi_marka_cto_in",
+                                            CType(e.Item.FindControl("txtedtMarkaCTOIn"), TextBox).Text)
+                cmd.Parameters.AddWithValue("@pi_marka_cto_out",
+                                            CType(e.Item.FindControl("txtedtMarkaCTOOut"), TextBox).Text)
+                cmd.Parameters.AddWithValue("@pi_marka_pzu_in",
+                                            CType(e.Item.FindControl("txtedtMarkaPZUIn"), TextBox).Text)
+                cmd.Parameters.AddWithValue("@pi_marka_pzu_out",
+                                            CType(e.Item.FindControl("txtedtMarkaPZUOut"), TextBox).Text)
+                cmd.Parameters.AddWithValue("@pi_marka_mfp_in",
+                                            CType(e.Item.FindControl("txtedtMarkaMFPIn"), TextBox).Text)
+                cmd.Parameters.AddWithValue("@pi_marka_mfp_out",
+                                            CType(e.Item.FindControl("txtedtMarkaMFPOut"), TextBox).Text)
+                cmd.Parameters.AddWithValue("@pi_marka_reestr_in",
+                                            CType(e.Item.FindControl("txtedtMarkaReestrIn"), TextBox).Text)
+                cmd.Parameters.AddWithValue("@pi_marka_reestr_out",
+                                            CType(e.Item.FindControl("txtedtMarkaReestrOut"), TextBox).Text)
+                cmd.Parameters.AddWithValue("@pi_marka_cto2_in",
+                                            CType(e.Item.FindControl("txtedtMarkaCTO2In"), TextBox).Text)
+                cmd.Parameters.AddWithValue("@pi_marka_cto2_out",
+                                            CType(e.Item.FindControl("txtedtMarkaCTO2Out"), TextBox).Text)
+                cmd.Parameters.AddWithValue("@pi_marka_cp_in",
+                                            CType(e.Item.FindControl("txtedtMarkaCPIn"), TextBox).Text)
+                cmd.Parameters.AddWithValue("@pi_marka_cp_out",
+                                            CType(e.Item.FindControl("txtedtMarkaCPOut"), TextBox).Text)
 
                 cmd.Parameters.AddWithValue("@pi_zreport_in", CType(e.Item.FindControl("txtedtZReportIn"), TextBox).Text)
-                cmd.Parameters.AddWithValue("@pi_zreport_out", CType(e.Item.FindControl("txtedtZReportOut"), TextBox).Text)
+                cmd.Parameters.AddWithValue("@pi_zreport_out",
+                                            CType(e.Item.FindControl("txtedtZReportOut"), TextBox).Text)
                 cmd.Parameters.AddWithValue("@pi_itog_in", CType(e.Item.FindControl("txtedtItogIn"), TextBox).Text)
                 cmd.Parameters.AddWithValue("@pi_itog_out", CType(e.Item.FindControl("txtedtItogOut"), TextBox).Text)
                 cmd.Parameters.AddWithValue("@pi_info", CType(e.Item.FindControl("txtInfoEdit"), TextBox).Text)
-                cmd.Parameters.AddWithValue("@pi_executor", CType(e.Item.FindControl("lstExecutor"), DropDownList).SelectedValue)
+                cmd.Parameters.AddWithValue("@pi_executor",
+                                            CType(e.Item.FindControl("lstExecutor"), DropDownList).SelectedValue)
                 cmd.Parameters.AddWithValue("@updateUserID", CurrentUser.sys_id)
                 Dim lst As DropDownList = CType(e.Item.FindControl("lstSaleDoc"), DropDownList)
                 If lst.Visible = True Then
@@ -1502,25 +1684,31 @@ Namespace Kasbi
             Catch
                 msgAddSupportConduct.Text = "Не удается обновить запись!<br>" & Err.Description
             End Try
-            grdSupportConductHistory.EditItemIndex = -1
+            grdSupportConductHistory.EditItemIndex = - 1
             LoadGoodInfo()
         End Sub
 
         Public Function GetRussianDate(ByVal d As Date) As String
-            Dim m() As String = {" Январь ", " Февраль ", " Март ", " Апрель ", " Май ", " Июнь ", " Июль ", " Август ", " Сентябрь ", " Октябрь ", " Ноябрь ", " Декабрь "}
+            Dim m() As String =
+                    {" Январь ", " Февраль ", " Март ", " Апрель ", " Май ", " Июнь ", " Июль ", " Август ",
+                     " Сентябрь ", " Октябрь ", " Ноябрь ", " Декабрь "}
             GetRussianDate = m(Month(d) - 1) & Year(d) & "г."
         End Function
 
         Public Function GetRussianDateFull(ByVal d As Date) As String
-            Dim m() As String = {" января ", " февраля ", " марта ", " апреля ", " мая ", " июня ", " июля ", " августа ", " сентября ", " октября ", " ноября ", " декабря "}
+            Dim m() As String =
+                    {" января ", " февраля ", " марта ", " апреля ", " мая ", " июня ", " июля ", " августа ",
+                     " сентября ", " октября ", " ноября ", " декабря "}
             GetRussianDateFull = Day(d) & m(Month(d) - 1) & Year(d) & "г."
         End Function
 
-        Private Sub btnExpand1_Click(ByVal sender As System.Object, ByVal e As System.Web.UI.ImageClickEventArgs) Handles btnExpand1.Click
+        Private Sub btnExpand1_Click(ByVal sender As System.Object, ByVal e As System.Web.UI.ImageClickEventArgs) _
+            Handles btnExpand1.Click
             Expand(pnlSupportConductHistory_body, btnExpand1)
         End Sub
 
-        Private Sub Expand(ByVal section As System.Web.UI.WebControls.Panel, ByVal button As System.Web.UI.WebControls.ImageButton)
+        Private Sub Expand(ByVal section As System.Web.UI.WebControls.Panel,
+                           ByVal button As System.Web.UI.WebControls.ImageButton)
             If section.Visible = True Then
                 section.Visible = False
                 button.ImageUrl = "Images/collapsed.gif"
@@ -1532,7 +1720,8 @@ Namespace Kasbi
             End If
         End Sub
 
-        Private Sub rbTO_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles rbTO.SelectedIndexChanged
+        Private Sub rbTO_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) _
+            Handles rbTO.SelectedIndexChanged
             If rbTO.SelectedIndex = 2 And chkDelayTO.Checked = False Then
                 pnlConduct.Visible = True
                 pnlDelay.Visible = False
@@ -1603,7 +1792,7 @@ Namespace Kasbi
                 lstCustomers.DataTextField = "customer_name"
                 lstCustomers.DataValueField = "customer_sys_id"
                 lstCustomers.DataBind()
-                lstCustomers.SelectedIndex = -1
+                lstCustomers.SelectedIndex = - 1
                 lstCustomers.Items.Insert(0, New ListItem(ClearString, "0"))
 
                 Dim item As ListItem = lstCustomers.Items.FindByValue(CurrentCustomer)
@@ -1628,24 +1817,15 @@ Namespace Kasbi
             End Try
         End Sub
 
-        Private Sub chkDelayTO_CheckedChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles chkDelayTO.CheckedChanged
+        Private Sub chkDelayTO_CheckedChanged(ByVal sender As Object, ByVal e As System.EventArgs) _
+            Handles chkDelayTO.CheckedChanged
             rbTO_SelectedIndexChanged(Me, Nothing)
         End Sub
 
-        Private Sub grdSupportConductHistory_DeleteCommand(ByVal source As System.Object, ByVal e As System.Web.UI.WebControls.DataGridCommandEventArgs) Handles grdSupportConductHistory.DeleteCommand
-            'Ограничение прав на удаление
-            If Session("rule20") = "1" Then
-                Try
-                    dbSQL.Execute("delete cash_history where sys_id = " & grdSupportConductHistory.DataKeys(e.Item.ItemIndex))
-                Catch
-                    msgSupportConductHistory.Text = "Ошибка удаления записи!<br>" & Err.Description
-                End Try
-                grdSupportConductHistory.EditItemIndex = -1
-                LoadGoodInfo()
-            End If
-        End Sub
 
-        Private Sub grdSupportConductHistory_ItemCommand(ByVal source As Object, ByVal e As System.Web.UI.WebControls.DataGridCommandEventArgs) Handles grdSupportConductHistory.ItemCommand
+        Private Sub grdSupportConductHistory_ItemCommand(ByVal source As Object,
+                                                         ByVal e As System.Web.UI.WebControls.DataGridCommandEventArgs) _
+            Handles grdSupportConductHistory.ItemCommand
             If e.CommandName = "DeleteDoc" Then
                 Dim docs As New Kasbi.Migrated_Documents
                 Try
@@ -1657,11 +1837,12 @@ Namespace Kasbi
             End If
         End Sub
 
-        Private Sub lnkCustomerFind_KKMRequest_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles lnkCustomerFind.Click
+        Private Sub lnkCustomerFind_KKMRequest_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) _
+            Handles lnkCustomerFind.Click
             Dim str$ = txtCustomerFind.Text
 
             If Trim(str).Length = 0 Then LoadCustomerList() : Exit Sub
-            If str.IndexOf("'") > -1 Then Exit Sub
+            If str.IndexOf("'") > - 1 Then Exit Sub
             Dim s$ = " (customer_name like '%" & str & "%')"
             LoadCustomerList(s)
             Session("CustFilter") = s
@@ -1752,16 +1933,13 @@ Namespace Kasbi
             End If
 
             SaveRebillingInfo = iSale
-
         End Function
 
         Protected Sub lstGoodType_Load(ByVal sender As Object, ByVal e As System.EventArgs) Handles lstGoodType.Load
-
         End Sub
 
         Protected Sub lnkAkt_TO_OnClick(sender As Object, e As EventArgs)
             CType(sender, LinkButton).Parent.FindControl("")
         End Sub
     End Class
-
 End Namespace

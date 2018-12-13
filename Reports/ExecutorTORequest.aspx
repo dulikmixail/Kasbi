@@ -62,7 +62,7 @@
 							<TR>
 								<TD class="SectionRowLabel" vAlign="top">Мастера :</TD>
 								<TD class="SectionRow">
-									<asp:ListBox id="lbxExecutor" runat="server" Width="250px" BackColor="#F6F8FC" Rows="10" SelectionMode="Multiple"></asp:ListBox></TD>
+									<asp:ListBox id="lbxExecutor" runat="server" Width="300px" BackColor="#F6F8FC" Rows="20" SelectionMode="Multiple"></asp:ListBox></TD>
 							</TR>
 						</TABLE>
 					</TD>

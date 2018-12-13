@@ -42,10 +42,8 @@ Namespace Kasbi
         Dim d As Kasbi.Documents
         Const ClearString$ = "-------"
 
-        Dim _serviceSkno As ServiceSkno = New ServiceSkno()
-
-
         Private _serviceSms As ServiceSms = New ServiceSms()
+        Private _serviceExport As ServiceExport = New ServiceExport()
 
         Private Overloads Sub Page_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
             If CurrentUser.is_admin
@@ -62,7 +60,10 @@ Namespace Kasbi
                 Exit Sub
             End Try
             Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture("ru-Ru")
+
             If Not IsPostBack Then
+                lblRepairDateOut.Visible = True
+                tbxRepairDateOut.Visible = False
                 Session("CustFilter") = ""
                 LoadRepairInfo()
                 LoadGoodInfo()
@@ -71,6 +72,9 @@ Namespace Kasbi
                 LoadSmsTelNotice()
                 LoadSmsHistory()
                 LoadSKNOInfo()
+                If _serviceExport.IsLockCashHistory(Convert.ToInt32(iCashHistory)) And Not CurrentUser.is_admin
+                    Response.Redirect("Repair.aspx?" & iCash & "&err=002")
+                End If
                 'Try
                 '    _serviceSms.UpdateStatusesByIdCashHistory(iCashHistory)
                 'Catch ex As Exception
@@ -81,13 +85,17 @@ Namespace Kasbi
         End Sub
 
         Function IsNewRepair(idCashHistory As Integer) As Boolean
-            Using reader As SqlClient.SqlDataReader = dbSQL.GetReader("SELECT CASE WHEN repairdate_out IS NULL THEN 1 ELSE 0 END As is_new FROM cash_history WHERE sys_id = " & idCashHistory)
+            Using _
+                reader As SqlClient.SqlDataReader =
+                    dbSQL.GetReader(
+                        "SELECT CASE WHEN repairdate_out IS NULL THEN 1 ELSE 0 END As is_new FROM cash_history WHERE sys_id = " &
+                        idCashHistory)
                 If reader.HasRows
                     While reader.Read
                         Return Convert.ToBoolean(reader("is_new"))
                     End While
-                    Else
-                        Return True
+                Else
+                    Return True
                 End If
             End Using
             Return True
@@ -95,15 +103,11 @@ Namespace Kasbi
 
         Private Sub LoadSKNOInfo()
             Try
-                If CurrentUser.is_admin
-                    cbxNeadSKNO.Enabled = True
-                Else
-                    cbxNeadSKNO.Enabled = False
-                End If
-
                 If Session("rule29") = 1 Or CurrentUser.is_admin Then
+                    cbxNeadSKNO.Enabled = True
                     pnlSKNO.Visible = True
                 Else
+                    cbxNeadSKNO.Enabled = False
                     pnlSKNO.Visible = False
                     If cbxNeadSKNO.Checked
                         lblErrorInfo.Text &= "(Нет прав на установку СКНО!)"
@@ -120,7 +124,7 @@ Namespace Kasbi
             Dim cmd As SqlCommand
             Dim ds As DataSet = New DataSet()
             Dim adapt As SqlDataAdapter
-                    
+
             _serviceSms.UpdateStatuses()
 
             Try
@@ -140,7 +144,9 @@ Namespace Kasbi
 
         Private Sub LoadSmsTelNotice()
             Dim reader As SqlDataReader =
-                    dbSQL.GetReader("SELECT tel_notice FROM cash_history ch, repair_history rh WHERE ch.repair_history_sys_id = rh.repair_history_sys_id AND ch.sys_id = " & iCashHistory)
+                    dbSQL.GetReader(
+                        "SELECT tel_notice FROM cash_history ch, repair_history rh WHERE ch.repair_history_sys_id = rh.repair_history_sys_id AND ch.sys_id = " &
+                        iCashHistory)
             If reader.Read
                 If IsDbNull(reader("tel_notice")) Then
                     txtPhoneNumber.Text = "Нет номера"
@@ -231,7 +237,7 @@ Namespace Kasbi
         Private Sub LoadGoodInfo()
             Dim cmd As SqlClient.SqlCommand
             Dim reader As SqlClient.SqlDataReader
-            Dim executorId As Integer = 0 
+            Dim executorId As Integer = 0
 
             Try
                 cmd = New SqlClient.SqlCommand("get_cash_repair_history")
@@ -369,6 +375,7 @@ Namespace Kasbi
                 Else
                     tbxRepairDateOut.Text = CDate(reader("repairdate_out")).ToString("dd.MM.yyyy HH:mm")
                 End If
+                lblRepairDateOut.Text = tbxRepairDateOut.Text
 
                 Try
                     CType(
@@ -497,7 +504,7 @@ Namespace Kasbi
             End Try
         End Sub
 
-        Private Sub BindLstWorker (list As DropDownList, ds As DataSet, executorIdFromRepair As Integer)
+        Private Sub BindLstWorker(list As DropDownList, ds As DataSet, executorIdFromRepair As Integer)
             With list
                 .DataSource = ds
                 .DataTextField = "name"
@@ -505,7 +512,7 @@ Namespace Kasbi
                 .DataBind()
                 .Items.Insert(0, New ListItem(ClearString, "0"))
                 .SelectedIndex = - 1
-                If IsNewRepair (iCashHistory) Or executorIdFromRepair = 0
+                If IsNewRepair(iCashHistory) Or executorIdFromRepair = 0
                     .Items.FindByValue(CurrentUser.sys_id.ToString()).Selected = True
                 Else
                     .Items.FindByValue(executorIdFromRepair.ToString()).Selected = True
@@ -1089,17 +1096,25 @@ Namespace Kasbi
                 Exit Sub
             End If
 
-            If (String.IsNullOrEmpty(Trim(txtPhoneNumber.Text)) Or Trim(txtPhoneNumber.Text) = "Нет номера")  And cbxSmsSend.Checked 
+            If _
+                (String.IsNullOrEmpty(Trim(txtPhoneNumber.Text)) Or Trim(txtPhoneNumber.Text) = "Нет номера") And
+                cbxSmsSend.Checked
                 msgNew.Text = "Введите номер для отправки СМС!"
                 Exit Sub
             End If
 
             Dim d1, d2 As DateTime
             Dim s1 As String()
-            If tbxRepairDateOut.Text = String.Empty OR tbxRepairDateOut.Text = "??.??.????" Then
+            If _
+                tbxRepairDateOut.Text = String.Empty Or lblRepairDateOut.Text = String.Empty Or
+                tbxRepairDateOut.Text = "??.??.????" Then
                 d2 = Now
             Else
-                d2 = CDate(tbxRepairDateOut.Text)
+                If chbRepairDateInEdit.Checked = False Then
+                    d2 = CDate(lblRepairDateOut.Text.Trim)
+                Else
+                    d2 = CDate(tbxRepairDateOut.Text)
+                End If
             End If
 
             If chbRepairDateInEdit.Checked = False Then
@@ -1198,7 +1213,7 @@ Namespace Kasbi
                     Trim(txtSerialNumberSKNO.Text).Length = 0
                     stateRepair = 5
                 Else
-                   
+
                 End If
 
                 'Установка статуса Отремонтирован и готов к выдаче
@@ -1211,7 +1226,8 @@ Namespace Kasbi
                 If cbxSmsSend.Checked
                     Dim smsText = txtSmsText.Text
                     Dim phoneNumber As String = txtPhoneNumber.Text
-                    _serviceSms.SendOneSmsWithInsertSmsHistory(phoneNumber,smsText,iCashHistory,CurrentUser.sys_id,smsType)
+                    _serviceSms.SendOneSmsWithInsertSmsHistory(phoneNumber, smsText, iCashHistory, CurrentUser.sys_id,
+                                                               smsType)
                 End If
             Catch
                 msgNew.Text = "Ошибка сохранения информации о ремонте!<br>" & Err.Description
@@ -1230,9 +1246,22 @@ Namespace Kasbi
                     tbxRepairDateIn.Text = CDate(lblRepairDateIn.Text).ToString("dd.MM.yyyy HH:mm")
                 End If
                 pnlRepairDateIn.Visible = True
+
+                If lblRepairDateOut.Text = "??.??.????" Or String.IsNullOrEmpty(lblRepairDateOut.Text)
+                    tbxRepairDateOut.Text = DateTime.Now.ToString("dd.MM.yyyy HH:mm")
+                Else
+                    tbxRepairDateOut.Text = CDate(lblRepairDateOut.Text).ToString("dd.MM.yyyy HH:mm")
+                End If
+
+                lblRepairDateOut.Visible = False
+                tbxRepairDateOut.Visible = True
+
             Else
                 pnlRepairDateIn.Visible = False
                 lblRepairDateIn.Visible = True
+
+                lblRepairDateOut.Visible = True
+                tbxRepairDateOut.Visible = False
             End If
         End Sub
 
@@ -1250,6 +1279,7 @@ Namespace Kasbi
                 lblSmsText.Visible = True
             End If
         End Sub
+
         Protected Sub cbxNeadSKNO_CheckedChanged(sender As Object, e As EventArgs) Handles cbxNeadSKNO.CheckedChanged
             pnlSKNO.Visible = cbxNeadSKNO.Checked
             SetTxtSmsText()

@@ -1,21 +1,27 @@
 Imports System.Data.SqlClient
+Imports Service
 
 Namespace Kasbi
-
     Partial Class Repair
         Inherits PageBase
         Dim sCaptionAddSupport As String = "Поставить на ТО"
         Dim CurrentCustomer%, iNewCust%
         Dim iCash%
         Dim sCaptionRemoveSupport As String = "Снять с ТО"
+        Dim errRequest As String = String.Empty
+
+        Const Err002 As String =
+            "Ремонт не может быть изменен/удален, так как данные уже выгружены на портал в налоговую!"
+
+        Private ReadOnly _serviceExport As ServiceExport = New ServiceExport()
 
         Protected WithEvents lnkRepairIN_OUT As System.Web.UI.WebControls.LinkButton
 
 #Region " Web Form Designer Generated Code "
 
         'This call is required by the Web Form Designer.
-        <System.Diagnostics.DebuggerStepThrough()> Private Sub InitializeComponent()
-
+        <System.Diagnostics.DebuggerStepThrough()>
+        Private Sub InitializeComponent()
         End Sub
 
 
@@ -37,6 +43,7 @@ Namespace Kasbi
 
             Try
                 iCash = Request.Params(0)
+                errRequest = Request.Params("err")
             Catch
                 msg.Text = "Неверный запрос"
                 Exit Sub
@@ -45,6 +52,12 @@ Namespace Kasbi
                 LoadGoodInfo()
                 LoadSKNOInfo()
                 BindGrid()
+                If Not String.IsNullOrEmpty(errRequest)
+                    If errRequest = "002"
+                        msg.Text = Err002
+                        Exit Sub
+                    End If
+                End If
             End If
         End Sub
 
@@ -68,7 +81,6 @@ Namespace Kasbi
                 reader.Close()
                 Exit Sub
             End Try
-
         End Sub
 
         Sub LoadGoodInfo()
@@ -108,8 +120,8 @@ Namespace Kasbi
                 s = Trim(reader("marka"))
                 'If reader("good_type_sys_id") = Config.Kasbi04_ID Then
                 sTmp = Trim(reader("num_control_cto2"))
-                    s = s & " / " & sTmp
-                    lblCaptionMarka.Text = "Марки ЦТО/ЦТО2:"
+                s = s & " / " & sTmp
+                lblCaptionMarka.Text = "Марки ЦТО/ЦТО2:"
                 'End If
                 b = s.Length > 0
                 If b Then lblMarka.Text = s
@@ -200,7 +212,6 @@ Namespace Kasbi
                 'reader.Close()
                 Exit Sub
             End Try
-
         End Sub
 
         Sub BindGrid()
@@ -319,9 +330,10 @@ Namespace Kasbi
         '    End Try
         'End Sub
 
-        Private Sub grdRepairs_ItemDataBound(ByVal sender As Object, ByVal e As System.Web.UI.WebControls.DataGridItemEventArgs) Handles grdRepairs.ItemDataBound
+        Private Sub grdRepairs_ItemDataBound(ByVal sender As Object,
+                                             ByVal e As System.Web.UI.WebControls.DataGridItemEventArgs) _
+            Handles grdRepairs.ItemDataBound
             Dim s$
-
 
 
             If e.Item.ItemType = ListItemType.Item Or e.Item.ItemType = ListItemType.AlternatingItem Then
@@ -332,7 +344,8 @@ Namespace Kasbi
 
                 'Dates
                 If Not IsDBNull(e.Item.DataItem("updateDate")) Then
-                    s = "Изменил:<br> " & e.Item.DataItem("updateUserID") & "<br>" & Format(e.Item.DataItem("updateDate"), "dd.MM.yyyy HH:mm")
+                    s = "Изменил:<br> " & e.Item.DataItem("updateUserID") & "<br>" &
+                        Format(e.Item.DataItem("updateDate"), "dd.MM.yyyy HH:mm")
                 Else
                     s = "Изменил:<br> " & e.Item.DataItem("updateUserID")
                 End If
@@ -349,12 +362,18 @@ Namespace Kasbi
                     s = s & "??.??.????"
                     isLabelShow = False
                     CType(e.Item.FindControl("lnkActRepairIN_OUT"), HyperLink).Text = "Акт о принятии в ремонт"
-                    CType(e.Item.FindControl("lnkActRepairIN_OUT"), HyperLink).NavigateUrl = GetAbsoluteUrl("documents.aspx?t=31&c=" & e.Item.DataItem("owner_sys_id") & "&g=" & e.Item.DataItem("good_sys_id") & "&h=" & e.Item.DataItem("sys_id"))
+                    CType(e.Item.FindControl("lnkActRepairIN_OUT"), HyperLink).NavigateUrl =
+                        GetAbsoluteUrl(
+                            "documents.aspx?t=31&c=" & e.Item.DataItem("owner_sys_id") & "&g=" &
+                            e.Item.DataItem("good_sys_id") & "&h=" & e.Item.DataItem("sys_id"))
 
                 Else
                     s = s & Format(e.Item.DataItem("date_out"), "dd.MM.yyyy HH:mm")
                     CType(e.Item.FindControl("lnkActRepairIN_OUT"), HyperLink).Text = "Акт о принятии в ремонт"
-                    CType(e.Item.FindControl("lnkActRepairIN_OUT"), HyperLink).NavigateUrl = GetAbsoluteUrl("documents.aspx?t=31&c=" & e.Item.DataItem("owner_sys_id") & "&g=" & e.Item.DataItem("good_sys_id") & "&h=" & e.Item.DataItem("sys_id"))
+                    CType(e.Item.FindControl("lnkActRepairIN_OUT"), HyperLink).NavigateUrl =
+                        GetAbsoluteUrl(
+                            "documents.aspx?t=31&c=" & e.Item.DataItem("owner_sys_id") & "&g=" &
+                            e.Item.DataItem("good_sys_id") & "&h=" & e.Item.DataItem("sys_id"))
                     Dim sale%
                     If IsDBNull(e.Item.DataItem("sale_sys_id")) Then
                         sale = e.Item.DataItem("sale_sys_id_first")
@@ -362,18 +381,32 @@ Namespace Kasbi
                         sale = e.Item.DataItem("sale_sys_id")
                     End If
                     CType(e.Item.FindControl("lnkRepairAct"), HyperLink).Text = "Акт"
-                    CType(e.Item.FindControl("lnkRepairAct"), HyperLink).NavigateUrl = GetAbsoluteUrl("documents.aspx?c=" & e.Item.DataItem("owner_sys_id") & "&s=" & sale & "&t=16&g=" & e.Item.DataItem("good_sys_id") & "&h=" & e.Item.DataItem("sys_id"))
+                    CType(e.Item.FindControl("lnkRepairAct"), HyperLink).NavigateUrl =
+                        GetAbsoluteUrl(
+                            "documents.aspx?c=" & e.Item.DataItem("owner_sys_id") & "&s=" & sale & "&t=16&g=" &
+                            e.Item.DataItem("good_sys_id") & "&h=" & e.Item.DataItem("sys_id"))
                     Dim garantia As Boolean = True
-                    garantia = (IsDBNull(e.Item.DataItem("summa")) Or e.Item.DataItem("summa") = "") Or (e.Item.DataItem("garantia_repair"))
+                    garantia = (IsDBNull(e.Item.DataItem("summa")) Or e.Item.DataItem("summa") = "") Or
+                               (e.Item.DataItem("garantia_repair"))
 
                     If garantia = False Then
-                        CType(e.Item.FindControl("lnkActRepairRealization"), HyperLink).Text = "Акт о проведении ремонта"
-                        CType(e.Item.FindControl("lnkActRepairRealization"), HyperLink).NavigateUrl = GetAbsoluteUrl("documents.aspx?t=32&c=" & e.Item.DataItem("owner_sys_id") & "&g=" & e.Item.DataItem("good_sys_id") & "&h=" & e.Item.DataItem("sys_id"))
+                        CType(e.Item.FindControl("lnkActRepairRealization"), HyperLink).Text =
+                            "Акт о проведении ремонта"
+                        CType(e.Item.FindControl("lnkActRepairRealization"), HyperLink).NavigateUrl =
+                            GetAbsoluteUrl(
+                                "documents.aspx?t=32&c=" & e.Item.DataItem("owner_sys_id") & "&g=" &
+                                e.Item.DataItem("good_sys_id") & "&h=" & e.Item.DataItem("sys_id"))
                         'Documents.aspx?t=32&c=" & CurrentCustomer & "&g=" & iCash & "&details=" & s & "&w=" & WorkNotCall & "'
                         CType(e.Item.FindControl("lnkTTNRepair"), HyperLink).Text = "Накладная"
-                        CType(e.Item.FindControl("lnkTTNRepair"), HyperLink).NavigateUrl = GetAbsoluteUrl("documents.aspx?t=33&c=" & e.Item.DataItem("owner_sys_id") & "&g=" & e.Item.DataItem("good_sys_id") & "&h=" & e.Item.DataItem("sys_id"))
+                        CType(e.Item.FindControl("lnkTTNRepair"), HyperLink).NavigateUrl =
+                            GetAbsoluteUrl(
+                                "documents.aspx?t=33&c=" & e.Item.DataItem("owner_sys_id") & "&g=" &
+                                e.Item.DataItem("good_sys_id") & "&h=" & e.Item.DataItem("sys_id"))
                         CType(e.Item.FindControl("lnkInvoiceNDS"), HyperLink).Text = "Счет-фактура по НДС"
-                        CType(e.Item.FindControl("lnkInvoiceNDS"), HyperLink).NavigateUrl = GetAbsoluteUrl("documents.aspx?t=34&c=" & e.Item.DataItem("owner_sys_id") & "&g=" & e.Item.DataItem("good_sys_id") & "&h=" & e.Item.DataItem("sys_id"))
+                        CType(e.Item.FindControl("lnkInvoiceNDS"), HyperLink).NavigateUrl =
+                            GetAbsoluteUrl(
+                                "documents.aspx?t=34&c=" & e.Item.DataItem("owner_sys_id") & "&g=" &
+                                e.Item.DataItem("good_sys_id") & "&h=" & e.Item.DataItem("sys_id"))
 
                     End If
 
@@ -388,17 +421,24 @@ Namespace Kasbi
                 End If
                 CType(e.Item.FindControl("lblDates"), Label).Text = s
 
-                s = "&nbsp;СК ЦТО :" & e.Item.DataItem("marka_cto_in") & " / " & e.Item.DataItem("marka_cto_out") & "<br>"
+                s = "&nbsp;СК ЦТО :" & e.Item.DataItem("marka_cto_in") & " / " & e.Item.DataItem("marka_cto_out") &
+                    "<br>"
                 'If (e.Item.DataItem("good_type_sys_id")) = Config.Kasbi04_ID Then
-                s = s & "&nbsp;СК ЦТО2 :" & e.Item.DataItem("marka_cto2_in") & " / " & e.Item.DataItem("marka_cto2_out") & "<br>"
+                s = s & "&nbsp;СК ЦТО2 :" & e.Item.DataItem("marka_cto2_in") & " / " & e.Item.DataItem("marka_cto2_out") &
+                    "<br>"
                 'End If
-                s = s & "&nbsp;СК Реестра :" & e.Item.DataItem("marka_reestr_in") & " / " & e.Item.DataItem("marka_reestr_out") & "<br>"
-                s = s & "&nbsp;СК ПЗУ :" & e.Item.DataItem("marka_pzu_in") & " / " & e.Item.DataItem("marka_pzu_out") & "<br>"
-                s = s & "&nbsp;СК МФП :" & e.Item.DataItem("marka_mfp_in") & " / " & e.Item.DataItem("marka_mfp_out") & "<br>"
+                s = s & "&nbsp;СК Реестра :" & e.Item.DataItem("marka_reestr_in") & " / " &
+                    e.Item.DataItem("marka_reestr_out") & "<br>"
+                s = s & "&nbsp;СК ПЗУ :" & e.Item.DataItem("marka_pzu_in") & " / " & e.Item.DataItem("marka_pzu_out") &
+                    "<br>"
+                s = s & "&nbsp;СК МФП :" & e.Item.DataItem("marka_mfp_in") & " / " & e.Item.DataItem("marka_mfp_out") &
+                    "<br>"
                 'If (e.Item.DataItem("good_type_sys_id")) = Config.Kasbi04_ID Then
-                s = s & "&nbsp;СК ЦП :" & e.Item.DataItem("marka_cp_in") & " / " & e.Item.DataItem("marka_cp_out") & "<br>"
+                s = s & "&nbsp;СК ЦП :" & e.Item.DataItem("marka_cp_in") & " / " & e.Item.DataItem("marka_cp_out") &
+                    "<br>"
                 'End If
-                s = s & "&nbsp;Z-отчет :" & e.Item.DataItem("zreport_in") & " / " & e.Item.DataItem("zreport_out") & "<br>"
+                s = s & "&nbsp;Z-отчет :" & e.Item.DataItem("zreport_in") & " / " & e.Item.DataItem("zreport_out") &
+                    "<br>"
                 s = s & "&nbsp;Итог :" & e.Item.DataItem("itog_in") & " / " & e.Item.DataItem("itog_out") & "<br>"
                 CType(e.Item.FindControl("lblStatus"), Label).Text = s
 
@@ -432,7 +472,9 @@ Namespace Kasbi
                 'CType(e.Item.FindControl("lblItogOut"), Label).Text = e.Item.DataItem("itog_out")
 
                 'Summa
-                CType(e.Item.FindControl("lblCost"), Label).Text = IIf(IsDBNull(e.Item.DataItem("summa")) Or e.Item.DataItem("summa") = "", "по гарантии", CStr(e.Item.DataItem("summa")))
+                CType(e.Item.FindControl("lblCost"), Label).Text =
+                    IIf(IsDBNull(e.Item.DataItem("summa")) Or e.Item.DataItem("summa") = "", "по гарантии",
+                        CStr(e.Item.DataItem("summa")))
 
                 'исполнитель
                 If Session("rule22") = 0 Or Session("rule22") = "" Then
@@ -441,7 +483,6 @@ Namespace Kasbi
                 If Session("rule28") = 0 Or Session("rule28") = "" Then
                     e.Item.FindControl("cmdEdit").Visible = False
                 End If
-
 
 
                 'почемуто иногда бывает пустая строка
@@ -460,44 +501,58 @@ Namespace Kasbi
                 'Доп информация
                 CType(e.Item.FindControl("lblRepairInfo"), Label).Text = e.Item.DataItem("repair_info")
 
-                CType(e.Item.FindControl("cmdDelete"), ImageButton).Attributes.Add("onclick", "return confirm('Вы действительно хотите удалить запись о ремонте?');")
+                CType(e.Item.FindControl("cmdDelete"), ImageButton).Attributes.Add("onclick",
+                                                                                   "return confirm('Вы действительно хотите удалить запись о ремонте?');")
 
             End If
         End Sub
 
-        Private Sub grdRepairs_EditCommand(ByVal source As Object, ByVal e As System.Web.UI.WebControls.DataGridCommandEventArgs) Handles grdRepairs.EditCommand
+        Private Sub grdRepairs_EditCommand(ByVal source As Object,
+                                           ByVal e As System.Web.UI.WebControls.DataGridCommandEventArgs) _
+            Handles grdRepairs.EditCommand
             grdRepairs.EditItemIndex = CInt(e.Item.ItemIndex)
-            Response.Redirect(GetAbsoluteUrl("~/RepairNew.aspx?cash=" & iCash & "&hc=" & grdRepairs.DataKeys(e.Item.ItemIndex)))
+            Response.Redirect(
+                GetAbsoluteUrl("~/RepairNew.aspx?cash=" & iCash & "&hc=" & grdRepairs.DataKeys(e.Item.ItemIndex)))
         End Sub
 
-        Private Sub grdRepairs_DeleteCommand(ByVal source As Object, ByVal e As System.Web.UI.WebControls.DataGridCommandEventArgs) Handles grdRepairs.DeleteCommand
+        Private Sub grdRepairs_DeleteCommand(ByVal source As Object,
+                                             ByVal e As System.Web.UI.WebControls.DataGridCommandEventArgs) _
+            Handles grdRepairs.DeleteCommand
             'Ограничение прав на удаление
             If Session("rule22") = "1" Then
-                Dim cmd As SqlClient.SqlCommand
+                If _serviceExport.IsLockCashHistory(Convert.ToInt32(grdRepairs.DataKeys(e.Item.ItemIndex))) And Not CurrentUser.is_admin
+                    msg.Text = err002
+                    Exit Sub
+                Else
+                    Dim cmd As SqlClient.SqlCommand
 
-                Try
-                    cmd = New SqlClient.SqlCommand("remove_repair")
-                    cmd.Parameters.AddWithValue("@pi_hc_sys_id", grdRepairs.DataKeys(e.Item.ItemIndex))
-                    cmd.CommandType = CommandType.StoredProcedure
-                    dbSQL.Execute(cmd)
+                    Try
+                        cmd = New SqlClient.SqlCommand("remove_repair")
+                        cmd.Parameters.AddWithValue("@pi_hc_sys_id", grdRepairs.DataKeys(e.Item.ItemIndex))
+                        cmd.CommandType = CommandType.StoredProcedure
+                        dbSQL.Execute(cmd)
 
-                    Dim query = dbSQL.ExecuteScalar("UPDATE good SET inrepair=null WHERE good_sys_id='" & iCash & "'")
+                        Dim query =
+                                dbSQL.ExecuteScalar("UPDATE good SET inrepair=null WHERE good_sys_id='" & iCash & "'")
 
-                    cmd = New SqlCommand("set_state_repair")
-                    cmd.Parameters.AddWithValue("@pi_state_repair", 0)
-                    cmd.Parameters.AddWithValue("@pi_good_sys_id", icash)
-                    cmd.CommandType = CommandType.StoredProcedure
-                    dbSQL.Execute(cmd)
-                Catch
-                    msgHistory.Text = "Ошибка удаления записи!<br>" & Err.Description
-                End Try
-                grdRepairs.EditItemIndex = -1
-                BindGrid()
-                ShowRepairImage()
+                        cmd = New SqlCommand("set_state_repair")
+                        cmd.Parameters.AddWithValue("@pi_state_repair", 0)
+                        cmd.Parameters.AddWithValue("@pi_good_sys_id", icash)
+                        cmd.CommandType = CommandType.StoredProcedure
+                        dbSQL.Execute(cmd)
+                    Catch
+                        msgHistory.Text = "Ошибка удаления записи!<br>" & Err.Description
+                    End Try
+                    grdRepairs.EditItemIndex = - 1
+                    BindGrid()
+                    ShowRepairImage()
+                End If
             End If
         End Sub
 
-        Private Sub grdRepairs_ItemCommand(ByVal source As Object, ByVal e As System.Web.UI.WebControls.DataGridCommandEventArgs) Handles grdRepairs.ItemCommand
+        Private Sub grdRepairs_ItemCommand(ByVal source As Object,
+                                           ByVal e As System.Web.UI.WebControls.DataGridCommandEventArgs) _
+            Handles grdRepairs.ItemCommand
             If e.CommandName = "DeleteDoc" Then
                 Dim d As New Kasbi.Migrated_Documents
                 Try
@@ -517,5 +572,4 @@ Namespace Kasbi
             Response.Redirect(GetAbsoluteUrl("~/GoodList.aspx"))
         End Sub
     End Class
-
 End Namespace

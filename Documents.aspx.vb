@@ -150,9 +150,7 @@ Namespace Kasbi
             If doc_type(0) = 31 Then
                 If Not ProcessDefectAct(doc_type, customer_sys_id, good_sys_id, history_id) Then Exit Sub
             ElseIf doc_type(0) = 60 Then
-                path = ProcessAktForTOandDolg(good_sys_id.ToString(), d.ToString())
-                doc_path = path
-                If Not path <> String.Empty Then Exit Sub
+                ProcessAktForTOandDolg(good_sys_id.ToString(), d.ToString())
             ElseIf doc_type(0) = 42 Then
                 If Not ProcessDefectActForGood(doc_type, customer_sys_id) Then Exit Sub
             ElseIf doc_type(0) = 32 Or doc_type(0) = 33 Or doc_type(0) = 34 Then
@@ -266,7 +264,7 @@ Namespace Kasbi
                 End If
                 query = ""
                 If doc_type(0) = 31 Or doc_type(0) = 42 Then
-                    path = Server.MapPath("Docs/") & "DefectActs\" & doc_path
+                    path = Server.MapPath("Docs/") & "DefectActs\" & CurrentUser.sys_id & "\" & doc_path
                 End If
                 If doc_type(0) = 32 Or doc_type(0) = 33 Or doc_type(0) = 34 Then
                     path = Server.MapPath("Docs/repair/") & doc_path
@@ -5786,7 +5784,7 @@ Namespace Kasbi
             adapt.Fill(ds, "defectAct")
 
             Dim docFullPath$
-            Dim path$ = Server.MapPath("Docs") & "\DefectActs"
+            Dim path$ = Server.MapPath("Docs") & "\DefectActs\" & CurrentUser.sys_id
             docFullPath = path & "\" & DocName31
             Dim fls As IO.File
             Dim fl As IO.FileInfo
@@ -5850,10 +5848,10 @@ Namespace Kasbi
                 Dim telNoticeFormat As String = dr1("tel_notice")
                 If telNoticeFormat.Length <> 0
                     telNoticeFormat = telNoticeFormat.Substring(0, 4) & " (" & telNoticeFormat.Substring(4, 2) &
-                                        ") " &
-                                        telNoticeFormat.Substring(6, 3) & "-" & telNoticeFormat.Substring(9, 2) &
-                                        "-" &
-                                        telNoticeFormat.Substring(11, 2)
+                                      ") " &
+                                      telNoticeFormat.Substring(6, 3) & "-" & telNoticeFormat.Substring(9, 2) &
+                                      "-" &
+                                      telNoticeFormat.Substring(11, 2)
                 Else
                     telNoticeFormat = ""
                 End If
@@ -5864,7 +5862,9 @@ Namespace Kasbi
                 'кто сделал все это
 
                 Dim sEmployee$ =
-                        dbSQL.ExecuteScalar("select Name from Employee where sys_id='" & ds.Tables("defectAct").Rows(0)("receptionist_sys_id") & "'")
+                        dbSQL.ExecuteScalar(
+                            "select Name from Employee where sys_id='" &
+                            ds.Tables("defectAct").Rows(0)("receptionist_sys_id") & "'")
                 If sEmployee Is Nothing OrElse sEmployee = String.Empty Then
                 Else
                     doc.Bookmarks("master1").Range.Text = sEmployee
@@ -6078,7 +6078,7 @@ Namespace Kasbi
                                               ds.Tables("customer").Rows(0)("customer_address"))
             End If
             Dim docFullPath$
-            Dim path$ = Server.MapPath("Docs") & "\DefectActs"
+            Dim path$ = Server.MapPath("Docs") & "\DefectActs\" & CurrentUser.sys_id
             docFullPath = path & "\" & DocName42
             Dim fls As IO.File
             Dim fl As IO.FileInfo
@@ -6380,14 +6380,13 @@ Namespace Kasbi
             End Try
         End Function
 
-        Private Function ProcessAktForTOandDolg(good_sys_id As String, d As String) As String
-            Dim checkGoods As Hashtable = New Hashtable()
+        Private Sub ProcessAktForTOandDolg(good_sys_id As String, d As String)
+            Dim checkGoods As ListDictionary = New ListDictionary()
             checkGoods.Add(good_sys_id.ToString(), " ")
-            Return _
-                serviceDoc.AktForTOandDolg(checkGoods, True,
-                                           Date.ParseExact(d, "ddMMyyyy",
-                                                           System.Globalization.DateTimeFormatInfo.InvariantInfo))
-        End Function
+            serviceDoc.AktForTOandDolg(checkGoods, Response, True,
+                                       Date.ParseExact(d, "ddMMyyyy",
+                                                       System.Globalization.DateTimeFormatInfo.InvariantInfo))
+        End Sub
 
 
         '    Private Function ProcessRebilling(ByVal num_doc() As Integer, ByVal customer As Integer, ByVal cashregisters As String, Optional ByVal isRefresh As Boolean = True) As Boolean

@@ -60,41 +60,30 @@ Namespace Service
 
         Public Function CheckDate(ByVal closePeriod As DateTime, ByVal closeDateText As String) As Boolean
             Dim exeption As ToExeption = New ToExeption(Nothing, closePeriod.ToString(), closeDateText)
-            Dim dNow, dStarPeriod, dEndPeriod, dToday As DateTime
+            Dim dStarPeriod, dEndPeriod, dToday As DateTime
             Dim firstDayOfPeriod As Integer = 3
-            dNow = New Date(Now.Year, Now.Month, 1)
 
-            dToday = DateTime.Today
+            dToday = Now
+            'задаем начальный период
             dStarPeriod = dToday
-
-            'поправка на один дополнительный день для проведения ТО
-            If (dToday.DayOfWeek = firstDayOfPeriod) Then
-                dStarPeriod = dStarPeriod.AddDays(-1)
-            End If
-            'ищем начало отчетного периода, в данном случае это Ср
-            While (dStarPeriod.DayOfWeek <> firstDayOfPeriod)
-                dStarPeriod = dStarPeriod.AddDays(-1)
-            End While
             'задаем конечный период
             dEndPeriod = dStarPeriod.AddDays(7).AddMinutes(-1)
             'поправка на один дополнительный день для проведения ТО
             If (dToday.DayOfWeek = firstDayOfPeriod) Then
+                dStarPeriod = dStarPeriod.AddDays(-1)
                 dEndPeriod = dEndPeriod.AddDays(1)
             End If
-
+            'ищем начало отчетного периода, в данном случае это Среда
+            While (dStarPeriod.DayOfWeek <> firstDayOfPeriod)
+                dStarPeriod = dStarPeriod.AddDays(-1)
+            End While
 
             If String.IsNullOrEmpty(closeDateText) Then
                 exeption.AddTextToList("Не выбрана дата выполнения.")
             Else
                 Dim closeDate As DateTime = DateTime.Parse(closeDateText)
-
-                'If (closePeriod > dNow) Then
-                '    exeptionText = "Закрываемый вами период больше текущего периода"
-                'ElseIf (closePeriod < dNow) Then
-                '    exeptionText = "Закрываемый вами период уже прошел. Проводить ТО можно только за текуший период (" & dNow.ToString("MMMM") & " " & dNow.ToString("yyyy") & ")"
                 If closePeriod <> New DateTime(closeDate.Year, closeDate.Month, 1) Then
                     exeption.AddTextToList("Дата закрытия периода и дата выполнения имеют разные месяца.")
-
                 ElseIf closeDate > dToday Then
                     exeption.AddTextToList("Вы собираетесь провести ТО днем, который еще не наступил.")
                 ElseIf closePeriod < New DateTime(dStarPeriod.Year, dStarPeriod.Month, 1) Then
