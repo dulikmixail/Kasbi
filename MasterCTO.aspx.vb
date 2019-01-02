@@ -1050,12 +1050,13 @@ Namespace Kasbi
                 '
                 'Картинки
                 '
-                If Not IsDBNull(e.Item.DataItem("alert")) Then
-                    s = CStr(e.Item.DataItem("alert"))
+                If Not IsDBNull(e.Item.DataItem("alert")) AndAlso e.Item.DataItem("alert") = 1 Then
+                    e.Item.FindControl("imgAlert").Visible = True
+                    CType(e.Item.FindControl("imgAlert"), HyperLink).ToolTip = IIf(IsDBNull(e.Item.DataItem("info")), "", e.Item.DataItem("info")).ToString()
+                Else
+                    e.Item.FindControl("imgAlert").Visible = False
                 End If
 
-                e.Item.FindControl("imgAlert").Visible = s.Length > 0
-                If s.Length > 0 Then CType(e.Item.FindControl("imgAlert"), WebControls.HyperLink).ToolTip = s
                 e.Item.FindControl("imgSupport").Visible = Not IsDBNull(e.Item.DataItem("support")) AndAlso
                                                            e.Item.DataItem("support") = "1"
 

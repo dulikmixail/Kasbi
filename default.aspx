@@ -79,7 +79,7 @@
         </table>
         <br/><br/><br/><br/><br/><br/><br/><br/><br/><br/>
 <asp:Panel ID="pnlExport" runat="server" Visible="true">
-    <table id="tblLinks" cellspacing="0" cellpadding="0" width="100%" runat="server" height="20px" style="margin: 5px 10px">
+    <table id="tblLinks" cellspacing="0" cellpadding="0" width="90%" runat="server" height="20px" style="margin: 5px 10px">
         <tr>
             <td>
                 <asp:Label ID="msg" runat="server" Font-Bold="True" ForeColor="Red" EnableViewState="False" Visible="True"></asp:Label>

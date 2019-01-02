@@ -1,15 +1,14 @@
 Imports Service
 
 Namespace Kasbi
-
     Partial Class GoodList
         Inherits PageBase
 
 #Region " Web Form Designer Generated Code "
 
         'This call is required by the Web Form Designer.
-        <System.Diagnostics.DebuggerStepThrough()> Private Sub InitializeComponent()
-
+        <System.Diagnostics.DebuggerStepThrough()>
+        Private Sub InitializeComponent()
         End Sub
 
         Private Sub Page_Init(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Init
@@ -19,6 +18,7 @@ Namespace Kasbi
         End Sub
 
 #End Region
+
         Dim iType%, i%, j%
         Dim idDeliveryOld, idDeliveryNew, idGoodTypeOld, idGoodTypeNew As Integer
         Protected WithEvents btnMain As System.Web.UI.WebControls.HyperLink
@@ -160,7 +160,8 @@ Namespace Kasbi
                 Dim sCaptionType$ = ""
 
                 If txtFindGoodNum.Text = "" Then
-                    numcashregister = CInt(IIf(Request.Params("numcashregister") <> "", Request.Params("numcashregister"), 0))
+                    numcashregister = CInt(IIf(Request.Params("numcashregister") <> "",
+                                               Request.Params("numcashregister"), 0))
                     action = CInt(IIf(Request.Params("action") <> "", Request.Params("action"), 0))
                 Else
                     numcashregister = txtFindGoodNum.Text
@@ -174,26 +175,39 @@ Namespace Kasbi
                 If findgoodcto = 0 Then findgoodcto = ""
 
                 If txtFindGoodManufacturer.Text = "" Then
-                    findgoodmanufacturer = IIf(Request.Params("findgoodmanufacturer") <> "", Request.Params("findgoodmanufacturer"), 0)
+                    findgoodmanufacturer = IIf(Request.Params("findgoodmanufacturer") <> "",
+                                               Request.Params("findgoodmanufacturer"), 0)
                 Else
                     findgoodmanufacturer = txtFindGoodManufacturer.Text
                 End If
                 If findgoodmanufacturer = 0 Then findgoodmanufacturer = ""
 
                 If action = 1 Then
-                    Dim sEmployee$ = dbSQL.ExecuteScalar("select good_sys_id from good where num_cashregister='" & numcashregister & "'")
+                    Dim sEmployee$ =
+                            dbSQL.ExecuteScalar(
+                                "select good_sys_id from good where num_cashregister='" & numcashregister & "'")
                     If sEmployee Is Nothing OrElse sEmployee = String.Empty Then
                     Else
                         Response.Redirect(GetAbsoluteUrl("~/Repair.aspx?" & sEmployee & "&action=1&param=" & sEmployee))
                     End If
                 ElseIf action = 2 Then
                     ds = New DataSet
-                    cmd = New SqlClient.SqlCommand("SELECT TOP 1 dbo.cash_history.owner_sys_id, dbo.cash_history.sys_id, dbo.good.good_sys_id FROM dbo.good RIGHT OUTER JOIN dbo.cash_history ON dbo.good.good_sys_id = dbo.cash_history.good_sys_id WHERE (dbo.good.num_cashregister = '" & numcashregister & "') AND (dbo.cash_history.state = '5') ORDER BY dbo.cash_history.updateDate DESC")
+                    cmd =
+                        New SqlClient.SqlCommand(
+                            "SELECT TOP 1 dbo.cash_history.owner_sys_id, dbo.cash_history.sys_id, dbo.good.good_sys_id FROM dbo.good RIGHT OUTER JOIN dbo.cash_history ON dbo.good.good_sys_id = dbo.cash_history.good_sys_id WHERE (dbo.good.num_cashregister = '" &
+                            numcashregister &
+                            "') AND (dbo.cash_history.state = '5') ORDER BY dbo.cash_history.updateDate DESC")
                     adapt = dbSQL.GetDataAdapter(cmd)
                     adapt.Fill(ds, "action2")
-                    Response.Redirect(GetAbsoluteUrl("~/documents.aspx?t=32&c=" & ds.Tables("action2").Rows(0)("owner_sys_id") & "&g=" & ds.Tables("action2").Rows(0)("good_sys_id") & "&h=" & ds.Tables("action2").Rows(0)("sys_id") & ""))
+                    Response.Redirect(
+                        GetAbsoluteUrl(
+                            "~/documents.aspx?t=32&c=" & ds.Tables("action2").Rows(0)("owner_sys_id") & "&g=" &
+                            ds.Tables("action2").Rows(0)("good_sys_id") & "&h=" & ds.Tables("action2").Rows(0)("sys_id") &
+                            ""))
                 ElseIf action = 3 Then
-                    Dim sEmployee$ = dbSQL.ExecuteScalar("select good_sys_id from good where num_cashregister='" & numcashregister & "'")
+                    Dim sEmployee$ =
+                            dbSQL.ExecuteScalar(
+                                "select good_sys_id from good where num_cashregister='" & numcashregister & "'")
                     If sEmployee Is Nothing OrElse sEmployee = String.Empty Then
                     Else
                         Response.Redirect(GetAbsoluteUrl("~/NewSupportConduct.aspx?" & sEmployee))
@@ -230,7 +244,8 @@ Namespace Kasbi
                         Exit Sub
                     End If
                     cmd.Parameters.AddWithValue("@pi_start_date", cal.SelectedDates.Item(0).ToShortDateString)
-                    cmd.Parameters.AddWithValue("@pi_finish_date", cal.SelectedDates.Item(cal.SelectedDates.Count - 1).ToShortDateString)
+                    cmd.Parameters.AddWithValue("@pi_finish_date",
+                                                cal.SelectedDates.Item(cal.SelectedDates.Count - 1).ToShortDateString)
                     cmd.Parameters.AddWithValue("@pi_use_date_type", lstUseDateType.SelectedIndex)
                 Else
                     cmd.Parameters.AddWithValue("@pi_start_date", "")
@@ -290,7 +305,8 @@ Namespace Kasbi
                             If cal.SelectedDates.Count = 1 Then
                                 sCaptionDate = " " & cal.SelectedDate.ToString("dd.MM.yyyy")
                             ElseIf cal.SelectedDates.Count > 1 Then
-                                sCaptionDate = " с " & cal.SelectedDates(0).ToString("dd.MM.yyyy") & " по " & cal.SelectedDates(cal.SelectedDates.Count - 1).ToString("dd.MM.yyyy")
+                                sCaptionDate = " с " & cal.SelectedDates(0).ToString("dd.MM.yyyy") & " по " &
+                                               cal.SelectedDates(cal.SelectedDates.Count - 1).ToString("dd.MM.yyyy")
                             Else
                                 sCaptionDate = " Не выбрана дата"
                             End If
@@ -334,7 +350,9 @@ Namespace Kasbi
             End If
         End Sub
 
-        Private Sub grdGood_EditCommand(ByVal source As System.Object, ByVal e As System.Web.UI.WebControls.DataGridCommandEventArgs) Handles grdGood.EditCommand
+        Private Sub grdGood_EditCommand(ByVal source As System.Object,
+                                        ByVal e As System.Web.UI.WebControls.DataGridCommandEventArgs) _
+            Handles grdGood.EditCommand
             'Ограничение прав на редактирование
             If Session("rule15") = "1" Then
                 grdGood.EditItemIndex = CInt(e.Item.ItemIndex)
@@ -342,12 +360,16 @@ Namespace Kasbi
             End If
         End Sub
 
-        Private Sub grdGood_CancelCommand(ByVal source As System.Object, ByVal e As System.Web.UI.WebControls.DataGridCommandEventArgs) Handles grdGood.CancelCommand
-            grdGood.EditItemIndex = -1
+        Private Sub grdGood_CancelCommand(ByVal source As System.Object,
+                                          ByVal e As System.Web.UI.WebControls.DataGridCommandEventArgs) _
+            Handles grdGood.CancelCommand
+            grdGood.EditItemIndex = - 1
             Bind()
         End Sub
 
-        Private Sub grdGood_DeleteCommand(ByVal source As System.Object, ByVal e As System.Web.UI.WebControls.DataGridCommandEventArgs) Handles grdGood.DeleteCommand
+        Private Sub grdGood_DeleteCommand(ByVal source As System.Object,
+                                          ByVal e As System.Web.UI.WebControls.DataGridCommandEventArgs) _
+            Handles grdGood.DeleteCommand
             'Ограничение прав на удаление
             If Session("rule15") = "1" Then
                 Try
@@ -359,12 +381,14 @@ Namespace Kasbi
                         msgCashregister.Text = "Ошибка удаления записи!<br>" & Err.Description
                     End If
                 End Try
-                grdGood.EditItemIndex = -1
+                grdGood.EditItemIndex = - 1
                 Bind()
             End If
         End Sub
 
-        Private Sub grdGood_ItemDataBound(ByVal sender As System.Object, ByVal e As System.Web.UI.WebControls.DataGridItemEventArgs) Handles grdGood.ItemDataBound
+        Private Sub grdGood_ItemDataBound(ByVal sender As System.Object,
+                                          ByVal e As System.Web.UI.WebControls.DataGridItemEventArgs) _
+            Handles grdGood.ItemDataBound
             Dim adapt As SqlClient.SqlDataAdapter
             Dim ds As DataSet
 
@@ -397,7 +421,12 @@ Namespace Kasbi
 
                         CType(e.Item.FindControl("lblGoodDelivery"), Label).Text = "Аппарат со стороны"
                     Else
-                        CType(e.Item.FindControl("lblGoodDelivery"), Label).Text = "№" & e.Item.DataItem("delivery_sys_id") & " от " & Format(e.Item.DataItem("delivery_date"), "dd.MM.yyyy")
+                        CType(e.Item.FindControl("lblGoodDelivery"), Label).Text = "№" &
+                                                                                   e.Item.DataItem("delivery_sys_id") &
+                                                                                   " от " &
+                                                                                   Format(
+                                                                                       e.Item.DataItem("delivery_date"),
+                                                                                       "dd.MM.yyyy")
                     End If
 
                 End If
@@ -414,10 +443,12 @@ Namespace Kasbi
                     s = s & e.Item.DataItem("worker") & " "
                 End If
                 If Not IsDBNull(e.Item.DataItem("d")) Then
-                    s = s & Format(e.Item.DataItem("d"), "dd/MM/yyyy") & "&nbsp;" & Format(e.Item.DataItem("d"), "HH:mm") & "<br>"
+                    s = s & Format(e.Item.DataItem("d"), "dd/MM/yyyy") & "&nbsp;" &
+                        Format(e.Item.DataItem("d"), "HH:mm") & "<br>"
                 End If
                 If Not IsDBNull(e.Item.DataItem("good_info")) Then
-                    s = s & "<br><b><span style='color:red;background-color:white'>" & e.Item.DataItem("good_info") & "</span></b>"
+                    s = s & "<br><b><span style='color:red;background-color:white'>" & e.Item.DataItem("good_info") &
+                        "</span></b>"
                 End If
                 CType(e.Item.FindControl("lbledtInfo"), Label).Text = s
 
@@ -425,20 +456,25 @@ Namespace Kasbi
                 s = CStr(e.Item.DataItem("alert"))
                 e.Item.FindControl("imgAlert").Visible = s.Length > 0
                 If s.Length > 0 Then CType(e.Item.FindControl("imgAlert"), HyperLink).ToolTip = s
-                e.Item.FindControl("imgSupport").Visible = Not IsDBNull(e.Item.DataItem("support")) AndAlso e.Item.DataItem("support") = "1"
+                e.Item.FindControl("imgSupport").Visible = Not IsDBNull(e.Item.DataItem("support")) AndAlso
+                                                           e.Item.DataItem("support") = "1"
                 Dim b As Boolean = e.Item.DataItem("repair")
                 e.Item.FindControl("imgRepair").Visible = b
                 If b Then
                     Dim i As Integer = CInt(e.Item.DataItem("repaired"))
                     If i > 1 Then
-                        CType(e.Item.FindControl("imgRepair"), HyperLink).ToolTip = "В ремонте. До этого в ремонте был " & i - 1 & " раз(а)"
+                        CType(e.Item.FindControl("imgRepair"), HyperLink).ToolTip =
+                            "В ремонте. До этого в ремонте был " & i - 1 & " раз(а)"
                     Else
-                        CType(e.Item.FindControl("imgRepair"), HyperLink).ToolTip = "В ремонте. До этого в ремонте не был"
+                        CType(e.Item.FindControl("imgRepair"), HyperLink).ToolTip =
+                            "В ремонте. До этого в ремонте не был"
                     End If
                 End If
                 e.Item.FindControl("imgRepaired").Visible = Not (b OrElse CInt(e.Item.DataItem("repaired")) = 0)
                 If e.Item.FindControl("imgRepaired").Visible Then
-                    CType(e.Item.FindControl("imgRepaired"), HyperLink).ToolTip = "Был в ремонте " & CInt(e.Item.DataItem("repaired")) & " раз(а)"
+                    CType(e.Item.FindControl("imgRepaired"), HyperLink).ToolTip = "Был в ремонте " &
+                                                                                  CInt(e.Item.DataItem("repaired")) &
+                                                                                  " раз(а)"
                 End If
 
                 If IsDBNull(e.Item.DataItem("state_skno")) Then
@@ -449,7 +485,8 @@ Namespace Kasbi
 
             ElseIf e.Item.ItemType = ListItemType.EditItem Then
 
-                If e.Item.DataItem("good_type_sys_id") = Config.Kasbi04_ID Or e.Item.DataItem("good_type_sys_id") = 1119 Then
+                If e.Item.DataItem("good_type_sys_id") = Config.Kasbi04_ID Or e.Item.DataItem("good_type_sys_id") = 1119 _
+                    Then
                     CType(e.Item.FindControl("pnlMarkaCTO2"), Panel).Visible = True
                     ' CType(e.Item.FindControl("pnlMarkaCP"), Panel).Visible = True
                 Else
@@ -481,7 +518,9 @@ Namespace Kasbi
                     CType(e.Item.FindControl("lstSaleOwner"), DropDownList).Visible = False
                 Else
                     Try
-                        adapt = dbSQL.GetDataAdapter("select delivery_sys_id,'№' + cast(delivery_sys_id as nvarchar) + ' от ' + cast(day(delivery_date) as nvarchar)+'.'+cast(month(delivery_date) as nvarchar)+'.'+cast(year(delivery_date) as nvarchar) as delivery from delivery where deleted =0 or deleted is NULL")
+                        adapt =
+                            dbSQL.GetDataAdapter(
+                                "select delivery_sys_id,'№' + cast(delivery_sys_id as nvarchar) + ' от ' + cast(day(delivery_date) as nvarchar)+'.'+cast(month(delivery_date) as nvarchar)+'.'+cast(year(delivery_date) as nvarchar) as delivery from delivery where deleted =0 or deleted is NULL")
                         ds = New DataSet
                         adapt.Fill(ds)
                         With CType(e.Item.FindControl("lstGoodDelivery"), DropDownList)
@@ -502,7 +541,11 @@ Namespace Kasbi
                     query = "select * from tbl_result where id in (select * from tbl_query)"
 
                     Try
-                        adapt = dbSQL.GetDataAdapter("select s.sale_sys_id, cast(c.customer_sys_id as nvarchar) + '/' + cast(s.sale_sys_id as nvarchar) + ' ' + cast(day(s.sale_date) as nvarchar)+'.'+cast(month(s.sale_date) as nvarchar)+'.'+cast(year(s.sale_date) as nvarchar) + ' ' + c.customer_name as sale from customer c, sale s where c.customer_sys_id=s.customer_sys_id order by c.cto DESC, c.customer_name, s.sale_date DESC")
+                        adapt =
+                            dbSQL.GetDataAdapter(
+                                "select s.sale_sys_id, cast(c.customer_sys_id as nvarchar) + '/' + cast(s.sale_sys_id as nvarchar) + ' ' + cast(day(s.sale_date) as nvarchar)+'.'+cast(month(s.sale_date) as nvarchar)+'.'+cast(year(s.sale_date) as nvarchar) + ' ' + c.customer_name as sale from customer c, sale s where c.customer_sys_id=s.customer_sys_id " &
+                                IIf(IsDBNull(e.Item.DataItem("sale_sys_id")), "".ToString(),"and s.sale_sys_id = " & e.Item.DataItem("sale_sys_id")).ToString() &
+                                " order by c.cto DESC, c.customer_name, s.sale_date DESC")
                         ds = New DataSet
                         adapt.Fill(ds)
                         With CType(e.Item.FindControl("lstSaleOwner"), DropDownList)
@@ -550,7 +593,9 @@ Namespace Kasbi
             End If
         End Sub
 
-        Private Sub grdGood_UpdateCommand(ByVal source As System.Object, ByVal e As System.Web.UI.WebControls.DataGridCommandEventArgs) Handles grdGood.UpdateCommand
+        Private Sub grdGood_UpdateCommand(ByVal source As System.Object,
+                                          ByVal e As System.Web.UI.WebControls.DataGridCommandEventArgs) _
+            Handles grdGood.UpdateCommand
             'Ограничение прав на редактирование
             If Session("rule15") = "1" Then
                 'Обрабатываем одинарные кавычки (замена на двойные)
@@ -606,17 +651,27 @@ Namespace Kasbi
 
                 Try
                     s1 = Replace(s1, ",", ".")
-                    Dim sql$ = String.Format("UPDATE good SET good_type_sys_id='{0}',price='{1}',num_cashregister='{2}',num_control_reestr='{3}',num_control_pzu='{4}',num_control_mfp='{5}',num_control_cto='{6}',set_place='{7}',kassir1='{8}',kassir2='{9}',info='{10}',delivery_sys_id={11},sale_sys_id={12},state={13},place_rn_id={14},num_control_cp='{15}',num_control_cto2='{16}' WHERE good_sys_id={17}", s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13, s14, s15, s16, grdGood.DataKeys(e.Item.ItemIndex))
+                    Dim sql$ =
+                            String.Format(
+                                "UPDATE good SET good_type_sys_id='{0}',price='{1}',num_cashregister='{2}',num_control_reestr='{3}',num_control_pzu='{4}',num_control_mfp='{5}',num_control_cto='{6}',set_place='{7}',kassir1='{8}',kassir2='{9}',info='{10}',delivery_sys_id={11},sale_sys_id={12},state={13},place_rn_id={14},num_control_cp='{15}',num_control_cto2='{16}' WHERE good_sys_id={17}",
+                                s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13, s14, s15, s16,
+                                grdGood.DataKeys(e.Item.ItemIndex))
                     dbSQL.Execute(sql)
                 Catch
-                    msgCashregister.Text = "Ошибка обновления записи!<br>" & Err.Description & "(" & String.Format("UPDATE good SET good_type_sys_id='{0}',price='{1}',num_cashregister='{2}',num_control_reestr='{3}',num_control_pzu='{4}',num_control_mfp='{5}',num_control_cto='{6}',set_place='{7}',kassir1='{8}',kassir2='{9}',info='{10}',delivery_sys_id={11},sale_sys_id={12},state={13},place_rn_id={14},num_control_cp='{15}',num_control_cto2='{16}' WHERE good_sys_id={17}", s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13, s14, s15, s16, grdGood.DataKeys(e.Item.ItemIndex)) & ")"
+                    msgCashregister.Text = "Ошибка обновления записи!<br>" & Err.Description & "(" &
+                                           String.Format(
+                                               "UPDATE good SET good_type_sys_id='{0}',price='{1}',num_cashregister='{2}',num_control_reestr='{3}',num_control_pzu='{4}',num_control_mfp='{5}',num_control_cto='{6}',set_place='{7}',kassir1='{8}',kassir2='{9}',info='{10}',delivery_sys_id={11},sale_sys_id={12},state={13},place_rn_id={14},num_control_cp='{15}',num_control_cto2='{16}' WHERE good_sys_id={17}",
+                                               s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13, s14, s15, s16,
+                                               grdGood.DataKeys(e.Item.ItemIndex)) & ")"
                 End Try
-                grdGood.EditItemIndex = -1
+                grdGood.EditItemIndex = - 1
                 Bind()
             End If
         End Sub
 
-        Private Sub grdGood_SortCommand(ByVal source As System.Object, ByVal e As System.Web.UI.WebControls.DataGridSortCommandEventArgs) Handles grdGood.SortCommand
+        Private Sub grdGood_SortCommand(ByVal source As System.Object,
+                                        ByVal e As System.Web.UI.WebControls.DataGridSortCommandEventArgs) _
+            Handles grdGood.SortCommand
             If ViewState("goodsort") = e.SortExpression Then
                 ViewState("goodsort") = e.SortExpression & " DESC"
             Else
@@ -642,7 +697,8 @@ Namespace Kasbi
             Bind()
         End Sub
 
-        Private Sub btnFindGood_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnFindGood.Click
+        Private Sub btnFindGood_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) _
+            Handles btnFindGood.Click
             Dim str$ = ""
             Dim sFilter$ = ""
             Dim sCaption$ = ""
@@ -650,28 +706,29 @@ Namespace Kasbi
             If isFind Then Exit Sub
 
             str = txtFindGoodNum.Text.Trim
-            If str.Length > 0 And str.IndexOf("'") = -1 Then
+            If str.Length > 0 And str.IndexOf("'") = - 1 Then
                 sFilter = "num_cashregister like '%" & str & "%'"
                 Session("num_cashregister") = sFilter
                 Session("num_cash") = str
                 sCaption = "номер ККМ: '" & str & "'; "
             End If
             str = txtFindGoodManufacturer.Text.Trim
-            If str.Length > 0 And str.IndexOf("'") = -1 Then
+            If str.Length > 0 And str.IndexOf("'") = - 1 Then
                 If sFilter.Length > 0 Then sFilter = sFilter & " and "
-                sFilter = sFilter & "(num_control_reestr like '%" & str & "%' or num_control_pzu like '%" & str & "%' or num_control_mfp like '%" & str & "%' or num_control_cp like '%" & str & "%')"
+                sFilter = sFilter & "(num_control_reestr like '%" & str & "%' or num_control_pzu like '%" & str &
+                          "%' or num_control_mfp like '%" & str & "%' or num_control_cp like '%" & str & "%')"
                 sCaption = sCaption & "СК Изготовителя: '" & str & "'; "
             End If
 
             str = txtFindGoodCTO.Text.Trim
-            If str.Length > 0 And str.IndexOf("'") = -1 Then
+            If str.Length > 0 And str.IndexOf("'") = - 1 Then
                 If sFilter.Length > 0 Then sFilter = sFilter & " and "
                 sFilter = sFilter & "(num_control_cto like '%" & str & "%' or num_control_cto2 like '%" & str & "%')"
                 sCaption = sCaption & "СК ЦТО: '" & str & "'; "
             End If
 
             str = txtFindGoodSetPlace.Text.Trim
-            If str.Length > 0 And str.IndexOf("'") = -1 Then
+            If str.Length > 0 And str.IndexOf("'") = - 1 Then
                 If sFilter.Length > 0 Then sFilter = sFilter & " and "
                 sFilter = sFilter & "set_place like '%" & str & "%'"
                 sCaption = sCaption & "место установки ККМ: '" & str & "'; "
@@ -680,18 +737,21 @@ Namespace Kasbi
             If sFilter.Length > 0 Then
                 Session("FilterGood") = sFilter
                 isFind = True
-                Bind("Показаны ККМ удовлетворяющие заданному критерию (" & sCaption.Substring(0, sCaption.Length - 2) & ")")
+                Bind(
+                    "Показаны ККМ удовлетворяющие заданному критерию (" & sCaption.Substring(0, sCaption.Length - 2) &
+                    ")")
             End If
-
         End Sub
 
-        Private Sub txtFindGoodNum_TextChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles txtFindGoodNum.TextChanged
+        Private Sub txtFindGoodNum_TextChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) _
+            Handles txtFindGoodNum.TextChanged
             If Request.Form("FindHidden") = "1" Then
                 btnFindGood_Click(sender, Nothing)
             End If
         End Sub
 
-        Private Sub txtFindGoodManufacturer_TextChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles txtFindGoodManufacturer.TextChanged
+        Private Sub txtFindGoodManufacturer_TextChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) _
+            Handles txtFindGoodManufacturer.TextChanged
             If Request.Form("FindHidden") = "2" Then
                 btnFindGood_Click(sender, Nothing)
             End If
@@ -712,13 +772,15 @@ Namespace Kasbi
             Response.SetCookie(c)
         End Sub
 
-        Private Sub txtFindGoodSetPlace_TextChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles txtFindGoodSetPlace.TextChanged
+        Private Sub txtFindGoodSetPlace_TextChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) _
+            Handles txtFindGoodSetPlace.TextChanged
             If Request.Form("FindHidden") = "6" Then
                 btnFindGood_Click(sender, Nothing)
             End If
         End Sub
 
-        Private Function CheckGoodInDelivery(ByVal good_type_sys_id As String, ByVal delivery_sys_id As String, ByVal good_sys_id As String) As String
+        Private Function CheckGoodInDelivery(ByVal good_type_sys_id As String, ByVal delivery_sys_id As String,
+                                             ByVal good_sys_id As String) As String
             Dim errStr$ = ""
             Dim cmd As SqlClient.SqlCommand
             If delivery_sys_id <> 0 Then
@@ -732,11 +794,9 @@ Namespace Kasbi
             Return errStr
         End Function
 
-        Protected Sub lnk_findgoodto_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles lnk_findgoodto.Click
+        Protected Sub lnk_findgoodto_Click(ByVal sender As Object, ByVal e As System.EventArgs) _
+            Handles lnk_findgoodto.Click
             bindTO()
         End Sub
-
-
     End Class
-
 End Namespace

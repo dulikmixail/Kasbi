@@ -8,7 +8,7 @@ Namespace Jobs
         Inherits PageBase
         Const MinutesForUpdateSmsStatus As Integer = 30
         Const HoursCheckForFindLongTimeRepair As Integer = 1
-        Public Async Sub Start()
+        Public Shared Async Sub Start()
             Dim scheduler As IScheduler = Await StdSchedulerFactory.GetDefaultScheduler()
             Await scheduler.Start()
             Dim job As IJobDetail = JobBuilder.Create(Of SmsStatusUpdater)().Build()

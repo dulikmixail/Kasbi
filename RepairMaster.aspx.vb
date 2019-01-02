@@ -1,6 +1,7 @@
 Imports System.Data.SqlClient
 Imports System.Globalization
 Imports System.Threading
+Imports Service
 
 Namespace Kasbi
     Partial Class RepairMaster
@@ -13,6 +14,8 @@ Namespace Kasbi
         Dim iCash
         Dim iCashHistory
         Dim _smsSender As SmsSender = New SmsSender()
+        ReadOnly _serviceSms As ServiceSms = New ServiceSms()
+
 
 #Region " Web Form Designer Generated Code "
 
@@ -35,6 +38,7 @@ Namespace Kasbi
 #End Region
 
         Protected Sub Page_Load1(ByVal sender As Object, ByVal e As System.EventArgs) Handles Me.Load
+
             Dim type = Request.Params(0)
             iCash = Request.Params(1)
             customer = Request.Params(2)
@@ -208,13 +212,6 @@ Namespace Kasbi
             ds = New DataSet
             adapt.Fill(ds)
 
-            'If ViewState("goodsort") = "" Then
-            '    ds.Tables(0).DefaultView.Sort = "good_sys_id DESC "
-            '    ViewState("goodsort") = "good_sys_id DESC "
-            'Else
-            '    ds.Tables(0).DefaultView.Sort = ViewState("goodsort") & ", good_sys_id ASC "
-            'End If
-
             ds.Tables(0).DefaultView.Sort = " state_repair, repairdate_in DESC"
 
             grdRepair.DataSource = ds.Tables(0).DefaultView
@@ -235,13 +232,14 @@ Namespace Kasbi
                     s = e.Item.DataItem("payerInfo")
                     CType(e.Item.FindControl("lblGoodOwner"), Label).Text = s
                 End If
+
+
                 If Not IsDBNull(e.Item.DataItem("alert")) AndAlso e.Item.DataItem("alert") = 1 Then
-                    e.Item.FindControl("imgAlertCustomer").Visible = True
-                    If Not IsDBNull(e.Item.DataItem("info")) AndAlso Trim(e.Item.DataItem("info")).Length > 0 Then
-                        CType(e.Item.FindControl("imgAlertCustomer"), ImageButton).ToolTip = e.Item.DataItem("info")
-                    End If
+                    e.Item.FindControl("imgAlert").Visible = True
+                    CType(e.Item.FindControl("imgAlert"), HyperLink).ToolTip =
+                        IIf(IsDBNull(e.Item.DataItem("info")), "", e.Item.DataItem("info")).ToString()
                 Else
-                    e.Item.FindControl("imgAlertCustomer").Visible = False
+                    e.Item.FindControl("imgAlert").Visible = False
                 End If
 
                 i = i + 1
@@ -287,6 +285,13 @@ Namespace Kasbi
                     CType(e.Item.FindControl("imgRepaired"), HyperLink).ToolTip = "Был в ремонте " &
                                                                                   CInt(e.Item.DataItem("repaired")) &
                                                                                   " раз(а)"
+                End If
+
+                'Установлено ли СКНО
+                If IsDBNull(e.Item.DataItem("state_skno")) Then
+                    e.Item.FindControl("imgSupportSKNO").Visible = 0
+                Else
+                    e.Item.FindControl("imgSupportSKNO").Visible = e.Item.DataItem("state_skno")
                 End If
 
                 'Дата принятия и приемщик
@@ -345,24 +350,22 @@ Namespace Kasbi
                 '   s = e.Item.DataItem("stateTO")
                 'End If
                 '
-                'CType(e.Item.FindControl("lnkStatus"), LinkButton).Text = "Просмотр"
-                'CType(e.Item.FindControl("lnkStatus"), LinkButton).ToolTip = "Просмотр"
+
                 '
                 'Если открыт ремонт
                 '
-
+                CType(e.Item.FindControl("lnkSetDataSkno"), LinkButton).Attributes.Add("onClick", "return false;")
                 Select Case e.Item.DataItem("state_repair")
                     Case 1
                         e.Item.BackColor = Drawing.Color.FromArgb(215, 245, 255)
 
                         CType(e.Item.FindControl("lnkSetRepair"), LinkButton).Visible = False
                         CType(e.Item.FindControl("lnkActivateRepair"), LinkButton).PostBackUrl =
-                            "?a=activaterepair&id=" & e.Item.DataItem("good_sys_id").ToString() & "&hc=" & e.Item.DataItem("hc_id").ToString()
+                            "?a=activaterepair&id=" & e.Item.DataItem("good_sys_id").ToString() & "&hc=" &
+                            e.Item.DataItem("hc_id").ToString()
                         CType(e.Item.FindControl("lnkOutRepair"), LinkButton).Visible = False
                         CType(e.Item.FindControl("lnkEditRepair"), LinkButton).Visible = False
-                        CType(e.Item.FindControl("lnkStatus"), LinkButton).PostBackUrl = "Repair.aspx?" &
-                                                                                         e.Item.DataItem("good_sys_id").
-                                                                                             ToString()
+
                     Case 2
                         e.Item.BackColor = Drawing.Color.FromArgb(255, 255, 205)
 
@@ -374,9 +377,7 @@ Namespace Kasbi
                                                                                                  "good_sys_id") &
                                                                                              "&hc=" &
                                                                                              e.Item.DataItem("hc_id")
-                        CType(e.Item.FindControl("lnkStatus"), LinkButton).PostBackUrl = "Repair.aspx?" &
-                                                                                         e.Item.DataItem("good_sys_id").
-                                                                                             ToString()
+
                     Case 3
                         e.Item.BackColor = Drawing.Color.FromArgb(155, 255, 155)
                         If isSlowRepair
@@ -389,9 +390,7 @@ Namespace Kasbi
                                                                                             e.Item.DataItem(
                                                                                                 "good_sys_id")
                         CType(e.Item.FindControl("lnkEditRepair"), LinkButton).Visible = False
-                        CType(e.Item.FindControl("lnkStatus"), LinkButton).PostBackUrl = "Repair.aspx?" &
-                                                                                         e.Item.DataItem("good_sys_id").
-                                                                                             ToString()
+
                     Case 5
                         e.Item.BackColor = Drawing.Color.FromArgb(255, 225, 155)
                         CType(e.Item.FindControl("lnkSetRepair"), LinkButton).Visible = False
@@ -402,9 +401,6 @@ Namespace Kasbi
                                                                                                  "good_sys_id") &
                                                                                              "&hc=" &
                                                                                              e.Item.DataItem("hc_id")
-                        CType(e.Item.FindControl("lnkStatus"), LinkButton).PostBackUrl = "Repair.aspx?" &
-                                                                                         e.Item.DataItem("good_sys_id").
-                                                                                             ToString()
 
                     Case Else
                         CType(e.Item.FindControl("lnkSetRepair"), LinkButton).PostBackUrl = "SetRepair.aspx?id=" &
@@ -416,8 +412,10 @@ Namespace Kasbi
                         CType(e.Item.FindControl("lnkActivateRepair"), LinkButton).Visible = False
                         CType(e.Item.FindControl("lnkEditRepair"), LinkButton).Visible = False
                         CType(e.Item.FindControl("lnkOutRepair"), LinkButton).Visible = False
-                        CType(e.Item.FindControl("lnkStatus"), LinkButton).PostBackUrl = "Repair.aspx?" &
-                                                                                         e.Item.DataItem("good_sys_id")
+                        'ToggleButtonDataSkno("block", e.Item.DataItem("good_sys_id").ToString())
+                        CType(e.Item.FindControl("lnkSetDataSkno"), LinkButton).Visible = True
+                        'CType(e.Item.FindControl("lnkSetDataSkno"), LinkButton).PostBackUrl = "RepairMaster.aspx?show_modal=true&good_id=" & e.Item.DataItem("good_sys_id").ToString()
+
                 End Select
                 'If e.Item.DataItem("repair") = 1 Then
                 '    e.Item.BackColor = Drawing.Color.FromArgb(217, 243, 254)
@@ -428,8 +426,7 @@ Namespace Kasbi
                 '                                                                         e.Item.DataItem("good_sys_id") &
                 '                                                                         "&hc=" &
                 '                                                                         e.Item.DataItem("hc_id")
-                '    CType(e.Item.FindControl("lnkStatus"), LinkButton).PostBackUrl = "Repair.aspx?" &
-                '                                                                     e.Item.DataItem("good_sys_id")
+
                 'Else
                 '    CType(e.Item.FindControl("lnkEditRepair"), LinkButton).Visible = False
                 '    CType(e.Item.FindControl("lnkOutRepair"), LinkButton).PostBackUrl = "?a=outrepair&id=" &
@@ -438,8 +435,6 @@ Namespace Kasbi
                 '                                                                        e.Item.DataItem("good_sys_id") &
                 '                                                                        "&customer=" &
                 '                                                                        e.Item.DataItem("payer_sys_id")
-                '    CType(e.Item.FindControl("lnkStatus"), LinkButton).PostBackUrl = "Repair.aspx?" &
-                '                                                                     e.Item.DataItem("good_sys_id")
 
                 '    If e.Item.DataItem("inrepair") = 0 Then
                 '        CType(e.Item.FindControl("lnkOutRepair"), LinkButton).Visible = False
@@ -448,12 +443,50 @@ Namespace Kasbi
             End If
         End Sub
 
+        Private Sub ToggleButtonDataSkno(display As String, goodId As String)
+            Dim script As String = "document.getElementById('" & goodId & "_lnkSetDataSkno').style.display = '" &
+                                   display & "'; "
+            Page.ClientScript.RegisterStartupScript(Me.GetType(), "CallJs", script, true)
+        End Sub
+
+
         Public Function GetRussianDate(ByVal d As Date) As String
             Dim m() As String =
                     {" Янв ", " Фев ", " Мар ", " Апр ", " Май ", " Июн ", " Июл ", " Авг ", " Сен ", " Окт ", " Ноя ",
                      " Дек "}
             GetRussianDate = m(Month(d) - 1) & Year(d) & "г."
         End Function
+
+        Protected Sub modalSubmit_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles modalSubmit.Click
+            SetDataSkno()
+            bind(Session("repair-filter"))
+        End Sub
+
+        Private Sub SetDataSkno()
+            Const smsTextFormat As String = "Ваше СКНО для ККМ №{0} готово, запись на установку т. +375291502047, срок 5 дней."
+
+            Dim rns As String = txtRegistrationNumberSKNO.Text
+            Dim sns As String = txtSerialNumberSKNO.Text
+            Dim telNotice As String = txtTelephoneNotice.Text
+            Dim goodId As Integer = Convert.ToInt32(modalGoodId.Text)
+
+            Dim numCashRegister As String = dbSQL.ExecuteScalar("SELECT num_cashregister FROM good WHERE good_sys_id = " + modalGoodId.Text).ToString().Trim()
+            Dim smsText = String.Format(smsTextFormat, numCashRegister)
+
+            If Not String.IsNullOrEmpty(rns) And Not String.IsNullOrEmpty(sns) And Not String.IsNullOrEmpty(goodId.ToString())
+                Dim cmd As SqlCommand = New SqlCommand("set_data_skno_by_good")
+                cmd.Parameters.AddWithValue("@pi_good_sys_id", goodId)
+                cmd.Parameters.AddWithValue("@pi_registration_number_skno", rns)
+                cmd.Parameters.AddWithValue("@pi_serial_number_skno", sns)
+                cmd.CommandType = CommandType.StoredProcedure
+                dbSQL.Execute(cmd)
+                If cbxModalSendSknoSms.Checked
+                    _serviceSms.SendOneSmsWithInsertSmsHistoryForGood(telNotice, smsText, goodId, CurrentUser.sys_id, 6)
+                End If
+            Else
+                Throw New Exception("Bad form requst. Skno data not saved!")
+            End If
+        End Sub
 
         Protected Sub lnkFind_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles lnkFind.Click
             show_state = 0

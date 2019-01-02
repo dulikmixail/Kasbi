@@ -68,67 +68,17 @@ Namespace Jobs
             Next
 
             For Each kvp In longTimeSkno
-                _serviceSms.SendOneSmsWithInsertSmsHistory(kvp.Value, SmsTextForLongTimeSkno, kvp.Key, 79, 4)
+                _serviceSms.SendOneSmsWithInsertSmsHistoryForCashHistory(kvp.Value, SmsTextForLongTimeSkno, kvp.Key, 79, 4)
             Next
 
             For Each kvp In longTimeRepair
-                _serviceSms.SendOneSmsWithInsertSmsHistory(kvp.Value(0),
+                _serviceSms.SendOneSmsWithInsertSmsHistoryForCashHistory(kvp.Value(0),
                                                            String.Format(SmsTextForLongTimeRepair,
                                                                          CDate(kvp.Value(1)).ToString("dd.MM.yyyy")),
                                                            kvp.Key, 79, 5)
             Next
 
 
-            'If Not String.IsNullOrEmpty(Trim(txtPhoneNumber.Text)) And cbxSmsSend.Checked And Trim(txtPhoneNumber.Text) <> "Нет номера"
-            '    Dim smsText = txtSmsText.Text
-            '    Dim cmd1 As SqlCommand
-            '    Dim phoneNumber As String = txtPhoneNumber.Text
-            '    Dim smsSendingR As SmsSendingResponse = _serviceSms.SendSameSms()
-            '    Dim msgSendingR As Models.Sms.Sending.Response.Msg = smsSendingR.message.msg(0)
-
-            '    Try
-            '        cmd1 = New SqlCommand("insert_sms_send")
-            '        cmd1.CommandType = CommandType.StoredProcedure
-            '        cmd1.Parameters.AddWithValue("@pi_recipient", phoneNumber)
-            '        cmd1.Parameters.AddWithValue("@pi_hc_sys_id", iCashHistory)
-            '        cmd1.Parameters.AddWithValue("@pi_validity_period", DBNull.Value)
-            '        cmd1.Parameters.AddWithValue("@pi_sms_text", smsText)
-            '        cmd1.Parameters.AddWithValue("@pi_sms_sys_id", msgSendingR.sms_id)
-            '        cmd1.Parameters.AddWithValue("@pi_error", DBNull.Value)
-            '        cmd1.Parameters.AddWithValue("@pi_executor", CurrentUser.sys_id)
-            '        cmd1.Parameters.AddWithValue("@pi_sms_type_sys_id", smsType)
-            '        dbSQL.Execute(cmd1)
-            '    Catch
-            '        Console.WriteLine("Ошибка вставки данных об отправке СМС!<br>" & Err.Description)
-            '        Exit Sub
-            '    End Try
-            '    System.Diagnostics.Debug.WriteLine(result)
-
-            '    Dim smsStatusingR As SmsStatusingResponse =
-            '            _serviceSms.GetSmsStatusingByJsonSmsSendingResponse(result)
-            '    System.Diagnostics.Debug.WriteLine(JsonConvert.SerializeObject(smsStatusingR))
-
-            '    Dim msgStatusingR As Models.Sms.Statusing.Response.Msg = smsStatusingR.status.msg(0)
-
-            '    Try
-            '        cmd1 = New SqlCommand("insert_or_update_sms_status_history")
-            '        With cmd1.Parameters
-            '            .AddWithValue("@pi_sms_sys_id", msgStatusingR.sms_id)
-            '            .AddWithValue("@pi_sms_count", msgStatusingR.sms_count)
-            '            .AddWithValue("@pi_operator", msgStatusingR.operator)
-            '            .AddWithValue("@pi_error_code", DBNull.Value)
-            '            .AddWithValue("@pi_sms_status", msgStatusingR.sms_status)
-            '            .AddWithValue("@pi_recipient", msgStatusingR.recipient)
-            '        End With
-            '        cmd1.CommandType = CommandType.StoredProcedure
-            '        dbSQL.Execute(cmd1)
-            '    Catch
-            '        Console.WriteLine("Ошибка вставки данных об статусе СМС!<br>" & Err.Description)
-            '        Exit Sub
-            '    End Try
-
-
-            'End If
         End Sub
     End Class
 End Namespace

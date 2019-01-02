@@ -11,7 +11,7 @@ Namespace Jobs
         ReadOnly _serviceSms As ServiceSms = New ServiceSms()
 
         Public Function Execute(ctx As IJobExecutionContext) As Task Implements IJob.Execute
-            _serviceSms.UpdateStatuses()
+            _serviceSms.UpdateStatuses(ServiceDbConnector.GetConnection())
         End Function
     End Class
 End Namespace

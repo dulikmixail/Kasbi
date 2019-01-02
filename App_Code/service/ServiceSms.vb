@@ -1,5 +1,6 @@
 ﻿Imports System.Data.SqlClient
 Imports Exeption
+Imports Kasbi
 Imports Microsoft.Ajax.Utilities
 Imports Microsoft.VisualBasic
 Imports Models
@@ -13,16 +14,18 @@ Namespace Service
     Public Class ServiceSms
         Inherits ServiceExeption
         Implements IService
-        Private serviseHttp As ServiseHttp = New ServiseHttp()
+        Private ReadOnly _serviseHttp As ServiseHttp = New ServiseHttp()
 
         Const MaxRequestNumber As Integer = 50
+        Const MaxNumbRepetitions As Integer = 3
+
 
         Private Const Login As String = "Ramok"
         Private Const Password As String = "B414Nv9p"
         Private Const Sender As String = "Ramok.by"
         Private Const ValidatyPeriod As Integer = 6
 
-        Private _urls As List(Of Uri) = New List(Of Uri)() From {
+        Private ReadOnly _urls As List(Of Uri) = New List(Of Uri)() From {
             New Uri("https://userarea.sms-assistent.by/api/v1/send_sms/plain"),
             New Uri("https://userarea.sms-assistent.by/api/v1/statuses/plain"),
             New Uri("https://userarea.sms-assistent.by/api/v1/credits/plain"),
@@ -54,11 +57,11 @@ Namespace Service
 
                 Dim res As SmsSendingResponse =
                         JsonConvert.DeserializeObject (Of SmsSendingResponse)(
-                            serviseHttp.SendRequestPostJsonUtf8(_urls(4),
-                                                                JsonConvert _
-                                                                   .
-                                                                   SerializeObject(
-                                                                       smsSendingRequest)))
+                            _serviseHttp.SendRequestPostJsonUtf8(_urls(4),
+                                                                 JsonConvert _
+                                                                    .
+                                                                    SerializeObject(
+                                                                        smsSendingRequest)))
                 Return res
 
             End If
@@ -105,16 +108,20 @@ Namespace Service
             End If
 
             Dim res As SmsSendingResponse =
-                    JsonConvert.DeserializeObject (Of SmsSendingResponse)(serviseHttp.SendRequestPostJsonUtf8(_urls(4),
-                                                                                                              JsonConvert _
-                                                                                                                 .
-                                                                                                                 SerializeObject(
-                                                                                                                     smsSendingRequest)))
-            Return res
+                    JsonConvert.DeserializeObject (Of SmsSendingResponse)(_serviseHttp.SendRequestPostJsonUtf8(_urls(4),
+                                                                                                               JsonConvert _
+                                                                                                                  .
+                                                                                                                  SerializeObject(
+                                                                                                                      smsSendingRequest)))
+            Return SmsSendingRepiter(smsSendingRequest, res)
         End Function
 
-        Public Sub SendOneSmsWithInsertSmsHistory(phoneNumber As String, smsText As String, cashHistoryId As Integer, executorId As Integer, smsType As Integer,
-                                                  Optional dataSend As DateTime = Nothing)
+        Private Sub SendOneSmsWithInsertSmsHistory(phoneNumber As String, smsText As String,
+                                                   executorId As Integer,
+                                                   smsType As Integer,
+                                                   Optional dataSend As DateTime = Nothing,
+                                                   Optional cashHistoryId As Integer = 0,
+                                                   Optional goodId As Integer = 0)
             If Not String.IsNullOrEmpty(Trim(phoneNumber)) AND Trim(phoneNumber) <> "Нет номера"
                 Dim cmd1 As SqlCommand
                 Dim smsSendSysId As Integer = 0
@@ -123,7 +130,16 @@ Namespace Service
                     cmd1 = New SqlCommand("insert_sms_send")
                     cmd1.CommandType = CommandType.StoredProcedure
                     cmd1.Parameters.AddWithValue("@pi_recipient", phoneNumber)
-                    cmd1.Parameters.AddWithValue("@pi_hc_sys_id", cashHistoryId)
+                    If cashHistoryId = 0
+                        cmd1.Parameters.AddWithValue("@pi_hc_sys_id", DBNull.Value)
+                    Else
+                        cmd1.Parameters.AddWithValue("@pi_hc_sys_id", cashHistoryId)
+                    End If
+                    If goodId = 0
+                        cmd1.Parameters.AddWithValue("@pi_good_sys_id", DBNull.Value)
+                    Else
+                        cmd1.Parameters.AddWithValue("@pi_good_sys_id", goodId)
+                    End If
                     cmd1.Parameters.AddWithValue("@pi_validity_period", DBNull.Value)
                     cmd1.Parameters.AddWithValue("@pi_sms_text", smsText)
                     cmd1.Parameters.AddWithValue("@pi_sms_sys_id", DBNull.Value)
@@ -136,15 +152,31 @@ Namespace Service
                 Catch
                     Throw New Exception("Ошибка вставки данных об отправке СМС 2!<br>" & Err.Description)
                 End Try
-                SendOneSmsWithUpdateSmsSend(smsSendSysId,phoneNumber,smsText, dataSend)
+                SendOneSmsWithUpdateSmsSend(smsSendSysId, phoneNumber, smsText, dataSend)
             End If
         End Sub
 
-        Private Sub SendOneSmsWithUpdateSmsSend(smsSendSysId As Integer, phoneNumber As String, smsText As String, Optional dataSend As DateTime = Nothing)
+        Public Sub SendOneSmsWithInsertSmsHistoryForCashHistory(phoneNumber As String, smsText As String,
+                                                                cashHistoryId As Integer, executorId As Integer,
+                                                                smsType As Integer,
+                                                                Optional dataSend As DateTime = Nothing)
+            SendOneSmsWithInsertSmsHistory(phoneNumber, smsText, executorId, smsType, dataSend, cashHistoryId)
+        End Sub
+
+        Public Sub SendOneSmsWithInsertSmsHistoryForGood(phoneNumber As String, smsText As String,
+                                                         goodId As Integer, executorId As Integer,
+                                                         smsType As Integer,
+                                                         Optional dataSend As DateTime = Nothing)
+            SendOneSmsWithInsertSmsHistory(phoneNumber, smsText, executorId, smsType, dataSend, Nothing, goodId)
+        End Sub
+
+        Private Sub SendOneSmsWithUpdateSmsSend(smsSendSysId As Integer, phoneNumber As String, smsText As String,
+                                                Optional dataSend As DateTime = Nothing)
             If Not String.IsNullOrEmpty(Trim(phoneNumber)) AND Trim(phoneNumber) <> "Нет номера"
                 Dim cmd1 As SqlCommand
                 Dim smsSendingR As SmsSendingResponse = SendOneSms(phoneNumber, smsText, dataSend)
                 If Not IsNothing(smsSendingR)
+
                     Dim msgSendingR As Sms.Sending.Response.Msg = smsSendingR.message.msg(0)
                     If smsSendSysId > 0
                         Try
@@ -152,6 +184,7 @@ Namespace Service
                             cmd1.CommandType = CommandType.StoredProcedure
                             cmd1.Parameters.AddWithValue("@pi_sms_send_sys_id", smsSendSysId)
                             cmd1.Parameters.AddWithValue("@pi_sms_sys_id", msgSendingR.sms_id)
+                            cmd1.Parameters.AddWithValue("@pi_error", msgSendingR.sms_id)
                             dbSQL.Execute(cmd1)
                         Catch
                             Throw New Exception("Ошибка обновления данных об отправке СМС 3!<br>" & Err.Description)
@@ -161,7 +194,6 @@ Namespace Service
                 End If
             End If
         End Sub
-
 
         Public Function GetSmsStatusingByIds(smsIds As List(Of Integer)) As SmsStatusingResponse
             Dim smsStatusingRequest As SmsStatusingRequest
@@ -174,10 +206,11 @@ Namespace Service
                 Throw New Exception("Ошибка. Получение статуса СМС. Не найдены ID СМС")
             End If
             Return _
-                JsonConvert.DeserializeObject (Of SmsStatusingResponse)(serviseHttp.SendRequestPostJsonUtf8(_urls(4),
-                                                                                                            JsonConvert.
-                                                                                                               SerializeObject(
-                                                                                                                   smsStatusingRequest)))
+                JsonConvert.DeserializeObject (Of SmsStatusingResponse)(_serviseHttp.SendRequestPostJsonUtf8(_urls(4),
+                                                                                                             JsonConvert _
+                                                                                                                .
+                                                                                                                SerializeObject(
+                                                                                                                    smsStatusingRequest)))
         End Function
 
         Public Function GetSmsStatusingByJsonSmsSendingResponse(json As String) As SmsStatusingResponse
@@ -196,7 +229,7 @@ Namespace Service
             End If
         End Function
 
-        Public Sub UpdateStatuses()
+        Public Sub UpdateStatuses(Optional sharedDbSql As MSSqlDB = Nothing)
             Dim cmd As SqlClient.SqlCommand
             Dim adapt As SqlClient.SqlDataAdapter
             Dim ds As DataSet = New DataSet
@@ -206,13 +239,17 @@ Namespace Service
             cmd.Parameters.AddWithValue("@pi_max_request_number", MaxRequestNumber)
             cmd.CommandType = CommandType.StoredProcedure
             cmd.CommandTimeout = 0
-            adapt = dbSQL.GetDataAdapter(cmd)
+            If Not IsNothing(sharedDbSql)
+                adapt = sharedDbSql.GetDataAdapter(cmd)
+            Else
+                adapt = dbSQL.GetDataAdapter(cmd)
+            End If
             adapt.Fill(ds)
 
             ReadAndInsertStatuses(ds)
         End Sub
 
-        Private Sub ReadAndInsertStatuses(ds As DataSet)
+        Private Sub ReadAndInsertStatuses(ds As DataSet, Optional sharedDbSql As MSSqlDB = Nothing)
             Dim cmd = New SqlCommand()
             Dim smsStatusingResponse = New SmsStatusingResponse()
             Dim smsIds = New List(Of Integer)()
@@ -222,9 +259,10 @@ Namespace Service
                     If Not IsDBNull(dr("sms_sys_id"))
                         smsIds.Add(Convert.ToInt32(dr("sms_sys_id")))
                     Else
-                    If Not IsDBNull(dr("recipient")) And Not IsDBNull(dr("sms_text"))
-                        SendOneSmsWithUpdateSmsSend(Convert.ToInt32(dr("sms_send_sys_id")), dr("recipient").ToString, dr("sms_text").ToString)
-                    End If
+                        If Not IsDBNull(dr("recipient")) And Not IsDBNull(dr("sms_text"))
+                            SendOneSmsWithUpdateSmsSend(Convert.ToInt32(dr("sms_send_sys_id")), dr("recipient").ToString,
+                                                        dr("sms_text").ToString)
+                        End If
                     End If
                 End If
             Next
@@ -246,5 +284,23 @@ Namespace Service
                 Next
             End If
         End Sub
+
+        Private Function SmsSendingRepiter(smsSendingRequest As SmsSendingRequest,
+                                           smsSendingResponse As SmsSendingResponse) As SmsSendingResponse
+
+            For i As Integer = 0 To MaxNumbRepetitions
+
+                If Not IsNothing(smsSendingResponse)
+                    Exit For
+                Else
+                    smsSendingResponse =
+                        JsonConvert.DeserializeObject (Of SmsSendingResponse)(
+                            _serviseHttp.SendRequestPostJsonUtf8(_urls(4),
+                                                                 JsonConvert.SerializeObject(smsSendingRequest)))
+                End If
+            Next
+
+            Return smsSendingResponse
+        End Function
     End Class
 End Namespace

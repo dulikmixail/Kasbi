@@ -1226,7 +1226,7 @@ Namespace Kasbi
                 If cbxSmsSend.Checked
                     Dim smsText = txtSmsText.Text
                     Dim phoneNumber As String = txtPhoneNumber.Text
-                    _serviceSms.SendOneSmsWithInsertSmsHistory(phoneNumber, smsText, iCashHistory, CurrentUser.sys_id,
+                    _serviceSms.SendOneSmsWithInsertSmsHistoryForCashHistory(phoneNumber, smsText, iCashHistory, CurrentUser.sys_id,
                                                                smsType)
                 End If
             Catch
