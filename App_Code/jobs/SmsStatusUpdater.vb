@@ -12,6 +12,7 @@ Namespace Jobs
 
         Public Function Execute(ctx As IJobExecutionContext) As Task Implements IJob.Execute
             _serviceSms.UpdateStatuses(ServiceDbConnector.GetConnection())
+            'dfsdfasdfsdf
         End Function
     End Class
 End Namespace
