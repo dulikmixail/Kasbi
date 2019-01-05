@@ -29,8 +29,8 @@ Namespace Kasbi
         Dim to_made = 0
         Dim to_made_tmp = 0
         Dim to_made_cnd = 0
-        Private serviceTo As ServiceTo = New ServiceTo()
-        Private serviceDoc As ServiceDocuments = New ServiceDocuments()
+        Private ReadOnly _serviceTo As ServiceTo = New ServiceTo()
+        Private ReadOnly _serviceDoc As ServiceDocuments = New ServiceDocuments()
 
 
         Private Overloads Sub Page_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
@@ -708,8 +708,8 @@ Namespace Kasbi
             If listOfIndexOfSelectCheckBox.Count <> 0 Then
 
                 'Проверяем корректность введенных данных
-                If Not serviceTo.CheckDate(d, tbxCloseDate.Text) Then
-                    msgCashregister.Text = serviceTo.GetTextStringAllExeption()
+                If Not _serviceTo.CheckDate(d, tbxCloseDate.Text) Then
+                    msgCashregister.Text = _serviceTo.GetTextStringAllExeption()
                     Exit Sub
                 End If
 
@@ -718,7 +718,7 @@ Namespace Kasbi
                 Dim kkmDs As DataSet = CType(Session("KKM_ds"), DataSet)
                 For Each index As Integer In listOfIndexOfSelectCheckBox
                     If _
-                        serviceTo.CheckCashHistoryItem(Integer.Parse(grdTO.DataKeys.Item(index).ToString()), d,
+                        _serviceTo.CheckCashHistoryItem(Integer.Parse(grdTO.DataKeys.Item(index).ToString()), d,
                                                        tbxCloseDate.Text) Then
                         cmd = New SqlClient.SqlCommand("insert_TO")
                         cmd.CommandType = CommandType.StoredProcedure
@@ -733,13 +733,12 @@ Namespace Kasbi
                         adapt.Fill(ds)
 
                     End If
-
                 Next
 
                 Dim dv As DataView = New DataView(kkmDs.Tables(0))
                 Dim filter As String = String.Empty
-                If serviceTo.HaveAnyExeption() Then
-                    filter = "good_sys_id in (" & String.Join(", ", serviceTo.GetListStringGoodSysId()) & ")"
+                If _serviceTo.HaveAnyExeption() Then
+                    filter = "good_sys_id in (" & String.Join(", ", _serviceTo.GetListStringGoodSysId()) & ")"
                 End If
 
 
@@ -748,7 +747,7 @@ Namespace Kasbi
                 grdError.DataKeyField = "good_sys_id"
                 grdError.DataBind()
 
-                If serviceTo.HaveAnyExeption() Then
+                If _serviceTo.HaveAnyExeption() Then
                     myModal.Style.Add("display", "block")
                 End If
             Else
@@ -794,7 +793,7 @@ Namespace Kasbi
                 iNumGoodOfError += 1
                 CType(e.Item.FindControl("lblNumGood"), WebControls.HyperLink).Text = iNumGoodOfError.ToString()
                 CType(e.Item.FindControl("lblToExeption"), Label).Text =
-                    serviceTo.GetExeptionTextByGoodId(CInt(CType(e.Item.FindControl("lblGood"), Label).Text))
+                    _serviceTo.GetExeptionTextByGoodId(CInt(CType(e.Item.FindControl("lblGood"), Label).Text))
             End If
         End Sub
 
@@ -1171,7 +1170,7 @@ Namespace Kasbi
             Dim checkGoods As ListDictionary
             checkGoods = FindCheckGoods()
             If checkGoods.Count > 0 Then
-                serviceDoc.AktForTOandDolg(checkGoods, Response, withDate, DateTime.Parse(tbxCloseDate.Text))
+                _serviceDoc.AktForTOandDolg(checkGoods, Response, withDate, DateTime.Parse(tbxCloseDate.Text))
             End If
             'End If
         End Sub

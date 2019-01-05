@@ -1,10 +1,5 @@
-﻿Imports System.Data.SqlClient
-Imports System.Threading.Tasks
+﻿Imports System.Threading.Tasks
 Imports Kasbi
-Imports Microsoft.VisualBasic
-Imports Models.Sms.Sending.Response
-Imports Models.Sms.Statusing.Response
-Imports Newtonsoft.Json
 Imports Quartz
 Imports Service
 
@@ -19,6 +14,7 @@ Namespace Jobs
         ReadOnly _serviceSms As ServiceSms = New ServiceSms()
 
         Public Function Execute(ctx As IJobExecutionContext) As Task Implements IJob.Execute
+            GetRepairInfo()
         End Function
 
         Public Sub GetRepairInfo()
@@ -77,8 +73,6 @@ Namespace Jobs
                                                                          CDate(kvp.Value(1)).ToString("dd.MM.yyyy")),
                                                            kvp.Key, 79, 5)
             Next
-
-
         End Sub
     End Class
 End Namespace

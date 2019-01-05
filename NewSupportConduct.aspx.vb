@@ -41,6 +41,7 @@ Namespace Kasbi
         Dim dogovor$
         Private ReadOnly _serviceExport As ServiceExport = New ServiceExport()
         Private ReadOnly _serviceTo As ServiceTo= New ServiceTo()
+        Private ReadOnly _serviceRepair As ServiceRepair = New ServiceRepair()
         Const ClearString$ = "-------"
         Const IgnoreLockCashHistory As Boolean = False
         Const Err003 As String =
@@ -757,7 +758,7 @@ Namespace Kasbi
                                 Const normaHour As Double = 0.18
                                 Const detailID As Integer = 167
 
-                                Dim akt$ = GetNewAktNumber()
+                                Dim akt$ = _serviceRepair.GetNewAktNumberByGoodId(iCash)
                                 If akt Is Nothing Then
                                     akt = ""
                                 End If
@@ -944,35 +945,6 @@ Namespace Kasbi
                 LoadGoodInfo()
             End If
         End Sub
-
-        Function GetNewAktNumber() As String
-            Dim cmd As SqlClient.SqlCommand
-            Dim adapt As SqlClient.SqlDataAdapter
-            Dim ds As DataSet
-
-            CurrentCustomer = Parameters.Value
-            'новый номер договора
-            Try
-                cmd = New SqlClient.SqlCommand("get_next_repair_akt")
-                cmd.Parameters.AddWithValue("@good_sys_id", iCash)
-                cmd.CommandType = CommandType.StoredProcedure
-                adapt = dbSQL.GetDataAdapter(cmd)
-                ds = New DataSet
-                adapt.Fill(ds)
-
-                Dim s
-                Dim num_cashregister
-                s = ds.Tables(0).Rows(0).Item("num_repairs")
-                num_cashregister = ds.Tables(0).Rows(0).Item("num_cashregister")
-                num_cashregister = Trim(num_cashregister)
-                s = s + 1
-
-                GetNewAktNumber = num_cashregister & "/" & Date.Now.Month & "/" & s
-            Catch
-                Return ""
-            End Try
-        End Function
-
 
         Function GetInfo(ByVal cust As Integer, Optional ByVal flag As Boolean = True) As String
             Dim adapt As SqlClient.SqlDataAdapter

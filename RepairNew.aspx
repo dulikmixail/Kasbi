@@ -516,7 +516,7 @@
         СКНО
     </td>
     <td colspan="4">
-        <asp:CheckBox runat="server" ID="cbxNeadSKNO" Text="Небходимо установить/снять СКНО" Enabled="False" AutoPostBack="True"/>
+        <asp:CheckBox runat="server" ID="cbxNeadSKNO" Text="Установить СКНО" Enabled="False" AutoPostBack="True"/>
     </td>
     <td colspan="4">
         <asp:Label runat="server" ID="lblErrorInfo" CssClass="errorInfo"></asp:Label>

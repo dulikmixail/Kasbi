@@ -14,6 +14,7 @@ Namespace Kasbi
             "–емонт не может быть изменен/удален, так как данные уже выгружены на портал в налоговую!"
 
         Private ReadOnly _serviceExport As ServiceExport = New ServiceExport()
+        Private ReadOnly _serviceRepair As ServiceRepair = New ServiceRepair()
 
         Protected WithEvents lnkRepairIN_OUT As System.Web.UI.WebControls.LinkButton
 
@@ -242,40 +243,12 @@ Namespace Kasbi
             End Try
         End Sub
 
-        Function GetNewAktNumber() As String
-            Dim cmd As SqlClient.SqlCommand
-            Dim adapt As SqlClient.SqlDataAdapter
-            Dim ds As DataSet
-
-            CurrentCustomer = Parameters.Value
-            'новый номер договора
-            Try
-                cmd = New SqlClient.SqlCommand("get_next_repair_akt")
-                cmd.Parameters.AddWithValue("@good_sys_id", iCash)
-                cmd.CommandType = CommandType.StoredProcedure
-                adapt = dbSQL.GetDataAdapter(cmd)
-                ds = New DataSet
-                adapt.Fill(ds)
-
-                Dim s
-                Dim num_cashregister
-                s = ds.Tables(0).Rows(0).Item("num_repairs")
-                num_cashregister = ds.Tables(0).Rows(0).Item("num_cashregister")
-                num_cashregister = Trim(num_cashregister)
-                s = s + 1
-
-                GetNewAktNumber = num_cashregister & "/" & Date.Now.Month & "/" & s
-            Catch
-                Return ""
-            End Try
-        End Function
-
         'Private Sub lnkRepairIN_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles lnkRepairIN.Click
 
         '    Dim cmd As SqlClient.SqlCommand
         '    CurrentCustomer = Parameters.Value
         '    Try
-        '        Dim akt$ = GetNewAktNumber()
+        '        Dim akt$ = _serviceRepair.GetNewAktNumberByGoodId(iCash)
         '        If akt Is Nothing Then
         '            akt = ""
         '        End If
@@ -473,8 +446,7 @@ Namespace Kasbi
 
                 'Summa
                 CType(e.Item.FindControl("lblCost"), Label).Text =
-                    IIf(IsDBNull(e.Item.DataItem("summa")) Or e.Item.DataItem("summa") = "", "по гарантии",
-                        CStr(e.Item.DataItem("summa")))
+                    IIf(IsDBNull(e.Item.DataItem("summa")), "по гарантии", e.Item.DataItem("summa")).ToString()
 
                 'исполнитель
                 If Session("rule22") = 0 Or Session("rule22") = "" Then
@@ -488,18 +460,18 @@ Namespace Kasbi
                 'почемуто иногда бывает пуста€ строка
                 Try
 
-                    CType(e.Item.FindControl("lblExecutor"), Label).Text = e.Item.DataItem("executor")
+                    CType(e.Item.FindControl("lblExecutor"), Label).Text = e.Item.DataItem("executor").ToString()
                 Catch
                 End Try
 
 
                 'Details
-                CType(e.Item.FindControl("lblDetails"), Label).Text = e.Item.DataItem("details")
+                CType(e.Item.FindControl("lblDetails"), Label).Text = IIf(IsDBNull(e.Item.DataItem("details")), "", e.Item.DataItem("details")).ToString()
 
                 '–аботы
-                CType(e.Item.FindControl("lblInfo"), Label).Text = e.Item.DataItem("info")
+                CType(e.Item.FindControl("lblInfo"), Label).Text = e.Item.DataItem("info").ToString()
                 'ƒоп информаци€
-                CType(e.Item.FindControl("lblRepairInfo"), Label).Text = e.Item.DataItem("repair_info")
+                CType(e.Item.FindControl("lblRepairInfo"), Label).Text = e.Item.DataItem("repair_info").ToString()
 
                 CType(e.Item.FindControl("cmdDelete"), ImageButton).Attributes.Add("onclick",
                                                                                    "return confirm('¬ы действительно хотите удалить запись о ремонте?');")

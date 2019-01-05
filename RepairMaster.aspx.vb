@@ -13,9 +13,17 @@ Namespace Kasbi
         Dim customer
         Dim iCash
         Dim iCashHistory
-        Dim _smsSender As SmsSender = New SmsSender()
-        ReadOnly _serviceSms As ServiceSms = New ServiceSms()
+        Private ReadOnly _serviceSms As ServiceSms = New ServiceSms()
+        Private ReadOnly _serviceCustomer As ServiceCustomer = New ServiceCustomer()
+        Private ReadOnly _serviceGood As ServiceGood = New ServiceGood()
+        Private ReadOnly _serviceRepair As ServiceRepair = New ServiceRepair()
 
+        'ПАЛИТРА ЦВЕТОВ
+        Dim ReadOnly _blue As Color = Color.FromArgb(215, 245, 255)
+        Dim ReadOnly _yellow As Color = Color.FromArgb(255, 255, 205)
+        Dim ReadOnly _grean As Color = Color.FromArgb(155, 255, 155)
+        Dim ReadOnly _red As Color = Color.FromArgb(255, 171, 171)
+        Dim ReadOnly _orange As Color = Color.FromArgb(255, 225, 155)
 
 #Region " Web Form Designer Generated Code "
 
@@ -46,17 +54,14 @@ Namespace Kasbi
 
             Dim query
 
+
             If type = "outrepair" Then
                 'Выдача аппарата с ремонта
                 query = dbSQL.ExecuteScalar("UPDATE good SET inrepair=null WHERE good_sys_id='" & iCash & "'")
 
-                Dim cmd As SqlCommand = New SqlCommand("set_state_repair")
-                cmd.Parameters.AddWithValue("@pi_state_repair", 0)
-                cmd.Parameters.AddWithValue("@pi_good_sys_id", icash)
-                cmd.CommandType = CommandType.StoredProcedure
-                dbSQL.Execute(cmd)
+                _serviceGood.SetStateRepair(iCash, 0)
 
-                cmd = New SqlCommand("update_repair_issue")
+                Dim cmd As SqlCommand = New SqlCommand("update_repair_issue")
                 cmd.Parameters.AddWithValue("@pi_issue_date", Now)
                 cmd.Parameters.AddWithValue("@pi_issuer_sys_id", CurrentUser.sys_id)
                 cmd.Parameters.AddWithValue("@pi_good_sys_id", iCash)
@@ -65,26 +70,63 @@ Namespace Kasbi
 
                 Response.Redirect(GetAbsoluteUrl("~/RepairMaster.aspx"))
             ElseIf type = "activaterepair" Then
-                Dim cmd As SqlCommand = New SqlCommand("set_state_repair")
-                cmd.Parameters.AddWithValue("@pi_state_repair", 2)
-                cmd.Parameters.AddWithValue("@pi_good_sys_id", iCash)
-                cmd.CommandType = CommandType.StoredProcedure
-                dbSQL.Execute(cmd)
+                Dim currenState = _serviceGood.GetStateRepair(iCash)
+                Select Case currenState
+                    Case 1
+                        _serviceRepair.UpdateRepairDateIn(CurrentUser.sys_id, iCash)
+                        bind(Session("repair-filter"))
+                        _serviceGood.SetStateRepair(iCash, 2)
+                        Response.Redirect("RepairNew.aspx?cash=" & iCash.ToString() & "&hc=" & iCashHistory.ToString())
+                    Case 11
+                        Dim copyRepairId As Integer =
+                                _serviceRepair.CreateCopyOfRepairFromRepairWithNewRepairHistory(iCashHistory)
+                        bind(Session("repair-filter"))
+                        _serviceGood.SetStateRepair(iCash, 12)
+                        Response.Redirect("RepairNew.aspx?cash=" & iCash.ToString() & "&hc=" & copyRepairId.ToString())
+                    Case 21
+                        Dim copyRepairId As Integer =
+                                _serviceRepair.CreateCopyOfRepairFromRepairWithNewRepairHistory(iCashHistory)
+                        bind(Session("repair-filter"))
+                        _serviceGood.SetStateRepair(iCash, 22)
+                        Response.Redirect("RepairNew.aspx?cash=" & iCash.ToString() & "&hc=" & copyRepairId.ToString())
+                End Select
+            ElseIf type = "activaterepairskno" Then
+                Dim currenState = _serviceGood.GetStateRepair(iCash)
+                Dim repairSknoId = FindLastNotCloseRepairIdWithNeadSkno(iCash)
+                Select Case currenState
+                    Case 11
+                        _serviceRepair.UpdateRepairDateIn(CurrentUser.sys_id, iCash)
+                        bind(Session("repair-filter"))
+                        _serviceGood.SetStateRepair(iCash, 21)
+                        Response.Redirect(
+                            "RepairNew.aspx?cash=" & iCash.ToString() & "&hc=" & repairSknoId.ToString())
+                    Case 12
+                        _serviceRepair.UpdateRepairDateIn(CurrentUser.sys_id, iCash)
+                        bind(Session("repair-filter"))
+                        _serviceGood.SetStateRepair(iCash, 22)
+                        Response.Redirect(
+                            "RepairNew.aspx?cash=" & iCash.ToString() & "&hc=" & repairSknoId.ToString())
+                    Case 13
+                        _serviceRepair.UpdateRepairDateIn(CurrentUser.sys_id, iCash)
+                        bind(Session("repair-filter"))
+                        _serviceGood.SetStateRepair(iCash, 23)
+                        Response.Redirect(
+                            "RepairNew.aspx?cash=" & iCash.ToString() & "&hc=" & repairSknoId.ToString())
+                End Select
 
-                cmd = New SqlCommand("update_repairdate_in")
-                cmd.Parameters.AddWithValue("@pi_repairdate_in", Now)
-                cmd.Parameters.AddWithValue("@pi_executor", CurrentUser.sys_id)
-                cmd.Parameters.AddWithValue("@pi_good_sys_id", iCash)
-                cmd.CommandType = CommandType.StoredProcedure
-                dbSQL.Execute(cmd)
-
+            ElseIf type = "editrepair" Then
+                Dim repairId = FindLastNotCloseRepairId(iCash)
                 bind(Session("repair-filter"))
-                Response.Redirect("RepairNew.aspx?cash=" & iCash.ToString() & "&hc=" & iCashHistory.ToString())
+                Response.Redirect("RepairNew.aspx?cash=" & iCash.ToString() & "&hc=" & repairId.ToString())
+            ElseIf type = "editrepairskno" Then
+                Dim repairSknoId = FindLastNotCloseRepairIdWithNeadSkno(iCash)
+                bind(Session("repair-filter"))
+                Response.Redirect("RepairNew.aspx?cash=" & iCash.ToString() & "&hc=" & repairSknoId.ToString())
             ElseIf type = "setrepair" Then
                 'Принятие ККМ в ремонт
                 Dim cmd As SqlClient.SqlCommand
 
-                Dim akt$ = GetNewAktNumber()
+                Dim akt$ = _serviceRepair.GetNewAktNumberByGoodId(iCash)
                 If akt Is Nothing Then
                     akt = ""
                 End If
@@ -131,11 +173,7 @@ Namespace Kasbi
 
                 query = dbSQL.ExecuteScalar("Update good SET inrepair='1' WHERE good_sys_id='" & iCash & "'")
 
-                cmd = New SqlCommand("set_state_repair")
-                cmd.Parameters.AddWithValue("@pi_state_repair", 1)
-                cmd.Parameters.AddWithValue("@pi_good_sys_id", icash)
-                cmd.CommandType = CommandType.StoredProcedure
-                dbSQL.Execute(cmd)
+                _serviceGood.SetStateRepair(iCash, 1)
 
                 query =
                     dbSQL.ExecuteScalar(
@@ -149,36 +187,8 @@ Namespace Kasbi
             If Not IsPostBack Then
                 If Session("repair-filter") = "" Then Session("repair-filter") = " where good.inrepair='1' "
                 bind(Session("repair-filter"))
-                _smsSender.GetRepairInfo()
             End If
         End Sub
-
-        Function GetNewAktNumber() As String
-            Dim cmd As SqlClient.SqlCommand
-            Dim adapt As SqlClient.SqlDataAdapter
-            Dim ds As DataSet
-
-            'новый номер договора
-            Try
-                cmd = New SqlClient.SqlCommand("get_next_repair_akt")
-                cmd.Parameters.AddWithValue("@good_sys_id", iCash)
-                cmd.CommandType = CommandType.StoredProcedure
-                adapt = dbSQL.GetDataAdapter(cmd)
-                ds = New DataSet
-                adapt.Fill(ds)
-
-                Dim s
-                Dim num_cashregister
-                s = ds.Tables(0).Rows(0).Item("num_repairs")
-                num_cashregister = ds.Tables(0).Rows(0).Item("num_cashregister")
-                num_cashregister = Trim(num_cashregister)
-                s = s + 1
-
-                GetNewAktNumber = num_cashregister & "/" & Date.Now.Month & "/" & s
-            Catch
-                Return ""
-            End Try
-        End Function
 
         Public Sub findgood()
             Dim filter
@@ -354,92 +364,133 @@ Namespace Kasbi
                 '
                 'Если открыт ремонт
                 '
-                CType(e.Item.FindControl("lnkSetDataSkno"), LinkButton).Attributes.Add("onClick", "return false;")
+
+
+                'Внести данные СКНО (Ссылка устанавливается на стороне фронта!)
+                'Начать установку СКНО
+                Dim pUrlLnkActivateRepairSkno As String = "?a=activaterepairskno&id=" &
+                                                          e.Item.DataItem("good_sys_id").ToString() & "&hc=" &
+                                                          e.Item.DataItem("hc_id").ToString()
+                'Редактировать ремонт с СКНО
+                Dim pUrlLnkEditRepairSkno As String = "?a=editrepairskno&cash=" &
+                                                      e.Item.DataItem("good_sys_id").ToString() & "&hc=" &
+                                                      e.Item.DataItem("hc_id").ToString()
+                'Принять в ремонт
+                Dim pUrlLnkSetRepair As String = "SetRepair.aspx?id=" & e.Item.DataItem("good_sys_id").ToString() &
+                                                 "&customer=" & e.Item.DataItem("payer_sys_id").ToString()
+                'Начать ремонт
+                Dim pUrlLnkActivateRepair As String = "?a=activaterepair&id=" &
+                                                      e.Item.DataItem("good_sys_id").ToString() & "&hc=" &
+                                                      e.Item.DataItem("hc_id").ToString()
+                ''Редактировать ремонт
+                'Dim pUrlLnkEditRepair As String = "RepairNew.aspx?cash=" & e.Item.DataItem("good_sys_id").ToString() &
+                '                                  "&hc=" & e.Item.DataItem("hc_id").ToString()
+                'Редактировать ремонт
+                Dim pUrlLnkEditRepair As String = "?a=editrepair&cash=" &
+                                                  e.Item.DataItem("good_sys_id").ToString() & "&hc=" &
+                                                  e.Item.DataItem("hc_id").ToString()
+
+                'Отдать владельцу
+                Dim pUrlLnkOutRepair As String = "?a=outrepair&id=" & e.Item.DataItem("good_sys_id").ToString()
+
                 Select Case e.Item.DataItem("state_repair")
+                    Case 0
+                        MenegerOperrations(e.Item, True, False, False, True, False, False, False,
+                                           pUrlLnkSetRepair := pUrlLnkSetRepair)
                     Case 1
-                        e.Item.BackColor = Drawing.Color.FromArgb(215, 245, 255)
-
-                        CType(e.Item.FindControl("lnkSetRepair"), LinkButton).Visible = False
-                        CType(e.Item.FindControl("lnkActivateRepair"), LinkButton).PostBackUrl =
-                            "?a=activaterepair&id=" & e.Item.DataItem("good_sys_id").ToString() & "&hc=" &
-                            e.Item.DataItem("hc_id").ToString()
-                        CType(e.Item.FindControl("lnkOutRepair"), LinkButton).Visible = False
-                        CType(e.Item.FindControl("lnkEditRepair"), LinkButton).Visible = False
-
+                        MenegerOperrations(e.Item, False, False, False, False, True, False, False, _blue,
+                                           pUrlLnkActivateRepair := pUrlLnkActivateRepair)
                     Case 2
-                        e.Item.BackColor = Drawing.Color.FromArgb(255, 255, 205)
-
-                        CType(e.Item.FindControl("lnkSetRepair"), LinkButton).Visible = False
-                        CType(e.Item.FindControl("lnkActivateRepair"), LinkButton).Visible = False
-                        CType(e.Item.FindControl("lnkOutRepair"), LinkButton).Visible = False
-                        CType(e.Item.FindControl("lnkEditRepair"), LinkButton).PostBackUrl = "RepairNew.aspx?cash=" &
-                                                                                             e.Item.DataItem(
-                                                                                                 "good_sys_id") &
-                                                                                             "&hc=" &
-                                                                                             e.Item.DataItem("hc_id")
-
-                    Case 3
-                        e.Item.BackColor = Drawing.Color.FromArgb(155, 255, 155)
+                        MenegerOperrations(e.Item, False, False, False, False, False, True, False, _yellow,
+                                           pUrlLnkEditRepair := pUrlLnkEditRepair)
+                    Case 3, 31, 33
+                        Dim color As Color = _grean
                         If isSlowRepair
-                            e.Item.BackColor = Drawing.Color.FromArgb(255, 171, 171)
+                            color = _red
                         End If
-
-                        CType(e.Item.FindControl("lnkSetRepair"), LinkButton).Visible = False
-                        CType(e.Item.FindControl("lnkActivateRepair"), LinkButton).Visible = False
-                        CType(e.Item.FindControl("lnkOutRepair"), LinkButton).PostBackUrl = "?a=outrepair&id=" &
-                                                                                            e.Item.DataItem(
-                                                                                                "good_sys_id")
-                        CType(e.Item.FindControl("lnkEditRepair"), LinkButton).Visible = False
-
-                    Case 5
-                        e.Item.BackColor = Drawing.Color.FromArgb(255, 225, 155)
-                        CType(e.Item.FindControl("lnkSetRepair"), LinkButton).Visible = False
-                        CType(e.Item.FindControl("lnkActivateRepair"), LinkButton).Visible = False
-                        CType(e.Item.FindControl("lnkOutRepair"), LinkButton).Visible = False
-                        CType(e.Item.FindControl("lnkEditRepair"), LinkButton).PostBackUrl = "RepairNew.aspx?cash=" &
-                                                                                             e.Item.DataItem(
-                                                                                                 "good_sys_id") &
-                                                                                             "&hc=" &
-                                                                                             e.Item.DataItem("hc_id")
-
+                        MenegerOperrations(e.Item, False, False, False, False, False, False, True, color,
+                                           pUrlLnkOutRepair := pUrlLnkOutRepair)
+                    Case 10
+                        MenegerOperrations(e.Item, False, False, False, True, False, False, False, _orange,
+                                           pUrlLnkSetRepair := pUrlLnkSetRepair)
+                    Case 11
+                        MenegerOperrations(e.Item, False, True, False, False, True, False, False, _orange,
+                                           pUrlLnkActivateRepairSkno := pUrlLnkActivateRepairSkno,
+                                           pUrlLnkActivateRepair := pUrlLnkActivateRepair)
+                    Case 12
+                        MenegerOperrations(e.Item, False, True, False, False, False, True, False, _orange,
+                                           pUrlLnkActivateRepairSkno := pUrlLnkActivateRepairSkno,
+                                           pUrlLnkEditRepair := pUrlLnkEditRepair)
+                    Case 13
+                        MenegerOperrations(e.Item, False, True, False, False, False, False, False, _orange,
+                                           pUrlLnkActivateRepairSkno := pUrlLnkActivateRepairSkno)
+                    Case 21
+                        MenegerOperrations(e.Item, False, False, True, False, True, False, False, _orange,
+                                           pUrlLnkEditRepairSkno := pUrlLnkEditRepairSkno,
+                                           pUrlLnkActivateRepair := pUrlLnkActivateRepair)
+                    Case 22
+                        MenegerOperrations(e.Item, False, False, True, False, False, True, False, _orange,
+                                           pUrlLnkEditRepairSkno := pUrlLnkEditRepairSkno,
+                                           pUrlLnkEditRepair := pUrlLnkEditRepair)
+                    Case 23
+                        MenegerOperrations(e.Item, False, False, True, False, False, False, False, _orange,
+                                           pUrlLnkEditRepairSkno := pUrlLnkEditRepairSkno)
+                    Case 32
+                        MenegerOperrations(e.Item, False, False, False, False, False, True, False, _orange,
+                                           pUrlLnkEditRepair := pUrlLnkEditRepair)
                     Case Else
-                        CType(e.Item.FindControl("lnkSetRepair"), LinkButton).PostBackUrl = "SetRepair.aspx?id=" &
-                                                                                            e.Item.DataItem(
-                                                                                                "good_sys_id") &
-                                                                                            "&customer=" &
-                                                                                            e.Item.DataItem(
-                                                                                                "payer_sys_id")
-                        CType(e.Item.FindControl("lnkActivateRepair"), LinkButton).Visible = False
-                        CType(e.Item.FindControl("lnkEditRepair"), LinkButton).Visible = False
-                        CType(e.Item.FindControl("lnkOutRepair"), LinkButton).Visible = False
-                        'ToggleButtonDataSkno("block", e.Item.DataItem("good_sys_id").ToString())
-                        CType(e.Item.FindControl("lnkSetDataSkno"), LinkButton).Visible = True
-                        'CType(e.Item.FindControl("lnkSetDataSkno"), LinkButton).PostBackUrl = "RepairMaster.aspx?show_modal=true&good_id=" & e.Item.DataItem("good_sys_id").ToString()
-
+                        MenegerOperrations(e.Item, False, False, False, False, False, False, False)
                 End Select
-                'If e.Item.DataItem("repair") = 1 Then
-                '    e.Item.BackColor = Drawing.Color.FromArgb(217, 243, 254)
+            End If
+        End Sub
 
-                '    CType(e.Item.FindControl("lnkSetRepair"), LinkButton).Visible = False
-                '    CType(e.Item.FindControl("lnkOutRepair"), LinkButton).Visible = False
-                '    CType(e.Item.FindControl("lnkEditRepair"), LinkButton).PostBackUrl = "RepairNew.aspx?cash=" &
-                '                                                                         e.Item.DataItem("good_sys_id") &
-                '                                                                         "&hc=" &
-                '                                                                         e.Item.DataItem("hc_id")
+        Private Sub MenegerOperrations(ByRef item As DataGridItem,
+                                       visibleLnkSetDataSkno As Boolean,
+                                       visibleLnkActivateRepairSkno As Boolean,
+                                       visibleLnkEditRepairSkno As Boolean,
+                                       visibleLnkSetRepair As Boolean,
+                                       visibleLnkActivateRepair As Boolean,
+                                       visibleLnkEditRepair As Boolean,
+                                       visibleLnkOutRepair As Boolean,
+                                       Optional itemColor As Color = Nothing,
+                                       Optional pUrlLnkSetDataSkno As String = "",
+                                       Optional pUrlLnkActivateRepairSkno As String = "",
+                                       Optional pUrlLnkEditRepairSkno As String = "",
+                                       Optional pUrlLnkSetRepair As String = "",
+                                       Optional pUrlLnkActivateRepair As String = "",
+                                       Optional pUrlLnkEditRepair As String = "",
+                                       Optional pUrlLnkOutRepair As String = "")
+            If Not IsNothing(itemColor)
+                item.BackColor = itemColor
+            End If
+            CType(item.FindControl("lnkSetDataSkno"), LinkButton).Visible = visibleLnkSetDataSkno
+            CType(item.FindControl("lnkActivateRepairSkno"), LinkButton).Visible = visibleLnkActivateRepairSkno
+            CType(item.FindControl("lnkEditRepairSkno"), LinkButton).Visible = visibleLnkEditRepairSkno
+            CType(item.FindControl("lnkSetRepair"), LinkButton).Visible = visibleLnkSetRepair
+            CType(item.FindControl("lnkActivateRepair"), LinkButton).Visible = visibleLnkActivateRepair
+            CType(item.FindControl("lnkEditRepair"), LinkButton).Visible = visibleLnkEditRepair
+            CType(item.FindControl("lnkOutRepair"), LinkButton).Visible = visibleLnkOutRepair
 
-                'Else
-                '    CType(e.Item.FindControl("lnkEditRepair"), LinkButton).Visible = False
-                '    CType(e.Item.FindControl("lnkOutRepair"), LinkButton).PostBackUrl = "?a=outrepair&id=" &
-                '                                                                        e.Item.DataItem("good_sys_id")
-                '    CType(e.Item.FindControl("lnkSetRepair"), LinkButton).PostBackUrl = "SetRepair.aspx?id=" &
-                '                                                                        e.Item.DataItem("good_sys_id") &
-                '                                                                        "&customer=" &
-                '                                                                        e.Item.DataItem("payer_sys_id")
-
-                '    If e.Item.DataItem("inrepair") = 0 Then
-                '        CType(e.Item.FindControl("lnkOutRepair"), LinkButton).Visible = False
-                '    End If
-                'End If
+            If Not String.IsNullOrEmpty(pUrlLnkSetDataSkno)
+                CType(item.FindControl("lnkSetDataSkno"), LinkButton).PostBackUrl = pUrlLnkSetDataSkno
+            End If
+            If Not String.IsNullOrEmpty(pUrlLnkActivateRepairSkno)
+                CType(item.FindControl("lnkActivateRepairSkno"), LinkButton).PostBackUrl = pUrlLnkActivateRepairSkno
+            End If
+            If Not String.IsNullOrEmpty(pUrlLnkEditRepairSkno)
+                CType(item.FindControl("lnkEditRepairSkno"), LinkButton).PostBackUrl = pUrlLnkEditRepairSkno
+            End If
+            If Not String.IsNullOrEmpty(pUrlLnkSetRepair)
+                CType(item.FindControl("lnkSetRepair"), LinkButton).PostBackUrl = pUrlLnkSetRepair
+            End If
+            If Not String.IsNullOrEmpty(pUrlLnkActivateRepair)
+                CType(item.FindControl("lnkActivateRepair"), LinkButton).PostBackUrl = pUrlLnkActivateRepair
+            End If
+            If Not String.IsNullOrEmpty(pUrlLnkEditRepair)
+                CType(item.FindControl("lnkEditRepair"), LinkButton).PostBackUrl = pUrlLnkEditRepair
+            End If
+            If Not String.IsNullOrEmpty(pUrlLnkOutRepair)
+                CType(item.FindControl("lnkOutRepair"), LinkButton).PostBackUrl = pUrlLnkOutRepair
             End If
         End Sub
 
@@ -460,26 +511,41 @@ Namespace Kasbi
         Protected Sub modalSubmit_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles modalSubmit.Click
             SetDataSkno()
             bind(Session("repair-filter"))
+            ClearModalForm()
+        End Sub
+
+        Private Sub ClearModalForm()
+            txtRegistrationNumberSKNO.Text = ""
+            txtSerialNumberSKNO.Text = ""
+            txtTelephoneNotice.Text = ""
         End Sub
 
         Private Sub SetDataSkno()
-            Const smsTextFormat As String = "Ваше СКНО для ККМ №{0} готово, запись на установку т. +375291502047, срок 5 дней."
+            Const smsTextFormat As String =
+                      "Ваше СКНО для ККМ №{0} готово, запись на установку т. +375291502047, срок 5 дней."
 
             Dim rns As String = txtRegistrationNumberSKNO.Text
             Dim sns As String = txtSerialNumberSKNO.Text
             Dim telNotice As String = txtTelephoneNotice.Text
             Dim goodId As Integer = Convert.ToInt32(modalGoodId.Text)
+            Dim customerId As Integer = Convert.ToInt32(modalCustomerId.Text)
 
-            Dim numCashRegister As String = dbSQL.ExecuteScalar("SELECT num_cashregister FROM good WHERE good_sys_id = " + modalGoodId.Text).ToString().Trim()
+            Dim numCashRegister As String =
+                    dbSQL.ExecuteScalar("SELECT num_cashregister FROM good WHERE good_sys_id = " + modalGoodId.Text).
+                    ToString().Trim()
             Dim smsText = String.Format(smsTextFormat, numCashRegister)
 
-            If Not String.IsNullOrEmpty(rns) And Not String.IsNullOrEmpty(sns) And Not String.IsNullOrEmpty(goodId.ToString())
+            If _
+                Not String.IsNullOrEmpty(rns) And Not String.IsNullOrEmpty(sns) And
+                Not String.IsNullOrEmpty(goodId.ToString())
                 Dim cmd As SqlCommand = New SqlCommand("set_data_skno_by_good")
                 cmd.Parameters.AddWithValue("@pi_good_sys_id", goodId)
                 cmd.Parameters.AddWithValue("@pi_registration_number_skno", rns)
                 cmd.Parameters.AddWithValue("@pi_serial_number_skno", sns)
                 cmd.CommandType = CommandType.StoredProcedure
                 dbSQL.Execute(cmd)
+                _serviceGood.SetStateRepair(goodId, 10)
+                _serviceCustomer.AddCustomerTelNotice(customerId, telNotice)
                 If cbxModalSendSknoSms.Checked
                     _serviceSms.SendOneSmsWithInsertSmsHistoryForGood(telNotice, smsText, goodId, CurrentUser.sys_id, 6)
                 End If
@@ -505,5 +571,33 @@ Namespace Kasbi
             grdRepair.CurrentPageIndex = 0
             bind(filter)
         End Sub
+
+        Private Function FindLastNotCloseRepairIdWithNeadSkno(goodId As Object) As Integer
+            Dim adapt = dbSQL.GetDataAdapter(
+                "SELECT TOP 1 ch.sys_id FROM cash_history ch INNER JOIN repair_history rh ON ch.repair_history_sys_id=rh.repair_history_sys_id WHERE rh.nead_SKNO = 1 AND good_sys_id = " &
+                goodId.ToString() & " AND ch.repairdate_out IS NULL ORDER BY ch.sys_id DESC")
+            Dim ds As DataSet = New DataSet()
+            adapt.Fill(ds)
+            If ds.Tables(0).Rows.Count = 0
+                Throw New Exception("Не найден активный ремонт с СКНО.")
+            End If
+            Dim dr As DataRow = ds.Tables(0).Rows(0)
+            Dim repairSknoId As Integer = Convert.ToInt32(dr("sys_id"))
+            Return repairSknoId
+        End Function
+
+        Private Function FindLastNotCloseRepairId(goodId As Object) As Integer
+            Dim adapt = dbSQL.GetDataAdapter(
+                "SELECT TOP 1 ch.sys_id FROM cash_history ch INNER JOIN repair_history rh ON ch.repair_history_sys_id=rh.repair_history_sys_id WHERE (rh.nead_SKNO = 0 Or rh.nead_SKNO IS NULL) AND good_sys_id = " &
+                goodId.ToString() & " AND ch.repairdate_out IS NULL ORDER BY ch.sys_id DESC")
+            Dim ds As DataSet = New DataSet()
+            adapt.Fill(ds)
+            If ds.Tables(0).Rows.Count = 0
+                Throw New Exception("Не найден активный ремонт.")
+            End If
+            Dim dr As DataRow = ds.Tables(0).Rows(0)
+            Dim repairSknoId As Integer = Convert.ToInt32(dr("sys_id"))
+            Return repairSknoId
+        End Function
     End Class
 End Namespace

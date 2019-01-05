@@ -125,37 +125,44 @@
             <div id="myModalBody" runat="server" class="modal-body">
                     <table>
                         <tr>
-                            <td style="font-size: 15px">Учетный номер СКНО</td>
+                            <td style="font-size: 14px">Учетный номер СКНО</td>
                             <td>
-                                <asp:TextBox runat="server" style="margin: 5px" type="text" ID="txtRegistrationNumberSKNO"></asp:TextBox>
+                                <asp:TextBox runat="server" style="margin: 5px" type="text" ID="txtRegistrationNumberSKNO" Value="123456789"></asp:TextBox>
                                 <ajaxToolkit:MaskedEditValidator ID="txtRegistrationNumberSKNO_MaskedEditValidator" runat="server" ControlExtender="txtRegistrationNumberSKNO_MaskedEditExtender" ControlToValidate="txtRegistrationNumberSKNO" Display="Dynamic" EmptyValueBlurredText="*" IsValidEmpty="True" ValidationExpression="^\d{9}$" ValidationGroup="GroupName"></ajaxToolkit:MaskedEditValidator>
                                 <ajaxToolkit:MaskedEditExtender ID="txtRegistrationNumberSKNO_MaskedEditExtender" runat="server" BehaviorID="txtRegistrationNumberSKNO_MaskedEditExtender" TargetControlID="txtRegistrationNumberSKNO" Mask="999999999" MaskType="Number" MessageValidatorTip="True" ErrorTooltipEnabled="True" ClearTextOnInvalid="True" ClearMaskOnLostFocus="True" AutoComplete="False"/>
                             </td>
                         </tr>
                         <tr>
-                            <td style="font-size: 15px">Заводской номер СКНО</td>
+                            <td style="font-size: 14px">Заводской номер СКНО</td>
                             <td>
-                                <asp:TextBox runat="server" style="margin: 5px" type="text" ID="txtSerialNumberSKNO"></asp:TextBox>
+                                <asp:TextBox runat="server" style="margin: 5px" type="text" ID="txtSerialNumberSKNO" Value="123456789"></asp:TextBox>
                                 <ajaxToolkit:MaskedEditValidator ID="txtSerialNumberSKNO_MaskedEditValidator" runat="server" ControlExtender="txtSerialNumberSKNO_MaskedEditExtender" ControlToValidate="txtSerialNumberSKNO" Display="Dynamic" EmptyValueBlurredText="*" IsValidEmpty="True" ValidationExpression="^\d{4,9}$" ValidationGroup="GroupName"></ajaxToolkit:MaskedEditValidator>
                                 <ajaxToolkit:MaskedEditExtender ID="txtSerialNumberSKNO_MaskedEditExtender" runat="server" BehaviorID="txtSerialNumberSKNO_MaskedEditExtender" TargetControlID="txtSerialNumberSKNO" Mask="999999999" MaskType="Number" MessageValidatorTip="True" ErrorTooltipEnabled="True" ClearTextOnInvalid="True" ClearMaskOnLostFocus="True" AutoComplete="False"/>
 
                             </td>
                         </tr>
+                        <%--<tr>
+                            <td style="font-size: 14px">Ранее использованные тел. оповещения</td>
+                            <td>
+                                <asp:DropDownList ID="lstTelephoneNotice" runat="server" style="margin: 5px" Width="100%" BackColor="#F6F8FC" AutoPostBack="True"/>
+                            </td>
+                        </tr>--%>
                         <tr>
-                            <td style="font-size: 15px">Телефон оповещения</td>
+                            <td style="font-size: 14px">Телефон оповещения</td>
                             <td align="center">
-                                <asp:TextBox ID="txtTelephoneNotice" runat="server" ToolTip="Введите телефон оповещения"/>
+                                <asp:TextBox ID="txtTelephoneNotice" runat="server" ToolTip="Введите телефон оповещения" Value="294010101"/>
                                 <ajaxToolkit:MaskedEditValidator ID="txtTelephoneNotice_MaskedEditValidator" runat="server" ControlExtender="txtTelephoneNotice_MaskedEditExtender" ControlToValidate="txtTelephoneNotice" Display="Dynamic" EmptyValueBlurredText="*" ErrorMessage="Введен некорректный мобильный телефон!" InvalidValueBlurredMessage="Введен некорректный мобильный телефон!" InvalidValueMessage="Введен некорректный мобильный телефон!" IsValidEmpty="True" ValidationExpression="^(29|25|44|33)(\d{7})$" ValidationGroup="GroupName">+375 (99) 999-99-99</ajaxToolkit:MaskedEditValidator>
                                 <ajaxToolkit:MaskedEditExtender ID="txtTelephoneNotice_MaskedEditExtender" runat="server" BehaviorID="txtTelephoneNotice_MaskedEditExtender" TargetControlID="txtTelephoneNotice" Mask="+375 (99) 999-99-99" MaskType="Number" MessageValidatorTip="True" ErrorTooltipEnabled="True" ClearTextOnInvalid="True" ClearMaskOnLostFocus="True" AutoComplete="False"/>
                             </td>
                         </tr>
                         <tr>
-                            <td style="font-size: 15px">Отправить СМС</td>
+                            <td style="font-size: 14px">Отправить СМС</td>
                             <td align="center">
                                 <asp:CheckBox runat="server" ID="cbxModalSendSknoSms"/>
                             </td>
                         </tr>
-                        <tr><td><asp:TextBox runat="server" style="margin: 5px" type="text" id="modalGoodId" hidden="true"/><br/></td></tr>
+                        <tr><td><asp:TextBox runat="server" type="text" id="modalGoodId" hidden="true"/></td></tr>
+                        <tr><td><asp:TextBox runat="server" type="text" id="modalCustomerId" hidden="true"/></td></tr>
                         <tr style="text-align:center">
                             <td colspan="2">
                                 <asp:LinkButton runat="server" ID="modalSubmit">Сохранить</asp:LinkButton>
@@ -310,12 +317,15 @@
                             <asp:TemplateColumn HeaderText="Операции">
                                 <ItemTemplate>
                                    <input name="hiddenGoodId" type="hidden" value="<%# DataBinder.Eval(Container.DataItem,"good_sys_id")%>"/>
+                                   <input name="hiddenCustomerId" type="hidden" value="<%# DataBinder.Eval(Container.DataItem,"payer_sys_id")%>"/>
                                    <%--<a href="#" id="<%# DataBinder.Eval(Container.DataItem,"good_sys_id")%>_lnkSetDataSkno" style="display: none">Внести&nbsp;данные&nbsp;СКНО!</a>--%>
-                                   <asp:LinkButton ID="lnkSetDataSkno" runat="server" >Внести&nbsp;данные&nbsp;СКНО!<br /></asp:LinkButton>
-                                   <asp:LinkButton ID="lnkSetRepair" runat="server">Принять&nbsp;в&nbsp;ремонт!<br /></asp:LinkButton>
-                                    <asp:LinkButton ID="lnkActivateRepair" runat="server">Взять&nbsp;в&nbsp;работу на ремонт!<br /></asp:LinkButton>
+                                   <asp:LinkButton ID="lnkSetDataSkno" runat="server">Внести&nbsp;данные&nbsp;СКНО<br /></asp:LinkButton>
+                                   <asp:LinkButton ID="lnkActivateRepairSkno" runat="server">Начать&nbsp;установку&nbsp;СКНО<br /></asp:LinkButton>
+                                   <asp:LinkButton ID="lnkEditRepairSkno" runat="server">Редактировать&nbsp;ремонт&nbsp;с&nbsp;СКНО<br /></asp:LinkButton>
+                                   <asp:LinkButton ID="lnkSetRepair" runat="server">Принять&nbsp;в&nbsp;ремонт<br /></asp:LinkButton>
+                                   <asp:LinkButton ID="lnkActivateRepair" runat="server">Начать&nbsp;ремонт<br /></asp:LinkButton>
+                                   <asp:LinkButton ID="lnkEditRepair" runat="server">Редактировать&nbsp;ремонт<br /> </asp:LinkButton>
                                    <asp:LinkButton ID="lnkOutRepair" runat="server">Отдать&nbsp;владельцу<br /></asp:LinkButton>
-                                   <asp:LinkButton ID="lnkEditRepair" runat="server">Редактировать&nbsp;ремонт!<br /> </asp:LinkButton>
                                 </ItemTemplate>
                             </asp:TemplateColumn>
                             <asp:TemplateColumn HeaderText="Последнее ТО" SortExpression="repair">
@@ -366,6 +376,8 @@
         el.onclick = function () {
             var goodId = this.parentNode.querySelector("input[name=hiddenGoodId]");
             modal.querySelector("input[id=modalGoodId]").value = goodId.value;
+            var customerId = this.parentNode.querySelector("input[name=hiddenCustomerId]");
+            modal.querySelector("input[id=modalCustomerId]").value = customerId.value;
             showSknoData();
         };
     });

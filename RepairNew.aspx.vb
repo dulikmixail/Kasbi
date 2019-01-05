@@ -42,8 +42,9 @@ Namespace Kasbi
         Dim d As Kasbi.Documents
         Const ClearString$ = "-------"
 
-        Private _serviceSms As ServiceSms = New ServiceSms()
-        Private _serviceExport As ServiceExport = New ServiceExport()
+        Private ReadOnly _serviceSms As ServiceSms = New ServiceSms()
+        Private ReadOnly _serviceExport As ServiceExport = New ServiceExport()
+        Private ReadOnly _serviceGood As ServiceGood = New ServiceGood()
 
         Private Overloads Sub Page_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
             If CurrentUser.is_admin
@@ -124,8 +125,6 @@ Namespace Kasbi
             Dim cmd As SqlCommand
             Dim ds As DataSet = New DataSet()
             Dim adapt As SqlDataAdapter
-
-            _serviceSms.UpdateStatuses()
 
             Try
                 cmd = New SqlClient.SqlCommand("get_sms_status_history")
@@ -438,19 +437,36 @@ Namespace Kasbi
                 'End If
 
                 If Not IsDBNull(reader("akt")) Then
-                    txtNewAkt.Text = reader("akt")
+                    txtNewAkt.Text = reader("akt").ToString()
                 End If
-
+                Dim isNeadSkno = False
                 If Not IsDBNull(reader("nead_SKNO")) Then
-                    cbxNeadSKNO.Checked = Convert.ToBoolean(reader("nead_SKNO"))
+                    isNeadSkno = Convert.ToBoolean(reader("nead_SKNO"))
+                    cbxNeadSKNO.Checked = isNeadSkno
                 End If
 
                 'Грузим инфу об установке СКНО
                 txtRegistrationNumberSKNO.Text = reader("registration_number_skno").ToString()
                 txtSerialNumberSKNO.Text = reader("serial_number_skno").ToString()
                 txtComment.Text = reader("comment_skno").ToString()
-
                 reader.Close()
+
+                Dim adapt As SqlDataAdapter =
+                        dbSQL.GetDataAdapter(
+                            "SELECT ISNULL(registration_number_skno, '') registration_number_skno, ISNULL(serial_number_skno, '') serial_number_skno FROM good WHERE good_sys_id = " &
+                            iCash)
+                Dim ds As DataSet = New DataSet()
+                adapt.Fill(ds)
+
+                Dim dr As DataRow = ds.Tables(0).Rows(0)
+
+                If String.IsNullOrEmpty(Trim(txtRegistrationNumberSKNO.Text)) And isNeadSkno
+                    txtRegistrationNumberSKNO.Text = dr("registration_number_skno").ToString()
+                End If
+                If String.IsNullOrEmpty(Trim(txtSerialNumberSKNO.Text)) And isNeadSkno
+                    txtSerialNumberSKNO.Text = dr("serial_number_skno").ToString()
+                End If
+
                 LoadExecutor(executorId)
                 ShowRepairImage()
             Catch
@@ -1187,10 +1203,6 @@ Namespace Kasbi
                 txtNewRepairInfo.Text = ""
                 ShowRepairImage()
 
-                'Установка статуса Необхожимо установить СКНО
-                Dim stateRepair As Integer = 3
-
-
                 If cbxNeadSKNO.Checked
                     cmd = New SqlClient.SqlCommand("insert_or_update_skno_history")
                     cmd.CommandType = CommandType.StoredProcedure
@@ -1208,26 +1220,46 @@ Namespace Kasbi
                     dbSQL.Execute(cmd)
 
                 End If
-                If _
-                    cbxNeadSKNO.Checked And Trim(txtRegistrationNumberSKNO.Text).Length = 0 And
-                    Trim(txtSerialNumberSKNO.Text).Length = 0
-                    stateRepair = 5
-                Else
+
+                If cbxNeadSKNO.Checked
+                    Select Case _serviceGood.GetStateRepair(iCash)
+                        Case 0
+                            'ничего не делаем
+                        Case 21
+                            _serviceGood.SetStateRepair(iCash, 31)
+                        Case 22
+                            _serviceGood.SetStateRepair(iCash, 32)
+                        Case 23
+                            _serviceGood.SetStateRepair(iCash, 33)
+                        Case 32
+                        Case Else
+                            Throw New Exception("Ошибка при изменении статуса ремонта (1). Недопустимое состояние статуса.")
+                    End Select
+                    Else
+                        Select Case _serviceGood.GetStateRepair(iCash)
+                            Case 0
+                                'ничего не делаем
+                            Case 2
+                                _serviceGood.SetStateRepair(iCash, 3)
+                            Case 12
+                                _serviceGood.SetStateRepair(iCash, 13)
+                            Case 22
+                                _serviceGood.SetStateRepair(iCash, 23)
+                            Case 32
+                                _serviceGood.SetStateRepair(iCash, 33)
+                            Case Else
+                                Throw New Exception("Ошибка при изменении статуса ремонта (2). Недопустимое состояние статуса.")
+                        End Select
 
                 End If
 
-                'Установка статуса Отремонтирован и готов к выдаче
-                cmd = New SqlCommand("set_state_repair")
-                cmd.Parameters.AddWithValue("@pi_state_repair", stateRepair)
-                cmd.Parameters.AddWithValue("@pi_good_sys_id", iCash)
-                cmd.CommandType = CommandType.StoredProcedure
-                dbSQL.Execute(cmd)
 
                 If cbxSmsSend.Checked
                     Dim smsText = txtSmsText.Text
                     Dim phoneNumber As String = txtPhoneNumber.Text
-                    _serviceSms.SendOneSmsWithInsertSmsHistoryForCashHistory(phoneNumber, smsText, iCashHistory, CurrentUser.sys_id,
-                                                               smsType)
+                    _serviceSms.SendOneSmsWithInsertSmsHistoryForCashHistory(phoneNumber, smsText, iCashHistory,
+                                                                             CurrentUser.sys_id,
+                                                                             smsType)
                 End If
             Catch
                 msgNew.Text = "Ошибка сохранения информации о ремонте!<br>" & Err.Description

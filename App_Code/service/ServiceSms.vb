@@ -15,6 +15,7 @@ Namespace Service
         Inherits ServiceExeption
         Implements IService
         Private ReadOnly _serviseHttp As ServiseHttp = New ServiseHttp()
+        Dim ReadOnly _sharedDbSql As MSSqlDB = ServiceDbConnector.GetConnection()
 
         Const MaxRequestNumber As Integer = 50
         Const MaxNumbRepetitions As Integer = 3
@@ -147,7 +148,7 @@ Namespace Service
                     cmd1.Parameters.AddWithValue("@pi_executor", executorId)
                     cmd1.Parameters.AddWithValue("@pi_sms_type_sys_id", smsType)
                     cmd1.Parameters.Add("@result", SqlDbType.Int).Direction = ParameterDirection.ReturnValue
-                    dbSQL.ExecuteScalar(cmd1)
+                    _sharedDbSql.ExecuteScalar(cmd1)
                     smsSendSysId = Convert.ToInt32(cmd1.Parameters("@result").Value)
                 Catch
                     Throw New Exception("Ошибка вставки данных об отправке СМС 2!<br>" & Err.Description)
@@ -185,7 +186,7 @@ Namespace Service
                             cmd1.Parameters.AddWithValue("@pi_sms_send_sys_id", smsSendSysId)
                             cmd1.Parameters.AddWithValue("@pi_sms_sys_id", msgSendingR.sms_id)
                             cmd1.Parameters.AddWithValue("@pi_error", msgSendingR.sms_id)
-                            dbSQL.Execute(cmd1)
+                            _sharedDbSql.Execute(cmd1)
                         Catch
                             Throw New Exception("Ошибка обновления данных об отправке СМС 3!<br>" & Err.Description)
                         End Try
@@ -229,7 +230,7 @@ Namespace Service
             End If
         End Function
 
-        Public Sub UpdateStatuses(Optional sharedDbSql As MSSqlDB = Nothing)
+        Public Sub UpdateStatuses()
             Dim cmd As SqlClient.SqlCommand
             Dim adapt As SqlClient.SqlDataAdapter
             Dim ds As DataSet = New DataSet
@@ -239,17 +240,13 @@ Namespace Service
             cmd.Parameters.AddWithValue("@pi_max_request_number", MaxRequestNumber)
             cmd.CommandType = CommandType.StoredProcedure
             cmd.CommandTimeout = 0
-            If Not IsNothing(sharedDbSql)
-                adapt = sharedDbSql.GetDataAdapter(cmd)
-            Else
-                adapt = dbSQL.GetDataAdapter(cmd)
-            End If
+            adapt = _sharedDbSql.GetDataAdapter(cmd)
             adapt.Fill(ds)
 
             ReadAndInsertStatuses(ds)
         End Sub
 
-        Private Sub ReadAndInsertStatuses(ds As DataSet, Optional sharedDbSql As MSSqlDB = Nothing)
+        Private Sub ReadAndInsertStatuses(ds As DataSet)
             Dim cmd = New SqlCommand()
             Dim smsStatusingResponse = New SmsStatusingResponse()
             Dim smsIds = New List(Of Integer)()
@@ -280,7 +277,7 @@ Namespace Service
                         .AddWithValue("@pi_do_increment_request_number", 1)
                     End With
                     cmd.CommandType = CommandType.StoredProcedure
-                    dbSQL.Execute(cmd)
+                    _sharedDbSql.Execute(cmd)
                 Next
             End If
         End Sub
