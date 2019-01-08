@@ -38,8 +38,8 @@ Namespace Kasbi
         Private CurrentCustomer%
         Private NumCashRegister As String = String.Empty
         Dim sCaptionRemoveSupport As String = "Снять с ТО"
-        Dim smsType As Integer = 1
         Dim d As Kasbi.Documents
+        Dim ReadOnly _notRejectReapirStatusForSendSms As List(Of Integer) = New List(Of Integer) From {12, 22, 32, 33}
         Const ClearString$ = "-------"
 
         Private ReadOnly _serviceSms As ServiceSms = New ServiceSms()
@@ -52,7 +52,7 @@ Namespace Kasbi
             Else
                 cbxEtitSmsSend.Visible = False
             End If
-            cbxEtitSmsSend_CheckedChanged(Nothing, Nothing)
+            
             Try
                 iCash = Request.Params("cash")
                 iCashHistory = Request.Params("hc")
@@ -76,6 +76,9 @@ Namespace Kasbi
                 If _serviceExport.IsLockCashHistory(Convert.ToInt32(iCashHistory)) And Not CurrentUser.is_admin
                     Response.Redirect("Repair.aspx?" & iCash & "&err=002")
                 End If
+                If _notRejectReapirStatusForSendSms.Contains(_serviceGood.GetStateRepair(iCash))
+                    cbxSmsSend.Checked = False
+                End If
                 'Try
                 '    _serviceSms.UpdateStatusesByIdCashHistory(iCashHistory)
                 'Catch ex As Exception
@@ -83,6 +86,7 @@ Namespace Kasbi
                 '    Exit Sub
                 'End Try
             End If
+            cbxEtitSmsSend_CheckedChanged(Nothing, Nothing)
         End Sub
 
         Function IsNewRepair(idCashHistory As Integer) As Boolean
@@ -201,8 +205,9 @@ Namespace Kasbi
                     CType(
                         grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl("cbxGarantia"),
                         CheckBox).Checked
-            Dim rows As DataRowCollection = GetDataSetRepairInfo().Tables(0).Rows
-            If rows.Count > 0
+            Dim rows As DataRowCollection = GetDataSetRepairInfo(iCashHistory).Tables(0).Rows
+
+            If rows.Count > 0 And Not isGarantia
                 Dim sum As Double = 0
                 For Each row As DataRow In rows
                     IF isWorkNotCall
@@ -214,19 +219,40 @@ Namespace Kasbi
                 Next
             End If
 
+            Dim ds1 As DataSet = New DataSet()
+
+            dbSQL.GetDataAdapter(
+                "SELECT TOP 1 * FROM cash_history ch INNER JOIN good g ON ch.good_sys_id=ch.good_sys_id WHERE ch.state = 5 AND g.inrepair = 1 AND ch.good_sys_id= " &
+                iCash & " AND ch.sys_id > " & iCashHistory & " ORDER BY ch.sys_id").Fill(ds1)
+            Dim isGarantia1 As Boolean = True
+            If ds1.Tables(0).Rows.Count > 0
+                Dim row1 As DataRow = ds1.Tables(0).Rows(0)
+                Dim sum As Double = 0
+                isWorkNotCall = Convert.ToBoolean(IIf(IsDBNull(row1("workNotCall")), 0, row1("workNotCall")))
+                isGarantia1 = Convert.ToBoolean(IIf(IsDBNull(row1("garantia")), 0, row1("garantia")))
+                Dim cashHistoryId1 As Integer = Convert.ToInt32(row1("sys_id"))
+                Dim rows1 As DataRowCollection = GetDataSetRepairInfo(cashHistoryId1).Tables(0).Rows
+                If rows1.Count > 0 And Not isGarantia1
+                    Dim sum1 As Double = 0
+                    For Each row2 As DataRow In rows1
+                        IF isWorkNotCall
+                            Double.TryParse(row2("price").ToString(), sum1)
+                        Else
+                            Double.TryParse(row2("total_sum").ToString(), sum1)
+                        End If
+                        repairTotalSumWithNds += Math.Round(sum1*1.2, 2)
+                    Next
+                End If
+
+            End If
+
             Dim smsText As String
 
-            If cbxNeadSKNO.Checked
-                smsType = 3
-                smsText = "Ваше СКНО готово. Приезжайте на установку. Тел. +375291502047"
-            Else
-                smsType = 2
                 smsText = "Ваш ККМ " & Trim(lblCash.Text) &
                           " готов." &
-                          IIf(isGarantia, " Гарантийный ремонт.",
+                          IIf(isGarantia And isGarantia1, " Гарантийный ремонт.",
                               " Сумма ремонта " & repairTotalSumWithNds & "р.").ToString() &
                           IIf(dolg > 0, " Общий долг: " & dolg & "р.", "").ToString()
-            End If
 
             txtSmsText.Text = smsText
             lblSmsText.Text = txtSmsText.Text
@@ -477,14 +503,14 @@ Namespace Kasbi
             RecalcCost(Nothing, Nothing)
         End Sub
 
-        Private Function GetDataSetRepairInfo() As DataSet
+        Private Function GetDataSetRepairInfo(cashHistoryId As Integer) As DataSet
             Dim cmd As SqlClient.SqlCommand
             Dim adapt As SqlClient.SqlDataAdapter
             Dim ds As DataSet = New DataSet()
 
             Try
                 cmd = New SqlClient.SqlCommand("get_repair_info")
-                cmd.Parameters.AddWithValue("@pi_hc_sys_id", iCashHistory)
+                cmd.Parameters.AddWithValue("@pi_hc_sys_id", cashHistoryId)
                 cmd.CommandType = CommandType.StoredProcedure
                 adapt = dbSQL.GetDataAdapter(cmd)
                 adapt.Fill(ds)
@@ -497,7 +523,7 @@ Namespace Kasbi
         End Function
 
         Private Sub LoadRepairInfo()
-            grdDetails.DataSource = GetDataSetRepairInfo()
+            grdDetails.DataSource = GetDataSetRepairInfo(iCashHistory)
             grdDetails.DataKeyField = "detail_id"
             grdDetails.DataBind()
         End Sub
@@ -1220,11 +1246,11 @@ Namespace Kasbi
                     dbSQL.Execute(cmd)
 
                 End If
+                Dim currentStateRepir = _serviceGood.GetStateRepair(iCash)
 
                 If cbxNeadSKNO.Checked
-                    Select Case _serviceGood.GetStateRepair(iCash)
-                        Case 0
-                            'ничего не делаем
+                    ResetSknoReceived(iCash)
+                    Select Case currentStateRepir
                         Case 21
                             _serviceGood.SetStateRepair(iCash, 31)
                         Case 22
@@ -1232,40 +1258,37 @@ Namespace Kasbi
                         Case 23
                             _serviceGood.SetStateRepair(iCash, 33)
                         Case 32
-                        Case Else
-                            Throw New Exception("Ошибка при изменении статуса ремонта (1). Недопустимое состояние статуса.")
                     End Select
-                    Else
-                        Select Case _serviceGood.GetStateRepair(iCash)
-                            Case 0
-                                'ничего не делаем
-                            Case 2
-                                _serviceGood.SetStateRepair(iCash, 3)
-                            Case 12
-                                _serviceGood.SetStateRepair(iCash, 13)
-                            Case 22
-                                _serviceGood.SetStateRepair(iCash, 23)
-                            Case 32
-                                _serviceGood.SetStateRepair(iCash, 33)
-                            Case Else
-                                Throw New Exception("Ошибка при изменении статуса ремонта (2). Недопустимое состояние статуса.")
-                        End Select
+                Else
+                    Select Case currentStateRepir
+                        Case 2
+                            _serviceGood.SetStateRepair(iCash, 3)
+                        Case 12
+                            _serviceGood.SetStateRepair(iCash, 13)
+                        Case 22
+                            _serviceGood.SetStateRepair(iCash, 23)
+                        Case 32
+                            _serviceGood.SetStateRepair(iCash, 33)
+                    End Select
 
                 End If
 
-
-                If cbxSmsSend.Checked
+                If cbxSmsSend.Checked And Not _notRejectReapirStatusForSendSms.Contains(currentStateRepir)
                     Dim smsText = txtSmsText.Text
                     Dim phoneNumber As String = txtPhoneNumber.Text
                     _serviceSms.SendOneSmsWithInsertSmsHistoryForCashHistory(phoneNumber, smsText, iCashHistory,
                                                                              CurrentUser.sys_id,
-                                                                             smsType)
+                                                                             2)
                 End If
             Catch
                 msgNew.Text = "Ошибка сохранения информации о ремонте!<br>" & Err.Description
                 Exit Sub
             End Try
             Response.Redirect(GetAbsoluteUrl("~/Repair.aspx?" & iCash))
+        End Sub
+
+        Private Sub ResetSknoReceived(goodId As Object) 
+            dbSQL.Execute("UPDATE good SET skno_received = NULL WHERE good_sys_id = " & Convert.ToInt32(goodId))
         End Sub
 
         Private Sub chbRepairDateInEdit_CheckedChanged(ByVal sender As Object, ByVal e As System.EventArgs) _

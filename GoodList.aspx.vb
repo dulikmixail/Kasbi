@@ -643,6 +643,8 @@ Namespace Kasbi
                 End If
                 Dim s15$ = CType(e.Item.FindControl("txtedtCP"), TextBox).Text.Replace("'", """")
                 Dim s16$ = CType(e.Item.FindControl("txtedtCTO2"), TextBox).Text.Replace("'", """")
+                Dim s17$ = CType(e.Item.FindControl("txtedtRegistrationNumberSkno"), TextBox).Text.Replace("'", """")
+                Dim s18$ = CType(e.Item.FindControl("txtedtSerialNumberSkno"), TextBox).Text.Replace("'", """")
 
                 'œ–Œ¬≈–»“‹ œŒ«∆≈
                 idDeliveryNew = CInt(s11)
@@ -653,15 +655,15 @@ Namespace Kasbi
                     s1 = Replace(s1, ",", ".")
                     Dim sql$ =
                             String.Format(
-                                "UPDATE good SET good_type_sys_id='{0}',price='{1}',num_cashregister='{2}',num_control_reestr='{3}',num_control_pzu='{4}',num_control_mfp='{5}',num_control_cto='{6}',set_place='{7}',kassir1='{8}',kassir2='{9}',info='{10}',delivery_sys_id={11},sale_sys_id={12},state={13},place_rn_id={14},num_control_cp='{15}',num_control_cto2='{16}' WHERE good_sys_id={17}",
-                                s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13, s14, s15, s16,
+                                "UPDATE good SET good_type_sys_id='{0}',price='{1}',num_cashregister='{2}',num_control_reestr='{3}',num_control_pzu='{4}',num_control_mfp='{5}',num_control_cto='{6}',set_place='{7}',kassir1='{8}',kassir2='{9}',info='{10}',delivery_sys_id={11},sale_sys_id={12},state={13},place_rn_id={14},num_control_cp='{15}',num_control_cto2='{16}',registration_number_skno='{17}',serial_number_skno = '{18}' WHERE good_sys_id={19}",
+                                s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13, s14, s15, s16, s17, s18,
                                 grdGood.DataKeys(e.Item.ItemIndex))
                     dbSQL.Execute(sql)
                 Catch
                     msgCashregister.Text = "Œ¯Ë·Í‡ Ó·ÌÓ‚ÎÂÌËˇ Á‡ÔËÒË!<br>" & Err.Description & "(" &
                                            String.Format(
-                                               "UPDATE good SET good_type_sys_id='{0}',price='{1}',num_cashregister='{2}',num_control_reestr='{3}',num_control_pzu='{4}',num_control_mfp='{5}',num_control_cto='{6}',set_place='{7}',kassir1='{8}',kassir2='{9}',info='{10}',delivery_sys_id={11},sale_sys_id={12},state={13},place_rn_id={14},num_control_cp='{15}',num_control_cto2='{16}' WHERE good_sys_id={17}",
-                                               s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13, s14, s15, s16,
+                                               "UPDATE good SET good_type_sys_id='{0}',price='{1}',num_cashregister='{2}',num_control_reestr='{3}',num_control_pzu='{4}',num_control_mfp='{5}',num_control_cto='{6}',set_place='{7}',kassir1='{8}',kassir2='{9}',info='{10}',delivery_sys_id={11},sale_sys_id={12},state={13},place_rn_id={14},num_control_cp='{15}',num_control_cto2='{16}',registration_number_skno='{17}',serial_number_skno = '{18}' WHERE good_sys_id={19}",
+                                               s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13, s14, s15, s16, s17, s18,
                                                grdGood.DataKeys(e.Item.ItemIndex)) & ")"
                 End Try
                 grdGood.EditItemIndex = - 1

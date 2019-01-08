@@ -127,7 +127,7 @@
                         <tr>
                             <td style="font-size: 14px">Учетный номер СКНО</td>
                             <td>
-                                <asp:TextBox runat="server" style="margin: 5px" type="text" ID="txtRegistrationNumberSKNO" Value="123456789"></asp:TextBox>
+                                <asp:TextBox runat="server" style="margin: 5px" type="text" ID="txtRegistrationNumberSKNO"></asp:TextBox>
                                 <ajaxToolkit:MaskedEditValidator ID="txtRegistrationNumberSKNO_MaskedEditValidator" runat="server" ControlExtender="txtRegistrationNumberSKNO_MaskedEditExtender" ControlToValidate="txtRegistrationNumberSKNO" Display="Dynamic" EmptyValueBlurredText="*" IsValidEmpty="True" ValidationExpression="^\d{9}$" ValidationGroup="GroupName"></ajaxToolkit:MaskedEditValidator>
                                 <ajaxToolkit:MaskedEditExtender ID="txtRegistrationNumberSKNO_MaskedEditExtender" runat="server" BehaviorID="txtRegistrationNumberSKNO_MaskedEditExtender" TargetControlID="txtRegistrationNumberSKNO" Mask="999999999" MaskType="Number" MessageValidatorTip="True" ErrorTooltipEnabled="True" ClearTextOnInvalid="True" ClearMaskOnLostFocus="True" AutoComplete="False"/>
                             </td>
@@ -135,7 +135,7 @@
                         <tr>
                             <td style="font-size: 14px">Заводской номер СКНО</td>
                             <td>
-                                <asp:TextBox runat="server" style="margin: 5px" type="text" ID="txtSerialNumberSKNO" Value="123456789"></asp:TextBox>
+                                <asp:TextBox runat="server" style="margin: 5px" type="text" ID="txtSerialNumberSKNO"></asp:TextBox>
                                 <ajaxToolkit:MaskedEditValidator ID="txtSerialNumberSKNO_MaskedEditValidator" runat="server" ControlExtender="txtSerialNumberSKNO_MaskedEditExtender" ControlToValidate="txtSerialNumberSKNO" Display="Dynamic" EmptyValueBlurredText="*" IsValidEmpty="True" ValidationExpression="^\d{4,9}$" ValidationGroup="GroupName"></ajaxToolkit:MaskedEditValidator>
                                 <ajaxToolkit:MaskedEditExtender ID="txtSerialNumberSKNO_MaskedEditExtender" runat="server" BehaviorID="txtSerialNumberSKNO_MaskedEditExtender" TargetControlID="txtSerialNumberSKNO" Mask="999999999" MaskType="Number" MessageValidatorTip="True" ErrorTooltipEnabled="True" ClearTextOnInvalid="True" ClearMaskOnLostFocus="True" AutoComplete="False"/>
 
@@ -150,7 +150,7 @@
                         <tr>
                             <td style="font-size: 14px">Телефон оповещения</td>
                             <td align="center">
-                                <asp:TextBox ID="txtTelephoneNotice" runat="server" ToolTip="Введите телефон оповещения" Value="294010101"/>
+                                <asp:TextBox ID="txtTelephoneNotice" runat="server" ToolTip="Введите телефон оповещения"/>
                                 <ajaxToolkit:MaskedEditValidator ID="txtTelephoneNotice_MaskedEditValidator" runat="server" ControlExtender="txtTelephoneNotice_MaskedEditExtender" ControlToValidate="txtTelephoneNotice" Display="Dynamic" EmptyValueBlurredText="*" ErrorMessage="Введен некорректный мобильный телефон!" InvalidValueBlurredMessage="Введен некорректный мобильный телефон!" InvalidValueMessage="Введен некорректный мобильный телефон!" IsValidEmpty="True" ValidationExpression="^(29|25|44|33)(\d{7})$" ValidationGroup="GroupName">+375 (99) 999-99-99</ajaxToolkit:MaskedEditValidator>
                                 <ajaxToolkit:MaskedEditExtender ID="txtTelephoneNotice_MaskedEditExtender" runat="server" BehaviorID="txtTelephoneNotice_MaskedEditExtender" TargetControlID="txtTelephoneNotice" Mask="+375 (99) 999-99-99" MaskType="Number" MessageValidatorTip="True" ErrorTooltipEnabled="True" ClearTextOnInvalid="True" ClearMaskOnLostFocus="True" AutoComplete="False"/>
                             </td>
@@ -210,6 +210,13 @@
              <tr class="Unit">
                 <td class="Unit" width="100%">
                     &nbsp;Найдено по кассовому оборудованию</td>
+            </tr>
+            <tr>
+                <td>
+                    <asp:Label ID="lblErrors" runat="server" EnableViewState="false" ForeColor="#ff0000"
+                               Font-Bold="true">
+                    </asp:Label>
+                </td>
             </tr>
             <tr>
                 <td>
@@ -289,7 +296,7 @@
                             <asp:TemplateColumn HeaderText="№ СК СКНО" SortExpression="num_control_cto" > 
                                 <HeaderStyle Font-Underline="True"></HeaderStyle>
                                 <ItemTemplate>
-                                    <asp:Label ID="lbledtSknoControl" runat="server" Text='<%# DataBinder.Eval(Container, "DataItem.registration_number_skno") & "<br>" & DataBinder.Eval(Container, "DataItem.serial_number_skno")%>'>
+                                    <asp:Label ID="lbledtSknoControl" runat="server">
                                     </asp:Label>
                                 </ItemTemplate>
                                 <ItemStyle HorizontalAlign="Center"></ItemStyle>
@@ -371,7 +378,7 @@
 
     // Get the <span> element that closes the modal
     var span = document.getElementsByClassName("close")[0];
-    $("*[id$=lnkSetDataSkno]").each(function (i, el) {
+    $("*[id*=lnkSetDataSkno]").each(function (i, el) {
         el.href = "#";
         el.onclick = function () {
             var goodId = this.parentNode.querySelector("input[name=hiddenGoodId]");

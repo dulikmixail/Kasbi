@@ -13,6 +13,7 @@ Namespace Kasbi
         Dim customer
         Dim iCash
         Dim iCashHistory
+        Dim ReadOnly _validTelCode As List(Of String) = New List(Of String) From {"25", "29", "33", "44"}
         Private ReadOnly _serviceSms As ServiceSms = New ServiceSms()
         Private ReadOnly _serviceCustomer As ServiceCustomer = New ServiceCustomer()
         Private ReadOnly _serviceGood As ServiceGood = New ServiceGood()
@@ -95,19 +96,19 @@ Namespace Kasbi
                 Dim repairSknoId = FindLastNotCloseRepairIdWithNeadSkno(iCash)
                 Select Case currenState
                     Case 11
-                        _serviceRepair.UpdateRepairDateIn(CurrentUser.sys_id, iCash)
+                        _serviceRepair.UpdateRepairDateIn(CurrentUser.sys_id, iCash, repairSknoId)
                         bind(Session("repair-filter"))
                         _serviceGood.SetStateRepair(iCash, 21)
                         Response.Redirect(
                             "RepairNew.aspx?cash=" & iCash.ToString() & "&hc=" & repairSknoId.ToString())
                     Case 12
-                        _serviceRepair.UpdateRepairDateIn(CurrentUser.sys_id, iCash)
+                        _serviceRepair.UpdateRepairDateIn(CurrentUser.sys_id, iCash, repairSknoId)
                         bind(Session("repair-filter"))
                         _serviceGood.SetStateRepair(iCash, 22)
                         Response.Redirect(
                             "RepairNew.aspx?cash=" & iCash.ToString() & "&hc=" & repairSknoId.ToString())
                     Case 13
-                        _serviceRepair.UpdateRepairDateIn(CurrentUser.sys_id, iCash)
+                        _serviceRepair.UpdateRepairDateIn(CurrentUser.sys_id, iCash, repairSknoId)
                         bind(Session("repair-filter"))
                         _serviceGood.SetStateRepair(iCash, 23)
                         Response.Redirect(
@@ -259,6 +260,15 @@ Namespace Kasbi
                 If Not IsDBNull(e.Item.DataItem("dolg")) Then
                     s = s & e.Item.DataItem("dolg")
                 End If
+
+                CType(e.Item.FindControl("lbledtSknoControl"), Label).Text =
+                    e.Item.DataItem("registration_number_skno").ToString() & "<br>" &
+                    e.Item.DataItem("serial_number_skno").ToString() & "<br>" &
+                    IIf(IsDBNull(e.Item.DataItem("skno_received_update_date")), "",
+                        "<strong>" & e.Item.DataItem("skno_received_update_date") & "</strong>").
+                        ToString()
+
+
                 CType(e.Item.FindControl("lblDolg"), Label).Text = s
 
                 If Not IsDBNull(e.Item.DataItem("lastTO")) Then
@@ -509,9 +519,15 @@ Namespace Kasbi
         End Function
 
         Protected Sub modalSubmit_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles modalSubmit.Click
-            SetDataSkno()
-            bind(Session("repair-filter"))
-            ClearModalForm()
+            If String.IsNullOrEmpty(txtTelephoneNotice.Text)
+                lblErrors.Text &= "Вы не ввели номер телефона оповещения"
+            ElseIf Not _validTelCode.Contains(txtTelephoneNotice.Text.Substring(0, 2))
+                lblErrors.Text &= "Введен некорректный мобильный телефон!"
+            Else
+                SetDataSkno()
+                bind(Session("repair-filter"))
+                ClearModalForm()
+            End If
         End Sub
 
         Private Sub ClearModalForm()
@@ -523,6 +539,23 @@ Namespace Kasbi
         Private Sub SetDataSkno()
             Const smsTextFormat As String =
                       "Ваше СКНО для ККМ №{0} готово, запись на установку т. +375291502047, срок 5 дней."
+            
+            If String.IsNullOrEmpty(txtRegistrationNumberSKNO.Text)
+                lblErrors.Text &= "Введите Учетный номер СКНО. "
+                Exit Sub
+            End If
+            If String.IsNullOrEmpty(txtSerialNumberSKNO.Text)
+                lblErrors.Text &= "Введите Заводской номер СКНО. "
+                Exit Sub
+            End If
+            If String.IsNullOrEmpty(txtTelephoneNotice.Text)
+                lblErrors.Text &= "Введите Телефон оповещения. "
+                Exit Sub
+            End If
+            If String.IsNullOrEmpty(modalCustomerId.Text)
+                lblErrors.Text &= "Невозможно внести данные СКНО. Не найден плательщик!"
+                Exit Sub
+            End If
 
             Dim rns As String = txtRegistrationNumberSKNO.Text
             Dim sns As String = txtSerialNumberSKNO.Text
@@ -545,9 +578,11 @@ Namespace Kasbi
                 cmd.CommandType = CommandType.StoredProcedure
                 dbSQL.Execute(cmd)
                 _serviceGood.SetStateRepair(goodId, 10)
-                _serviceCustomer.AddCustomerTelNotice(customerId, telNotice)
+                _serviceGood.SetStatusSknoReceived(goodId, 1)
+                _serviceCustomer.AddCustomerTelNotice(customerId, telNotice, 2)
                 If cbxModalSendSknoSms.Checked
-                    _serviceSms.SendOneSmsWithInsertSmsHistoryForGood(telNotice, smsText, goodId, CurrentUser.sys_id, 6)
+                    _serviceSms.SendOneSmsWithInsertSmsHistoryForGood("+375" & telNotice, smsText, goodId,
+                                                                      CurrentUser.sys_id, 6)
                 End If
             Else
                 Throw New Exception("Bad form requst. Skno data not saved!")

@@ -87,17 +87,18 @@ Namespace Service
             Return CreateCopyOfRepairFromRepairWithNewRepairHistory(Convert.ToInt32(copyCashHistoryId))
         End Function
 
-        Public Sub UpdateRepairDateIn(currentUserId As Integer, goodId As Integer)
+        Public Sub UpdateRepairDateIn(currentUserId As Integer, goodId As Integer, Optional cashHistoryId As Integer = 0)
             Dim cmd = New SqlCommand("update_repairdate_in")
             cmd.Parameters.AddWithValue("@pi_repairdate_in", Now)
             cmd.Parameters.AddWithValue("@pi_executor", currentUserId)
             cmd.Parameters.AddWithValue("@pi_good_sys_id", goodId)
+            cmd.Parameters.AddWithValue("@pi_cash_history_sys_id", cashHistoryId)
             cmd.CommandType = CommandType.StoredProcedure
             dbSQL.Execute(cmd)
         End Sub
 
-        Public Sub UpdateRepairDateIn(currentUserId As Integer, goodId As Object)
-            UpdateRepairDateIn(currentUserId, Convert.ToInt32(goodId))
+        Public Sub UpdateRepairDateIn(currentUserId As Integer, goodId As Object, Optional cashHistoryId As Object = 0)
+            UpdateRepairDateIn(currentUserId, Convert.ToInt32(goodId), Convert.ToInt32(cashHistoryId))
         End Sub
     End Class
 End Namespace

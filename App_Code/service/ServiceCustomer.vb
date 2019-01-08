@@ -11,7 +11,8 @@ Namespace Service
         Const ClearString$ = "-------"
         Dim ReadOnly _sharedDbSql As MSSqlDB = ServiceDbConnector.GetConnection()
 
-        Public Function AddCustomerTelNotice(customerSysId As Integer, tel As String) As Boolean
+        Public Function AddCustomerTelNotice(customerSysId As Integer, tel As String,
+                                             Optional customerTelNoticeType As Integer = 1) As Boolean
             If customerSysId < 1
                 Return False
             End If
@@ -19,6 +20,9 @@ Namespace Service
             cmd.CommandType = CommandType.StoredProcedure
             cmd.Parameters.AddWithValue("@pi_customer_sys_id", customerSysId)
             cmd.Parameters.AddWithValue("@pi_tel_notice", tel)
+            If customerTelNoticeType <> 1
+                cmd.Parameters.AddWithValue("@pi_customer_tel_notice_type", customerTelNoticeType)
+            End If
             Return Convert.ToBoolean(_sharedDbSql.Execute(cmd))
         End Function
 
@@ -104,7 +108,7 @@ Namespace Service
         End Sub
 
         Public Function GetInfo(ByVal cust As Integer, ByRef lstCustomers As ListBox, ByRef lblErrors As Label,
-                         Optional ByVal flag As Boolean = True) As String
+                                Optional ByVal flag As Boolean = True) As String
             Dim adapt As SqlClient.SqlDataAdapter
             Dim cmd As SqlClient.SqlCommand
             Dim ds As DataSet

@@ -604,25 +604,28 @@ Namespace Kasbi
 
                 'Summa
                 CType(e.Item.FindControl("lblCost"), Label).Text =
-                    IIf(IsDBNull(e.Item.DataItem("summa")) Or e.Item.DataItem("summa") = "", "по гарантии",
-                        CStr(e.Item.DataItem("summa")))
+                    IIf(IsDBNull(e.Item.DataItem("summa")), "по гарантии", e.Item.DataItem("summa")).ToString()
                 'ProcessControl(e.Item, "summa", "Cost", bOneOfAll, isLabelShow)
                 'исполнитель
                 'ProcessControl(e.Item, "executor", "Executor", bOneOfAll, isLabelShow)
 
                 'почемуто иногда бывает пустая строка
                 Try
-                    CType(e.Item.FindControl("lblExecutor"), Label).Text = e.Item.DataItem("executor")
+                    CType(e.Item.FindControl("lblExecutor"), Label).Text =
+                        IIf(IsDBNull(e.Item.DataItem("executor")), "", e.Item.DataItem("executor")).ToString()
                 Catch
                 End Try
 
                 'Details
-                CType(e.Item.FindControl("lblDetails"), Label).Text = e.Item.DataItem("details")
+                CType(e.Item.FindControl("lblDetails"), Label).Text =
+                    IIf(IsDBNull(e.Item.DataItem("details")), "", e.Item.DataItem("details")).ToString()
                 'ProcessControl(e.Item, "details", "Details", bOneOfAll, isLabelShow)
                 'Работы
-                CType(e.Item.FindControl("lblInfo"), Label).Text = e.Item.DataItem("info")
+                CType(e.Item.FindControl("lblInfo"), Label).Text =
+                    IIf(IsDBNull(e.Item.DataItem("info")), "", e.Item.DataItem("info")).ToString()
                 'Доп информация
-                CType(e.Item.FindControl("lblRepairInfo"), Label).Text = e.Item.DataItem("repair_info")
+                CType(e.Item.FindControl("lblRepairInfo"), Label).Text =
+                    IIf(IsDBNull(e.Item.DataItem("repair_info")), "", e.Item.DataItem("repair_info")).ToString()
 
                 'ProcessControl(e.Item, "info", "Info", bOneOfAll, isLabelShow)
                 ' Информация о плательщике ТО

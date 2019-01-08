@@ -254,7 +254,7 @@ Namespace Kasbi
                 cmd.Parameters.AddWithValue("@pi_repair_info", "")
                 cmd.Parameters.AddWithValue("@pi_executor", DBNull.Value)
                 cmd.Parameters.AddWithValue("@pi_repair_in", 1)
-                cmd.Parameters.AddWithValue("@updateUserID", CurrentUser.sys_id)
+                cmd.Parameters.AddWithValue("@updateUserID", DBNull.Value)
                 cmd.Parameters.AddWithValue("@repare_in_info", "")
                 cmd.Parameters.AddWithValue("@pi_repair_bads_info", repairBadsInfo)
                 cmd.Parameters.AddWithValue("@pi_repair_bads_sum_itog", repairBadsSumItog)

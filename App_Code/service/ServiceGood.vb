@@ -19,7 +19,7 @@ Namespace Service
         End Sub
 
         Private Sub InitDictStates()
-            _allowedStatesTransitions.Add(0, New Integer() {1, 10})
+            _allowedStatesTransitions.Add(0, New Integer() {1, 10, 11})
             _allowedStatesTransitions.Add(1, New Integer() {2})
             _allowedStatesTransitions.Add(2, New Integer() {3, 12})
             _allowedStatesTransitions.Add(3, New Integer() {0})
@@ -326,6 +326,15 @@ Namespace Service
         Public Sub SetStateRepair(goodId As Object, stateRepair As Integer,
                                   Optional ignoreValidation As Boolean = False)
             SetStateRepair(Convert.ToInt32(goodId), stateRepair, ignoreValidation)
+        End Sub
+
+        Public Sub SetStatusSknoReceived(goodId As Integer, status As Integer, Optional withUpdateDate As Boolean = True)
+            Dim cmd As SqlCommand = New SqlCommand("set_status_skno_received")
+            cmd.Parameters.AddWithValue("@pi_status_skno_received", status)
+            cmd.Parameters.AddWithValue("@pi_good_sys_id", goodId)
+            cmd.Parameters.AddWithValue("@withUpdateDate", withUpdateDate)
+            cmd.CommandType = CommandType.StoredProcedure
+            _sharedDbSql.Execute(cmd)
         End Sub
     End Class
 End Namespace
