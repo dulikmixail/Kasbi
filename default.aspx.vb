@@ -107,11 +107,11 @@ Namespace Kasbi
 
                 tbxBeginDate.Text = Date.Now.Day & "." & Date.Now.Month & "." & Date.Now.Year
                 tbxEndDate.Text = Date.Now.Day & "." & Date.Now.Month & "." & Date.Now.Year
-                load_employee()
+                LoadEmployee()
             End If
         End Sub
 
-        Sub load_employee()
+        Private Sub LoadEmployee()
             Dim cmd As SqlClient.SqlCommand
             Dim adapt As SqlClient.SqlDataAdapter
             Dim ds As DataSet

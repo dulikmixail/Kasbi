@@ -57,19 +57,8 @@ Namespace Kasbi
             End Try
             pnlDataPickerCloseDate.Visible = True
 
-            ' If CurrentUser.Item("permissions") = 4 Then
-            '   pnlDataPickerCloseDate.Visible = True
-            'Else
-            '   pnlDataPickerCloseDate.Visible = False
-            ' End If
-
-            'Dim sFilter$
             If Not IsPostBack Then
 
-                'sFilter = Session("CustomerTOFilter")
-                'If sFilter = "" Then
-                '    Session("CustomerTOFilter") = "False"
-                'End If
                 autoAktAboutRevomeFromTO.Checked = True
                 Session("CustFilter") = ""
 
@@ -80,45 +69,8 @@ Namespace Kasbi
                 rbTO_SelectedIndexChanged(Me, Nothing)
                 LoadGoodInfo()
                 LoadCustomerList()
-                'LoadSKNOInfo()
             End If
         End Sub
-
-        'Sub LoadSKNOInfo()
-        '    Dim cmd As SqlClient.SqlCommand
-        '    Dim reader As SqlClient.SqlDataReader
-
-        '    Try
-        '        cmd = New SqlClient.SqlCommand("get_last_skno_history")
-        '        cmd.Parameters.AddWithValue("@pi_good_sys_id", iCash)
-        '        cmd.CommandType = CommandType.StoredProcedure
-        '        reader = dbSQL.GetReader(cmd)
-
-        '        rbSKNO.Visible = False
-        '        btnSaveSKNOInfo.Visible = False
-        '        If Session("rule29") = 1 Or CurrentUser.is_admin Then
-        '            rbSKNO.Visible = True
-        '            btnSaveSKNOInfo.Visible = True
-        '        End If
-        '        If Not reader.Read Then
-        '            rbSKNO.SelectedValue = 0.ToString()
-        '            lblSKNOExecutor.Visible = False
-        '            lblSKNOExecutorInfo.Visible = False
-        '        Else
-        '            If reader("state_SKNO") = 1 Then
-        '                lblSupportSKNO.Text = ", установлено СКНО"
-        '            End If
-        '            rbSKNO.SelectedValue = reader("state_SKNO").ToString()
-        '            lblSKNOExecutorInfo.Text = reader("executor").ToString()
-        '        End If
-        '        reader.Close()
-        '    Catch
-        '        msg.Text = "Ошибка загрузки информации о установке СКНО!1<br>" & Err.Description
-        '        reader.Close()
-        '        Exit Sub
-        '    End Try
-
-        'End Sub
 
         Sub LoadGoodInfo()
             Dim cmd As SqlClient.SqlCommand
@@ -143,10 +95,8 @@ Namespace Kasbi
                 Dim d As Date = reader("end_date")
 
                 d.AddMonths(1)
-                'lstMonth.SelectedIndex = d.Month - 1
                 lstMonth.SelectedIndex = Now.Month - 1
-                If d.Year > 2002 And d.Year < 2019 Then
-                    'lstYear.SelectedIndex = d.Year - 2003
+                If d.Year > 2002 And d.Year <= 2020 Then
                     lstYear.SelectedIndex = Now.Year - 2003
                 Else
                     lstYear.SelectedIndex = 0
@@ -156,7 +106,7 @@ Namespace Kasbi
 
                 'lstMonthDelayIn.SelectedIndex = d.Month - 1
                 lstMonthDelayIn.SelectedIndex = Now.Month - 1
-                If d.Year > 2002 And d.Year < 2019 Then
+                If d.Year > 2002 And d.Year <= 2020 Then
                     'lstYearDelayIn.SelectedIndex = d.Year - 2003
                     lstYearDelayIn.SelectedIndex = Now.Year - 2003
                 Else

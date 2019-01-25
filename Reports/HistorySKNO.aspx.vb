@@ -5,6 +5,8 @@ Imports Microsoft.VisualBasic.FileIO.FileSystem
 Namespace Kasbi.Reports
     Partial Class HistorySKNO
         Inherits PageBase
+        Const ClearString = "-------"
+        Const NotHaveData As String = "Нет данных для экспорта!"
         Dim startdate As DateTime = New DateTime
         Dim endDate As DateTime = New DateTime
         Dim WithEvents oExcel As Microsoft.Office.Interop.Excel.Application
@@ -12,8 +14,10 @@ Namespace Kasbi.Reports
         Dim WithEvents oSheet As Worksheet
 
         Private Overloads Sub Page_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
+            ClearError()
             If Not IsPostBack Then
                 LoadData()
+                LoadEmployee()
             End If
         End Sub
 
@@ -27,18 +31,16 @@ Namespace Kasbi.Reports
         End Sub
 
         Private Function ValidateData() As Boolean
-            lblError.Visible = False
+            ClearError()
             Try
                 startdate = DateTime.Parse(tbxBeginDate.Text)
                 endDate = DateTime.Parse(tbxEndDate.Text)
                 If (startdate > endDate) Then
                     lblError.Text = "Конечная дата должна быть меньше начальной"
-                    lblError.Visible = True
                     Return False
                 End If
             Catch
                 lblError.Text = "Пожалуйста, введите корректные значения дат"
-                lblError.Visible = True
                 Return False
             End Try
             Return True
@@ -52,28 +54,61 @@ Namespace Kasbi.Reports
 
         Private Sub export_History_SKNO_to_Excel()
             Dim cmd As SqlClient.SqlCommand
-
             Dim adapt As SqlClient.SqlDataAdapter
             Dim ds As DataSet
+            Dim executorId = 0
 
+            If lstEmployee.SelectedValue <> ClearString
+                executorId = Convert.ToInt32(lstEmployee.SelectedValue)
+            End If
             startdate = DateTime.Parse(tbxBeginDate.Text + " 00:00:00")
             endDate = DateTime.Parse(tbxEndDate.Text + " 23:59:59")
 
             cmd = New SqlClient.SqlCommand("get_kkm_skno_history")
             cmd.CommandType = CommandType.StoredProcedure
             cmd.Parameters.Clear()
-            cmd.Parameters.AddWithValue("@date_start", startdate)
-            cmd.Parameters.AddWithValue("@date_end", endDate)
+            cmd.Parameters.AddWithValue("@pi_date_start", startdate)
+            cmd.Parameters.AddWithValue("@pi_date_end", endDate)
+            cmd.Parameters.AddWithValue("@pi_executor", executorId)
 
             adapt = dbSQL.GetDataAdapter(cmd)
             ds = New DataSet
             adapt.Fill(ds)
 
-            createAndSendFileHistorySKNO(ds, "kkm_skno_history.xlsx")
+            CreateAndSendFileHistorySKNO(ds, "kkm_skno_history.xlsx")
         End Sub
 
-        Private Sub createAndSendFileHistorySKNO(ds As DataSet, fileName As String)
-            Dim oExcel As Microsoft.Office.Interop.Excel.Application
+        Private Sub LoadEmployee()
+            Dim cmd As SqlClient.SqlCommand
+            Dim adapt As SqlClient.SqlDataAdapter
+            Dim ds As DataSet
+
+            cmd = New SqlClient.SqlCommand("get_employee_by_role_id")
+            cmd.CommandType = CommandType.StoredProcedure
+            cmd.Parameters.AddWithValue("@pi_role_id", 0)
+            Try
+                adapt = dbSQL.GetDataAdapter(cmd)
+                ds = New DataSet
+                adapt.Fill(ds)
+                ds.Tables(0).DefaultView.Sort = "name"
+                lstEmployee.DataSource = ds.Tables(0).DefaultView
+                lstEmployee.DataTextField = "name"
+                lstEmployee.DataValueField = "sys_id"
+                lstEmployee.DataBind()
+                lstEmployee.Items.Insert(0, New ListItem(ClearString, ClearString))
+            Catch
+            End Try
+        End Sub
+
+        Private Sub ClearError()
+            lblError.Text = "&nbsp;"
+        End Sub
+        Private Sub ShowNotHaveData()
+            lblError.Text = NotHaveData
+        End Sub
+
+        Private Sub CreateAndSendFileHistorySkno(ds As DataSet, fileName As String)
+            Dim oExcel As Application
             Dim oBook As Workbook
             Dim oSheet As Worksheet
             Dim docPath, savePath As String
@@ -81,8 +116,14 @@ Namespace Kasbi.Reports
             Dim drs() As DataRow
             Dim iFirstTableRow = 2
 
+            drs = ds.Tables(0).Select()
+            If drs.Count = 0
+                ShowNotHaveData()
+                Exit Sub
+            End If
+
             docPath = Server.MapPath("~") & "Templates\" & fileName
-            savePath = Server.MapPath("~") & "Docs\TO\" & Session("User").sys_id & "\" & fileName
+            savePath = Server.MapPath("~") & "Docs\TO\" & Session("User").sys_id.ToString() & "\" & fileName
             CopyFile(docPath, savePath, overwrite := True)
 
             oExcel = New ApplicationClass()
@@ -90,13 +131,12 @@ Namespace Kasbi.Reports
             oBook = oExcel.Workbooks.Open(savePath)
             oSheet = oBook.ActiveSheet
 
-            drs = ds.Tables(0).Select()
-
             For i As Integer = 0 To drs.Length - 1
                 oSheet.Cells(iFirstTableRow + i, 1).Value = i + 1
-                oSheet.Cells(iFirstTableRow + i, 2).Value = drs(i).Item(0)
-                oSheet.Cells(iFirstTableRow + i, 3).Value = drs(i).Item(1)
-                oSheet.Cells(iFirstTableRow + i, 5).Value = drs(i).Item(2)
+                oSheet.Cells(iFirstTableRow + i, 2).Value = drs(i).Item("name")
+                oSheet.Cells(iFirstTableRow + i, 3).Value = drs(i).Item("address")
+                oSheet.Cells(iFirstTableRow + i, 4).Value = drs(i).Item("registration_number_skno")
+                oSheet.Cells(iFirstTableRow + i, 5).Value = drs(i).Item("date_update")
             Next
 
             oSheet.Range("A" & iFirstTableRow & ":E" & drs.Length + 1).Borders.LineStyle = 1
