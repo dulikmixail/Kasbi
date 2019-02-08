@@ -5,7 +5,6 @@ Imports Service
 
 Namespace Jobs
     Public Class SmsSender
-        Inherits PageBase
         Implements IJob
 
         Dim ReadOnly _sharedDbSql As MSSqlDB = ServiceDbConnector.GetConnection()
@@ -48,10 +47,8 @@ Namespace Jobs
             For Each dr As DataRow In ds.Tables(0).Rows
                 Dim sknoReceivedUpdateDate = Date.Parse(dr("skno_received_update_date").ToString())
                 If sknoReceivedUpdateDate.AddDays(DaysBeforeSendingSknoSms) < Now() And Not IsDBNull(dr("tel_notice"))
-                    If Convert.ToInt32(dr("count_sms_with_type_4")) = 0
                         longTimeSkno.Add(Convert.ToInt32(dr("good_sys_id")),
                                          New List(Of String) From {dr("tel_notice"), Trim(dr("num_cashregister").ToString())})
-                    End If
                 End If
             Next
             Return longTimeSkno

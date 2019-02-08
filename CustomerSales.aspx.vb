@@ -420,13 +420,6 @@ Namespace Kasbi
             Session("CurrentPage") = "CustomerSales"
             Response.Redirect(GetAbsoluteUrl("~/CustomerSales.aspx?" & cust))
         End Sub
-
-        'Private Sub btnCreateDocuments_Click(ByVal sender As System.Object, ByVal e As System.EventArgs)
-        '    Dim doc_num() As Integer = New Integer(5) {6, 7, 4, 8, 9, 18}
-        '    Dim docs As New Kasbi.Migrated_Documents
-        '    docs.ProcessDocuments(doc_num, cust, iSale, 1)
-        '    docs = Nothing
-        'End Sub
     End Class
 
 End Namespace

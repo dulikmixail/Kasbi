@@ -2,6 +2,7 @@ Imports System.IO
 Imports System.Windows.Forms
 Imports Microsoft.Office.Interop.Excel
 Imports Microsoft.VisualBasic.FileIO.FileSystem
+Imports Models
 Imports Models.Sms.Sending.Request
 Imports Models.Sms.Sending.Response
 Imports Models.Sms.Statusing.Response
@@ -24,6 +25,8 @@ Namespace Kasbi
         Protected WithEvents repGoodTypes As System.Web.UI.WebControls.Repeater
 
         Private ReadOnly _serviceExport As ServiceExport = New ServiceExport()
+        Private ReadOnly _serviceSms As ServiceSms = New ServiceSms()
+        Private ReadOnly _emailSender As EmailSender = New EmailSender()
 
         Dim startdate
         Dim enddate
@@ -623,14 +626,15 @@ Namespace Kasbi
             'Catch
             ' End Try
         End Sub
+
         Private Function ParseCashHistoryRow(row As String) As ArrayList
             Dim matchCollection As MatchCollection
             Dim cashHistories As ArrayList = New ArrayList()
 
             matchCollection = Regex.Matches(row, "(<cash_history sys_id="")([0-9]+?)("")")
-                    For Each match As Match In matchCollection
-                        cashHistories.Add(match.Groups.Item(2).Value)
-                    Next
+            For Each match As Match In matchCollection
+                cashHistories.Add(match.Groups.Item(2).Value)
+            Next
             Return cashHistories
         End Function
 
@@ -1056,27 +1060,14 @@ Namespace Kasbi
             msg.Text = NotHaveData
         End Sub
 
-        'Protected Sub testSms_OnClick(sender As Object, e As EventArgs)
-        '    Dim serviceSms As ServiceSms = New ServiceSms()
-        '    Dim result As SmsSendingResponse = serviceSms.SendSameSms(New List(Of String) From {"375294010101", "375294010102"}, "Тестовое СМС 1")
-        '    Dim smsStatusing As SmsStatusingResponse = serviceSms.GetSmsStatusingBySmsSendingResponse(result)
-        '    System.Diagnostics.Debug.WriteLine(JsonConvert.SerializeObject(smsStatusing))
-        '    'Dim result1 As String = serviceSms.GetJsonManySmsWithSameText(New List(Of String) From{"375297561519","375296936700"},"Тестовое СМС 2", DateTime.Now.AddDays(1))
-        '    'Dim result2 As String = serviceSms.GetJsonManySmsWithDifferentText(New Dictionary(Of String, String) From 
-        '    '                                                                      {
-        '    '                                                                      {"375297561519", "Текст 1"},
-        '    '                                                                      {"375296936700", "Текст 2"}
-        '    '                                                                      }
-        '    '                                                                   )
-        '    'Dim result3 As String = serviceSms.GetJsonManySmsWithDifferentText(New Dictionary(Of String, String) From 
-        '    '                                                                      {
-        '    '                                                                      {"375297561519", "Текст 3"},
-        '    '                                                                      {"375296936700", "Текст 4"}
-        '    '                                                                      },
-        '    '                                                                   DateTime.Now.AddDays(5)
-        '    '                                                                   )
-
-        '    Dim stop1 As Boolean = True
+        'Protected Sub Unnamed2_Click(sender As Object, e As EventArgs)
+        '    Dim sms1 = New SmsModel("297561519", "Тестовый текст", 79, 1, customerId := 100)
+        '    Dim sms2 = New SmsModel("296936700", "Тестовый текст 2", 79, 1, customerId := 101)
+        '    _serviceSms.SendManySmsWithInsertSmsHistory(New SmsModel() {sms1, sms2})
         'End Sub
+
+        Protected Sub TestSendMail(sender As Object, e As EventArgs)
+            _emailSender.SendAktDillers()
+        End Sub
     End Class
 End Namespace

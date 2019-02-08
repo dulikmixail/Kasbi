@@ -45,6 +45,7 @@ Namespace Kasbi
         Private ReadOnly _serviceSms As ServiceSms = New ServiceSms()
         Private ReadOnly _serviceExport As ServiceExport = New ServiceExport()
         Private ReadOnly _serviceGood As ServiceGood = New ServiceGood()
+        Private ReadOnly _serviceEmail As ServiceEmail = New ServiceEmail()
 
         Private Overloads Sub Page_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
             If CurrentUser.is_admin
@@ -52,7 +53,7 @@ Namespace Kasbi
             Else
                 cbxEtitSmsSend.Visible = False
             End If
-            
+
             Try
                 iCash = Request.Params("cash")
                 iCashHistory = Request.Params("hc")
@@ -248,16 +249,15 @@ Namespace Kasbi
 
             Dim smsText As String
 
-                smsText = "Ваш ККМ " & Trim(lblCash.Text) &
-                          " готов." &
-                          IIf(isGarantia And isGarantia1, " Гарантийный ремонт.",
-                              " Сумма ремонта " & repairTotalSumWithNds & "р.").ToString() &
-                          IIf(dolg > 0, " Общий долг: " & dolg & "р.", "").ToString()
+            smsText = "Ваш ККМ " & Trim(lblCash.Text) &
+                      " готов." &
+                      IIf(isGarantia And isGarantia1, " Гарантийный ремонт.",
+                          " Сумма ремонта " & repairTotalSumWithNds & "р.").ToString() &
+                      IIf(dolg > 0, " Общий долг: " & dolg & "р.", "").ToString()
 
             txtSmsText.Text = smsText
             lblSmsText.Text = txtSmsText.Text
         End Sub
-
 
         Private Sub LoadGoodInfo()
             Dim cmd As SqlClient.SqlCommand
@@ -1280,6 +1280,8 @@ Namespace Kasbi
                                                                              CurrentUser.sys_id,
                                                                              2)
                 End If
+
+                _serviceEmail.AddAktForSend(iCashHistory, CurrentUser.sys_id)
             Catch
                 msgNew.Text = "Ошибка сохранения информации о ремонте!<br>" & Err.Description
                 Exit Sub
@@ -1287,7 +1289,7 @@ Namespace Kasbi
             Response.Redirect(GetAbsoluteUrl("~/Repair.aspx?" & iCash))
         End Sub
 
-        Private Sub ResetSknoReceived(goodId As Object) 
+        Private Sub ResetSknoReceived(goodId As Object)
             dbSQL.Execute("UPDATE good SET skno_received = NULL WHERE good_sys_id = " & Convert.ToInt32(goodId))
         End Sub
 

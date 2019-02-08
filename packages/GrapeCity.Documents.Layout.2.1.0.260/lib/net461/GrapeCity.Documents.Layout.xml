@@ -1,0 +1,710 @@
+<?xml version="1.0"?>
+<doc>
+    <assembly>
+        <name>GrapeCity.Documents.Layout</name>
+    </assembly>
+    <members>
+        <member name="M:GrapeCity.Documents.Layout.ExportToPdfLicense.DrawLicenseWarning(GrapeCity.Documents.Pdf.GcPdfGraphics,System.String)">
+            <summary>
+            Draws licensed warning.
+            </summary>
+            <param name="graphics"></param>
+            <param name="text"></param>
+        </member>
+        <member name="T:GrapeCity.Documents.Layout.BaseFragment`1">
+            <summary>
+            Base class for layout fragments. It provides absolute coordinates for elements;
+            </summary>
+        </member>
+        <member name="P:GrapeCity.Documents.Layout.BaseFragment`1.Bounds">
+            <summary>
+            Element's bounds in points.
+            </summary>
+        </member>
+        <member name="P:GrapeCity.Documents.Layout.BaseFragment`1.BoundsInDips">
+            <summary>
+            Element's bounds in graphic units.
+            </summary>
+        </member>
+        <member name="P:GrapeCity.Documents.Layout.BaseFragment`1.OuterBounds">
+            <summary>
+            Element's bounds in points.
+            </summary>
+        </member>
+        <member name="P:GrapeCity.Documents.Layout.BaseFragment`1.OuterBoundsInDips">
+            <summary>
+            Element's bounds in graphic units.
+            </summary>
+        </member>
+        <member name="P:GrapeCity.Documents.Layout.BaseFragment`1.SourceElement">
+            <summary>
+            Source Word element
+            </summary>
+        </member>
+        <member name="T:GrapeCity.Documents.Layout.Fragment">
+            <summary>
+            Base class for layout fragments. It provides absolute coordinates for elements;
+            </summary>
+        </member>
+        <member name="T:GrapeCity.Documents.Layout.BorderFragment">
+            <summary>
+            Base class for border fragments. It provides absolute coordinates for elements;
+            </summary>
+        </member>
+        <member name="T:GrapeCity.Documents.Layout.BorderLineFragment">
+            <summary>
+            Base class for border fragments. It provides absolute coordinates for elements;
+            </summary>
+        </member>
+        <member name="T:GrapeCity.Documents.Layout.TextFragment">
+            <summary>
+            For internal use.
+            </summary>
+        </member>
+        <member name="P:GrapeCity.Documents.Layout.TextFragment.Text">
+            <summary>
+            For internal use.
+            </summary>
+        </member>
+        <member name="P:GrapeCity.Documents.Layout.TextFragment.GlyphRun">
+            <summary>
+            For internal use.
+            </summary>
+        </member>
+        <member name="T:GrapeCity.Documents.Layout.CommentTextFragment">
+            <summary>
+            For internal use.
+            </summary>
+        </member>
+        <member name="P:GrapeCity.Documents.Layout.CommentTextFragment.Id">
+            <summary>
+            For internal use.
+            </summary>
+        </member>
+        <member name="T:GrapeCity.Documents.Layout.BookmarkFragment">
+            <summary>
+            For internal use.
+            </summary>
+        </member>
+        <member name="P:GrapeCity.Documents.Layout.BookmarkFragment.Name">
+            <summary>
+            For internal use.
+            </summary>
+        </member>
+        <member name="T:GrapeCity.Documents.Layout.HyperlinkFragment">
+            <summary>
+            For internal use.
+            </summary>
+        </member>
+        <member name="P:GrapeCity.Documents.Layout.HyperlinkFragment.Url">
+            <summary>
+            For internal use.
+            </summary>
+        </member>
+        <member name="P:GrapeCity.Documents.Layout.HyperlinkFragment.IsBookmark">
+            <summary>
+            For internal use.
+            </summary>
+        </member>
+        <member name="T:GrapeCity.Documents.Layout.ImageFragment">
+            <summary>
+            For internal use.
+            </summary>
+        </member>
+        <member name="P:GrapeCity.Documents.Layout.ImageFragment.Transform">
+            <summary>
+            For internal use.
+            </summary>
+        </member>
+        <member name="P:GrapeCity.Documents.Layout.ImageFragment.OriginalBounds">
+            <summary>
+            For internal use.
+            </summary>
+        </member>
+        <member name="P:GrapeCity.Documents.Layout.ImageFragment.OriginalBoundsInDips">
+            <summary>
+            For internal use.
+            </summary>
+        </member>
+        <member name="T:GrapeCity.Documents.Layout.Container`1">
+            <summary>
+            For internal use.
+            </summary>
+            <typeparam name="T"></typeparam>
+        </member>
+        <member name="P:GrapeCity.Documents.Layout.Container`1.Items">
+            <summary>
+            For internal use.
+            </summary>
+        </member>
+        <member name="T:GrapeCity.Documents.Layout.LineFragment">
+            <summary>
+            For internal use.
+            </summary>
+        </member>
+        <member name="T:GrapeCity.Documents.Layout.ParagraphFragment">
+            <summary>
+            For internal use.
+            </summary>
+        </member>
+        <member name="T:GrapeCity.Documents.Layout.ColumnFragment">
+            <summary>
+            For internal use.
+            </summary>
+        </member>
+        <member name="T:GrapeCity.Documents.Layout.CommentFragment">
+            <summary>
+            For internal use.
+            </summary>
+        </member>
+        <member name="T:GrapeCity.Documents.Layout.CommentsFragment">
+            <summary>
+            For internal use.
+            </summary>
+        </member>
+        <member name="T:GrapeCity.Documents.Layout.TableCellFragment">
+            <summary>
+            For internal use.
+            </summary>
+        </member>
+        <member name="T:GrapeCity.Documents.Layout.TableRowFragment">
+            <summary>
+            For internal use.
+            </summary>
+        </member>
+        <member name="T:GrapeCity.Documents.Layout.TableColumnFragment">
+            <summary>
+            For internal use.
+            </summary>
+        </member>
+        <member name="T:GrapeCity.Documents.Layout.TableFragment">
+            <summary>
+            For internal use.
+            </summary>
+        </member>
+        <member name="T:GrapeCity.Documents.Layout.PageFragment">
+            <summary>
+            For internal use.
+            </summary>
+        </member>
+        <member name="M:GrapeCity.Documents.Layout.PageFragment.GetItemsByLayers">
+            <summary>
+            For internal use.
+            </summary>
+            <returns></returns>
+        </member>
+        <member name="T:GrapeCity.Documents.Layout.SectionFragment">
+            <summary>
+            For internal use.
+            </summary>
+        </member>
+        <member name="P:GrapeCity.Documents.Layout.SectionFragment.Columns">
+            <summary>
+            For internal use.
+            </summary>
+        </member>
+        <member name="P:GrapeCity.Documents.Layout.SectionFragment.Size">
+            <summary>
+            For internal use.
+            </summary>
+        </member>
+        <member name="T:GrapeCity.Documents.Layout.Fonts">
+            <summary>
+            For internal use.
+            </summary>
+        </member>
+        <member name="M:GrapeCity.Documents.Layout.Utils.Rect.GetInDips(System.Drawing.RectangleF)">
+            <summary>
+            For internal use.
+            </summary>
+            <param name="bounds"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GrapeCity.Documents.Layout.Utils.Point.GetInDips(System.Drawing.PointF)">
+            <summary>
+            For internal use.
+            </summary>
+            <param name="point"></param>
+            <returns></returns>
+        </member>
+        <member name="M:GrapeCity.Documents.Layout.Utils.GetDips(System.Single)">
+            <summary>
+            For internal use.
+            </summary>
+            <param name="value"></param>
+            <returns></returns>
+        </member>
+        <member name="T:GrapeCity.Documents.Layout.LayoutColumns">
+            <summary>
+            Class to paginate GrapeCity.Documents.Word.LayoutColumns and to calculate absolute coordinates for all its objects
+            </summary>
+        </member>
+        <member name="P:GrapeCity.Documents.Layout.LayoutColumns.Columns">
+            <summary>
+            Gets layout columns after paginating
+            </summary>
+        </member>
+        <member name="P:GrapeCity.Documents.Layout.LayoutColumns.Parent">
+            <summary>
+            Gets parent
+            </summary>
+        </member>
+        <member name="M:GrapeCity.Documents.Layout.LayoutColumns.Add(GrapeCity.Documents.Word.Paragraph)">
+            <summary>
+            Tries to add a <see cref="T:GrapeCity.Documents.Word.Paragraph"/> to the <see cref="T:GrapeCity.Documents.Layout.LayoutColumns"/>.
+            </summary>
+            <param name="paragraph">The paragraph to be added to the end of the <see cref="T:GrapeCity.Documents.Layout.LayoutColumns"/>.</param>
+            <returns>true if the whole paragraph was added successfully; otherwise, false.</returns>
+        </member>
+        <member name="M:GrapeCity.Documents.Layout.LayoutColumns.Add(GrapeCity.Documents.Word.Table)">
+            <summary>
+            Tries to add a <see cref="T:GrapeCity.Documents.Word.Table"/> to the <see cref="T:GrapeCity.Documents.Layout.LayoutColumns"/>.
+            </summary>
+            <param name="table">The table to be added to the end of the <see cref="T:GrapeCity.Documents.Layout.LayoutColumns"/>.</param>
+            <returns>true if the whole table was added successfully; otherwise, false.</returns>
+        </member>
+        <member name="M:GrapeCity.Documents.Layout.LayoutColumns.SplitParagraph(System.Drawing.RectangleF)">
+            <summary>
+            Splits a <see cref="T:GrapeCity.Documents.Word.Paragraph"/>, adds the first paragraph part to the <see cref="T:GrapeCity.Documents.Layout.LayoutColumn"/> and returns the second part.
+            </summary>
+            <returns><see cref="T:GrapeCity.Documents.Layout.LayoutParagraph"/> with the second part of the splitted paragraph.</returns>
+        </member>
+        <member name="M:GrapeCity.Documents.Layout.LayoutColumns.SplitTable(System.Drawing.RectangleF)">
+            <summary>
+            Splits a <see cref="T:GrapeCity.Documents.Word.Table"/>, adds the first table part to the <see cref="T:GrapeCity.Documents.Layout.LayoutColumn"/> and returns the second part.
+            </summary>
+            <returns><see cref="T:GrapeCity.Documents.Layout.LayoutTable"/> with the second part of the splitted table.</returns>
+        </member>
+        <member name="T:GrapeCity.Documents.Layout.LayoutColumn">
+            <summary>
+            Class to paginate GrapeCity.Documents.Word.LayoutColumn and to calculate absolute coordinates for all its objects
+            </summary>
+        </member>
+        <member name="P:GrapeCity.Documents.Layout.LayoutColumn.Column">
+            <summary>
+            Gets layout column after paginating
+            </summary>
+        </member>
+        <member name="P:GrapeCity.Documents.Layout.LayoutColumn.Parent">
+            <summary>
+            Gets parent
+            </summary>
+        </member>
+        <member name="P:GrapeCity.Documents.Layout.LayoutColumn.Break">
+            <summary>
+            Gets whether the column contains a break
+            </summary>
+        </member>
+        <member name="M:GrapeCity.Documents.Layout.LayoutColumn.Add(GrapeCity.Documents.Layout.LayoutParagraph)">
+            <summary>
+            Adds a <see cref="T:GrapeCity.Documents.Layout.LayoutParagraph"/> to the <see cref="T:GrapeCity.Documents.Layout.LayoutColumn"/>.
+            </summary>
+            <param name="paragraph">The paragraph to be added to the end of the <see cref="T:GrapeCity.Documents.Layout.LayoutColumn"/>.</param>
+        </member>
+        <member name="M:GrapeCity.Documents.Layout.LayoutColumn.Add(GrapeCity.Documents.Layout.LayoutTable)">
+            <summary>
+            Adds a <see cref="T:GrapeCity.Documents.Layout.LayoutTable"/> to the <see cref="T:GrapeCity.Documents.Layout.LayoutColumn"/>.
+            </summary>
+            <param name="table">The table to be added to the end of the <see cref="T:GrapeCity.Documents.Layout.LayoutColumn"/>.</param>
+        </member>
+        <member name="M:GrapeCity.Documents.Layout.LayoutColumn.Add(GrapeCity.Documents.Word.Paragraph)">
+            <summary>
+            Tries to add a <see cref="T:GrapeCity.Documents.Word.Paragraph"/> to the <see cref="T:GrapeCity.Documents.Layout.LayoutColumn"/>.
+            </summary>
+            <param name="paragraph">The paragraph to be added to the end of the <see cref="T:GrapeCity.Documents.Layout.LayoutColumn"/>.</param>
+            <returns>true if the whole paragraph was added successfully; otherwise, false.</returns>
+        </member>
+        <member name="M:GrapeCity.Documents.Layout.LayoutColumn.Add(GrapeCity.Documents.Word.Paragraph,System.Drawing.Color)">
+            <summary>
+            Tries to add a <see cref="T:GrapeCity.Documents.Word.Paragraph"/> to the <see cref="T:GrapeCity.Documents.Layout.LayoutColumn"/>.
+            </summary>
+            <param name="paragraph">The paragraph to be added to the end of the <see cref="T:GrapeCity.Documents.Layout.LayoutColumn"/>.</param>
+            <param name="backColor">Optional background color (outside paragraph) which can be used to calculate font auto color.</param>
+            <returns>true if the whole paragraph was added successfully; otherwise, false.</returns>
+        </member>
+        <member name="M:GrapeCity.Documents.Layout.LayoutColumn.Add(GrapeCity.Documents.Word.Table)">
+            <summary>
+            Tries to add a <see cref="T:GrapeCity.Documents.Word.Table"/> to the <see cref="T:GrapeCity.Documents.Layout.LayoutColumn"/>.
+            </summary>
+            <param name="table">The table to be added to the end of the <see cref="T:GrapeCity.Documents.Layout.LayoutColumn"/>.</param>
+            <returns>true if the whole table was added successfully; otherwise, false.</returns>
+        </member>
+        <member name="M:GrapeCity.Documents.Layout.LayoutColumn.SplitParagraph(System.Drawing.RectangleF)">
+            <summary>
+            Splits a <see cref="T:GrapeCity.Documents.Word.Paragraph"/>, adds the first paragraph part to the <see cref="T:GrapeCity.Documents.Layout.LayoutColumn"/> and returns the second part.
+            </summary>
+            <returns><see cref="T:GrapeCity.Documents.Layout.LayoutParagraph"/> with the second part of the splitted paragraph.</returns>
+        </member>
+        <member name="M:GrapeCity.Documents.Layout.LayoutColumn.SplitTable(System.Drawing.RectangleF)">
+            <summary>
+            Splits a <see cref="T:GrapeCity.Documents.Word.Table"/>, adds the first table part to the <see cref="T:GrapeCity.Documents.Layout.LayoutColumn"/> and returns the second part.
+            </summary>
+            <returns><see cref="T:GrapeCity.Documents.Layout.LayoutTable"/> with the second part of the splitted table.</returns>
+        </member>
+        <member name="T:GrapeCity.Documents.Layout.LayoutComments">
+            <summary>
+            Class to paginate GrapeCity.Documents.Word.LayoutColumns and to calculate absolute coordinates for all its objects
+            </summary>
+        </member>
+        <member name="P:GrapeCity.Documents.Layout.LayoutComments.Comments">
+            <summary>
+            Gets layout columns after paginating
+            </summary>
+        </member>
+        <member name="M:GrapeCity.Documents.Layout.LayoutComments.Add(GrapeCity.Documents.Word.Comment)">
+            <summary>
+            Creates a new <see cref="T:GrapeCity.Documents.Layout.LayoutComment"/> and adds it to the current collection the <see cref="T:GrapeCity.Documents.Layout.LayoutComments"/>.
+            </summary>
+            <returns>A new <see cref="T:GrapeCity.Documents.Layout.LayoutComment"/>.</returns>
+        </member>
+        <member name="T:GrapeCity.Documents.Layout.LayoutComment">
+            <summary>
+            Class to paginate GrapeCity.Documents.Word.Comment and to calculate absolute coordinates for all its objects
+            </summary>
+        </member>
+        <member name="P:GrapeCity.Documents.Layout.LayoutComment.Fragment">
+            <summary>
+            Gets layout column after paginating
+            </summary>
+        </member>
+        <member name="M:GrapeCity.Documents.Layout.LayoutComment.Add(GrapeCity.Documents.Word.Paragraph)">
+            <summary>
+            Tries to add a <see cref="T:GrapeCity.Documents.Word.Paragraph"/> to the <see cref="T:GrapeCity.Documents.Layout.LayoutColumn"/>.
+            </summary>
+            <param name="paragraph">The paragraph to be added to the end of the <see cref="T:GrapeCity.Documents.Layout.LayoutColumn"/>.</param>
+            <returns>true if the whole paragraph was added successfully; otherwise, false.</returns>
+        </member>
+        <member name="M:GrapeCity.Documents.Layout.LayoutComment.Add(GrapeCity.Documents.Word.Table)">
+            <summary>
+            Tries to add a <see cref="T:GrapeCity.Documents.Word.Table"/> to the <see cref="T:GrapeCity.Documents.Layout.LayoutColumn"/>.
+            </summary>
+            <param name="table">The table to be added to the end of the <see cref="T:GrapeCity.Documents.Layout.LayoutColumn"/>.</param>
+            <returns>true if the whole table was added successfully; otherwise, false.</returns>
+        </member>
+        <member name="T:GrapeCity.Documents.Layout.LayoutDocument">
+            <summary>
+            Class to paginate <see cref="T:GrapeCity.Documents.Word.GcWordDocument"/> and to calculate absolute coordinates for all objects: paragraphs, images, etc.
+            </summary>
+        </member>
+        <member name="M:GrapeCity.Documents.Layout.LayoutDocument.#ctor(GrapeCity.Documents.Word.GcWordDocument,GrapeCity.Documents.Text.FontCollection,GrapeCity.Documents.Layout.Options)">
+            <summary>
+            For internal use.
+            </summary>
+            <param name="sourceDoc"></param>
+            <param name="fontCollection">The <see cref="P:GrapeCity.Documents.Layout.LayoutDocument.FontCollection"/> instance. In Windows environment this can be null and system fonts will be used, otherwise it must be set up and specified.</param>
+            <param name="options"></param>
+        </member>
+        <member name="M:GrapeCity.Documents.Layout.LayoutDocument.FindBookmark(System.String,System.Int32@)">
+            <summary>
+            Gets all sections from the Word document. It is useful for hierarchal document navigation.
+            </summary>
+        </member>
+        <member name="P:GrapeCity.Documents.Layout.LayoutDocument.Sections">
+            <summary>
+            Gets all sections from the Word document. It is useful for hierarchal document navigation.
+            </summary>
+        </member>
+        <member name="P:GrapeCity.Documents.Layout.LayoutDocument.Pages">
+            <summary>
+            Gets all pages from all sections. It is useful for sequential page navigation.
+            </summary>
+        </member>
+        <member name="T:GrapeCity.Documents.Layout.Options">
+            <summary>
+            For internal use.
+            </summary>
+        </member>
+        <member name="T:GrapeCity.Documents.Layout.LayoutEngine">
+            <summary>
+            For internal use.
+            </summary>
+        </member>
+        <member name="M:GrapeCity.Documents.Layout.LayoutEngine.Layout(GrapeCity.Documents.Word.GcWordDocument,GrapeCity.Documents.Text.FontCollection,GrapeCity.Documents.Layout.Options)">
+            <summary>
+            Converts <see cref="T:GrapeCity.Documents.Word.GcWordDocument"/> to <see cref="T:GrapeCity.Documents.Layout.LayoutDocument"/>
+            </summary>
+            <param name="doc">Word document to be converted.</param>
+            <param name="fontCollection">The <see cref="T:GrapeCity.Documents.Text.FontCollection"/> instance. In Windows environment this can be null and system fonts will be used, otherwise it must be set up and specified.</param>
+            <param name="options"></param>
+            <returns>Paginated <see cref="T:GrapeCity.Documents.Layout.LayoutDocument"/></returns>
+        </member>
+        <member name="P:GrapeCity.Documents.Layout.LayoutPageHeaderFooter.Column">
+            <summary>
+            Gets layout column after paginating
+            </summary>
+        </member>
+        <member name="P:GrapeCity.Documents.Layout.LayoutPageHeaderFooter.Fragment">
+            <summary>
+            Gets layout column after paginating
+            </summary>
+        </member>
+        <member name="M:GrapeCity.Documents.Layout.LayoutPageHeaderFooter.Add(GrapeCity.Documents.Word.Paragraph)">
+            <summary>
+            Tries to add a <see cref="T:GrapeCity.Documents.Word.Paragraph"/> to the <see cref="T:GrapeCity.Documents.Layout.LayoutPageHeaderFooter"/>.
+            </summary>
+            <param name="paragraph">The paragraph to be added to the <see cref="T:GrapeCity.Documents.Layout.LayoutPageHeaderFooter"/>.</param>
+            <returns>true if the whole paragraph was added successfully; otherwise, false.</returns>
+        </member>
+        <member name="T:GrapeCity.Documents.Layout.LayoutPages">
+            <summary>
+            Class to paginate GrapeCity.Documents.Word.LayoutPages and to calculate absolute coordinates for all its objects
+            </summary>
+        </member>
+        <member name="P:GrapeCity.Documents.Layout.LayoutPages.Pages">
+            <summary>
+            Gets layout pages after paginating
+            </summary>
+        </member>
+        <member name="M:GrapeCity.Documents.Layout.LayoutPages.Add(GrapeCity.Documents.Word.Paragraph)">
+            <summary>
+            Adds a <see cref="T:GrapeCity.Documents.Word.Paragraph"/> to the <see cref="T:GrapeCity.Documents.Layout.LayoutPages"/>.
+            </summary>
+            <param name="paragraph">The paragraph to be added to the end of the <see cref="T:GrapeCity.Documents.Layout.LayoutPages"/>.</param>
+        </member>
+        <member name="M:GrapeCity.Documents.Layout.LayoutPages.Add(GrapeCity.Documents.Word.Table)">
+            <summary>
+            Adds a <see cref="T:GrapeCity.Documents.Word.Table"/> to the <see cref="T:GrapeCity.Documents.Layout.LayoutPages"/>.
+            </summary>
+            <param name="table">The table to be added to the end of the <see cref="T:GrapeCity.Documents.Layout.LayoutPages"/>.</param>
+        </member>
+        <member name="T:GrapeCity.Documents.Layout.LayoutPage">
+            <summary>
+            Class to paginate GrapeCity.Documents.Word.LayoutPage and to calculate absolute coordinates for all its objects
+            </summary>
+        </member>
+        <member name="P:GrapeCity.Documents.Layout.LayoutPage.Parent">
+            <summary>
+            Gets parent
+            </summary>
+        </member>
+        <member name="P:GrapeCity.Documents.Layout.LayoutPage.Page">
+            <summary>
+            Gets layout page after paginating
+            </summary>
+        </member>
+        <member name="P:GrapeCity.Documents.Layout.LayoutPage.Header">
+            <summary>
+            Gets layout page after paginating
+            </summary>
+        </member>
+        <member name="P:GrapeCity.Documents.Layout.LayoutPage.Footer">
+            <summary>
+            Gets layout page after paginating
+            </summary>
+        </member>
+        <member name="M:GrapeCity.Documents.Layout.LayoutPage.SplitParagraph">
+            <summary>
+            Splits a <see cref="T:GrapeCity.Documents.Word.Paragraph"/>, adds the first paragraph part to the <see cref="T:GrapeCity.Documents.Layout.LayoutPage"/> and returns the second part.
+            </summary>
+            <returns><see cref="T:GrapeCity.Documents.Layout.LayoutParagraph"/> with the second part of the splitted paragraph.</returns>
+        </member>
+        <member name="M:GrapeCity.Documents.Layout.LayoutPage.SplitTable">
+            <summary>
+            Splits a <see cref="T:GrapeCity.Documents.Word.Table"/>, adds the first table part to the <see cref="T:GrapeCity.Documents.Layout.LayoutPage"/> and returns the second part.
+            </summary>
+            <returns><see cref="T:GrapeCity.Documents.Layout.LayoutTable"/> with the second part of the splitted table.</returns>
+        </member>
+        <member name="M:GrapeCity.Documents.Layout.LayoutPage.Add(GrapeCity.Documents.Word.Paragraph)">
+            <summary>
+            Tries to add a <see cref="T:GrapeCity.Documents.Word.Paragraph"/> to the <see cref="T:GrapeCity.Documents.Layout.LayoutPage"/>.
+            </summary>
+            <param name="paragraph">The paragraph to be added to the <see cref="T:GrapeCity.Documents.Layout.LayoutPage"/>.</param>
+            <returns>true if the whole paragraph was added successfully; otherwise, false.</returns>
+        </member>
+        <member name="M:GrapeCity.Documents.Layout.LayoutPage.Add(GrapeCity.Documents.Word.Table)">
+            <summary>
+            Tries to add a <see cref="T:GrapeCity.Documents.Word.Table"/> to the <see cref="T:GrapeCity.Documents.Layout.LayoutPage"/>.
+            </summary>
+            <param name="table">The table to be added to the <see cref="T:GrapeCity.Documents.Layout.LayoutPage"/>.</param>
+            <returns>true if the whole table was added successfully; otherwise, false.</returns>
+        </member>
+        <member name="T:GrapeCity.Documents.Layout.LayoutParagraph">
+            <summary>
+            Class to "convert" Word Paragraph to ParagraphFragment using TextLayout Paragraph
+            </summary>
+        </member>
+        <member name="P:GrapeCity.Documents.Layout.LayoutParagraph.Parent">
+            <summary>
+            Gets parent
+            </summary>
+        </member>
+        <member name="T:GrapeCity.Documents.Layout.LayoutSections">
+            <summary>
+            Class to paginate <see cref="T:GrapeCity.Documents.Word.SectionCollection"/> and to calculate absolute coordinates for all its objects
+            </summary>
+        </member>
+        <member name="P:GrapeCity.Documents.Layout.LayoutSections.Sections">
+            <summary>
+            Gets layout sections after paginating
+            </summary>
+        </member>
+        <member name="T:GrapeCity.Documents.Layout.LayoutSection">
+            <summary>
+            Class to paginate <see cref="T:GrapeCity.Documents.Word.Section"/> and to calculate absolute coordinates for all its objects
+            </summary>
+        </member>
+        <member name="P:GrapeCity.Documents.Layout.LayoutSection.Section">
+            <summary>
+            Gets layout sections after paginating
+            </summary>
+        </member>
+        <member name="T:GrapeCity.Documents.Layout.Localization.Strings">
+            <summary>
+              A strongly-typed resource class, for looking up localized strings, etc.
+            </summary>
+        </member>
+        <member name="P:GrapeCity.Documents.Layout.Localization.Strings.ResourceManager">
+            <summary>
+              Returns the cached ResourceManager instance used by this class.
+            </summary>
+        </member>
+        <member name="P:GrapeCity.Documents.Layout.Localization.Strings.Culture">
+            <summary>
+              Overrides the current thread's CurrentUICulture property for all
+              resource lookups using this strongly typed resource class.
+            </summary>
+        </member>
+        <member name="P:GrapeCity.Documents.Layout.Localization.Strings.CommentedPrefixLabel">
+            <summary>
+              Looks up a localized string similar to Commented.
+            </summary>
+        </member>
+        <member name="P:GrapeCity.Documents.Layout.Localization.Strings.CreatedWithExpiredCopyWarning">
+            <summary>
+              Looks up a localized string similar to Created with expired evaluation copy of GrapeCity Word. Contact us.sales@grapecity.com to purchase license..
+            </summary>
+        </member>
+        <member name="P:GrapeCity.Documents.Layout.Localization.Strings.CreatedWithUnlicensedCopyWarning">
+            <summary>
+              Looks up a localized string similar to Created with unlicensed copy of GrapeCity Word. Contact us.sales@grapecity.com to get your 30-day evaluation key..
+            </summary>
+        </member>
+        <member name="T:GrapeCity.Documents.Layout.PdfConversionOptions">
+            <summary>
+            Represents options used when converting a <see cref="T:GrapeCity.Documents.Word.GcWordDocument"/> to PDF.
+            </summary>
+        </member>
+        <member name="T:GrapeCity.Documents.Layout.PdfConversionOptions.CommentsExportMode">
+            <summary>
+            Specifies how comments are handled during export.
+            </summary>
+        </member>
+        <member name="F:GrapeCity.Documents.Layout.PdfConversionOptions.CommentsExportMode.None">
+            <summary>
+            Comments are not exported.
+            </summary>
+        </member>
+        <member name="F:GrapeCity.Documents.Layout.PdfConversionOptions.CommentsExportMode.Highlights">
+            <summary>
+            Highlight only commented text, comments are not exported.
+            </summary>
+        </member>
+        <member name="F:GrapeCity.Documents.Layout.PdfConversionOptions.CommentsExportMode.Full">
+            <summary>
+            All comments data is exported.
+            </summary>
+        </member>
+        <member name="M:GrapeCity.Documents.Layout.PdfConversionOptions.#ctor">
+            <summary>
+            Creates a new instance of the <see cref="T:GrapeCity.Documents.Layout.PdfConversionOptions"/> class.
+            </summary>
+        </member>
+        <member name="P:GrapeCity.Documents.Layout.PdfConversionOptions.CompressionLevel">
+            <summary>
+            Gets or sets the compression level. Default value is <see cref="F:System.IO.Compression.CompressionLevel.Fastest"/>.
+            </summary>
+        </member>
+        <member name="P:GrapeCity.Documents.Layout.PdfConversionOptions.DocumentInfo">
+            <summary>
+            Gets or sets a <see cref="P:GrapeCity.Documents.Layout.PdfConversionOptions.DocumentInfo"/> object containing information about 
+            the document (author, title, etc).
+            See <see cref="P:GrapeCity.Documents.Pdf.GcPdfDocument.DocumentInfo"/> for details.
+            </summary>
+        </member>
+        <member name="P:GrapeCity.Documents.Layout.PdfConversionOptions.ImageOptions">
+            <summary>
+            Gets or sets an <see cref="T:GrapeCity.Documents.Pdf.ImageOptions"/> object with options 
+            controlling how images are handled when added to the PDF.
+            See <see cref="P:GrapeCity.Documents.Pdf.GcPdfDocument.ImageOptions"/> for details.
+            </summary>
+        </member>
+        <member name="P:GrapeCity.Documents.Layout.PdfConversionOptions.Linearized">
+            <summary>
+            Gets or sets a value indicating whether the generated PDF should be linearized.
+            See <see cref="P:GrapeCity.Documents.Pdf.GcPdfDocument.Linearized"/> for details.
+            </summary>
+        </member>
+        <member name="P:GrapeCity.Documents.Layout.PdfConversionOptions.Metadata">
+            <summary>
+            Gets or sets a metadata object associated with the generated PDF.
+            See <see cref="P:GrapeCity.Documents.Pdf.GcPdfDocument.Metadata"/> for details.
+            </summary>
+        </member>
+        <member name="P:GrapeCity.Documents.Layout.PdfConversionOptions.PdfACompliant">
+            <summary>
+            Gets or sets a value indicating whether the document should be PDF/A compliant.
+            See <see cref="P:GrapeCity.Documents.Pdf.GcPdfDocument.PdfACompliant"/> for details.
+            </summary>
+        </member>
+        <member name="P:GrapeCity.Documents.Layout.PdfConversionOptions.PdfVersion">
+            <summary>
+            Gets or sets the PDF Version of the generated document.
+            See <see cref="P:GrapeCity.Documents.Pdf.GcPdfDocument.PdfVersion"/> for details.
+            </summary>
+        </member>
+        <member name="P:GrapeCity.Documents.Layout.PdfConversionOptions.CommentsMode">
+            <summary>
+            Gets or sets a value indicating how to handle comments during export.
+            </summary>
+        </member>
+        <member name="T:GrapeCity.Documents.Word.GcWordDocumentExtensions">
+            <summary>
+            Extensions for converting <see cref="T:GrapeCity.Documents.Word.GcWordDocument"/> to other formats.
+            </summary>
+        </member>
+        <member name="M:GrapeCity.Documents.Word.GcWordDocumentExtensions.SaveAsPdf(GrapeCity.Documents.Word.GcWordDocument,System.IO.Stream,GrapeCity.Documents.Text.FontCollection,GrapeCity.Documents.Layout.PdfConversionOptions)">
+            <summary>
+            Saves the current <see cref="T:GrapeCity.Documents.Word.GcWordDocument"/> as PDF to a specified stream.
+            </summary>
+            <param name="source">The <see cref="T:GrapeCity.Documents.Word.GcWordDocument"/> instance to convert to PDF.</param>
+            <param name="stream">The destination stream.</param>
+            <param name="fontCollection">The <see cref="T:GrapeCity.Documents.Text.FontCollection"/> with fonts to be used during conversion.
+            In a Windows environment this can be null, in which case Windows system fonts will be used.
+            In a non-Windows environment not specifying this parameter may cause the conversion to fail.</param>
+            <param name="options">The <see cref="T:GrapeCity.Documents.Layout.PdfConversionOptions"/> controlling the conversion.</param>
+        </member>
+        <member name="M:GrapeCity.Documents.Word.GcWordDocumentExtensions.SaveAsPdf(GrapeCity.Documents.Word.GcWordDocument,System.IO.Stream,System.String,GrapeCity.Documents.Layout.PdfConversionOptions)">
+            <summary>
+            Saves the current <see cref="T:GrapeCity.Documents.Word.GcWordDocument"/> as PDF to a specified stream.
+            </summary>
+            <param name="source">The <see cref="T:GrapeCity.Documents.Word.GcWordDocument"/> instance to convert to PDF.</param>
+            <param name="stream">The destination stream.</param>
+            <param name="fontDirectory">The path to a directory with fonts to be used during conversion.
+            In a Windows environment this can be null, in which case Windows system fonts will be used.
+            In a non-Windows environment not specifying this parameter may cause the conversion to fail.</param>
+            <param name="options">The <see cref="T:GrapeCity.Documents.Layout.PdfConversionOptions"/> controlling the conversion.</param>
+        </member>
+        <member name="M:GrapeCity.Documents.Word.GcWordDocumentExtensions.SaveAsPdf(GrapeCity.Documents.Word.GcWordDocument,System.String,GrapeCity.Documents.Text.FontCollection,GrapeCity.Documents.Layout.PdfConversionOptions)">
+            <summary>
+            Saves the current <see cref="T:GrapeCity.Documents.Word.GcWordDocument"/> as PDF to a specified file.
+            </summary>
+            <param name="source">The <see cref="T:GrapeCity.Documents.Word.GcWordDocument"/> instance to convert to PDF.</param>
+            <param name="fileName">The destination file name.</param>
+            <param name="fontCollection">The <see cref="T:GrapeCity.Documents.Text.FontCollection"/> with fonts to be used during conversion.
+            In a Windows environment this can be null, in which case Windows system fonts will be used.
+            In a non-Windows environment not specifying this parameter may cause the conversion to fail.</param>
+            <param name="options">The <see cref="T:GrapeCity.Documents.Layout.PdfConversionOptions"/> controlling the conversion.</param>
+        </member>
+        <member name="M:GrapeCity.Documents.Word.GcWordDocumentExtensions.SaveAsPdf(GrapeCity.Documents.Word.GcWordDocument,System.String,System.String,GrapeCity.Documents.Layout.PdfConversionOptions)">
+            <summary>
+            Saves the current <see cref="T:GrapeCity.Documents.Word.GcWordDocument"/> as PDF to a specified file.
+            </summary>
+            <param name="source">The <see cref="T:GrapeCity.Documents.Word.GcWordDocument"/> instance to convert to PDF.</param>
+            <param name="fileName">The destination file name.</param>
+            <param name="fontDirectory">The path to a directory with fonts to be used during conversion.
+            In a Windows environment this can be null, in which case Windows system fonts will be used.
+            In a non-Windows environment not specifying this parameter may cause the conversion to fail.</param>
+            <param name="options">The <see cref="T:GrapeCity.Documents.Layout.PdfConversionOptions"/> controlling the conversion.</param>
+        </member>
+    </members>
+</doc>

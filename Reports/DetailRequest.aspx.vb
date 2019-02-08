@@ -1,18 +1,17 @@
+Imports System.Data.SqlClient
 Imports System.Globalization
 Imports System.Threading
 
 
 Namespace Kasbi.Reports
-
-
     Partial Class DetailRequest
         Inherits PageBase
 
 #Region " Web Form Designer Generated Code "
 
         'This call is required by the Web Form Designer.
-        <System.Diagnostics.DebuggerStepThrough()> Private Sub InitializeComponent()
-
+        <System.Diagnostics.DebuggerStepThrough()>
+        Private Sub InitializeComponent()
         End Sub
 
 
@@ -42,10 +41,16 @@ Namespace Kasbi.Reports
         Private Sub LoadMasters()
             Dim adapt As SqlClient.SqlDataAdapter
             Dim ds As DataSet = New DataSet
+            Dim cmd As SqlCommand
             Try
-                adapt = dbSQL.GetDataAdapter("get_masters", True)
+
+                cmd = New SqlClient.SqlCommand("get_employee_by_role_id")
+                cmd.CommandType = CommandType.StoredProcedure
+                cmd.Parameters.AddWithValue("@pi_role_id", 0)
+                adapt = dbSQL.GetDataAdapter(cmd)
                 ds = New DataSet
                 adapt.Fill(ds)
+                ds.Tables(0).DefaultView.Sort = "Name"
                 lbxExecutor.DataSource = ds.Tables(0).DefaultView
                 lbxExecutor.DataValueField = "sys_id"
                 lbxExecutor.DataTextField = "Name"
@@ -54,7 +59,8 @@ Namespace Kasbi.Reports
             End Try
         End Sub
 
-        Private Sub btnView_Click(ByVal sender As System.Object, ByVal e As System.Web.UI.ImageClickEventArgs) Handles btnView.Click
+        Private Sub btnView_Click(ByVal sender As System.Object, ByVal e As System.Web.UI.ImageClickEventArgs) _
+            Handles btnView.Click
             Dim startdate As DateTime = New DateTime
             Dim endDate As DateTime = New DateTime
 
@@ -79,15 +85,16 @@ Namespace Kasbi.Reports
                 If item.Selected Then Executor &= item.Value & ","
             Next item
 
-            Dim strRequest$ = String.Format("DetailReport.aspx?start_date={0}&end_date={1}&ex={2}", Format(startdate, "dd/MM/yyyy"), Format(endDate, "dd/MM/yyyy"), Executor)
-            strRequest = "<script language='javascript' type='text/javascript'>window.open('" & strRequest & "')</script>"
+            Dim strRequest$ = String.Format("DetailReport.aspx?start_date={0}&end_date={1}&ex={2}",
+                                            Format(startdate, "dd/MM/yyyy"), Format(endDate, "dd/MM/yyyy"), Executor)
+            strRequest = "<script language='javascript' type='text/javascript'>window.open('" & strRequest &
+                         "')</script>"
             Me.RegisterStartupScript("report", strRequest)
         End Sub
 
-        Private Sub btnBack_Click(ByVal sender As System.Object, ByVal e As System.Web.UI.ImageClickEventArgs) Handles btnBack.Click
+        Private Sub btnBack_Click(ByVal sender As System.Object, ByVal e As System.Web.UI.ImageClickEventArgs) _
+            Handles btnBack.Click
             Response.Redirect(GetAbsoluteUrl("~/Reports/Default.aspx"))
         End Sub
-
     End Class
-
 End Namespace

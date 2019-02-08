@@ -10,6 +10,7 @@
 Imports System.Collections.Generic
 Imports System.Data.SqlClient
 Imports System.IO
+Imports System.Runtime.InteropServices
 Imports Microsoft.Office.Interop
 Imports service
 
@@ -36,8 +37,6 @@ Namespace Kasbi
         'Const ConnectionString = "data source=BY-MN-DBSRV;initial catalog=Ramok;persist security info=False;user id=WebDB;workstation id=BY-MN-DBSRV;packet size=4096;password=webdb;"
 
         'Const ConnectionString = "data source=192.168.11.14;initial catalog=Ramok;persist security info=False;user id=WebDB;workstation id=198.168.11.14;packet size=4096;password=webdb;"
-        Dim act_num_global
-
         Const DocName0 As String = "InvoiceNDS.doc"
         Const DocName1 As String = "Dogovor.doc"
         Const DocName2 As String = "Zayavlenie_Na_Knigu_Kassira.doc"
@@ -99,8 +98,8 @@ Namespace Kasbi
         Private doc As Word.DocumentClass
         Private sheet As Excel.WorksheetClass
         Private book As Excel.WorkbookClass
-        Private serviceDoc As ServiceDocuments = New ServiceDocuments()
-        Private serviceSale As ServiceSale = New ServiceSale()
+        Private _serviceDoc As ServiceDocuments = New ServiceDocuments()
+        Private _serviceSale As ServiceSale = New ServiceSale()
 
         Dim query
 
@@ -154,7 +153,12 @@ Namespace Kasbi
             ElseIf doc_type(0) = 42 Then
                 If Not ProcessDefectActForGood(doc_type, customer_sys_id) Then Exit Sub
             ElseIf doc_type(0) = 32 Or doc_type(0) = 33 Or doc_type(0) = 34 Then
-                If Not ProcessRepairRealizationAct(doc_type, customer_sys_id, good_sys_id, history_id) Then Exit Sub
+                If _
+                    Not _
+                    String.IsNullOrEmpty(Trim(_serviceDoc.ProcessRepairRealizationAct(doc_type, customer_sys_id,
+                                                                                      good_sys_id, history_id,
+                                                                                      CurrentUser.sys_id))) Then _
+                    Exit Sub
             ElseIf doc_type(0) = 50 Then
                 If _
                     Not _
@@ -267,7 +271,7 @@ Namespace Kasbi
                     path = Server.MapPath("Docs/") & "DefectActs\" & CurrentUser.sys_id & "\" & doc_path
                 End If
                 If doc_type(0) = 32 Or doc_type(0) = 33 Or doc_type(0) = 34 Then
-                    path = Server.MapPath("Docs/repair/") & doc_path
+                    path = Server.MapPath("Docs/repair/") & CurrentUser.sys_id & "\" & doc_path
                 End If
                 If doc_type(0) = 50 Then
                     path = Server.MapPath("Docs/") & "Reports\" & Format(DateTime.Now, "yyyyMMdd") & "\" & doc_path
@@ -1808,9 +1812,9 @@ Namespace Kasbi
                     '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
                     'Договор на техническое обслуживание 3 + дополнительное соглашение
                     Try
-                        Dim firstSale As DataRow = serviceSale.GetFirstSaleWhereUnpEqualNumDogovor(customer)
-                        If (serviceSale.HaveAnyExeption()) Then
-                            Throw New System.Exception(serviceSale.GetTextStringAllExeption())
+                        Dim firstSale As DataRow = _serviceSale.GetFirstSaleWhereUnpEqualNumDogovor(customer)
+                        If (_serviceSale.HaveAnyExeption()) Then
+                            Throw New System.Exception(_serviceSale.GetTextStringAllExeption())
                         End If
 
                         Dim s$
@@ -1921,9 +1925,9 @@ Namespace Kasbi
                     '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
                     'Реест кассовых аппаратов на ТО у клиента по продаже
                     Try
-                        Dim firstSale As DataRow = serviceSale.GetFirstSaleWhereUnpEqualNumDogovor(customer)
-                        If (serviceSale.HaveAnyExeption()) Then
-                            Throw New System.Exception(serviceSale.GetTextStringAllExeption())
+                        Dim firstSale As DataRow = _serviceSale.GetFirstSaleWhereUnpEqualNumDogovor(customer)
+                        If (_serviceSale.HaveAnyExeption()) Then
+                            Throw New System.Exception(_serviceSale.GetTextStringAllExeption())
                         End If
 
                         Dim s$
@@ -2432,146 +2436,11 @@ Namespace Kasbi
 
         Overrides Function Summa_propis(ByVal s As String, Optional ByVal b As Boolean = True,
                                         Optional ByVal b_cop As Boolean = True) As String
-            Dim sum_p_rub, sum_p_cop, cop As String
-            Dim kop_arr = s.ToString.Split(",")
-            sum_p_cop = String.Empty
-
-            If kop_arr.Length >= 2 Then
-                s = kop_arr(0)
-                cop = kop_arr(1)
-            Else
-                s = kop_arr(0)
-                cop = "00"
-            End If
-            sum_p_rub = Summa_propis_rub(s, b)
-            If (b_cop) Then
-                sum_p_cop = " " & Summa_propis_cop(cop, b)
-            End If
-            Return sum_p_rub & sum_p_cop
+            Return _serviceDoc.Summa_propis(s, b, b_cop)
         End Function
 
         Private Function Summa_propis_rub(ByVal s As String, Optional ByVal b As Boolean = True) As String
-            Dim ss@, txt$, n%, i%
-            Static triad(4) As Integer, numb1(19) As String, numb2(9) As String, numb3(9) As String
-            If s = 0 Then
-                Summa_propis_rub = ""
-                Exit Function
-            End If
-
-            ss@ = s
-            triad(1) = ss@ - Int(ss@/1000)*1000
-            ss@ = Int(ss@/1000)
-            triad(2) = ss@ - Int(ss@/1000)*1000
-            ss@ = Int(ss@/1000)
-            triad(3) = ss@ - Int(ss@/1000)*1000
-            ss@ = Int(ss@/1000)
-            triad(4) = ss@ - Int(ss@/1000)*1000
-            ss@ = Int(ss@/1000)
-            numb1(0) = ""
-            numb1(1) = "один "
-            numb1(2) = "два "
-            numb1(3) = "три "
-            numb1(4) = "четыре "
-            numb1(5) = "пять "
-            numb1(6) = "шесть "
-            numb1(7) = "семь "
-            numb1(8) = "восемь "
-            numb1(9) = "девять "
-            numb1(10) = "десять "
-            numb1(11) = "одиннадцать "
-            numb1(12) = "двенадцать "
-            numb1(13) = "тринадцать "
-            numb1(14) = "четырнадцать "
-            numb1(15) = "пятнадцать "
-            numb1(16) = "шестнадцать "
-            numb1(17) = "семнадцать "
-            numb1(18) = "восемнадцать "
-            numb1(19) = "девятнадцать "
-            numb2(0) = ""
-            numb2(1) = ""
-            numb2(2) = "двадцать "
-            numb2(3) = "тридцать "
-            numb2(4) = "сорок "
-            numb2(5) = "пятьдесят "
-            numb2(6) = "шестьдесят "
-            numb2(7) = "семьдесят "
-            numb2(8) = "восемьдесят "
-            numb2(9) = "девяносто "
-            numb3(0) = ""
-            numb3(1) = "сто "
-            numb3(2) = "двести "
-            numb3(3) = "триста "
-            numb3(4) = "четыреста "
-            numb3(5) = "пятьсот "
-            numb3(6) = "шестьсот "
-            numb3(7) = "семьсот "
-            numb3(8) = "восемьсот "
-            numb3(9) = "девятьсот "
-            txt$ = ""
-            If ss@ <> 0 Then
-                'n% = MsgBox("Сумма выходит за границы формата", 16, "Сумма прописью")
-                Summa_propis_rub = ""
-                Exit Function
-            End If
-            For i% = 4 To 1 Step - 1
-                n% = 0
-                If triad(i%) > 0 Then
-                    n% = Int(triad(i%)/100)
-                    txt$ = txt$ & numb3(n%)
-                    n% = Int((triad(i%) - n%*100)/10)
-                    txt$ = txt$ & numb2(n%)
-                    If n% < 2 Then
-                        n% = triad(i%) - (Int(triad(i%)/10) - n%)*10
-                    Else
-                        n% = triad(i%) - Int(triad(i%)/10)*10
-                    End If
-                    Select Case n%
-                        Case 1
-                            If i% = 2 Then txt$ = txt$ & "одна " Else txt$ = txt$ & "один "
-                        Case 2
-                            If i% = 2 Then txt$ = txt$ & "две " Else txt$ = txt$ & "два "
-                        Case Else
-                            txt$ = txt$ & numb1(n%)
-                    End Select
-                    Select Case i%
-                        Case 2
-                            If n% = 0 Or n% > 4 Then
-                                txt$ = txt$ + "тысяч "
-                            Else
-                                If n% = 1 Then txt$ = txt$ + "тысяча " Else txt$ = txt$ + "тысячи "
-                            End If
-                        Case 3
-                            If n% = 0 Or n% > 4 Then
-                                txt$ = txt$ + "миллионов "
-                            Else
-                                If n% = 1 Then txt$ = txt$ + "миллион " Else txt$ = txt$ + "миллиона "
-                            End If
-                        Case 4
-                            If n% = 0 Or n% > 4 Then
-                                txt$ = txt$ + "миллиардов "
-                            Else
-                                If n% = 1 Then txt$ = txt$ + "миллиард " Else txt$ = txt$ + "миллиарда "
-                            End If
-                    End Select
-                End If
-            Next i%
-            If b Then
-                txt$ = txt$ + "бел. руб."
-            End If
-            txt$ = UCase$(Left$(txt$, 1)) & Mid$(txt$, 2)
-            Summa_propis_rub = txt$
-        End Function
-
-        Private Function Summa_propis_cop(ByVal cop As String, Optional ByVal b As Boolean = True) As String
-            If cop.Length = 1 Then
-                cop = cop & "0"
-            End If
-
-            If b Then
-                Return cop & " коп."
-            Else
-                Return cop
-            End If
+            Return _serviceDoc.Summa_propis_rub(s, b)
         End Function
 
         Private Function Summa_propis_rub_OLD(ByVal s As String, Optional ByVal b As Boolean = True) As String
@@ -2708,31 +2577,19 @@ Namespace Kasbi
         End Function
 
         Public Overrides Function GetRussianDate(ByVal d As Date) As String
-            Dim m() As String =
-                    {" января ", " февраля ", " марта ", " апреля ", " мая ", " июня ", " июля ", " августа ",
-                     " сентября ", " октября ", " ноября ", " декабря "}
-            GetRussianDate = Day(d) & m(Month(d) - 1) & Year(d) & "г."
+            Return _serviceDoc.GetRussianDate(d)
         End Function
 
         Public Overrides Function GetRussianDate1(ByVal d As Date) As String
-            Dim m() As String =
-                    {" января ", " февраля ", " марта ", " апреля ", " мая ", " июня ", " июля ", " августа ",
-                     " сентября ", " октября ", " ноября ", " декабря "}
-            GetRussianDate1 = " « " & Day(d) & " » " & m(Month(d) - 1) & Year(d) & "г."
+            Return _serviceDoc.GetRussianDate1(d)
         End Function
 
         Public Overrides Function GetRussianDate2(ByVal d As Date) As String
-            Dim m() As String =
-                    {" Янв ", " Фев ", " Мар ", " Апр ", " Май ", " Июн ", " Июл ", " Авг ", " Сен ", " Окт ", " Ноя ",
-                     " Дек "}
-            GetRussianDate2 = m(Month(d) - 1) & Year(d) & "г."
+            Return _serviceDoc.GetRussianDate2(d)
         End Function
 
         Public Overrides Function GetRussianDate3(ByVal d As Date) As String
-            Dim m() As String =
-                    {" Январь ", " Февраль ", " Март ", " Апрель ", " Май ", " Июнь ", " Июль ", " Август ",
-                     " Сентябрь ", " Октябрь ", " Ноябрь ", " Декабрь "}
-            GetRussianDate3 = m(Month(d) - 1) & Year(d) & "г."
+            Return _serviceDoc.GetRussianDate3(d)
         End Function
 
         Public Overrides Function ProcessSupportDocuments(ByVal doc_type As Integer, ByVal customer_sys_id_s As String,
@@ -4776,583 +4633,6 @@ Namespace Kasbi
             End Try
         End Sub
 
-        Private Function ProcessRepairRealizationAct(ByVal num_doc() As Integer, ByVal customer As Integer,
-                                                     ByVal cash As Integer, ByVal history As Integer) As Boolean
-            Dim cmd As SqlClient.SqlCommand
-            Dim adapt As SqlClient.SqlDataAdapter
-            Dim ds As DataSet
-            Dim r1 As Word.Row
-            Dim i%
-            Dim Cost, NDS, TotalSum, NormaHour, Quantity As Double
-            Dim q, p, dNDS, dTotal, sSum, sNDS, CPP As Double
-            Cost = 0
-            NDS = 0
-            TotalSum = 0
-            NormaHour = 0
-            Quantity = 1
-
-            ds = New DataSet
-            cmd = New SqlClient.SqlCommand("prc_rpt_RepairRealizationAct_New")
-            cmd.CommandType = CommandType.StoredProcedure
-            cmd.Parameters.AddWithValue("@pi_good_sys_id", cash)
-            cmd.Parameters.AddWithValue("@pi_customer_sys_id", customer)
-            cmd.Parameters.AddWithValue("@pi_hc_sys_id", history)
-            adapt = dbSQL.GetDataAdapter(cmd)
-            adapt.Fill(ds, "RepairRealizationAct")
-
-            cmd = New SqlClient.SqlCommand("get_repair_info")
-            cmd.Parameters.AddWithValue("@pi_hc_sys_id", history)
-            cmd.CommandType = CommandType.StoredProcedure
-            adapt = dbSQL.GetDataAdapter(cmd)
-            If Not ds.Tables("details") Is Nothing Then
-                ds.Tables("details").Clear()
-            End If
-            adapt.Fill(ds, "details")
-
-            If ds.Tables("details").Rows.Count = 0 Then GoTo ExitFunction
-            Dim boos_name$, customer_name$, accountant$, unn$, registration$, sDate$, dogovor$
-
-            cmd = New SqlClient.SqlCommand("get_customer_info")
-
-            cmd.CommandType = CommandType.StoredProcedure
-            cmd.Parameters.AddWithValue("@pi_customer_sys_id", customer)
-            adapt = dbSQL.GetDataAdapter(cmd)
-            If Not ds.Tables("customer") Is Nothing Then
-                ds.Tables("customer").Clear()
-            End If
-            adapt.Fill(ds, "customer")
-
-            If ds.Tables("customer").Rows.Count = 0 Then GoTo ExitFunction
-            Dim sEmployee$ =
-                    dbSQL.ExecuteScalar(
-                        "select Name from Employee where sys_id='" &
-                        ds.Tables("RepairRealizationAct").Rows(0)("executor") & "'")
-            If sEmployee Is Nothing OrElse sEmployee = String.Empty Then
-                sEmployee = ""
-            End If
-
-            Dim act_num$ = ds.Tables("RepairRealizationAct").Rows(0)("akt")
-            Dim WorkNotCall% = IIf(IsDBNull(ds.Tables("RepairRealizationAct").Rows(0)("workNotCall")), 0,
-                                   ds.Tables("RepairRealizationAct").Rows(0)("workNotCall"))
-
-            Dim docFullPath$
-            Dim path$ = Server.MapPath("Docs\")
-
-            Dim fls As IO.File
-            Dim fl As IO.FileInfo
-            ProcessRepairRealizationAct = True
-
-            Try
-                ' Create instance of Word!
-                wrdApp = New Word.Application
-            Catch ex As Exception
-                WriteError(Err.Description & "<br>" & ex.ToString)
-                ProcessRepairRealizationAct = False
-                GoTo ExitFunction
-            End Try
-
-            If num_doc(0) = 32 Then
-
-                act_num_global = act_num
-                Try
-                    MkDir(path & "repair\temp\")
-                Catch ex As Exception
-                End Try
-                Try
-                    docFullPath = path & "repair\temp\" & DocName32
-                    fl = New IO.FileInfo(docFullPath)
-
-                    If Not fl.Exists() Then
-                        If fl.Exists() Then
-                            Try
-                                fl.Delete()
-                            Catch
-                            End Try
-                        End If
-                        Try
-                            'Create folders and copy templates
-                            Dim fldr As New IO.DirectoryInfo(path)
-                            If Not fldr.Exists Then
-                                fldr.Create()
-                            End If
-
-                        Catch ex As Exception
-                            WriteError(Err.Description & "<BR>" & ex.ToString)
-                            ProcessRepairRealizationAct = False
-                            Exit Function
-                        End Try
-                    End If
-                    IO.File.Copy(Server.MapPath("Templates/") & DocName32, docFullPath, True)
-
-                    doc = wrdApp.Documents.Open(docFullPath)
-                    doc.Bookmarks("act_number1").Range.Text = act_num
-                    doc.Bookmarks("num_cashregister1").Range.Text =
-                        ds.Tables("RepairRealizationAct").Rows(0)("num_cashregister")
-                    ' doc.Bookmarks("num_cashregister2").Range.Text = ds.Tables("RepairRealizationAct").Rows(0)("num_cashregister")
-                    doc.Bookmarks("good_name1").Range.Text = ds.Tables("RepairRealizationAct").Rows(0)("good_name")
-                    'doc.Bookmarks("good_type2").Range.Text = ds.Tables("defectAct").Rows(0)("good_name")
-                    doc.Bookmarks("customer1").Range.Text = ds.Tables("RepairRealizationAct").Rows(0)("customer_name")
-                    '  doc.Bookmarks("customer2").Range.Text = ds.Tables("defectAct").Rows(0)("customer_name")
-                    'кто сделал все это
-
-                    doc.Bookmarks("master1").Range.Text = sEmployee
-                    doc.Bookmarks("work_type").Range.Text =
-                        dbSQL.ExecuteScalar(
-                            "select ISNULL(work_type, '') from employee where sys_id =" &
-                            ds.Tables("RepairRealizationAct").Rows(0)("executor")).ToString()
-
-                    dogovor = ds.Tables("RepairRealizationAct").Rows(0)("dogovor")
-                    sDate = ""
-                    doc.Bookmarks("dogovor1").Range.Text = dogovor '& " от " & sDate
-                    Try
-                        doc.Bookmarks("sale_date1").Range.Text =
-                            GetRussianDate(ds.Tables("RepairRealizationAct").Rows(0)("sale_date"))
-                    Catch
-                        doc.Bookmarks("sale_date1").Range.Text = "-"
-                    End Try
-                    Dim rdate_in As DateTime = CDate(ds.Tables("RepairRealizationAct").Rows(0)("repairdate_in"))
-                    Dim rdate_out As DateTime = CDate(ds.Tables("RepairRealizationAct").Rows(0)("repairdate_out"))
-                    Dim sRepairDates$ = GetRussianDate(rdate_in) & " " & rdate_in.ToString("HH:mm") & " - " &
-                                        GetRussianDate(rdate_out)
-                    doc.Bookmarks("repair_date1").Range.Text = sRepairDates
-
-                    Dim a As Integer = 0
-                    Dim ndsItem As Double = 0
-
-                    For i = 0 To ds.Tables("details").Rows.Count - 1
-
-                        If ds.Tables("details").Rows(i)("is_detail") = True Then
-                            ' детали
-                            r1 = doc.Tables(1).Rows.Add(doc.Tables(1).Rows(a + 2))
-                            a = a + 1
-                            r1.Cells(1).Range.Text = a
-                            r1.Cells(2).Range.Text = ds.Tables("details").Rows(i)("name")
-                            Quantity = ds.Tables("details").Rows(i)("quantity")
-                            r1.Cells(3).Range.Text = Quantity
-                            r1.Cells(4).Range.Text = String.Format("{0:0.00}",
-                                                                   (Math.Round(
-                                                                       ds.Tables("details").Rows(i)("price")/1.0/1, 2)))
-                            r1.Cells(5).Range.Text = String.Format("{0:0.00}",
-                                                                   (Quantity*
-                                                                    Math.Round(
-                                                                        ds.Tables("details").Rows(i)("price")/1.0/1, 2)))
-                            ndsItem = Quantity*
-                                      (Math.Round(ds.Tables("details").Rows(i)("price")*1.2/1, 2)*1 -
-                                       Math.Round(ds.Tables("details").Rows(i)("price")/1.0/1, 2)*1)
-                            r1.Cells(6).Range.Text = String.Format("{0:0.00}", ndsItem)
-                            r1.Cells(7).Range.Text = String.Format("{0:0.00}",
-                                                                   (Quantity*
-                                                                    Math.Round(
-                                                                        ds.Tables("details").Rows(i)("price")*1.2/1, 2)*
-                                                                    1))
-                            r1.Cells(8).Range.Text = String.Format("{0:0.00}",
-                                                                   (IIf(WorkNotCall = 1,
-                                                                        Quantity*
-                                                                        ds.Tables("details").Rows(i)("norma_hour"), "0")))
-
-                            Cost = Cost + Math.Round(Quantity*ds.Tables("details").Rows(i)("price")/1.0/1, 2)*1
-                            NDS = NDS + ndsItem
-                            TotalSum = TotalSum + Quantity*Math.Round(ds.Tables("details").Rows(i)("price")*1.2/1, 2)*1
-
-                            ' замена  детали
-                            If ds.Tables("details").Rows(i)("cost_service") > 0 Then
-                                NormaHour = NormaHour + Quantity*ds.Tables("details").Rows(i)("norma_hour")
-                                If WorkNotCall = 0 Then
-                                    r1 = doc.Tables(1).Rows.Add(doc.Tables(1).Rows(a + 2))
-                                    a = a + 1
-                                    r1.Cells(1).Range.Text = a
-                                    r1.Cells(2).Range.Text = "Замена " & ds.Tables("details").Rows(i)("name")
-                                    r1.Cells(3).Range.Text = ""
-                                    r1.Cells(4).Range.Text = String.Format("{0:0.00}",
-                                                                           (Math.Round(
-                                                                               ds.Tables("details").Rows(i)(
-                                                                                   "cost_service")/1.0/1, 2)*1))
-                                    r1.Cells(5).Range.Text = String.Format("{0:0.00}",
-                                                                           (Quantity*
-                                                                            Math.Round(
-                                                                                ds.Tables("details").Rows(i)(
-                                                                                    "cost_service")/1.0/1, 2)*1))
-                                    ndsItem = Quantity*
-                                              (Math.Round(ds.Tables("details").Rows(i)("cost_service")*1.2/1, 2)*1 -
-                                               Math.Round(ds.Tables("details").Rows(i)("cost_service")/1.0/1, 2)*1)
-                                    r1.Cells(6).Range.Text = String.Format("{0:0.00}", ndsItem)
-                                    r1.Cells(7).Range.Text = String.Format("{0:0.00}",
-                                                                           (Quantity*
-                                                                            Math.Round(
-                                                                                ds.Tables("details").Rows(i)(
-                                                                                    "cost_service")*1.2/1, 2)*1))
-                                    r1.Cells(8).Range.Text = String.Format("{0:0.00}",
-                                                                           (Quantity*
-                                                                            ds.Tables("details").Rows(i)("norma_hour")))
-                                    Cost = Cost +
-                                           Quantity*Math.Round(ds.Tables("details").Rows(i)("cost_service")/1.0/1, 2)*1
-                                    NDS = NDS + ndsItem
-                                    TotalSum = TotalSum +
-                                               Quantity*
-                                               Math.Round(ds.Tables("details").Rows(i)("cost_service")*1.2/1, 2)*1
-                                End If
-                            End If
-                        Else
-                            If WorkNotCall = 0 Then
-                                r1 = doc.Tables(1).Rows.Add(doc.Tables(1).Rows(a + 2))
-                                a = a + 1
-                                r1.Cells(1).Range.Text = a
-                                r1.Cells(2).Range.Text = ds.Tables("details").Rows(i)("name")
-                                r1.Cells(3).Range.Text = ""
-                                Quantity = ds.Tables("details").Rows(i)("quantity")
-                                r1.Cells(4).Range.Text = String.Format("{0:0.00}",
-                                                                       (Math.Round(
-                                                                           ds.Tables("details").Rows(i)("cost_service")/
-                                                                           1.0/1, 2)))
-                                r1.Cells(5).Range.Text = String.Format("{0:0.00}",
-                                                                       (Quantity*
-                                                                        Math.Round(
-                                                                            ds.Tables("details").Rows(i)("cost_service")/
-                                                                            1.0/1, 2)))
-
-                                ndsItem = Quantity*
-                                          (Math.Round(ds.Tables("details").Rows(i)("cost_service")*1.2/1, 2)*1 -
-                                           Math.Round(ds.Tables("details").Rows(i)("cost_service")/1.0/1, 2)*1)
-                                r1.Cells(6).Range.Text = String.Format("{0:0.00}", ndsItem)
-                                r1.Cells(7).Range.Text = String.Format("{0:0.00}",
-                                                                       (Quantity*
-                                                                        Math.Round(
-                                                                            ds.Tables("details").Rows(i)("cost_service")*
-                                                                            1.2/1, 2)))
-                                r1.Cells(8).Range.Text = String.Format("{0:0.00}",
-                                                                       (Quantity*
-                                                                        ds.Tables("details").Rows(i)("norma_hour")))
-                                NormaHour = NormaHour + Quantity*ds.Tables("details").Rows(i)("norma_hour")
-                                Cost = Cost +
-                                       Quantity*Math.Round(ds.Tables("details").Rows(i)("cost_service")/1.0/1, 2)*1
-                                NDS = NDS + ndsItem
-                                TotalSum = TotalSum +
-                                           Quantity*Math.Round(ds.Tables("details").Rows(i)("cost_service")*1.2/1, 2)*1
-                            End If
-                        End If
-                    Next
-                    r1 = doc.Tables(1).Rows.Last
-                    r1.Cells(5).Range.Text = String.Format("{0:0.00}", Cost)
-                    r1.Cells(6).Range.Text = String.Format("{0:0.00}", NDS)
-                    r1.Cells(7).Range.Text = String.Format("{0:0.00}", TotalSum)
-                    r1.Cells(8).Range.Text = String.Format("{0:0.00}", NormaHour)
-
-                    doc.Bookmarks("cost1").Range.Text = Summa_propis(Cost)
-                    doc.Bookmarks("NDS1").Range.Text = Summa_propis(NDS)
-                    doc.Bookmarks("Summa1").Range.Text = Summa_propis(TotalSum)
-                    doc.Bookmarks("norma_hour").Range.Text = CStr(NormaHour) & " ч."
-
-                    doc.Save()
-
-                    IO.File.Copy(docFullPath, path & "repair\" & DocName32, True)
-
-                    '
-                    'Сохраняем инфу для экспорта на сайт
-                    '
-
-
-                    'находим УНП клиента
-                    Dim customer_unn =
-                            dbSQL.ExecuteScalar(
-                                "SELECT unn FROM customer WHERE customer_sys_id='" & GetPageParam("c") & "'")
-
-                    'Копируем док
-                    IO.File.Copy(docFullPath,
-                                 Server.MapPath(
-                                     "XML/repair_docs/" & Trim(customer_unn) & "+" &
-                                     Trim(ds.Tables("RepairRealizationAct").Rows(0)("num_cashregister")) & ".doc"), True)
-
-                    Dim export_content = Trim(customer_unn) & ";" &
-                                         Trim(ds.Tables("RepairRealizationAct").Rows(0)("num_cashregister")) & ";" & Now &
-                                         ";ready;" & TotalSum & vbCrLf
-
-                    Dim content_temp
-                    Dim file_open As IO.StreamReader
-                    i = 1
-                    file_open = IO.File.OpenText(Server.MapPath("XML/new_repair.csv"))
-                    While Not file_open.EndOfStream
-                        i = i + 1
-                        content_temp = file_open.ReadLine()
-                        If i < 20 Then
-                            export_content &= content_temp & vbCrLf
-                        End If
-                    End While
-                    file_open.Close()
-                    Try
-                        Dim file_save As IO.StreamWriter
-                        file_save = IO.File.CreateText(Server.MapPath("XML/new_repair.csv"))
-                        file_save.Write(export_content)
-                        file_save.Close()
-                    Catch ex As Exception
-                    End Try
-
-
-                Catch
-                    WriteError("Акт о проведении ремонта<br>" & Err.Description)
-                    ProcessRepairRealizationAct = False
-                    GoTo ExitFunction
-                End Try
-            ElseIf num_doc(0) = 33 Then
-                'Товарная накладная
-                docFullPath = path & "repair\" & DocName33
-
-
-                'ds.Tables("customer").Rows(0)("dogovor") & ds.Tables("sale").Rows(0)("dogovor")
-                boos_name = ds.Tables("customer").Rows(0)("boos_name")
-                customer_name = ds.Tables("customer").Rows(0)("customer_name")
-                accountant = ds.Tables("customer").Rows(0)("accountant")
-                unn = ds.Tables("customer").Rows(0)("unn")
-                registration = ds.Tables("customer").Rows(0)("registration")
-                Try
-                    fl = New IO.FileInfo(docFullPath)
-
-                    If Not fl.Exists() Then
-                        If fl.Exists() Then
-                            Try
-                                fl.Delete()
-                            Catch
-                            End Try
-                        End If
-                        Try
-                            'Create folders and copy templates
-                            Dim fldr As New IO.DirectoryInfo(path)
-                            If Not fldr.Exists Then
-                                fldr.Create()
-                            End If
-                        Catch ex As Exception
-                            WriteError(Err.Description & "<BR>" & ex.ToString)
-                            ProcessRepairRealizationAct = False
-                            Exit Function
-                        End Try
-                    End If
-                    IO.File.Copy(Server.MapPath("Templates/") & DocName33, docFullPath, True)
-
-                    doc = wrdApp.Documents.Open(docFullPath)
-
-                    'doc.Bookmarks("Boos").Range.Text = ds.Tables("sale").Rows(0)("proxy")
-                    'doc.Bookmarks("Boos2").Range.Text = ds.Tables("sale").Rows(0)("proxy")
-                    doc.Bookmarks("CustomerAddress").Range.Text = ds.Tables("customer").Rows(0)("customer_address")
-                    doc.Bookmarks("CustomerName").Range.Text = customer_name
-                    doc.Bookmarks("Dogovor").Range.Text = act_num
-                    dogovor = ds.Tables("RepairRealizationAct").Rows(0)("dogovor")
-                    sDate = GetRussianDate(ds.Tables("RepairRealizationAct").Rows(0)("sale_date"))
-
-
-                    Dim s1$ = ds.Tables("customer").Rows(0)("bank")
-                    If s1.Trim.Length = 0 Then s1 = "нет"
-                    doc.Bookmarks("Bank").Range.Text = s1
-                    doc.Bookmarks("UNN1").Range.Text = unn
-                    doc.Bookmarks("UNN2").Range.Text = unn
-                    doc.Bookmarks("Date").Range.Text = dogovor '& " от " & sDate
-                    doc.Bookmarks("Date2").Range.Text = GetRussianDate(Now)
-                    doc.Bookmarks("Razreshil").Range.Text = "Яско Владимир Федорович!" _
-                    'ds.Tables("sale").Rows(0)("razreshil")
-                    'If ds.Tables("sale").Rows(0)("firm_sys_id") <> 1 Then
-                    '    doc.Bookmarks("FirmName1").Range.Text = ds.Tables("sale").Rows(0)("firm_name")
-                    '    doc.Bookmarks("Rekvisit").Range.Text = ds.Tables("sale").Rows(0)("rekvisit")
-                    '    doc.Bookmarks("Employee").Range.Text = ds.Tables("sale").Rows(0)("fio")
-                    'Else
-                    'кто сделал все это
-
-                    doc.Bookmarks("Employee").Range.Text = sEmployee
-
-                    Dim a As Integer = 0
-                    Dim ndsItem As Double = 0
-
-                    For i = 0 To ds.Tables("details").Rows.Count - 1
-
-                        If ds.Tables("details").Rows(i)("is_detail") = True Then
-                            ' детали
-                            r1 = doc.Tables(2).Rows.Add(doc.Tables(2).Rows(a + 3))
-                            a = a + 1
-                            r1.Cells(1).Range.Text = a
-                            r1.Cells(2).Range.Text = ds.Tables("details").Rows(i)("name")
-                            r1.Cells(3).Range.Text = "шт."
-                            Quantity = ds.Tables("details").Rows(i)("quantity")
-                            r1.Cells(4).Range.Text = Quantity
-                            p = Math.Round(ds.Tables("details").Rows(i)("price")/1.2, 2)
-                            sSum = Quantity*ds.Tables("details").Rows(i)("price")
-                            sNDS = (sSum - Quantity*p)
-                            r1.Cells(5).Range.Text = String.Format("{0:0.00}", p)
-                            r1.Cells(6).Range.Text = "0"
-                            r1.Cells(7).Range.Text = String.Format("{0:0.00}", (sSum - sNDS))
-                            r1.Cells(8).Range.Text = "20"
-                            r1.Cells(9).Range.Text = String.Format("{0:0.00}", sNDS)
-                            r1.Cells(10).Range.Text = String.Format("{0:0.00}", sSum)
-                            dNDS = dNDS + sNDS
-                            dTotal = dTotal + sSum
-                        End If
-                    Next
-                    doc.Bookmarks("TotalNDS").Range.Text = String.Format("{0:0.00}", dNDS)
-                    doc.Bookmarks("TotalAll").Range.Text = String.Format("{0:0.00}", dTotal)
-                    doc.Bookmarks("Total").Range.Text = String.Format("{0:0.00}", (dTotal - dNDS))
-                    doc.Bookmarks("TotalNDSPropis").Range.Text = Summa_propis(dNDS)
-                    doc.Bookmarks("TotalAllPropis").Range.Text = Summa_propis(dTotal)
-
-                    doc.Bookmarks("Count").Range.Text = Summa_propis(ds.Tables("details").Rows.Count, False)
-
-                    doc.Save()
-
-                Catch
-                    WriteError(
-                        "Товарная накладная<br>" & Err.Description & "<br>" & Err.Erl & "<br>" & Err.LastDllError &
-                        "<br>" & Err.Number & "<br>" & Err.Source)
-                    ProcessRepairRealizationAct = False
-                    GoTo ExitFunction
-                End Try
-
-
-            End If
-            If num_doc(0) = 34 Then
-
-                '''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''''
-                'Счет-фактура по НДС
-
-                docFullPath = path & "repair\" & DocName34
-
-                Try
-                    fl = New IO.FileInfo(docFullPath)
-
-                    If Not fl.Exists() Then
-                        If fl.Exists() Then
-                            Try
-                                fl.Delete()
-                            Catch
-                            End Try
-                        End If
-                        Try
-                            'Create folders and copy templates
-                            Dim fldr As New IO.DirectoryInfo(path)
-                            If Not fldr.Exists Then
-                                fldr.Create()
-                            End If
-
-                        Catch ex As Exception
-                            WriteError(Err.Description & "<BR>" & ex.ToString)
-                            ProcessRepairRealizationAct = False
-                            Exit Function
-                        End Try
-                    End If
-                    IO.File.Copy(Server.MapPath("Templates/") & DocName34, docFullPath, True)
-
-                    doc = wrdApp.Documents.Open(docFullPath)
-
-                    Dim rdate_in As DateTime = CDate(ds.Tables("RepairRealizationAct").Rows(0)("repairdate_in"))
-                    Dim rdate_out As DateTime = CDate(ds.Tables("RepairRealizationAct").Rows(0)("repairdate_out"))
-                    sDate = GetRussianDate(rdate_out)
-
-
-                    dogovor = ds.Tables("RepairRealizationAct").Rows(0)("dogovor")
-                    'doc.Bookmarks("Dogovor").Range.Text = act_num
-                    doc.Bookmarks("RECIPIENT_ADDRESS").Range.Text = ds.Tables("customer").Rows(0)("customer_address")
-                    doc.Bookmarks("RECIPIENT_NAME").Range.Text = ds.Tables("customer").Rows(0)("customer_name")
-                    doc.Bookmarks("RECIPIENT_UNN").Range.Text = ds.Tables("customer").Rows(0)("unn")
-                    doc.Bookmarks("Date").Range.Text = sDate
-                    doc.Bookmarks("Date1").Range.Text = sDate
-                    doc.Bookmarks("BILL_DATE").Range.Text = sDate
-                    doc.Bookmarks("ACCEPT_INVOICE").Range.Text = "к акту №" & act_num & " от " &
-                                                                 rdate_out.ToString("dd.MM.yyyy") & "г."
-                    doc.Bookmarks("Saler").Range.Text = sEmployee
-                    Dim a As Integer = 0
-                    Dim ndsItem As Double = 0
-
-                    For i = 0 To ds.Tables("details").Rows.Count - 1
-
-                        If ds.Tables("details").Rows(i)("is_detail") = True Then
-                            ' детали
-                            r1 = doc.Tables(3).Rows.Add(doc.Tables(3).Rows(a + 3))
-                            a = a + 1
-                            r1.Cells(1).Range.Text = ds.Tables("details").Rows(i)("name")
-                            Quantity = ds.Tables("details").Rows(i)("quantity")
-                            p = Math.Round(ds.Tables("details").Rows(i)("price")/1.2, 2)
-                            sSum = Quantity*ds.Tables("details").Rows(i)("price")
-                            sNDS = (sSum - Quantity*p)
-                            r1.Cells(2).Range.Text = String.Format("{0:0.00}", (Quantity*p))
-                            r1.Cells(3).Range.Text = " "
-                            r1.Cells(4).Range.Text = "20"
-                            r1.Cells(5).Range.Text = String.Format("{0:0.00}", sNDS)
-                            r1.Cells(6).Range.Text = String.Format("{0:0.00}", sSum)
-                            dNDS = dNDS + sNDS
-                            dTotal = dTotal + sSum
-                            If ds.Tables("details").Rows(i)("cost_service") > 0 Then
-                                r1 = doc.Tables(3).Rows.Add(doc.Tables(3).Rows(a + 3))
-                                a = a + 1
-                                r1.Cells(1).Range.Text = "Замена " & ds.Tables("details").Rows(i)("name")
-                                Quantity = ds.Tables("details").Rows(i)("quantity")
-                                p = Math.Round(ds.Tables("details").Rows(i)("cost_service")/1.2, 2)
-                                sSum = Quantity*ds.Tables("details").Rows(i)("cost_service")
-                                sNDS = (sSum - Quantity*p)
-                                r1.Cells(2).Range.Text = Quantity*p
-                                r1.Cells(3).Range.Text = " "
-                                r1.Cells(4).Range.Text = "20"
-                                r1.Cells(5).Range.Text = String.Format("{0:0.00}", sNDS)
-                                r1.Cells(6).Range.Text = String.Format("{0:0.00}", sSum)
-                                dNDS = dNDS + sNDS
-                                dTotal = dTotal + sSum
-                            End If
-                        Else
-                            r1 = doc.Tables(3).Rows.Add(doc.Tables(3).Rows(a + 3))
-                            a = a + 1
-                            r1.Cells(1).Range.Text = ds.Tables("details").Rows(i)("name")
-                            Quantity = ds.Tables("details").Rows(i)("quantity")
-                            p = Math.Round(ds.Tables("details").Rows(i)("cost_service")/1.2, 2)
-                            sSum = Quantity*ds.Tables("details").Rows(i)("cost_service")
-                            sNDS = (sSum - Quantity*p)
-                            r1.Cells(2).Range.Text = String.Format("{0:0.00}", (Quantity*p))
-                            r1.Cells(3).Range.Text = " "
-                            r1.Cells(4).Range.Text = "20"
-                            r1.Cells(5).Range.Text = String.Format("{0:0.00}", sNDS)
-                            r1.Cells(6).Range.Text = String.Format("{0:0.00}", sSum)
-                            dNDS = dNDS + sNDS
-                            dTotal = dTotal + sSum
-                        End If
-                    Next
-                    r1 = doc.Tables(3).Rows.Last
-                    r1.Cells(2).Range.Text = String.Format("{0:0.00}", (dTotal - dNDS))
-                    r1.Cells(3).Range.Text = ""
-                    r1.Cells(4).Range.Text = "x"
-                    r1.Cells(5).Range.Text = String.Format("{0:0.00}", dNDS)
-                    r1.Cells(6).Range.Text = String.Format("{0:0.00}", dTotal)
-
-
-                    'doc.Bookmarks("TotalNDS").Range.Text = dNDS
-                    'doc.Bookmarks("TotalAll").Range.Text = dTotal
-                    'doc.Bookmarks("Total").Range.Text = dTotal - dNDS
-                    doc.Bookmarks("TotalNDSPropis").Range.Text = Summa_propis(dNDS)
-                    doc.Bookmarks("TotalAllPropis").Range.Text = Summa_propis(dTotal)
-
-                    doc.Save()
-
-
-                Catch
-                    WriteError(
-                        "Счет-фактура  по НДС<br>" & Err.Description & "<br>" & Err.Erl & "<br>" & Err.LastDllError &
-                        "<br>" & Err.Number & "<br>" & Err.Source)
-                    ProcessRepairRealizationAct = False
-                    GoTo ExitFunction
-                End Try
-
-            End If
-            ExitFunction:
-            Try
-                ds.Clear()
-                If Not doc Is Nothing Then
-                    doc.Close(True)
-                End If
-                If Not wrdApp Is Nothing Then
-                    wrdApp.Quit(False)
-                End If
-                wrdApp = Nothing
-                doc = Nothing
-                cmd = Nothing
-                ds = Nothing
-                adapt = Nothing
-
-            Catch
-                WriteError("Аварийное завершение работы Microsoft Word<br>" & Err.Description)
-            End Try
-        End Function
-
         Private Function ProcessRestReport(ByVal group As String) As Boolean
             Dim j As Integer
             Dim cmd As SqlClient.SqlCommand
@@ -6383,9 +5663,9 @@ Namespace Kasbi
         Private Sub ProcessAktForTOandDolg(good_sys_id As String, d As String)
             Dim checkGoods As ListDictionary = New ListDictionary()
             checkGoods.Add(good_sys_id.ToString(), " ")
-            serviceDoc.AktForTOandDolg(checkGoods, Response, True,
-                                       Date.ParseExact(d, "ddMMyyyy",
-                                                       System.Globalization.DateTimeFormatInfo.InvariantInfo))
+            _serviceDoc.AktForTOandDolg(checkGoods, Response, True,
+                                        Date.ParseExact(d, "ddMMyyyy",
+                                                        System.Globalization.DateTimeFormatInfo.InvariantInfo))
         End Sub
 
 

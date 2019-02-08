@@ -216,7 +216,7 @@
                         </asp:ImageButton>&nbsp;История&nbsp;ремонта
                     </td>
                     <td class="Unit" align="right">
-                        <asp:HyperLink ID="lnkNewRepair" runat="server" CssClass="PanelHider" EnableViewState="False">Добавить&nbsp;запись&nbsp;о&nbsp;ремонте</asp:HyperLink></td>
+                        <asp:HyperLink ID="lnkNewRepair" runat="server" CssClass="PanelHider" EnableViewState="False">История&nbsp;ремонтов&nbsp;(подробнее)</asp:HyperLink></td>
                 </tr>
                 <asp:Panel ID="pnlRepairInfo_body" runat="server">
                     <tr>

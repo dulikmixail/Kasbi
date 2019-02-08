@@ -41,7 +41,7 @@ Namespace Kasbi
         Private ReadOnly _serviceCustomer As ServiceCustomer = New ServiceCustomer()
         Private ReadOnly _serviceGood As ServiceGood = New ServiceGood()
         Private ReadOnly _serviceRepair As ServiceRepair = New ServiceRepair()
-        Dim ReadOnly _validTelCode As List(Of String) = New List(Of String) From {"25", "29", "33", "44"}
+        Private ReadOnly _serviceTelNumber As ServiceTelNumber = New ServiceTelNumber()
 
         Private Overloads Sub Page_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
             icash = Request.Params(0)
@@ -128,8 +128,8 @@ Namespace Kasbi
                 lblErrors.Text = "Выберите плательщика ремонта!"
             ElseIf String.IsNullOrEmpty(txtTelephoneNotice.Text)
                 lblErrors.Text = "Вы не ввели номер телефона оповещения"
-            ElseIf Not _validTelCode.Contains(txtTelephoneNotice.Text.Substring(0, 2))
-                lblErrors.Text = "Введен некорректный мобильный телефон!"
+            ElseIf Not _serviceTelNumber.IsValidNumber(txtTelephoneNotice.Text)
+                lblErrors.Text = _serviceTelNumber.GetStringAllExeption()
             ElseIf String.IsNullOrEmpty(repairBadsList) And String.IsNullOrEmpty(txtName) And Not isNeadSKNO.Checked
                 lblErrors.Text = "Вы не выбрали или не ввели неисправность"
             ElseIf _

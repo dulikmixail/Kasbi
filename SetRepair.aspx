@@ -46,8 +46,7 @@ CodeFile="SetRepair.aspx.vb" %>
                 <asp:TextBox ID="txtCustomerFind" runat="server" BorderWidth="1px" BackColor="#F6F8FC"
                              Width="80%" MaxLength="11">
                 </asp:TextBox>
-                <asp:LinkButton ID="lnkCustomerFind" runat="server"
-                                CssClass="LinkButton">
+                <asp:LinkButton ID="lnkCustomerFind" runat="server" CssClass="LinkButton">
                     Найти
                 </asp:LinkButton>
 

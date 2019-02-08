@@ -29,8 +29,8 @@ Namespace Exeption
 
         Public Overloads Function ToString() As String Implements IExeption.ToString
             Dim str As String = String.Empty
-            For Each field As FieldInfo In Me.GetType().GetFields(BindingFlags.Public)
-                str &= field.Name & "=" & field.GetValue(Nothing).ToString() & " "
+            For Each text As String In _texts
+                str &= text
             Next
             Return str
         End Function

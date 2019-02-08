@@ -1,3 +1,5 @@
+Imports Service
+
 Namespace Kasbi
 
     Partial Class CTOList
@@ -27,6 +29,7 @@ Namespace Kasbi
 
 #End Region
         Const ClearString = "-------"
+        Private ReadOnly _serviceTelNumber As ServiceTelNumber = New ServiceTelNumber()
 
 
         Private Overloads Sub Page_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
@@ -198,6 +201,10 @@ Namespace Kasbi
                     If s.Length > 0 Then s = s & "<br>"
                     s = s & "Факс: " & e.Item.DataItem("phone1")
                 End If
+                If Not IsDBNull(e.Item.DataItem("phone_notice")) AndAlso Trim(e.Item.DataItem("phone_notice").ToString()).Length > 0 Then
+                    If s.Length > 0 Then s = s & ", " Else s = ""
+                    s = s & "<br/>Для СМС: " & "+375" & e.Item.DataItem("phone_notice").ToString()
+                End If
 
                 CType(e.Item.FindControl("lblPhone2"), Label).Text = s
 
@@ -269,6 +276,12 @@ Namespace Kasbi
             'Ограничение прав на редактирование
             If Session("rule6") = "1" Then
                 Dim cmd As SqlClient.SqlCommand
+                'проверяем номер для СМС на валидность
+                Dim phoneNotice As String =  CType(e.Item.FindControl("txtPhoneNotice"), WebControls.TextBox).Text
+                If Not _serviceTelNumber.IsValidNumber(phoneNotice, False)
+                    msgCTO.Text = _serviceTelNumber.GetStringAllExeption() & "<br>"
+                    Exit Sub
+                End If
                 Try
                     cmd = New SqlClient.SqlCommand("update_customer")
                     cmd.CommandType = CommandType.StoredProcedure
@@ -295,6 +308,7 @@ Namespace Kasbi
                     cmd.Parameters.AddWithValue("@pi_phone2", CType(e.Item.FindControl("txtPhone22"), TextBox).Text.Replace("'", """"))
                     cmd.Parameters.AddWithValue("@pi_phone3", CType(e.Item.FindControl("txtPhone32"), TextBox).Text.Replace("'", """"))
                     cmd.Parameters.AddWithValue("@pi_phone4", CType(e.Item.FindControl("txtPhone42"), TextBox).Text.Replace("'", """"))
+                    cmd.Parameters.AddWithValue("@pi_phone_notice", CType(e.Item.FindControl("txtPhoneNotice"), TextBox).Text.Replace("'", """"))
                     cmd.Parameters.AddWithValue("@pi_tax_inspection", CType(e.Item.FindControl("txtTaxInspection2"), TextBox).Text.Replace("'", """"))
                     If CType(e.Item.FindControl("lstIMNS"), DropDownList).SelectedIndex > 0 Then
                         cmd.Parameters.AddWithValue("@pi_imns_sys_id", CType(e.Item.FindControl("lstIMNS"), DropDownList).SelectedValue)

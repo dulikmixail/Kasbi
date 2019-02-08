@@ -28,6 +28,7 @@ function isFind()
     bottommargin="0" leftmargin="0" topmargin="0" onload="javascript:document.body.scrollTop=document.all['scrollPos'].value;"
     rightmargin="0">
     <form id="frmCustomerList" method="post" runat="server" KeyPreview = "true">
+    <asp:ScriptManager ID="ScriptManager1" runat="server"></asp:ScriptManager>
         <uc1:Header ID="Header1" runat="server"></uc1:Header>
         <table width="100%" border="0" cellpadding="2" cellspacing="1" class="PageTitle">
             <tr>
@@ -287,21 +288,26 @@ function isFind()
                                         BorderStyle="Solid" Text='<%# DataBinder.Eval(Container, "DataItem.phone1") %>'>
                                     </asp:TextBox><br>
                                     <p class="SubTitleEditbox">
-                                        Телефон 1:</p>
+                                        Рабочий:</p>
                                     <asp:TextBox ID="txtPhone2" runat="server" Width="100%" BorderWidth="1px" MaxLength="25"
                                         BorderStyle="Solid" Text='<%# DataBinder.Eval(Container, "DataItem.phone2") %>'>
                                     </asp:TextBox><br>
                                     <p class="SubTitleEditbox">
-                                        Телефон 2:</p>
+                                        Домашний:</p>
                                     <asp:TextBox ID="txtPhone3" runat="server" Width="100%" BorderWidth="1px" MaxLength="25"
                                         BorderStyle="Solid" Text='<%# DataBinder.Eval(Container, "DataItem.phone3") %>'>
-                                    </asp:TextBox><br>a
+                                    </asp:TextBox><br>
                                     <p class="SubTitleEditbox">
-                                        Телефон 3:</p>
+                                        Мобильный:</p>
                                         
                                     <asp:TextBox ID="txtPhone4" runat="server" Width="100%" BorderWidth="1px" MaxLength="25"
                                         BorderStyle="Solid" Text='<%# DataBinder.Eval(Container, "DataItem.phone4") %>'>
                                     </asp:TextBox>
+                                    <p class="SubTitleEditbox">
+                                        Для СМС:</p>
+                                    <asp:TextBox ID="txtPhoneNotice" runat="server" ToolTip="Введите телефон для СМС" BackColor="#F6F8FC" Width="100%" MaxLength="250" BorderWidth="1px" Text='<%# DataBinder.Eval(Container, "DataItem.phone_notice") %>'/>
+                                    <ajaxToolkit:MaskedEditValidator ID="txtPhoneNotice_MaskedEditValidator" runat="server" ControlExtender="txtPhoneNotice_MaskedEditExtender" ControlToValidate="txtPhoneNotice" Display="Dynamic" EmptyValueBlurredText="*" ErrorMessage="Введен некорректный мобильный телефон!" InvalidValueBlurredMessage="Введен некорректный мобильный телефон!" InvalidValueMessage="Введен некорректный мобильный телефон!" IsValidEmpty="True" ValidationExpression="^(29|25|44|33)(\d{7})$" ValidationGroup="GroupName">+375 (99) 999-99-99</ajaxToolkit:MaskedEditValidator>
+                                    <ajaxToolkit:MaskedEditExtender ID="txtPhoneNotice_MaskedEditExtender" runat="server" BehaviorID="txtPhoneNotice_MaskedEditExtender" TargetControlID="txtPhoneNotice" Mask="+375 (99) 999-99-99" MaskType="Number" MessageValidatorTip="True" ErrorTooltipEnabled="True" ClearTextOnInvalid="True" ClearMaskOnLostFocus="True" AutoComplete="False"/>
                                 </EditItemTemplate>
                             </asp:TemplateColumn>
                             <asp:TemplateColumn HeaderText="Банк">

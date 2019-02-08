@@ -22,6 +22,7 @@
     bottommargin="0" leftmargin="0" topmargin="0" onload="javascript:document.body.scrollTop=document.all['scrollPos'].value;"
     rightmargin="0">
     <form id="frmNewRequest" method="post" runat="server">
+    <asp:ScriptManager ID="ScriptManager1" runat="server"></asp:ScriptManager>
         <uc1:Header ID="Header1" runat="server"></uc1:Header>
         <table class="PageTitle" cellspacing="1" cellpadding="2" width="100%" border="0">
             <tr>
@@ -298,32 +299,39 @@
                             <tr class="TitleTextbox">
                                 <td class="SubTitleTextbox" align="left">
                                     &nbsp;</td>
-                                <td class="SubTitleTextbox" align="left" colspan="2">
+                                <td class="SubTitleTextbox" align="left">
                                     Факс</td>
                                 <td class="SubTitleTextbox" align="left">
                                     рабочий</td>
-                                <td class="SubTitleTextbox" align="left" colspan="2">
+                                <td class="SubTitleTextbox" align="left">
                                     домашний</td>
                                 <td class="SubTitleTextbox" align="left">
                                     мобильный</td>
-                                <td class="SubTitleTextbox" align="left" colspan="2">
+                                <td class="SubTitleTextbox" align="left">
+                                    для СМС</td>
+                                <td class="SubTitleTextbox" align="left">
                                     &nbsp;</td>
                             </tr>
                             <tr class="TitleTextbox">
                                 <td class="SectionRow" align="left">
                                     &nbsp;</td>
-                                <td class="SectionRow" align="right" colspan="2">
+                                <td class="SectionRow" align="right">
                                     <asp:TextBox ID="txtPhone1" runat="server" ToolTip="Введите номер факса" MaxLength="20"
                                         BackColor="#F6F8FC" BorderWidth="1px" Width="100%"></asp:TextBox></td>
                                 <td class="SectionRow" align="right">
                                     <asp:TextBox ID="txtPhone2" runat="server" ToolTip="Введите телефон 1" MaxLength="20"
                                         BackColor="#F6F8FC" BorderWidth="1px" Width="100%"></asp:TextBox></td>
-                                <td class="SectionRow" align="right" colspan="2">
+                                <td class="SectionRow" align="right">
                                     <asp:TextBox ID="txtPhone3" runat="server" ToolTip="Введите телефон 2" MaxLength="20"
                                         BackColor="#F6F8FC" BorderWidth="1px" Width="100%"></asp:TextBox></td>
                                 <td class="SectionRow" align="right">
                                     <asp:TextBox ID="txtPhone4" runat="server" ToolTip="Введите телефон 3" MaxLength="20"
                                         BackColor="#F6F8FC" BorderWidth="1px" Width="100%"></asp:TextBox></td>
+                                <td class="SectionRow" align="center" colspan="2">
+                                    <asp:TextBox ID="txtPhoneNotice" runat="server" ToolTip="Введите телефон для СМС" BackColor="#F6F8FC" Width="100%" MaxLength="250" BorderWidth="1px"/>
+                                    <ajaxToolkit:MaskedEditValidator ID="txtPhoneNotice_MaskedEditValidator" runat="server" ControlExtender="txtPhoneNotice_MaskedEditExtender" ControlToValidate="txtPhoneNotice" Display="Dynamic" EmptyValueBlurredText="*" ErrorMessage="Введен некорректный мобильный телефон!" InvalidValueBlurredMessage="Введен некорректный мобильный телефон!" InvalidValueMessage="Введен некорректный мобильный телефон!" IsValidEmpty="True" ValidationExpression="^(29|25|44|33)(\d{7})$" ValidationGroup="GroupName">+375 (99) 999-99-99</ajaxToolkit:MaskedEditValidator>
+                                    <ajaxToolkit:MaskedEditExtender ID="txtPhoneNotice_MaskedEditExtender" runat="server" BehaviorID="txtPhoneNotice_MaskedEditExtender" TargetControlID="txtPhoneNotice" Mask="+375 (99) 999-99-99" MaskType="Number" MessageValidatorTip="True" ErrorTooltipEnabled="True" ClearTextOnInvalid="True" ClearMaskOnLostFocus="True" AutoComplete="False"/>
+                                </td>
                                 <td class="SectionRow" align="left" colspan="2">
                                     &nbsp;</td>
                             </tr>

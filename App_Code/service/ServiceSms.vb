@@ -37,7 +37,7 @@ Namespace Service
 
         Public Function SendManySmsWithDifferentText(phonesAndSmsTexts As Dictionary(Of String, String),
                                                      Optional defaultText As String =
-                                                        "Ошибка: 101. Если вы получили это СМС. Сообщите этот код ошибки по телефону  8 (017) 213-67-00",
+                                                        "Ошибка: 101. Если вы получили это СМС. Сообщите этот код ошибки по телефону  8 (017) 213-67-00. Спасибо.",
                                                      Optional dataSend As DateTime = Nothing) As SmsSendingResponse
             Dim exeption = New SmsExeption()
 
@@ -122,11 +122,36 @@ Namespace Service
                                                    smsType As Integer,
                                                    Optional dataSend As DateTime = Nothing,
                                                    Optional cashHistoryId As Integer = 0,
-                                                   Optional goodId As Integer = 0)
+                                                   Optional goodId As Integer = 0,
+                                                   Optional customerId As Integer = 0)
             If Not String.IsNullOrEmpty(Trim(phoneNumber)) AND Trim(phoneNumber) <> "Нет номера"
-                Dim cmd1 As SqlCommand
                 Dim smsSendSysId As Integer = 0
 
+                smsSendSysId = IsertSmsHistory(phoneNumber, smsText, executorId, smsType, cashHistoryId, goodId,
+                                               customerId)
+                SendOneSmsWithUpdateSmsSend(smsSendSysId, phoneNumber, smsText, dataSend)
+            End If
+        End Sub
+
+        Public Sub SendManySmsWithInsertSmsHistory(smsModels As SmsModel())
+            Dim smsSendSysIds As List(Of Integer) = New List(Of Integer)
+            For Each smsModel As SmsModel In smsModels
+                smsSendSysIds.Add(IsertSmsHistory(smsModel.PhoneNumber, smsModel.SmsText, smsModel.ExecutorId,
+                                                  smsModel.SmsType, smsModel.CashHistoryId, smsModel.GoodId,
+                                                  smsModel.CustomerId))
+            Next
+            SendManySmsWithUpdateSmsSend(smsSendSysIds.ToArray())
+        End Sub
+
+        Private Function IsertSmsHistory(phoneNumber As String, smsText As String,
+                                         executorId As Integer,
+                                         smsType As Integer,
+                                         Optional cashHistoryId As Integer = 0,
+                                         Optional goodId As Integer = 0,
+                                         Optional customerId As Integer = 0) As Integer
+            Dim cmd1 As SqlCommand
+            Dim smsSendSysId As Integer = 0
+            If Not String.IsNullOrEmpty(Trim(phoneNumber)) AND Trim(phoneNumber) <> "Нет номера"
                 Try
                     cmd1 = New SqlCommand("insert_sms_send")
                     cmd1.CommandType = CommandType.StoredProcedure
@@ -141,6 +166,11 @@ Namespace Service
                     Else
                         cmd1.Parameters.AddWithValue("@pi_good_sys_id", goodId)
                     End If
+                    If customerId = 0
+                        cmd1.Parameters.AddWithValue("@pi_customer_sys_id", DBNull.Value)
+                    Else
+                        cmd1.Parameters.AddWithValue("@pi_customer_sys_id", customerId)
+                    End If
                     cmd1.Parameters.AddWithValue("@pi_validity_period", DBNull.Value)
                     cmd1.Parameters.AddWithValue("@pi_sms_text", smsText)
                     cmd1.Parameters.AddWithValue("@pi_sms_sys_id", DBNull.Value)
@@ -153,9 +183,9 @@ Namespace Service
                 Catch
                     Throw New Exception("Ошибка вставки данных об отправке СМС 2!<br>" & Err.Description)
                 End Try
-                SendOneSmsWithUpdateSmsSend(smsSendSysId, phoneNumber, smsText, dataSend)
             End If
-        End Sub
+            Return smsSendSysId
+        End Function
 
         Public Sub SendOneSmsWithInsertSmsHistoryForCashHistory(phoneNumber As String, smsText As String,
                                                                 cashHistoryId As Integer, executorId As Integer,
@@ -171,27 +201,64 @@ Namespace Service
             SendOneSmsWithInsertSmsHistory(phoneNumber, smsText, executorId, smsType, dataSend, Nothing, goodId)
         End Sub
 
+        Private Sub SendManySmsWithUpdateSmsSend(smsSendSysIds As Integer(),
+                                                 Optional dataSend As DateTime = Nothing)
+            Dim phonesAndSmsTexts As Dictionary(Of String, String) = New Dictionary(Of String,String)()
+            Dim cmd As SqlCommand
+            Dim adapt As SqlDataAdapter
+            Dim ds As DataSet = New DataSet
+            Dim rows As DataRowCollection
+            If smsSendSysIds.Length > 0
+                cmd = New SqlCommand("get_sms_send_by_ids")
+                cmd.CommandType = CommandType.StoredProcedure
+                cmd.Parameters.AddWithValue("@pi_sms_send_sys_ids", String.Join(";", smsSendSysIds))
+                adapt = _sharedDbSql.GetDataAdapter(cmd)
+                adapt.Fill(ds)
+            End If
+
+            If ds.Tables.Count > 0 And ds.Tables(0).Rows.Count > 0
+                rows = ds.Tables(0).Rows
+                For Each row In rows
+                    phonesAndSmsTexts.Add(row("recipient").ToString(), row("sms_text").ToString())
+                Next
+            End If
+
+            Dim smsSendingR As SmsSendingResponse = SendManySmsWithDifferentText(phonesAndSmsTexts, dataSend := dataSend)
+            If Not IsNothing(smsSendingR)
+                If smsSendSysIds.Length <> smsSendingR.message.msg.Length
+                    Throw New Exception("Длинна запроса не соответствует длинне ответа<br>")
+                End If
+                Dim smsSendSysId As Integer
+                Dim msg = smsSendingR.message.msg
+                For i As Integer = 0 To smsSendSysIds.Length - 1
+                    smsSendSysId = smsSendSysIds(i)
+                    UpdateSmsSend(smsSendSysId, msg(i).sms_id, msg(i).error_code)
+                Next
+            End If
+        End Sub
+
+        Private Sub UpdateSmsSend(smsSendSysId As Integer, smsId As Integer, smsError As Integer)
+            Dim cmd1 As SqlCommand
+            Try
+                cmd1 = New SqlCommand("update_sms_send")
+                cmd1.CommandType = CommandType.StoredProcedure
+                cmd1.Parameters.AddWithValue("@pi_sms_send_sys_id", smsSendSysId)
+                cmd1.Parameters.AddWithValue("@pi_sms_sys_id", smsId)
+                cmd1.Parameters.AddWithValue("@pi_error", smsError)
+                _sharedDbSql.Execute(cmd1)
+            Catch
+                Throw New Exception("Ошибка обновления данных об отправке СМС 3!<br>" & Err.Description)
+            End Try
+        End Sub
+
         Private Sub SendOneSmsWithUpdateSmsSend(smsSendSysId As Integer, phoneNumber As String, smsText As String,
                                                 Optional dataSend As DateTime = Nothing)
             If Not String.IsNullOrEmpty(Trim(phoneNumber)) AND Trim(phoneNumber) <> "Нет номера"
-                Dim cmd1 As SqlCommand
                 Dim smsSendingR As SmsSendingResponse = SendOneSms(phoneNumber, smsText, dataSend)
                 If Not IsNothing(smsSendingR)
 
-                    Dim msgSendingR As Sms.Sending.Response.Msg = smsSendingR.message.msg(0)
-                    If smsSendSysId > 0
-                        Try
-                            cmd1 = New SqlCommand("update_sms_send")
-                            cmd1.CommandType = CommandType.StoredProcedure
-                            cmd1.Parameters.AddWithValue("@pi_sms_send_sys_id", smsSendSysId)
-                            cmd1.Parameters.AddWithValue("@pi_sms_sys_id", msgSendingR.sms_id)
-                            cmd1.Parameters.AddWithValue("@pi_error", msgSendingR.sms_id)
-                            _sharedDbSql.Execute(cmd1)
-                        Catch
-                            Throw New Exception("Ошибка обновления данных об отправке СМС 3!<br>" & Err.Description)
-                        End Try
-
-                    End If
+                    Dim msg As Sms.Sending.Response.Msg = smsSendingR.message.msg(0)
+                    UpdateSmsSend(smsSendSysId, msg.sms_id, msg.error_code)
                 End If
             End If
         End Sub

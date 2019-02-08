@@ -213,6 +213,54 @@
         </div>
 
     </div>
+    
+    <!-- The Modal for Sms Sendera -->
+    <div id="smsSendModal" runat="server" class="modal">
+        <!-- Modal content -->
+        <div class="modal-content">
+            <div class="modal-header">
+                <span class="close">&times;</span>
+                <h3>Результат отправки СМС</h3>
+                <asp:Panel runat="server">
+                    <table>
+                        <tbody>
+                        <tr>
+                            <td>
+                                <strong>Всего СМС:</strong>
+                            </td>
+                            <td>
+                                <asp:Label runat="server" ID="lblCountSelectedSms"></asp:Label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>Отправлено:</strong>
+                            </td>
+                            <td>
+                                <asp:Label runat="server" ID="lblCountSendSms"></asp:Label>
+                            </td>
+                        </tr>
+                        <tr>
+                            <td>
+                                <strong>Не нейдено номеров номеров:</strong>
+                            </td>
+                            <td>
+                                <asp:Label runat="server" ID="lblCountPhonesNotFound"></asp:Label>
+                            </td>
+                        </tr>
+
+                        </tbody>
+                    </table>
+                </asp:Panel>
+            </div>
+            <div id="Div2" runat="server" class="modal-body">
+            </div>
+            <div class="modal-footer">
+            </div>
+        </div>
+    </div>
+    
+
         <uc1:Header ID="Header1" runat="server"></uc1:Header>
         <table class="PageTitle" cellspacing="1" cellpadding="2" width="100%" border="0">
             <tr>
@@ -328,7 +376,7 @@
 
             <tr>
                 <td align="left" colspan="2" height="15" valign="top" style="padding:5px; font-size:12px">
-                <div style="background-color:Silver; width:980px; padding:5px">                         
+                <div style="background-color:Silver; width:1100px; padding:5px">                         
                 <b>Дата&nbsp;проведения&nbsp;ТО:&nbsp;</b><asp:textbox id="tbxCloseDate" Runat="server" BorderWidth="1px"></asp:textbox><b>&nbsp;&nbsp;Закрываемый&nbsp;период:&nbsp;</b>
                     <%--<A href="javascript:showdatepicker('tbxCloseDate', 0, false,'MM.DD.YYYY')"><IMG alt="Date Picker" src="../Images/cal_date_picker.gif" border="0"></A>--%>
                                 <asp:DropDownList ID="lstMonth" runat="server" BorderWidth="1px" BackColor="#F6F8FC">
@@ -367,10 +415,11 @@
                                     <asp:ListItem Value="2020">2020</asp:ListItem>
                                 </asp:DropDownList>                  
                 &nbsp;&nbsp;&nbsp;
-                <asp:LinkButton ID="lnkSetTO" cssClass="LinkButton" runat="server">Провести ТО</asp:LinkButton>&nbsp;|&nbsp;
+                <asp:LinkButton ID="lnkSetTO" cssClass="LinkButton" runat="server">Провести&nbsp;ТО</asp:LinkButton>&nbsp;|&nbsp;
                 <%--<asp:LinkButton ID="LinkButton1" cssClass="LinkButton" runat="server">АКТ приема-сдачи выполненных работ</asp:LinkButton>&nbsp;|&nbsp;--%>               
-                <asp:LinkButton ID="lnkExportData" cssClass="LinkButton" runat="server">Экспорт в Excel</asp:LinkButton>&nbsp;|&nbsp;
-                <asp:LinkButton ID="lnkSetRaon" cssClass="LinkButton" runat="server">Привязать к району</asp:LinkButton>       
+                <asp:LinkButton ID="lnkExportData" cssClass="LinkButton" runat="server">Экспорт&nbsp;в&nbsp;Excel</asp:LinkButton>&nbsp;|&nbsp;
+                <asp:LinkButton ID="lnkSetRaon" cssClass="LinkButton" runat="server">Привязать&nbsp;к&nbsp;району</asp:LinkButton>&nbsp;|&nbsp;
+                <asp:LinkButton ID="lnkSendSms" cssClass="LinkButton" runat="server" OnClick="lnkSendSms_Click">Отправить&nbsp;СМС</asp:LinkButton>
                 </div>   
                 <br />
                
@@ -411,7 +460,7 @@
   
                            <asp:TemplateColumn HeaderText="Плательщик / Владелец" SortExpression="payerInfo"> 
                                 <ItemTemplate>
-                                    <asp:Label ID="lblGoodOwner" runat="server"></asp:Label>
+                                    <asp:HyperLink ID="lblGoodOwner" runat="server" Target="_blank"></asp:HyperLink>
                                 </ItemTemplate>
                             </asp:TemplateColumn>
                             <asp:TemplateColumn HeaderText="Товар" SortExpression="good_name" > 
@@ -532,8 +581,8 @@
                             </asp:TemplateColumn>
                             <asp:TemplateColumn HeaderText="Товар" SortExpression="good_name" ItemStyle-HorizontalAlign="center"> 
                                 <ItemTemplate>
-                                    <asp:Label ID="lbledtGoodName" runat="server" Text='<%# DataBinder.Eval(Container, "DataItem.good_name") %>'>
-                                    </asp:Label>
+                                    <asp:HyperLink ID="lbledtGoodName" runat="server" Text='<%# DataBinder.Eval(Container, "DataItem.good_name") %>' NavigateUrl="">
+                                    </asp:HyperLink>
                                 </ItemTemplate>
                             </asp:TemplateColumn>
                             <asp:TemplateColumn HeaderText="№" SortExpression="num_cashregister" > 
@@ -621,19 +670,24 @@
 
     // Get the modal
     var modal = document.getElementById('myModal');
+    var smsSendModal = document.getElementById('smsSendModal');
 
     // Get the <span> element that closes the modal
-    var span = document.getElementsByClassName("close")[0];
+    var spans = document.getElementsByClassName("close");
 
     // When the user clicks on <span> (x), close the modal
-    span.onclick = function () {
-        modal.style.display = "none";
-    }
+    for (var i=0; i < spans.length; i++) {
+        spans[i].onclick = function(){
+            modal.style.display = "none";
+            smsSendModal.style.display = "none";
+        }
+    };
 
     // When the user clicks anywhere outside of the modal, close it
     window.onclick = function (event) {
         if (event.target == modal) {
             modal.style.display = "none";
+            smsSendModal.style.display = "none";
         }
     }
 

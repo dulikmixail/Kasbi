@@ -1,7 +1,6 @@
 Imports Service
 
 Namespace Kasbi
-
     Partial Class NewRequest
         Inherits PageBase
 
@@ -11,14 +10,15 @@ Namespace Kasbi
         Dim dogovor$
         Dim isChangeMonth, isExpired, isCto As Boolean
         Dim m_goodsDS As DataSet
-        Private serviceSale As ServiceSale = New ServiceSale()
+        Private ReadOnly _serviceSale As ServiceSale = New ServiceSale()
+        Private ReadOnly _serviceTelNumber As ServiceTelNumber = New ServiceTelNumber()
 
 
 #Region " Web Form Designer Generated Code "
 
         'This call is required by the Web Form Designer.
-        <System.Diagnostics.DebuggerStepThrough()> Private Sub InitializeComponent()
-
+        <System.Diagnostics.DebuggerStepThrough()>
+        Private Sub InitializeComponent()
         End Sub
 
         Private Sub Page_Init(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Init
@@ -70,14 +70,31 @@ Namespace Kasbi
 
         Private Overloads Sub Page_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
             Const javascript = "javascript:"
-            chkPayed.Attributes.Add("onclick", javascript & radiobuttons.ClientID & ".disabled=!" & chkPayed.ClientID & ".checked;")
+            chkPayed.Attributes.Add("onclick",
+                                    javascript & radiobuttons.ClientID & ".disabled=!" & chkPayed.ClientID & ".checked;")
             'lnkAccountant.Attributes.Add("onclick", "javascript:" & txtAccountant.ClientID & ".value=" & txtBoosLastName.ClientID & ".value + ' ' + " & txtBoosFirstName.ClientID & ".value + ' ' + " & txtBoosPatronymicName.ClientID & ".value;")
             'txtUNN.Attributes.Add("onchange", javascript & txtOKPO.ClientID & ".value=" & txtUNN.ClientID & ".value;")
-            txtBoosLastName.Attributes.Add("onchange", javascript & txtAccountant.ClientID & ".value=" & txtBoosLastName.ClientID & ".value + ' ' + " & txtBoosFirstName.ClientID & ".value + ' ' + " & txtBoosPatronymicName.ClientID & ".value;")
-            txtBoosFirstName.Attributes.Add("onchange", javascript & txtAccountant.ClientID & ".value=" & txtBoosLastName.ClientID & ".value + ' ' + " & txtBoosFirstName.ClientID & ".value + ' ' + " & txtBoosPatronymicName.ClientID & ".value;")
-            txtBoosPatronymicName.Attributes.Add("onchange", javascript & txtAccountant.ClientID & ".value=" & txtBoosLastName.ClientID & ".value + ' ' + " & txtBoosFirstName.ClientID & ".value + ' ' + " & txtBoosPatronymicName.ClientID & ".value;")
-            rdbtnIP.Attributes.Add("onclick", javascript & chkNDS.ClientID & ".checked=false;" & txtCustomerName.ClientID & ".disabled=true;" & txtCustomerAbr.ClientID & ".disabled=true;" & txtBranch.ClientID & ".disabled=true;")
-            rdbtnOrganization.Attributes.Add("onclick", javascript & chkNDS.ClientID & ".checked=true;" & txtCustomerName.ClientID & ".disabled=false;" & txtCustomerAbr.ClientID & ".disabled=false;" & txtBranch.ClientID & ".disabled=false;")
+            txtBoosLastName.Attributes.Add("onchange",
+                                           javascript & txtAccountant.ClientID & ".value=" & txtBoosLastName.ClientID &
+                                           ".value + ' ' + " & txtBoosFirstName.ClientID & ".value + ' ' + " &
+                                           txtBoosPatronymicName.ClientID & ".value;")
+            txtBoosFirstName.Attributes.Add("onchange",
+                                            javascript & txtAccountant.ClientID & ".value=" & txtBoosLastName.ClientID &
+                                            ".value + ' ' + " & txtBoosFirstName.ClientID & ".value + ' ' + " &
+                                            txtBoosPatronymicName.ClientID & ".value;")
+            txtBoosPatronymicName.Attributes.Add("onchange",
+                                                 javascript & txtAccountant.ClientID & ".value=" &
+                                                 txtBoosLastName.ClientID & ".value + ' ' + " &
+                                                 txtBoosFirstName.ClientID & ".value + ' ' + " &
+                                                 txtBoosPatronymicName.ClientID & ".value;")
+            rdbtnIP.Attributes.Add("onclick",
+                                   javascript & chkNDS.ClientID & ".checked=false;" & txtCustomerName.ClientID &
+                                   ".disabled=true;" & txtCustomerAbr.ClientID & ".disabled=true;" & txtBranch.ClientID &
+                                   ".disabled=true;")
+            rdbtnOrganization.Attributes.Add("onclick",
+                                             javascript & chkNDS.ClientID & ".checked=true;" & txtCustomerName.ClientID &
+                                             ".disabled=false;" & txtCustomerAbr.ClientID & ".disabled=false;" &
+                                             txtBranch.ClientID & ".disabled=false;")
             Dim sHide$ = lstCity.ClientID & ".style.display='"
             Dim sSetValue$ = txtCity.ClientID & ".value=this.options[this.selectedIndex].text;"
             btnCity.Attributes.Add("onclick", javascript & sHide & "block';" & lstCity.ClientID & ".focus();")
@@ -87,37 +104,23 @@ Namespace Kasbi
 
             Dim sHide2$ = lstCustomerAbr.ClientID & ".style.display='"
             Dim sSetValue2$ = txtCustomerAbr.ClientID & ".value=this.options[this.selectedIndex].text;"
-            btnCustomerAbr.Attributes.Add("onclick", javascript & sHide2 & "block';" & lstCustomerAbr.ClientID & ".focus();")
-            txtCustomerAbr.Attributes.Add("ondblclick", javascript & sHide2 & "block';" & lstCustomerAbr.ClientID & ".focus();")
+            btnCustomerAbr.Attributes.Add("onclick",
+                                          javascript & sHide2 & "block';" & lstCustomerAbr.ClientID & ".focus();")
+            txtCustomerAbr.Attributes.Add("ondblclick",
+                                          javascript & sHide2 & "block';" & lstCustomerAbr.ClientID & ".focus();")
             lstCustomerAbr.Attributes.Add("onchange", javascript & sSetValue2 & sHide2 & "none';")
             lstCustomerAbr.Attributes.Add("onfocusout", javascript & sHide2 & "none';")
 
 
             bank_id = ""
             isChangeMonth = False
-            If Not IsPostBack Then
-
-
-                BindLists()
-                LoadGoodGroups()
-                Try
-                    If Request.QueryString.Count > 0 Then
-                        customer_sys_id = GetPageParam(0)
-                    Else
-                        'customer_sys_id = Session("AddSaleForCustomer")
-                    End If
-                Catch
-                    customer_sys_id = 0
-                End Try
-
-
-                'Session("AddSaleForCustomer") = customer_sys_id
-
-                DisableCustomerPanel(Not GetCustomer())
-                TreeGroup.ExpandDepth = 1
-
-            End If
-
+            Try
+                If Request.QueryString.Count > 0 Then
+                    customer_sys_id = GetPageParam(0)
+                End If
+            Catch
+                customer_sys_id = 0
+            End Try
             If Request.QueryString.ToString = "0" Then
                 Response.Redirect(GetAbsoluteUrl("~/NewRequest.aspx"))
             End If
@@ -128,10 +131,19 @@ Namespace Kasbi
 
             Dim vis_addtosale
             If customer_sys_id Then
-                vis_addtosale = dbSQL.ExecuteScalar("select max(sale_sys_id) from sale where customer_sys_id=" & customer_sys_id)
+                vis_addtosale =
+                    dbSQL.ExecuteScalar("select max(sale_sys_id) from sale where customer_sys_id=" & customer_sys_id)
                 If vis_addtosale Is DBNull.Value Then
                     chkAddToSale.Visible = False
                 End If
+            End If
+
+            If Not IsPostBack Then
+                BindLists()
+                LoadGoodGroups()
+                DisableCustomerPanel(Not GetCustomer())
+                TreeGroup.ExpandDepth = 1
+
             End If
         End Sub
 
@@ -174,7 +186,9 @@ Namespace Kasbi
 
             'список типов товаров
             Try
-                adapt = dbSQL.GetDataAdapter("select distinct(gt.good_type_sys_id),gt.name,gt.is_cashregister from  good_type gt ,good g where g.good_type_sys_id = gt.good_type_sys_id and g.sale_sys_id is null and (g.param_num > 0 or is_cashregister=1 ) order by is_cashregister DESC,name")
+                adapt =
+                    dbSQL.GetDataAdapter(
+                        "select distinct(gt.good_type_sys_id),gt.name,gt.is_cashregister from  good_type gt ,good g where g.good_type_sys_id = gt.good_type_sys_id and g.sale_sys_id is null and (g.param_num > 0 or is_cashregister=1 ) order by is_cashregister DESC,name")
                 ds = New DataSet
                 adapt.Fill(ds)
                 lstType.DataSource = ds.Tables(0).DefaultView
@@ -226,12 +240,6 @@ Namespace Kasbi
                 Dim item As ListItem = lstSaler.Items.FindByValue(CurrentUser.sys_id)
                 If Not item Is Nothing Then item.Selected = True
 
-                'Try
-                '    customer_sys_id = Session("AddSaleForCustomer")
-                'Catch
-                '    customer_sys_id = 0
-                'End Try
-
                 If customer_sys_id = 0 Then
                     lstManager.DataSource = ds.Tables(0).DefaultView
                     lstManager.DataTextField = "Name"
@@ -263,7 +271,9 @@ Namespace Kasbi
 
             'список городов
             Try
-                adapt = dbSQL.GetDataAdapter("select distinct city from customer where city is not null and ltrim(city)<>'' order by city")
+                adapt =
+                    dbSQL.GetDataAdapter(
+                        "select distinct city from customer where city is not null and ltrim(city)<>'' order by city")
                 ds = New DataSet
                 adapt.Fill(ds)
                 lstCity.DataSource = ds.Tables(0).DefaultView
@@ -277,7 +287,9 @@ Namespace Kasbi
 
             'список аббревиатур организаций
             Try
-                adapt = dbSQL.GetDataAdapter("select distinct customer_abr from customer where customer_abr is not null and ltrim(customer_abr)<>'' order by customer_abr")
+                adapt =
+                    dbSQL.GetDataAdapter(
+                        "select distinct customer_abr from customer where customer_abr is not null and ltrim(customer_abr)<>'' order by customer_abr")
                 ds = New DataSet
                 adapt.Fill(ds)
                 lstCustomerAbr.DataSource = ds.Tables(0).DefaultView
@@ -325,21 +337,22 @@ Namespace Kasbi
 
             Root.SelectAction = TreeNodeSelectAction.SelectExpand
             TreeGroup.Nodes.Add(Root)
-
         End Sub
 
         Sub PopulateGroups(ByVal node As TreeNode)
             Dim adapt As SqlClient.SqlDataAdapter
             Dim ds As DataSet
-            adapt = dbSQL.GetDataAdapter("select good_group_sys_id,name group_name from good_group where good_group_sys_id <>0 order by group_name")
+            adapt =
+                dbSQL.GetDataAdapter(
+                    "select good_group_sys_id,name group_name from good_group where good_group_sys_id <>0 order by group_name")
             ds = New DataSet
             adapt.Fill(ds, "Group")
             If ds.Tables.Count > 0 Then
                 Dim row As DataRow
                 For Each row In ds.Tables(0).Rows
                     Dim NewNode As TreeNode = New _
-                        TreeNode(row("group_name").ToString(),
-                        row("good_group_sys_id").ToString())
+                            TreeNode(row("group_name").ToString(),
+                                     row("good_group_sys_id").ToString())
                     NewNode.PopulateOnDemand = True
                     NewNode.SelectAction = TreeNodeSelectAction.SelectExpand
                     node.ChildNodes.Add(NewNode)
@@ -353,7 +366,8 @@ Namespace Kasbi
             Dim cmd As SqlClient.SqlCommand
 
             cmd = New SqlClient.SqlCommand()
-            cmd.CommandText = "select distinct(gt.good_type_sys_id),gt.name,gt.artikul, gt.is_cashregister,good_group_sys_id from  good_type gt ,good g where g.good_type_sys_id = gt.good_type_sys_id and g.sale_sys_id is null and (g.param_num > 0 or is_cashregister=1 ) and gt.good_group_sys_id = @good_group_sys_id order by is_cashregister DESC,name"
+            cmd.CommandText =
+                "select distinct(gt.good_type_sys_id),gt.name,gt.artikul, gt.is_cashregister,good_group_sys_id from  good_type gt ,good g where g.good_type_sys_id = gt.good_type_sys_id and g.sale_sys_id is null and (g.param_num > 0 or is_cashregister=1 ) and gt.good_group_sys_id = @good_group_sys_id order by is_cashregister DESC,name"
             cmd.Parameters.Add("@good_group_sys_id", SqlDbType.Int).Value = node.Value
             adapt = dbSQL.GetDataAdapter(cmd)
             adapt.Fill(ds, "Goods")
@@ -361,7 +375,7 @@ Namespace Kasbi
                 Dim row As DataRow
                 For Each row In ds.Tables(0).Rows
                     Dim NewNode As TreeNode = New _
-                        TreeNode(row("name").ToString(), row("good_type_sys_id").ToString())
+                            TreeNode(row("name").ToString(), row("good_type_sys_id").ToString())
                     If row("artikul").ToString() <> "" Then
                         NewNode.ToolTip = "Артикул: " & row("artikul").ToString()
                     Else
@@ -387,7 +401,8 @@ Namespace Kasbi
 
                 rs = dbSQL.GetReader(cmd)
 
-                FileOpen(1, Server.MapPath("XML") & "\new_customer.xml", OpenMode.Output, OpenAccess.Write, OpenShare.LockWrite)
+                FileOpen(1, Server.MapPath("XML") & "\new_customer.xml", OpenMode.Output, OpenAccess.Write,
+                         OpenShare.LockWrite)
                 PrintLine(1, "<?xml version='1.0' encoding='windows-1251' ?>")
                 PrintLine(1, "<Customers>")
                 While rs.Read
@@ -415,7 +430,8 @@ Namespace Kasbi
                 cmd.Parameters.AddWithValue("@date", Date.Today)
                 rs = dbSQL.GetReader(cmd)
 
-                FileOpen(1, Server.MapPath("XML") & "\new_sales.xml", OpenMode.Output, OpenAccess.Write, OpenShare.LockWrite)
+                FileOpen(1, Server.MapPath("XML") & "\new_sales.xml", OpenMode.Output, OpenAccess.Write,
+                         OpenShare.LockWrite)
                 PrintLine(1, "<?xml version='1.0' encoding='windows-1251' ?>")
                 PrintLine(1, "<Sales>")
                 While rs.Read
@@ -431,7 +447,8 @@ Namespace Kasbi
             End Try
         End Sub
 
-        Private Sub btnAdd_Click(ByVal sender As System.Object, ByVal e As System.Web.UI.ImageClickEventArgs) Handles btnAdd.Click
+        Private Sub btnAdd_Click(ByVal sender As System.Object, ByVal e As System.Web.UI.ImageClickEventArgs) _
+            Handles btnAdd.Click
             Dim cmd As SqlClient.SqlCommand
             Dim param As SqlClient.SqlParameter
             Dim ds As DataSet
@@ -473,9 +490,11 @@ Namespace Kasbi
                     With GoodsDS.Tables(0)
                         For i = 0 To .Rows.Count - 1
                             If CBool(.Rows(i).Item("is_cashregister")) Then
-                                s = "select count(*)-1 from good where good_sys_id=" & .Rows(i).Item("good_sys_id") & " and state<2"
+                                s = "select count(*)-1 from good where good_sys_id=" & .Rows(i).Item("good_sys_id") &
+                                    " and state<2"
                             Else
-                                s = "select param_num-" & .Rows(i).Item("quantity") & " from good where good_sys_id=" & .Rows(i).Item("good_sys_id") & " and state<2"
+                                s = "select param_num-" & .Rows(i).Item("quantity") & " from good where good_sys_id=" &
+                                    .Rows(i).Item("good_sys_id") & " and state<2"
                             End If
                             If dbSQL.ExecuteScalar(s) < 0 Then
                                 msgAddCustomer.Text = "Товар " & .Rows(i).Item("good_description") & " уже заказан."
@@ -490,17 +509,12 @@ Namespace Kasbi
 
             'Нужно ли добавлять пользователя
 
-            Try
-                customer_sys_id = Session("AddSaleForCustomer")
-            Catch
-                customer_sys_id = 0
-            End Try
+            'Try
+            '    customer_sys_id = Session("AddSaleForCustomer")
+            'Catch
+            '    customer_sys_id = 0
+            'End Try
 
-
-            isCto = CBool(dbSQL.ExecuteScalar("Select top 1 cto from customer where customer_sys_id = " & customer_sys_id))
-            If (Not isCto) Then
-                dogovor = CInt(txtUNN.Text)
-            End If
 
             Dim advertise_id As Object = lstAdvertising.SelectedItem.Value
             If (lstAdvertising.SelectedItem.Value = "0") Then
@@ -524,38 +538,63 @@ Namespace Kasbi
                 'добавляем нового клиента
                 Try
                     'проверяем УНН на присутствие в базе
+                    If txtUNN.Text.Trim.Length <> 9 Then
+                        msgAddCustomer.Text = "Ошибка! Вы ввели неверный УНП!<br>"
+                        Exit Sub
+                    End If
                     Dim dublicate = dbSQL.ExecuteScalar("SELECT unn FROM customer WHERE unn='" & txtUNN.Text & "'")
                     If dublicate <> "" Then
                         msgAddCustomer.Text = "Ошибка! В базе уже есть клиент с таким УНП!<br>"
                         Exit Sub
                     End If
-                    If txtUNN.Text.Trim.Length > 9 Or txtUNN.Text.Trim.Length < 9 Then
-                        msgAddCustomer.Text = "Ошибка! Вы ввели неверный УНП!<br>"
+                    'проверяем номер для СМС на валидность
+                    If Not _serviceTelNumber.IsValidNumber(txtPhoneNotice.Text, False)
+                        msgAddCustomer.Text = _serviceTelNumber.GetStringAllExeption() & "<br>"
                         Exit Sub
                     End If
 
                     'проверяем какой нужен номер договора
                     If chkCTO.Checked Then
-                        dogovor = CInt(dbSQL.ExecuteScalar("SELECT TOP 1 dogovor FROM customer WHERE cto = 1 ORDER BY customer_sys_id DESC")) + 1
+                        dogovor =
+                            CInt(
+                                dbSQL.ExecuteScalar(
+                                    "SELECT TOP 1 dogovor FROM customer WHERE cto = 1 ORDER BY customer_sys_id DESC")) +
+                            1
+                    End If
+                    isCto =
+                        CBool(
+                            dbSQL.ExecuteScalar(
+                                "Select top 1 cto from customer where customer_sys_id = " & customer_sys_id))
+                    If (Not isCto) Then
+                        dogovor = CInt(txtUNN.Text)
                     End If
 
                     cmd = New SqlClient.SqlCommand("new_customer")
                     cmd.CommandType = CommandType.StoredProcedure
-                    cmd.Parameters.AddWithValue("@pi_customer_abr", IIf(rdbtnIP.Checked, "ИП", txtCustomerAbr.Text.Replace("'", """")))
-                    cmd.Parameters.AddWithValue("@pi_customer_name", IIf(rdbtnIP.Checked, txtBoosLastName.Text.Replace("'", """").Trim() & " " & txtBoosFirstName.Text.Replace("'", """").Trim() & " " & txtBoosPatronymicName.Text.Replace("'", """").Trim(), txtCustomerName.Text.Replace("'", """")))
+                    cmd.Parameters.AddWithValue("@pi_customer_abr",
+                                                IIf(rdbtnIP.Checked, "ИП", txtCustomerAbr.Text.Replace("'", """")))
+                    cmd.Parameters.AddWithValue("@pi_customer_name",
+                                                IIf(rdbtnIP.Checked,
+                                                    txtBoosLastName.Text.Replace("'", """").Trim() & " " &
+                                                    txtBoosFirstName.Text.Replace("'", """").Trim() & " " &
+                                                    txtBoosPatronymicName.Text.Replace("'", """").Trim(),
+                                                    txtCustomerName.Text.Replace("'", """")))
                     cmd.Parameters.AddWithValue("@pi_boos_last_name", txtBoosLastName.Text.Replace("'", """"))
                     cmd.Parameters.AddWithValue("@pi_boos_first_name", txtBoosFirstName.Text.Replace("'", """"))
-                    cmd.Parameters.AddWithValue("@pi_boos_patronymic_name", txtBoosPatronymicName.Text.Replace("'", """"))
+                    cmd.Parameters.AddWithValue("@pi_boos_patronymic_name",
+                                                txtBoosPatronymicName.Text.Replace("'", """"))
                     cmd.Parameters.AddWithValue("@pi_accountant", txtAccountant.Text.Replace("'", """"))
                     cmd.Parameters.AddWithValue("@pi_unn", txtUNN.Text)
                     cmd.Parameters.AddWithValue("@pi_okpo", txtOKPO.Text)
                     cmd.Parameters.AddWithValue("@pi_zipcode", txtZipCode.Text.Replace("'", """"))
                     sTmp = txtRegion.Text.Trim
-                    If sTmp.IndexOf(" ") > -1 Then
+                    If sTmp.IndexOf(" ") > - 1 Then
                         sTmp = sTmp.Substring(0, sTmp.IndexOf(" "))
                     End If
 
-                    cmd.Parameters.AddWithValue("@pi_region", lstRegion.SelectedItem.Value & IIf(txtRegion.Text.Trim.Length > 0, ", " & sTmp & " р-н", ""))
+                    cmd.Parameters.AddWithValue("@pi_region",
+                                                lstRegion.SelectedItem.Value &
+                                                IIf(txtRegion.Text.Trim.Length > 0, ", " & sTmp & " р-н", ""))
                     cmd.Parameters.AddWithValue("@pi_city_abr", lstCityAbr.SelectedItem.Value)
                     cmd.Parameters.AddWithValue("@pi_city", txtCity.Text.Replace("'", """"))
                     cmd.Parameters.AddWithValue("@pi_street_abr", lstStreetAbr.SelectedValue)
@@ -564,12 +603,13 @@ Namespace Kasbi
                     cmd.Parameters.AddWithValue("@pi_phone2", txtPhone2.Text)
                     cmd.Parameters.AddWithValue("@pi_phone3", txtPhone3.Text)
                     cmd.Parameters.AddWithValue("@pi_phone4", txtPhone4.Text)
+                    cmd.Parameters.AddWithValue("@pi_phone_notice", txtPhoneNotice.Text)
                     cmd.Parameters.AddWithValue("@pi_tax_inspection", txtTaxInspection.Text.Replace("'", """"))
                     cmd.Parameters.AddWithValue("@pi_imns_sys_id", imns_id)
                     cmd.Parameters.AddWithValue("@pi_advertise_id", advertise_id)
-                    cmd.Parameters.AddWithValue("@pi_NDS", -1 * CInt(chkNDS.Checked))
-                    cmd.Parameters.AddWithValue("@pi_CTO", -1 * CInt(chkCTO.Checked))
-                    cmd.Parameters.AddWithValue("@pi_Support", -1 * CInt(chkSupport.Checked))
+                    cmd.Parameters.AddWithValue("@pi_NDS", - 1*CInt(chkNDS.Checked))
+                    cmd.Parameters.AddWithValue("@pi_CTO", - 1*CInt(chkCTO.Checked))
+                    cmd.Parameters.AddWithValue("@pi_Support", - 1*CInt(chkSupport.Checked))
 
                     cmd.Parameters.AddWithValue("@pi_bank_sys_id", bank_id)
 
@@ -603,16 +643,18 @@ Namespace Kasbi
             Else
                 iCustomer = customer_sys_id
                 Try
-                    dbSQL.Execute("update customer set Advertise_id =" & IIf(IsDBNull(advertise_id), "null", advertise_id) & " where customer_sys_id=" & iCustomer)
+                    dbSQL.Execute(
+                        "update customer set Advertise_id =" & IIf(IsDBNull(advertise_id), "null", advertise_id) &
+                        " where customer_sys_id=" & iCustomer)
                 Catch
                     msgAddCustomer.Text = "Ошибка сохранения информации о рекламе!<br>" & Err.Description
                 End Try
             End If
 
             'получаем номер приложения к договору
-            sSubDogovor = serviceSale.GetNextSaleDogovorByCustomer(iCustomer)
-            If serviceSale.HaveAnyExeption() Then
-                msgAddCustomer.Text = serviceSale.GetTextStringAllExeption()
+            sSubDogovor = _serviceSale.GetNextSaleDogovorByCustomer(iCustomer)
+            If _serviceSale.HaveAnyExeption() Then
+                msgAddCustomer.Text = _serviceSale.GetTextStringAllExeption()
                 Exit Sub
             End If
 
@@ -620,7 +662,8 @@ Namespace Kasbi
                 'Нужно ли добавлять товары в последний из заказов
                 If chkAddToSale.Checked Then
                     Try
-                        iSale = dbSQL.ExecuteScalar("select max(sale_sys_id) from sale where customer_sys_id=" & iCustomer)
+                        iSale =
+                            dbSQL.ExecuteScalar("select max(sale_sys_id) from sale where customer_sys_id=" & iCustomer)
                     Catch
                         If Err.Number = 13 Then
                             iSale = 0
@@ -687,7 +730,10 @@ Namespace Kasbi
                         cmd.Parameters.AddWithValue("@pi_type", i)
                         cmd.Parameters.AddWithValue("@pi_dogovor", sSubDogovor)
                         s = txtProxy.Text.Trim.Replace("'", """")
-                        If s.Length = 0 Then s = txtBoosLastName.Text.Trim.Replace("'", """") & " " & txtBoosFirstName.Text.Trim.Replace("'", """") & " " & txtBoosPatronymicName.Text.Trim.Replace("'", """")
+                        If s.Length = 0 Then _
+                            s = txtBoosLastName.Text.Trim.Replace("'", """") & " " &
+                                txtBoosFirstName.Text.Trim.Replace("'", """") & " " &
+                                txtBoosPatronymicName.Text.Trim.Replace("'", """")
                         cmd.Parameters.AddWithValue("@pi_proxy", s)
                         param = New SqlClient.SqlParameter
                         param.Direction = ParameterDirection.Output
@@ -711,7 +757,8 @@ Namespace Kasbi
                 isCto = CBool(dbSQL.ExecuteScalar("Select top 1 cto from customer where customer_sys_id = " & iCustomer))
                 If (Not isCto) Then
                     Try
-                        dbSQL.Execute("update customer set dogovor=unn where dogovor!=unn and customer_sys_id=" & iCustomer)
+                        dbSQL.Execute(
+                            "update customer set dogovor=unn where dogovor!=unn and customer_sys_id=" & iCustomer)
                     Catch
                         msgAddCustomer.Text = "Ошибка обновления номера договора!<br>" & Err.Description
                     End Try
@@ -767,7 +814,7 @@ Namespace Kasbi
                             cmd = New SqlClient.SqlCommand("update_customer_dolg")
                             cmd.CommandType = CommandType.StoredProcedure
                             cmd.Parameters.AddWithValue("@pi_customer_sys_id", iCustomer)
-                            cmd.Parameters.AddWithValue("@pi_dolg", dolg * 1.2)
+                            cmd.Parameters.AddWithValue("@pi_dolg", dolg*1.2)
 
                             dbSQL.Execute(cmd)
                         End If
@@ -803,8 +850,10 @@ Namespace Kasbi
                         cmd.Parameters.AddWithValue("@pi_marka_pzu_out", ds.Tables(0).Rows(i).Item("num_control_pzu"))
                         cmd.Parameters.AddWithValue("@pi_marka_mfp_in", ds.Tables(0).Rows(i).Item("num_control_mfp"))
                         cmd.Parameters.AddWithValue("@pi_marka_mfp_out", ds.Tables(0).Rows(i).Item("num_control_mfp"))
-                        cmd.Parameters.AddWithValue("@pi_marka_reestr_in", ds.Tables(0).Rows(i).Item("num_control_reestr"))
-                        cmd.Parameters.AddWithValue("@pi_marka_reestr_out", ds.Tables(0).Rows(i).Item("num_control_reestr"))
+                        cmd.Parameters.AddWithValue("@pi_marka_reestr_in",
+                                                    ds.Tables(0).Rows(i).Item("num_control_reestr"))
+                        cmd.Parameters.AddWithValue("@pi_marka_reestr_out",
+                                                    ds.Tables(0).Rows(i).Item("num_control_reestr"))
                         cmd.Parameters.AddWithValue("@pi_marka_cto2_in", ds.Tables(0).Rows(i).Item("num_control_cto2"))
                         cmd.Parameters.AddWithValue("@pi_marka_cto2_out", ds.Tables(0).Rows(i).Item("num_control_cto2"))
                         cmd.Parameters.AddWithValue("@pi_marka_cp_in", ds.Tables(0).Rows(i).Item("num_control_cp"))
@@ -836,7 +885,8 @@ Namespace Kasbi
             Response.Redirect(GetAbsoluteUrl("~/CustomerSales.aspx?" & iCustomer))
         End Sub
 
-        Private Sub btnClear_Click(ByVal sender As System.Object, ByVal e As System.Web.UI.ImageClickEventArgs) Handles btnClear.Click
+        Private Sub btnClear_Click(ByVal sender As System.Object, ByVal e As System.Web.UI.ImageClickEventArgs) _
+            Handles btnClear.Click
             ClearFields()
         End Sub
 
@@ -889,7 +939,8 @@ Namespace Kasbi
             BindLists()
         End Sub
 
-        Private Sub GetBankNameAddress(ByVal bank_id As String, ByRef BankName As String, ByRef BankAddress As String, ByRef msgctrl As Label)
+        Private Sub GetBankNameAddress(ByVal bank_id As String, ByRef BankName As String, ByRef BankAddress As String,
+                                       ByRef msgctrl As Label)
             Dim reader As SqlClient.SqlDataReader
 
             Try
@@ -909,7 +960,8 @@ Namespace Kasbi
             End Try
         End Sub
 
-        Private Sub lstBank_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles lstBank.SelectedIndexChanged
+        Private Sub lstBank_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) _
+            Handles lstBank.SelectedIndexChanged
             Dim s1 As String, s2 As String
             If bank_id.Trim <> "" Then
                 lstBank.SelectedItem.Selected = False
@@ -932,7 +984,8 @@ Namespace Kasbi
             Next
         End Function
 
-        Private Sub lstType_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles lstType.SelectedIndexChanged
+        Private Sub lstType_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) _
+            Handles lstType.SelectedIndexChanged
             goods_to_list()
         End Sub
 
@@ -1002,9 +1055,9 @@ Namespace Kasbi
             End If
         End Sub
 
-        Private Sub btnAddGood_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnAddGood.Click
+        Private Sub btnAddGood_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) _
+            Handles btnAddGood.Click
             add_good()
-
         End Sub
 
         Private Function GetGood(ByVal ds As DataSet, ByVal good_sys_id As Integer) As DataRow
@@ -1021,7 +1074,8 @@ Namespace Kasbi
             Next
         End Function
 
-        Private Overloads Sub Page_PreRender(ByVal sender As Object, ByVal e As System.EventArgs) Handles MyBase.PreRender
+        Private Overloads Sub Page_PreRender(ByVal sender As Object, ByVal e As System.EventArgs) _
+            Handles MyBase.PreRender
             radiobuttons.Enabled = chkPayed.Checked
             chkNDS.Checked = False
             Try
@@ -1073,14 +1127,15 @@ Namespace Kasbi
                             txtBoosLastName.Text = .Item("boos_last_name")
                             txtBoosFirstName.Text = .Item("boos_first_name")
                             txtBoosPatronymicName.Text = .Item("boos_patronymic_name")
-                            txtProxy.Text = .Item("boos_last_name") & " " & .Item("boos_first_name") & " " & .Item("boos_patronymic_name")
+                            txtProxy.Text = .Item("boos_last_name") & " " & .Item("boos_first_name") & " " &
+                                            .Item("boos_patronymic_name")
                             txtAccountant.Text = .Item("accountant")
                             txtUNN.Text = .Item("unn")
                             txtOKPO.Text = .Item("okpo")
                             txtZipCode.Text = .Item("zipcode")
                             sRegion = .Item("region")
                             For ii = 1 To lstRegion.Items.Count - 1
-                                If sRegion.IndexOf(lstRegion.Items(ii).Value) > -1 Then
+                                If sRegion.IndexOf(lstRegion.Items(ii).Value) > - 1 Then
                                     lstRegion.SelectedIndex = ii
                                     sRegion = sRegion.Substring(lstRegion.SelectedItem.Value.Length)
                                     If sRegion.Length = 0 Or sRegion.Trim = "," Then
@@ -1101,6 +1156,7 @@ Namespace Kasbi
                             txtPhone2.Text = .Item("phone2")
                             txtPhone3.Text = .Item("phone3")
                             txtPhone4.Text = .Item("phone4")
+                            txtPhoneNotice.Text = .Item("phone_notice")
                             txtTaxInspection.Text = .Item("tax_inspection")
                             If Not IsDBNull(.Item("imns_sys_id")) Then
                                 item = dlstIMNS.Items.FindByValue(.Item("imns_sys_id"))
@@ -1181,7 +1237,6 @@ Namespace Kasbi
                 GetCustomer = False
                 Exit Function
             End If
-
         End Function
 
         Private Sub DisableCustomerPanel(ByVal b As Boolean)
@@ -1219,20 +1274,26 @@ Namespace Kasbi
             chkAddToSale.Visible = Not b
         End Sub
 
-        Private Sub calendar_SelectionChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles calendar.TextChanged
+        Private Sub calendar_SelectionChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) _
+            Handles calendar.TextChanged
             Session("SelectedDate") = DateTime.Parse(calendar.Text)
         End Sub
 
-        Private Sub calendar_VisibleMonthChanged(ByVal sender As System.Object, ByVal e As System.Web.UI.WebControls.MonthChangedEventArgs)
+        Private Sub calendar_VisibleMonthChanged(ByVal sender As System.Object,
+                                                 ByVal e As System.Web.UI.WebControls.MonthChangedEventArgs)
             isChangeMonth = True
         End Sub
 
-        Private Sub lstPriceList_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles lstPriceList.SelectedIndexChanged
+        Private Sub lstPriceList_SelectedIndexChanged(ByVal sender As System.Object, ByVal e As System.EventArgs) _
+            Handles lstPriceList.SelectedIndexChanged
             Dim price%
 
             Try
                 If lstPriceList.SelectedItem Is Nothing Then Exit Sub
-                price = dbSQL.ExecuteScalar("select price from pricelist where pricelist_sys_id='" & lstPriceList.SelectedItem.Value & "' and good_type_sys_id=" & lstType.SelectedItem.Value)
+                price =
+                    dbSQL.ExecuteScalar(
+                        "select price from pricelist where pricelist_sys_id='" & lstPriceList.SelectedItem.Value &
+                        "' and good_type_sys_id=" & lstType.SelectedItem.Value)
                 txtPrice.Text = price.ToString()
             Catch
                 msgGoods.Text = "Ошибка определения цены товара по прейскуранту!<br>" & Err.Description
@@ -1240,7 +1301,9 @@ Namespace Kasbi
             End Try
         End Sub
 
-        Private Sub repSalesGoods_ItemDataBound(ByVal sender As Object, ByVal e As System.Web.UI.WebControls.RepeaterItemEventArgs) Handles repSalesGoods.ItemDataBound
+        Private Sub repSalesGoods_ItemDataBound(ByVal sender As Object,
+                                                ByVal e As System.Web.UI.WebControls.RepeaterItemEventArgs) _
+            Handles repSalesGoods.ItemDataBound
             If (e.Item.ItemType = ListItemType.Item) Or (e.Item.ItemType = ListItemType.AlternatingItem) Then
                 Dim drw As DataRowView = CType(e.Item.DataItem, DataRowView)
                 Dim trSetPlace As HtmlTableRow = e.Item.FindControl("trSetPlace")
@@ -1258,14 +1321,17 @@ Namespace Kasbi
             End If
         End Sub
 
-        Private Sub repSalesGoods_ItemCommand(ByVal source As Object, ByVal e As System.Web.UI.WebControls.RepeaterCommandEventArgs) Handles repSalesGoods.ItemCommand
+        Private Sub repSalesGoods_ItemCommand(ByVal source As Object,
+                                              ByVal e As System.Web.UI.WebControls.RepeaterCommandEventArgs) _
+            Handles repSalesGoods.ItemCommand
             If e.CommandName = "Delete" Then
                 Dim drow As DataRow = GoodsDS.Tables(0).Rows.Find(e.CommandArgument)
                 Dim good_type_id As String = drow("good_type_id")
                 Dim ds As DataSet = Cache.Get(Session.SessionID & "goods" & good_type_id)
                 Dim i As Integer
                 Dim View As DataView = New DataView(ds.Tables(0))
-                View.RowStateFilter = DataViewRowState.Deleted Or DataViewRowState.ModifiedCurrent Or DataViewRowState.CurrentRows
+                View.RowStateFilter = DataViewRowState.Deleted Or DataViewRowState.ModifiedCurrent Or
+                                      DataViewRowState.CurrentRows
                 For i = 0 To View.Count - 1
                     If (View.Item(i)("good_sys_id") = drow("good_sys_id")) Then
                         View.Item(i).Row.RejectChanges()
@@ -1283,7 +1349,9 @@ Namespace Kasbi
                 For z = 0 To repSalesGoods.Items.Count - 1
                     Dim item As RepeaterItem = repSalesGoods.Items(z)
                     If (item.ItemType = ListItemType.Item) Or (item.ItemType = ListItemType.AlternatingItem) Then
-                        drow = GoodsDS.Tables(0).Rows.Find(CType(item.FindControl("btnDelete"), ImageButton).CommandArgument)
+                        drow =
+                            GoodsDS.Tables(0).Rows.Find(
+                                CType(item.FindControl("btnDelete"), ImageButton).CommandArgument)
                         drow("price") = CType(item.FindControl("tbxPrice"), TextBox).Text
                         drow("quantity") = CType(item.FindControl("tbxQuantity"), TextBox).Text
                         Dim good_type_id As String = drow("good_type_id")
@@ -1294,9 +1362,17 @@ Namespace Kasbi
 
                         For i = 0 To View.Count - 1
                             If (View.Item(i)("good_sys_id") = drow("good_sys_id")) Then
-                                If drow("quantity") > ds.Tables(0).Rows((ds.Tables(0).Rows.Count - lstDescription.Items.Count - z) + i).Item("quantity") Then
-                                    drow("quantity") = ds.Tables(0).Rows((ds.Tables(0).Rows.Count - lstDescription.Items.Count - z) + i).Item("quantity")
-                                    msgGoods.Text = "Максимальное количество товара - " & ds.Tables(0).Rows((ds.Tables(0).Rows.Count - lstDescription.Items.Count - z) + i).Item("quantity")
+                                If _
+                                    drow("quantity") >
+                                    ds.Tables(0).Rows((ds.Tables(0).Rows.Count - lstDescription.Items.Count - z) + i).
+                                        Item("quantity") Then
+                                    drow("quantity") =
+                                        ds.Tables(0).Rows((ds.Tables(0).Rows.Count - lstDescription.Items.Count - z) + i) _
+                                            .Item("quantity")
+                                    msgGoods.Text = "Максимальное количество товара - " &
+                                                    ds.Tables(0).Rows(
+                                                        (ds.Tables(0).Rows.Count - lstDescription.Items.Count - z) + i).
+                                                        Item("quantity")
                                 End If
                                 Exit For
                             End If
@@ -1313,7 +1389,7 @@ Namespace Kasbi
                             End If
                         Next
 
-                        drow("cost") = drow("price") * drow("quantity")
+                        drow("cost") = drow("price")*drow("quantity")
                         If (CBool(drow("is_cashregister"))) Then
                             drow("city_id") = CType(item.FindControl("ddlCity"), DropDownList).SelectedValue
                             drow("set_place") = CType(item.FindControl("txtPlace"), TextBox).Text
@@ -1341,7 +1417,8 @@ Namespace Kasbi
         Private Sub BindCities(ByVal ddlCity As DropDownList, ByVal id As Integer)
             Dim adapt As SqlClient.SqlDataAdapter
             Dim ds As DataSet
-            Dim sql$ = "select 	a.*, a.name_city + COALESCE(', ' + c.name_obl, ', ' + c.name_obl, '') + COALESCE(', ' +  b.name_rn, ', ' + b.name_rn, '') as CityFullName from City a left outer join rn b on a.id_rn = b.id_rn left outer join obl c on a.id_obl = c.id_obl order by a.name_city"
+            Dim sql$ =
+                    "select 	a.*, a.name_city + COALESCE(', ' + c.name_obl, ', ' + c.name_obl, '') + COALESCE(', ' +  b.name_rn, ', ' + b.name_rn, '') as CityFullName from City a left outer join rn b on a.id_rn = b.id_rn left outer join obl c on a.id_obl = c.id_obl order by a.name_city"
 
             If ddlCity.Items.Count = 0 Then
                 Try
@@ -1369,14 +1446,15 @@ Namespace Kasbi
             'Next
         End Sub
 
-        Protected Sub TreeGroup_SelectedNodeChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles TreeGroup.SelectedNodeChanged
+        Protected Sub TreeGroup_SelectedNodeChanged(ByVal sender As Object, ByVal e As System.EventArgs) _
+            Handles TreeGroup.SelectedNodeChanged
             If TreeGroup.SelectedNode.Depth = 2 Then
 
-                lstType.SelectedIndex = -1
+                lstType.SelectedIndex = - 1
                 Dim item As ListItem = lstType.Items.FindByValue(TreeGroup.SelectedNode.Value)
                 If Not item Is Nothing Then item.Selected = True
             Else
-                lstType.SelectedIndex = -1
+                lstType.SelectedIndex = - 1
             End If
             lstType_SelectedIndexChanged(Me, Nothing)
             TreeGroup.SelectedNodeStyle.BackColor = Color.Red
@@ -1384,11 +1462,15 @@ Namespace Kasbi
             TreeGroup.SelectedNodeStyle.Font.Bold = True
         End Sub
 
-        Protected Sub TreeGroup_TreeNodeExpanded(ByVal sender As Object, ByVal e As System.Web.UI.WebControls.TreeNodeEventArgs) Handles TreeGroup.TreeNodeExpanded
+        Protected Sub TreeGroup_TreeNodeExpanded(ByVal sender As Object,
+                                                 ByVal e As System.Web.UI.WebControls.TreeNodeEventArgs) _
+            Handles TreeGroup.TreeNodeExpanded
             TreeGroup_TreeNodePopulate(sender, e)
         End Sub
 
-        Protected Sub TreeGroup_TreeNodePopulate(ByVal sender As Object, ByVal e As System.Web.UI.WebControls.TreeNodeEventArgs) Handles TreeGroup.TreeNodePopulate
+        Protected Sub TreeGroup_TreeNodePopulate(ByVal sender As Object,
+                                                 ByVal e As System.Web.UI.WebControls.TreeNodeEventArgs) _
+            Handles TreeGroup.TreeNodePopulate
             If e.Node.ChildNodes.Count = 0 Then
                 Select Case e.Node.Depth
                     Case 0
@@ -1403,7 +1485,9 @@ Namespace Kasbi
             Dim reader As SqlClient.SqlDataReader
 
             If txtArtikul.Text <> "" Then
-                reader = dbSQL.GetReader("select good_type_sys_id from delivery_detail where artikul='" & txtArtikul.Text & "'")
+                reader =
+                    dbSQL.GetReader(
+                        "select good_type_sys_id from delivery_detail where artikul='" & txtArtikul.Text & "'")
 
 
                 If reader.Read() Then
@@ -1416,7 +1500,7 @@ Namespace Kasbi
                     reader.Close()
                     'MsgBox(type_id)
 
-                    lstType.SelectedIndex = -1
+                    lstType.SelectedIndex = - 1
                     Dim item As ListItem = lstType.Items.FindByValue(type_id)
                     If Not item Is Nothing Then item.Selected = True
 
@@ -1443,7 +1527,10 @@ Namespace Kasbi
 
             If (txt_fast_add.Text.Length = 8 Or txt_fast_add.Text.Length = 13) Then
 
-                reader = dbSQL.GetReader("select good_type_sys_id, good_sys_id from good where num_cashregister='" & txt_fast_add.Text & "'")
+                reader =
+                    dbSQL.GetReader(
+                        "select good_type_sys_id, good_sys_id from good where num_cashregister='" & txt_fast_add.Text &
+                        "'")
 
                 If reader.Read() Then
                     Dim good_type_sys_id = reader.Item(0)
@@ -1481,7 +1568,7 @@ Namespace Kasbi
             Dim ds As DataSet
             Try
                 'Выбран ли товар
-                If lstDescription.SelectedIndex = -1 Then
+                If lstDescription.SelectedIndex = - 1 Then
                     If lstDescription.Items.Count > 1 Then
                         msgGoods.Text = "Выберите товар!"
                         Exit Sub
@@ -1580,9 +1667,9 @@ Namespace Kasbi
 
                         drow("price") = p
                         drow("quantity") = d
-                        drow("cost") = p * d
+                        drow("cost") = p*d
                         drow("pricelist_sys_id") = lstPriceList.SelectedItem.Value
-                        drow("city_id") = -1
+                        drow("city_id") = - 1
                         drow("set_place") = ""
                         drow("kassir1") = ""
                         drow("kassir2") = ""
@@ -1617,12 +1704,12 @@ Namespace Kasbi
                 End If
             Catch
                 Dim ex As Exception = HttpContext.Current.Server.GetLastError()
-                msgGoods.Text = "Невозможно добавить товар! " & ex.Message & "source " & ex.Source & ex.StackTrace.ToString()
+                msgGoods.Text = "Невозможно добавить товар! " & ex.Message & "source " & ex.Source &
+                                ex.StackTrace.ToString()
             End Try
         End Sub
 
         Protected Sub txtQuantity_TextChanged(sender As Object, e As EventArgs) Handles txtQuantity.TextChanged
-
         End Sub
     End Class
 End Namespace

@@ -4,7 +4,7 @@ VisualStudioVersion = 15.0.26430.12
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{E24C65DC-7377-472B-9ABA-BC803B73C61A}") = "Kasbi_src", ".", "{1C9F12F0-B630-43D0-9E12-36B55BA41A5D}"
 	ProjectSection(WebsiteProperties) = preProject
-		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.6"
+		TargetFrameworkMoniker = ".NETFramework,Version%3Dv4.6.2"
 		Debug.AspNetCompiler.VirtualPath = "/kasbi"
 		Debug.AspNetCompiler.PhysicalPath = "..\Kasbi_src\"
 		Debug.AspNetCompiler.TargetPath = "..\..\..\..\..\..\Inetpub\wwwroot\kasbi\"
@@ -32,5 +32,8 @@ Global
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
+	EndGlobalSection
+	GlobalSection(ExtensibilityGlobals) = postSolution
+		SolutionGuid = {97B7F409-F497-44D8-AA26-C55EF3B3526C}
 	EndGlobalSection
 EndGlobal

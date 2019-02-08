@@ -6,8 +6,8 @@ Namespace Service
         Inherits ServiceExeption
         Implements IService
 
-
-        Public Function CheckCashHistoryItem(ByVal idGood As Integer, ByVal closePeriod As DateTime, ByVal closeDateText As String) As Boolean
+        Public Function CheckCashHistoryItem(ByVal idGood As Integer, ByVal closePeriod As DateTime,
+                                             ByVal closeDateText As String) As Boolean
             Dim exeption As ToExeption = New ToExeption(idGood, closePeriod.ToString(), closeDateText)
 
             Dim adapt As SqlClient.SqlDataAdapter
@@ -29,7 +29,7 @@ Namespace Service
                             Dim state As Integer = .Item("state")
                             Select Case state
                                 Case 1
-                                    If closePeriod = enddate.AddMonths(-1) Then
+                                    If closePeriod = enddate.AddMonths(- 1) Then
                                         exeption.AddTextToList("Закрываемый вами период уже закрыт.")
                                     End If
                                 Case 6
@@ -52,10 +52,10 @@ Namespace Service
 
             If exeption.HaveAnyText() Then
                 AddExeption(exeption)
+                Return False
+            Else
+                Return True
             End If
-
-            Return Not HaveAnyExeption()
-
         End Function
 
         Public Function CheckDate(ByVal closePeriod As DateTime, ByVal closeDateText As String) As Boolean
@@ -68,16 +68,16 @@ Namespace Service
             'задаем начальный период
             dStarPeriod = dToday
             'задаем конечный период
-            dEndPeriod = dStarPeriod.AddDays(7).AddMinutes(-1)
+            dEndPeriod = dStarPeriod.AddDays(7).AddMinutes(- 1)
             'поправка на один дополнительный день для проведения ТО
             If (dToday.DayOfWeek = firstDayOfPeriod) Then
-                dStarPeriod = dStarPeriod.AddDays(-1)
+                dStarPeriod = dStarPeriod.AddDays(- 1)
                 dEndPeriod = dEndPeriod.AddDays(1)
-                dayCorrector = -1
+                dayCorrector = - 1
             End If
             'ищем начало отчетного периода, в данном случае это Среда
             While (dStarPeriod.DayOfWeek <> firstDayOfPeriod)
-                dStarPeriod = dStarPeriod.AddDays(-1)
+                dStarPeriod = dStarPeriod.AddDays(- 1)
             End While
 
             If String.IsNullOrEmpty(closeDateText) Then
@@ -94,7 +94,11 @@ Namespace Service
                     exeption.AddTextToList("Закрываемый вами период еще не настал.")
                 ElseIf (dStarPeriod > closeDate Or closeDate > dEndPeriod) Then
                     Dim dateCorector As Date = dEndPeriod.AddDays(dayCorrector)
-                    exeption.AddTextToList("Дата закрытия должна входить в отчетный период. Действующий отчетный период на данный момент с " & dStarPeriod.ToString("dd") & "." & dStarPeriod.ToString("MM") & "." & dStarPeriod.ToString("yy") & " по " & dateCorector.ToString("dd") & "." & dateCorector.ToString("MM") & "." & dateCorector.ToString("yy") & " включительно.")
+                    exeption.AddTextToList(
+                        "Дата закрытия должна входить в отчетный период. Действующий отчетный период на данный момент с " &
+                        dStarPeriod.ToString("dd") & "." & dStarPeriod.ToString("MM") & "." & dStarPeriod.ToString("yy") &
+                        " по " & dateCorector.ToString("dd") & "." & dateCorector.ToString("MM") & "." &
+                        dateCorector.ToString("yy") & " включительно.")
                 End If
             End If
 
@@ -130,7 +134,5 @@ Namespace Service
             Next
             Return String.Join(" ", list)
         End Function
-
     End Class
-
 End Namespace
