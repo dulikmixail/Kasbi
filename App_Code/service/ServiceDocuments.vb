@@ -19,6 +19,9 @@ Namespace Service
         Private _wrdApp As Microsoft.Office.Interop.Word.ApplicationClass
         Private _wrdDoc As Microsoft.Office.Interop.Word.DocumentClass
 
+        Dim ReadOnly _sharedDbSql As MSSqlDB = ServiceDbConnector.GetConnection()
+        Dim ReadOnly _sharedDbSql2 As MSSqlDB = ServiceDbConnector.GetConnection2()
+
         Public Sub New()
             _monthReplacements1.Add("01", "января")
             _monthReplacements1.Add("02", "февраля")
@@ -69,13 +72,13 @@ Namespace Service
             cmd.Parameters.AddWithValue("@pi_good_sys_id", cash)
             cmd.Parameters.AddWithValue("@pi_customer_sys_id", customer)
             cmd.Parameters.AddWithValue("@pi_hc_sys_id", history)
-            adapt = dbSQL.GetDataAdapter(cmd)
+            adapt = _sharedDbSql2.GetDataAdapter(cmd)
             adapt.Fill(ds, "RepairRealizationAct")
 
             cmd = New SqlClient.SqlCommand("get_repair_info")
             cmd.Parameters.AddWithValue("@pi_hc_sys_id", history)
             cmd.CommandType = CommandType.StoredProcedure
-            adapt = dbSQL.GetDataAdapter(cmd)
+            adapt = _sharedDbSql2.GetDataAdapter(cmd)
             If Not ds.Tables("details") Is Nothing Then
                 ds.Tables("details").Clear()
             End If
@@ -88,7 +91,7 @@ Namespace Service
 
             cmd.CommandType = CommandType.StoredProcedure
             cmd.Parameters.AddWithValue("@pi_customer_sys_id", customer)
-            adapt = dbSQL.GetDataAdapter(cmd)
+            adapt = _sharedDbSql2.GetDataAdapter(cmd)
             If Not ds.Tables("customer") Is Nothing Then
                 ds.Tables("customer").Clear()
             End If
@@ -96,7 +99,7 @@ Namespace Service
 
             If ds.Tables("customer").Rows.Count = 0 Then GoTo ExitFunction
             Dim sEmployee$ =
-                    dbSQL.ExecuteScalar(
+                    _sharedDbSql2.ExecuteScalar(
                         "select Name from Employee where sys_id='" &
                         ds.Tables("RepairRealizationAct").Rows(0)("executor") & "'")
             If sEmployee Is Nothing OrElse sEmployee = String.Empty Then
@@ -108,7 +111,7 @@ Namespace Service
                                    ds.Tables("RepairRealizationAct").Rows(0)("workNotCall"))
 
             Dim docFullPath$ = String.Empty
-            Dim path$ = Server.MapPath("Docs\")
+            Dim path$ = Hosting.HostingEnvironment.MapPath("~/Docs/")
 
             Dim fls As IO.File
             Dim fl As IO.FileInfo
@@ -153,7 +156,7 @@ Namespace Service
                             Exit Function
                         End Try
                     End If
-                    IO.File.Copy(Server.MapPath("Templates/") & DocName32, docFullPath, True)
+                    IO.File.Copy(Hosting.HostingEnvironment.MapPath("~/Templates/") & DocName32, docFullPath, True)
 
                     _wrdDoc = _wrdApp.Documents.Open(docFullPath)
                     _wrdDoc.Bookmarks("act_number1").Range.Text = act_num
@@ -169,7 +172,7 @@ Namespace Service
 
                     _wrdDoc.Bookmarks("master1").Range.Text = sEmployee
                     _wrdDoc.Bookmarks("work_type").Range.Text =
-                        dbSQL.ExecuteScalar(
+                        _sharedDbSql2.ExecuteScalar(
                             "select ISNULL(work_type, '') from employee where sys_id =" &
                             ds.Tables("RepairRealizationAct").Rows(0)("executor")).ToString()
 
@@ -338,13 +341,13 @@ Namespace Service
 
                     'находим УНП клиента
                     Dim customer_unn =
-                            dbSQL.ExecuteScalar(
+                            _sharedDbSql2.ExecuteScalar(
                                 "SELECT unn FROM customer WHERE customer_sys_id='" & GetPageParam("c") & "'")
 
                     'Копируем док
                     IO.File.Copy(docFullPath,
-                                 Server.MapPath(
-                                     "XML/repair_docs/" & Trim(customer_unn) & "+" &
+                                 Hosting.HostingEnvironment.MapPath(
+                                     "~/XML/repair_docs/" & Trim(customer_unn) & "+" &
                                      Trim(ds.Tables("RepairRealizationAct").Rows(0)("num_cashregister")) & ".doc"), True)
 
                     Dim export_content = Trim(customer_unn) & ";" &
@@ -354,7 +357,7 @@ Namespace Service
                     Dim content_temp
                     Dim file_open As IO.StreamReader
                     i = 1
-                    file_open = IO.File.OpenText(Server.MapPath("XML/new_repair.csv"))
+                    file_open = IO.File.OpenText(Hosting.HostingEnvironment.MapPath("~/XML/new_repair.csv"))
                     While Not file_open.EndOfStream
                         i = i + 1
                         content_temp = file_open.ReadLine()
@@ -365,7 +368,7 @@ Namespace Service
                     file_open.Close()
                     Try
                         Dim file_save As IO.StreamWriter
-                        file_save = IO.File.CreateText(Server.MapPath("XML/new_repair.csv"))
+                        file_save = IO.File.CreateText(Hosting.HostingEnvironment.MapPath("~/XML/new_repair.csv"))
                         file_save.Write(export_content)
                         file_save.Close()
                     Catch ex As Exception
@@ -410,7 +413,7 @@ Namespace Service
                             Exit Function
                         End Try
                     End If
-                    IO.File.Copy(Server.MapPath("Templates/") & DocName33, docFullPath, True)
+                    IO.File.Copy(Hosting.HostingEnvironment.MapPath("~/Templates/") & DocName33, docFullPath, True)
 
                     _wrdDoc = _wrdApp.Documents.Open(docFullPath)
 
@@ -518,7 +521,7 @@ Namespace Service
                             Exit Function
                         End Try
                     End If
-                    IO.File.Copy(Server.MapPath("Templates/") & DocName34, docFullPath, True)
+                    IO.File.Copy(Hosting.HostingEnvironment.MapPath("~/Templates/") & DocName34, docFullPath, True)
 
                     _wrdDoc = _wrdApp.Documents.Open(docFullPath)
 
@@ -660,7 +663,7 @@ Namespace Service
             Dim subCheckGoods As ListDictionary = New ListDictionary
 
 
-            rootPath = Server.MapPath("Docs") & "\Akts\" & Session("User").sys_id.ToString
+            rootPath = Hosting.HostingEnvironment.MapPath("~/Docs") & "\Akts\" & Session("User").sys_id.ToString
             folderPath = rootPath & "\" & folderName
 
             If dateAkt = Nothing Then
@@ -706,7 +709,7 @@ Namespace Service
             Dim drs() As Data.DataRow
             Dim templatePath, savePath, filter, fullFileName As String
 
-            templatePath = Server.MapPath("Templates\") & "Akt_Of_TO_And_Dolg.doc"
+            templatePath = Hosting.HostingEnvironment.MapPath("~/Templates\") & "Akt_Of_TO_And_Dolg.doc"
             fullFileName = fileName & ".doc"
             savePath = rootPath & "\" & fullFileName
 
@@ -739,7 +742,7 @@ Namespace Service
 
                 cmd.CommandTimeout = 0
 
-                adapt = dbSQL.GetDataAdapter(cmd)
+                adapt = _sharedDbSql.GetDataAdapter(cmd)
                 ds = New DataSet
                 adapt.Fill(ds)
 
