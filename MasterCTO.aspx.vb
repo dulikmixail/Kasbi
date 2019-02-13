@@ -490,6 +490,7 @@ Namespace Kasbi
                     '
                     'Если проведено ТО
                     '
+                   
                     If Not IsDBNull(e.Item.DataItem("lastTO")) Then
                         If _
                             Month(e.Item.DataItem("lastTO")) = Month(Now()) And
@@ -500,11 +501,18 @@ Namespace Kasbi
 
                     'CType(e.Item.FindControl("lblLastTO"), Label).Text &= e.Item.DataItem("state")
 
+                    Dim dateEndDelayTo As DateTime = Now()
+                    If Not IsDBNull(e.Item.DataItem("start_date"))
+                        dateEndDelayTo =
+                            Date.Parse(e.Item.DataItem("start_date").ToString).AddMonths(
+                                Convert.ToInt32(e.Item.DataItem("period")))
+                    End If
+
                     If e.Item.DataItem("state") = 2 Or e.Item.DataItem("state") = 3 Then
                         e.Item.BackColor = Drawing.Color.FromArgb(250, 100, 100)
                     ElseIf e.Item.DataItem("state") = 4 Then
                         e.Item.BackColor = Drawing.Color.FromArgb(250, 250, 250)
-                    ElseIf e.Item.DataItem("state") = 6 Then
+                    ElseIf e.Item.DataItem("state") = 6 And dateEndDelayTo > Now() Then
                         e.Item.BackColor = Drawing.Color.FromArgb(250, 250, 210)
                     End If
 
@@ -1204,7 +1212,7 @@ Namespace Kasbi
                                                            CurrentUser.sys_id,
                                                            smsType, customerId := Convert.ToInt32(selectedCustomerId)))
                             Else
-                                countPhonesNotFound +=1
+                                countPhonesNotFound += 1
                             End If
                         End If
                     End If

@@ -226,7 +226,7 @@
                         <tbody>
                         <tr>
                             <td>
-                                <strong>Всего СМС:</strong>
+                                <strong>Всего СМС: </strong>
                             </td>
                             <td>
                                 <asp:Label runat="server" ID="lblCountSelectedSms"></asp:Label>
@@ -234,7 +234,7 @@
                         </tr>
                         <tr>
                             <td>
-                                <strong>Отправлено:</strong>
+                                <strong>Отправлено: </strong>
                             </td>
                             <td>
                                 <asp:Label runat="server" ID="lblCountSendSms"></asp:Label>
@@ -242,7 +242,7 @@
                         </tr>
                         <tr>
                             <td>
-                                <strong>Не нейдено номеров номеров:</strong>
+                                <strong>Не нейдено номеров: </strong>
                             </td>
                             <td>
                                 <asp:Label runat="server" ID="lblCountPhonesNotFound"></asp:Label>

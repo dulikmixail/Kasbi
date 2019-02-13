@@ -73,7 +73,7 @@
                     
                 </td>--%>
                 <td valign="top">
-                    <asp:HyperLink ID="lnkBookKeeping" runat="server" EnableViewState="False" CssClass="PanelHider" NavigateUrl="BookKeeping.aspx"> <asp:Image runat="server" ID="Image5" ImageUrl="Images/sel.gif" Style="z-index: 103; position: relative; left: 10;"></asp:Image>&nbsp;Бухгалтерия</asp:HyperLink>
+                    <asp:HyperLink ID="lnkBookKeeping" runat="server" EnableViewState="False" CssClass="PanelHider" NavigateUrl="BookKeeping.aspx"> <asp:Image runat="server" ID="Image5" ImageUrl="Images/sel.gif" Style="z-index: 103; position: relative; left: 10px;"></asp:Image>&nbsp;Бухгалтерия</asp:HyperLink>
                 </td>                
             </tr>
         </table>
@@ -90,7 +90,7 @@
         <tr>
             <td>
                 <asp:linkbutton id="lnk_export" runat="server" CssClass="PanelHider" EnableViewState="False">
-                    <asp:Image runat="server" ID="Image4" ImageUrl="Images/sel.gif" style="Z-INDEX: 103; position:relative; left:10;"></asp:Image>&nbsp;Экспорт</asp:linkbutton>
+                    <asp:Image runat="server" ID="Image4" ImageUrl="Images/sel.gif" style="Z-INDEX: 103; position:relative; left:10px;"></asp:Image>&nbsp;Экспорт</asp:linkbutton>
                 <asp:hyperlink id="Hyperlink3" runat="server" EnableViewState="False" Font-Size="8pt" Target="_blank"></asp:hyperlink>
             </td>
             <td>

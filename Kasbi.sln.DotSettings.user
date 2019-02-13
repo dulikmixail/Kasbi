@@ -2,4 +2,5 @@
 	<s:String x:Key="/Default/Environment/AssemblyExplorer/XmlDocument/@EntryValue">&lt;AssemblyExplorer&gt;&#xD;
   &lt;Assembly Path="C:\Users\dulik\Documents\Visual Studio 2017\Projects\Kasbi_src\Bin\Microsoft.Office.Interop.Excel.dll" /&gt;&#xD;
   &lt;Assembly Path="C:\Users\dulik\Documents\Visual Studio 2017\Projects\Kasbi_src\Bin\Microsoft.Office.Interop.Word.dll" /&gt;&#xD;
-&lt;/AssemblyExplorer&gt;</s:String></wpf:ResourceDictionary>
+&lt;/AssemblyExplorer&gt;</s:String>
+	<s:Int64 x:Key="/Default/Environment/SearchAndNavigation/DefaultOccurrencesGroupingIndex/@EntryValue">3</s:Int64></wpf:ResourceDictionary>

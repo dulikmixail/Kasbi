@@ -1,7 +1,5 @@
-﻿Imports System.ComponentModel
-Imports System.Data.SqlClient
+﻿Imports System.Data.SqlClient
 Imports System.Net.Mail
-Imports System.Threading.Tasks
 Imports Kasbi
 Imports MimeKit
 Imports Models
@@ -49,19 +47,19 @@ Namespace Service
             Return emailMessage
         End Function
 
-        Public Sub AddAktForSend(historyCashId As Integer, updateUserId As Integer)
+        Public Sub AddDillersAktForSend(historyCashId As Integer, updateUserId As Integer)
             Dim dr As DataRow
             Dim emails As String()
             Dim goodId As Integer = 0
             Dim customerId As Integer = 0
 
-            Const emailSubject = "Ваш ремонтный Акт - УП Рамок"
+            Dim emailSubject = "Ваш ремонтный Акт от " & Now.ToString("dd.MM.yyyy") & " - УП Рамок"
             Const emailText =
                       "Здравствуйте. Направляем Вам ремонтный акт, который был сформирован. Просим Вас приезжать с подписанным актами и доверенностью или печатью."
 
             Dim ds As DataSet = New DataSet()
             Dim query =
-                    "SELECT * FROM cash_history ch INNER JOIN customer c ON ch.owner_sys_id = c.customer_sys_id WHERE ch.state = 5 AND ch.summa IS NOT NULL AND ch.summa > 0 AND c.cto=1 AND ch.repairdate_out IS NOT NULL AND ch.sys_id =" &
+                    "SELECT * FROM cash_history ch INNER JOIN customer c ON ch.owner_sys_id = c.customer_sys_id WHERE ch.state = 5 AND ch.summa IS NOT NULL AND ch.summa > 0 AND c.cto=1 AND ch.repairdate_out IS NOT NULL AND ch.garantia <> 1 AND ch.sys_id =" &
                     historyCashId
             Dim adapt = _sharedDbSql.GetDataAdapter(query)
             adapt.Fill(ds)

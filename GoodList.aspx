@@ -341,7 +341,7 @@
                            ToolTip="В ремонте" ImageUrl="Images/repair.gif">
             </asp:HyperLink>
             <asp:HyperLink ID="imgRepaired" runat="server" CssClass="CutImageLink" NavigateUrl='<%#
-                "Repair.aspx?/" & DataBinder.Eval(Container, "DataItem.good_sys_id")%>'
+                "Repair.aspx?" & DataBinder.Eval(Container, "DataItem.good_sys_id")%>'
                            ToolTip="Побывал в ремонте" ImageUrl="Images/repaired.gif">
             </asp:HyperLink>
         </p>

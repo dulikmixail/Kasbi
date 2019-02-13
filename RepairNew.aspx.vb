@@ -1281,7 +1281,7 @@ Namespace Kasbi
                                                                              2)
                 End If
 
-                _serviceEmail.AddAktForSend(iCashHistory, CurrentUser.sys_id)
+                _serviceEmail.AddDillersAktForSend(iCashHistory, CurrentUser.sys_id)
             Catch
                 msgNew.Text = "Ошибка сохранения информации о ремонте!<br>" & Err.Description
                 Exit Sub

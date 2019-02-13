@@ -6,7 +6,7 @@ Imports Quartz.Impl
 Namespace Jobs
     Public Class EmailScheduler
         Inherits PageBase
-        Const MinutesForCheckDillersAkt As Integer = 2
+        Const MinutesForCheckDillersAkt As Integer = 3
 
         Public Shared Async Sub Start()
             Dim scheduler As IScheduler = Await StdSchedulerFactory.GetDefaultScheduler()

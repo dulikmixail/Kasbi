@@ -179,43 +179,43 @@
                             <td class="SectionRow">
                                 <asp:LinkButton ID="lnkConduct" runat="server" CssClass="LinkButton">
                                     <asp:Image runat="server" ID="Image1" ImageUrl="Images/sel.gif" Style="z-index: 103;
-                                        position: relative; left: 10;"></asp:Image>
+                                        position: relative; left: 10px;"></asp:Image>
                                     &nbsp;ТО&nbsp;проведено&nbsp;</asp:LinkButton>
                             </td>
                             <td class="SectionRow">
                                 <asp:LinkButton ID="lnkNotConduct" runat="server" CssClass="LinkButton">
                                     <asp:Image runat="server" ID="Image2" ImageUrl="Images/sel.gif" Style="z-index: 103;
-                                        position: relative; left: 10;"></asp:Image>
+                                        position: relative; left: 10px;"></asp:Image>
                                     &nbsp;ТО&nbsp;не&nbsp;проведено&nbsp;</asp:LinkButton>
                             </td>
                             <td class="SectionRow">
                                 <asp:LinkButton ID="lnkSupport" runat="server" CssClass="LinkButton">
                                     <asp:Image runat="server" ID="Image7" ImageUrl="Images/sel.gif" Style="z-index: 103;
-                                        position: relative; left: 10;"></asp:Image>
+                                        position: relative; left: 10px;"></asp:Image>
                                     &nbsp;Поставленные&nbsp;на&nbsp;ТО</asp:LinkButton>
                             </td>
                             <td class="SectionRow">
                                 <asp:LinkButton ID="lnkDismissal" runat="server" CssClass="LinkButton">
                                     <asp:Image runat="server" ID="Image3" ImageUrl="Images/sel.gif" Style="z-index: 103;
-                                        position: relative; left: 10;"></asp:Image>
+                                        position: relative; left: 10px;"></asp:Image>
                                     &nbsp;Снятые&nbsp;с&nbsp;ТО</asp:LinkButton>
                             </td>
                             <td class="SectionRow">
                                 <asp:LinkButton ID="lnkDelay" runat="server" CssClass="LinkButton">
                                     <asp:Image runat="server" ID="Image4" ImageUrl="Images/sel.gif" Style="z-index: 103;
-                                        position: relative; left: 10;"></asp:Image>
+                                        position: relative; left: 10px;"></asp:Image>
                                     &nbsp;ТО&nbsp;приостановлено&nbsp;</asp:LinkButton>
                             </td>
                             <td class="SectionRow">
                                 <asp:LinkButton ID="lnkBlackList" runat="server" CssClass="LinkButton" Visible="False">
                                     <asp:Image runat="server" ID="Image5" ImageUrl="Images/sel.gif" Style="z-index: 103;
-                                        position: relative; left: 10;"></asp:Image>
+                                        position: relative; left: 10px;"></asp:Image>
                                     &nbsp;Черный&nbsp;список&nbsp;</asp:LinkButton>
                             </td>
                             <td class="SectionRow">
                                 <asp:LinkButton ID="lnkRoute" runat="server" CssClass="LinkButton">
                                     <asp:Image runat="server" ID="Image6" ImageUrl="Images/sel.gif" Style="z-index: 103;
-                                        position: relative; left: 10;"></asp:Image>
+                                        position: relative; left: 10px;"></asp:Image>
                                     &nbsp;Маршруты&nbsp;</asp:LinkButton></td>
                         </tr>
                     </table>

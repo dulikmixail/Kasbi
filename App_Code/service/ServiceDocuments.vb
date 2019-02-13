@@ -1,4 +1,5 @@
-﻿Imports System.IO
+﻿Imports System.Diagnostics
+Imports System.IO
 Imports System.IO.Compression
 Imports System.Threading
 Imports Kasbi
@@ -21,6 +22,11 @@ Namespace Service
 
         Dim ReadOnly _sharedDbSql As MSSqlDB = ServiceDbConnector.GetConnection()
         Dim ReadOnly _sharedDbSql2 As MSSqlDB = ServiceDbConnector.GetConnection2()
+
+        ReadOnly _pathToDocs As String = Hosting.HostingEnvironment.MapPath("~/Docs/")
+        ReadOnly _pathToTemplates As String = Hosting.HostingEnvironment.MapPath("~/Templates/")
+        ReadOnly _pathToXml As String = Hosting.HostingEnvironment.MapPath("~/XML/")
+
 
         Public Sub New()
             _monthReplacements1.Add("01", "января")
@@ -111,7 +117,7 @@ Namespace Service
                                    ds.Tables("RepairRealizationAct").Rows(0)("workNotCall"))
 
             Dim docFullPath$ = String.Empty
-            Dim path$ = Hosting.HostingEnvironment.MapPath("~/Docs/")
+            Dim path$ = _pathToDocs
 
             Dim fls As IO.File
             Dim fl As IO.FileInfo
@@ -156,7 +162,7 @@ Namespace Service
                             Exit Function
                         End Try
                     End If
-                    IO.File.Copy(Hosting.HostingEnvironment.MapPath("~/Templates/") & DocName32, docFullPath, True)
+                    IO.File.Copy(_pathToTemplates & DocName32, docFullPath, True)
 
                     _wrdDoc = _wrdApp.Documents.Open(docFullPath)
                     _wrdDoc.Bookmarks("act_number1").Range.Text = act_num
@@ -346,9 +352,8 @@ Namespace Service
 
                     'Копируем док
                     IO.File.Copy(docFullPath,
-                                 Hosting.HostingEnvironment.MapPath(
-                                     "~/XML/repair_docs/" & Trim(customer_unn) & "+" &
-                                     Trim(ds.Tables("RepairRealizationAct").Rows(0)("num_cashregister")) & ".doc"), True)
+                                 _pathToXml & "/repair_docs/" & Trim(customer_unn) & "+" &
+                                     Trim(ds.Tables("RepairRealizationAct").Rows(0)("num_cashregister")) & ".doc", True)
 
                     Dim export_content = Trim(customer_unn) & ";" &
                                          Trim(ds.Tables("RepairRealizationAct").Rows(0)("num_cashregister")) & ";" & Now &
@@ -357,7 +362,7 @@ Namespace Service
                     Dim content_temp
                     Dim file_open As IO.StreamReader
                     i = 1
-                    file_open = IO.File.OpenText(Hosting.HostingEnvironment.MapPath("~/XML/new_repair.csv"))
+                    file_open = IO.File.OpenText(_pathToXml & "/new_repair.csv")
                     While Not file_open.EndOfStream
                         i = i + 1
                         content_temp = file_open.ReadLine()
@@ -368,7 +373,7 @@ Namespace Service
                     file_open.Close()
                     Try
                         Dim file_save As IO.StreamWriter
-                        file_save = IO.File.CreateText(Hosting.HostingEnvironment.MapPath("~/XML/new_repair.csv"))
+                        file_save = IO.File.CreateText(_pathToXml & "/new_repair.csv")
                         file_save.Write(export_content)
                         file_save.Close()
                     Catch ex As Exception
@@ -413,7 +418,7 @@ Namespace Service
                             Exit Function
                         End Try
                     End If
-                    IO.File.Copy(Hosting.HostingEnvironment.MapPath("~/Templates/") & DocName33, docFullPath, True)
+                    IO.File.Copy(_pathToTemplates & DocName33, docFullPath, True)
 
                     _wrdDoc = _wrdApp.Documents.Open(docFullPath)
 
@@ -521,7 +526,7 @@ Namespace Service
                             Exit Function
                         End Try
                     End If
-                    IO.File.Copy(Hosting.HostingEnvironment.MapPath("~/Templates/") & DocName34, docFullPath, True)
+                    IO.File.Copy(_pathToTemplates & DocName34, docFullPath, True)
 
                     _wrdDoc = _wrdApp.Documents.Open(docFullPath)
 
@@ -663,7 +668,7 @@ Namespace Service
             Dim subCheckGoods As ListDictionary = New ListDictionary
 
 
-            rootPath = Hosting.HostingEnvironment.MapPath("~/Docs") & "\Akts\" & Session("User").sys_id.ToString
+            rootPath = _pathToDocs & "\Akts\" & Session("User").sys_id.ToString
             folderPath = rootPath & "\" & folderName
 
             If dateAkt = Nothing Then
@@ -709,7 +714,7 @@ Namespace Service
             Dim drs() As Data.DataRow
             Dim templatePath, savePath, filter, fullFileName As String
 
-            templatePath = Hosting.HostingEnvironment.MapPath("~/Templates\") & "Akt_Of_TO_And_Dolg.doc"
+            templatePath = _pathToTemplates & "Akt_Of_TO_And_Dolg.doc"
             fullFileName = fileName & ".doc"
             savePath = rootPath & "\" & fullFileName
 
@@ -1017,7 +1022,7 @@ Namespace Service
             End If
         End Function
 
-        Private Sub ResponseFile(savePath As String, httpResponse As HttpResponse)
+        Public Sub ResponseFile(savePath As String, httpResponse As HttpResponse)
             Dim fileExtension = savePath.Substring(savePath.Length - 3, 3)
             Dim file As IO.FileInfo
             file = New FileInfo(savePath)
