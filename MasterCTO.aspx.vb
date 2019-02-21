@@ -37,6 +37,7 @@ Namespace Kasbi
         Private ReadOnly _serviceTo As ServiceTo = New ServiceTo()
         Private ReadOnly _serviceDoc As ServiceDocuments = New ServiceDocuments()
         Private ReadOnly _serviceSms As ServiceSms = New ServiceSms()
+        Private ReadOnly _serviceGood As ServiceGood = New ServiceGood()
 
 
         Private Overloads Sub Page_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
@@ -44,7 +45,7 @@ Namespace Kasbi
             If Not IsPostBack Then
                 LoadPlaceRegion()
                 LoadEmployee()
-                LoadGoodType(1)
+                LoadGoodByType(1)
                 'Выставляем текущий месяц и год
                 lstMonth.SelectedIndex = Month(Now) - 1
                 lstYear.SelectedValue = Year(Now).ToString()
@@ -199,23 +200,9 @@ Namespace Kasbi
             lstEmployee.Enabled = True
         End Sub
 
-        Sub LoadGoodType(ByVal type)
-            Dim sql$ = ""
-
-            If type = 1 Then
-                sql = "select * from good_type where is_cashregister='1' order by name"
-            ElseIf type = 2 Then
-                sql = "select * from good_type where is_cashregister='0' and allowCTO='1' order by name"
-            ElseIf type = 3 Then
-                sql = "select * from good_type where allowCTO='1' order by name"
-            End If
-
-            Dim adapt As SqlClient.SqlDataAdapter
-            Dim ds As DataSet
+        Private Sub LoadGoodByType(ByVal type)
+            Dim ds As DataSet = _serviceGood.GetGoodsByType(type)
             Try
-                adapt = dbSQL.GetDataAdapter(sql)
-                ds = New DataSet
-                adapt.Fill(ds)
                 lstGoodType.DataSource = ds.Tables(0).DefaultView
                 lstGoodType.DataTextField = "name"
                 lstGoodType.DataValueField = "good_type_sys_id"
@@ -954,15 +941,15 @@ Namespace Kasbi
             If chk_show_kkm.Checked = True And chk_show_torg.Checked = False Then
                 grdTO.Visible = True
                 grdTO_prod.Visible = False
-                LoadGoodType(1)
+                LoadGoodByType(1)
             ElseIf chk_show_kkm.Checked = False And chk_show_torg.Checked = True Then
                 grdTO.Visible = False
                 grdTO_prod.Visible = True
-                LoadGoodType(2)
+                LoadGoodByType(2)
             ElseIf chk_show_kkm.Checked = True And chk_show_torg.Checked = True Then
                 grdTO.Visible = True
                 grdTO_prod.Visible = True
-                LoadGoodType(3)
+                LoadGoodByType(3)
             End If
         End Sub
 
@@ -972,15 +959,15 @@ Namespace Kasbi
             If chk_show_kkm.Checked = True And chk_show_torg.Checked = False Then
                 grdTO.Visible = True
                 grdTO_prod.Visible = False
-                LoadGoodType(1)
+                LoadGoodByType(1)
             ElseIf chk_show_kkm.Checked = False And chk_show_torg.Checked = True Then
                 grdTO.Visible = False
                 grdTO_prod.Visible = True
-                LoadGoodType(2)
+                LoadGoodByType(2)
             ElseIf chk_show_kkm.Checked = True And chk_show_torg.Checked = True Then
                 grdTO.Visible = True
                 grdTO_prod.Visible = True
-                LoadGoodType(3)
+                LoadGoodByType(3)
             End If
         End Sub
 

@@ -141,7 +141,7 @@
 
 
 </asp:Panel>
-        <asp:LinkButton runat="server" OnClick="TestSendMail">реяр нропюбйх Email</asp:LinkButton>
+        <%--<asp:LinkButton runat="server" OnClick="TestSendMail">реяр нропюбйх Email</asp:LinkButton>--%>
         <%--<asp:LinkButton runat="server" OnClick="Unnamed2_Click">реяр нропюбйх яля</asp:LinkButton>--%>
         <%--<asp:LinkButton runat="server" ID="testSms" OnClick="testSms_OnClick">рЕЯР яля</asp:LinkButton>--%>
         <script language="javascript">

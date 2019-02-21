@@ -46,6 +46,8 @@ Namespace Kasbi
             If Session("rule13") = "0" Then FormsAuthentication.RedirectFromLoginPage("*", True)
             If Session("rule14") = "0" Then btnNew.Visible = False
 
+            EditVisibleAcess(True)
+
             If Not IsPostBack Then
                 Dim s1$ = lstUseDateType.ClientID
                 Dim s2$ = ".disabled = !" & chkUseDate.ClientID & ".checked;"
@@ -78,6 +80,7 @@ Namespace Kasbi
                     lstUseDateType.Items(Request.Cookies("Ramok")("UseDateType")).Selected = True
                 Catch
                 End Try
+
             End If
             If Not IsPostBack Then
                 cal.SelectedDate = Now
@@ -354,8 +357,12 @@ Namespace Kasbi
                                         ByVal e As System.Web.UI.WebControls.DataGridCommandEventArgs) _
             Handles grdGood.EditCommand
             'Ограничение прав на редактирование
+            If Not CurrentUser.is_admin
+                EditVisibleAcess(False)
+            End If
             If Session("rule15") = "1" Then
                 grdGood.EditItemIndex = CInt(e.Item.ItemIndex)
+
                 Bind()
             End If
         End Sub
@@ -544,7 +551,8 @@ Namespace Kasbi
                         adapt =
                             dbSQL.GetDataAdapter(
                                 "select s.sale_sys_id, cast(c.customer_sys_id as nvarchar) + '/' + cast(s.sale_sys_id as nvarchar) + ' ' + cast(day(s.sale_date) as nvarchar)+'.'+cast(month(s.sale_date) as nvarchar)+'.'+cast(year(s.sale_date) as nvarchar) + ' ' + c.customer_name as sale from customer c, sale s where c.customer_sys_id=s.customer_sys_id " &
-                                IIf(IsDBNull(e.Item.DataItem("sale_sys_id")), "".ToString(),"and s.sale_sys_id = " & e.Item.DataItem("sale_sys_id")).ToString() &
+                                IIf(IsDBNull(e.Item.DataItem("sale_sys_id")), "".ToString(),
+                                    "and s.sale_sys_id = " & e.Item.DataItem("sale_sys_id")).ToString() &
                                 " order by c.cto DESC, c.customer_name, s.sale_date DESC")
                         ds = New DataSet
                         adapt.Fill(ds)
@@ -663,7 +671,8 @@ Namespace Kasbi
                     msgCashregister.Text = "Ошибка обновления записи!<br>" & Err.Description & "(" &
                                            String.Format(
                                                "UPDATE good SET good_type_sys_id='{0}',price='{1}',num_cashregister='{2}',num_control_reestr='{3}',num_control_pzu='{4}',num_control_mfp='{5}',num_control_cto='{6}',set_place='{7}',kassir1='{8}',kassir2='{9}',info='{10}',delivery_sys_id={11},sale_sys_id={12},state={13},place_rn_id={14},num_control_cp='{15}',num_control_cto2='{16}',registration_number_skno='{17}',serial_number_skno = '{18}' WHERE good_sys_id={19}",
-                                               s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13, s14, s15, s16, s17, s18,
+                                               s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13, s14, s15, s16,
+                                               s17, s18,
                                                grdGood.DataKeys(e.Item.ItemIndex)) & ")"
                 End Try
                 grdGood.EditItemIndex = - 1
@@ -799,6 +808,13 @@ Namespace Kasbi
         Protected Sub lnk_findgoodto_Click(ByVal sender As Object, ByVal e As System.EventArgs) _
             Handles lnk_findgoodto.Click
             bindTO()
+        End Sub
+
+        Private Sub EditVisibleAcess(visibility As Boolean)
+            grdGood.Columns(2).Visible = visibility
+            grdGood.Columns(3).Visible = visibility
+            grdGood.Columns(4).Visible = visibility
+            grdGood.Columns(5).Visible = visibility
         End Sub
     End Class
 End Namespace

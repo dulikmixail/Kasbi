@@ -36,7 +36,6 @@ Namespace Kasbi
         Dim icash
         Dim customer As String = ""
         Dim _currentStateRepair As Integer = 0
-        Dim _nextStateRepair As Integer = 0
         Const ClearString$ = "-------"
         Private ReadOnly _serviceCustomer As ServiceCustomer = New ServiceCustomer()
         Private ReadOnly _serviceGood As ServiceGood = New ServiceGood()
@@ -146,7 +145,7 @@ Namespace Kasbi
 
                 If Not String.IsNullOrEmpty(Trim(txtName))
                     Try
-                        cmd = New SqlCommand("insert_repair_bads")
+                        cmd = New SqlCommand("insert_or_update_repair_bads")
                         With cmd.Parameters
                             .AddWithValue("@pi_name", txtName)
                             .AddWithValue("@pi_price_from", Replace(txtPriceFrom, ",", "."))
@@ -162,7 +161,7 @@ Namespace Kasbi
                         End If
                         repairBadsList &= Convert.ToInt32(ds.Tables(0).Rows(0).Item("return_value"))
                     Catch
-                        lblErrors.Text = "Ошибка добавления дрйгой неисправности<br>" & Err.Description
+                        lblErrors.Text = "Ошибка добавления другой неисправности<br>" & Err.Description
                     End Try
                 End If
 
@@ -171,10 +170,16 @@ Namespace Kasbi
                 If String.IsNullOrEmpty(repairBadsList)
                     repairBadsSumItog = "0 руб."
                 Else
+                    dbSQL.Execute(
+                        String.Format(
+                            "UPDATE repair_bads SET choice_counter = choice_counter + 1 WHERE repair_bads_sys_id IN ({0})",
+                            repairBadsList))
+
                     ds = New DataSet()
-                    adapt = dbSQL.GetDataAdapter(
-                        "SELECT * FROM repair_bads WHERE repair_bads_sys_id IN (" & repairBadsList &
-                        ") ORDER BY name")
+                    adapt =
+                        dbSQL.GetDataAdapter(
+                            String.Format("SELECT * FROM repair_bads WHERE repair_bads_sys_id IN ({0}) ORDER BY name",
+                                          repairBadsList))
                     adapt.Fill(ds, "repair_bads_info")
 
                     Dim dt As DataTable = ds.Tables("repair_bads_info")

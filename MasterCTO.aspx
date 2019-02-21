@@ -469,6 +469,12 @@
                                     </asp:Label>
                                 </ItemTemplate>
                             </asp:TemplateColumn>
+                            <asp:TemplateColumn HeaderText="Версия ПО" SortExpression="software_version" > 
+                                <ItemTemplate>
+                                    <asp:Label ID="lbledtSoftwareVersion" runat="server" Text='<%# DataBinder.Eval(Container, "DataItem.software_version") %>'>
+                                    </asp:Label>
+                                </ItemTemplate>
+                            </asp:TemplateColumn>
                             <asp:TemplateColumn HeaderText="№" SortExpression="num_cashregister" > 
                                   <ItemTemplate>
                                     <asp:HyperLink ID="lbledtNum" Target="_blank" runat="server" Text='<%# DataBinder.Eval(Container, "DataItem.num_cashregister") %>'

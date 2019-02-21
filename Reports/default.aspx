@@ -56,31 +56,36 @@
 			            <asp:HyperLink id="lnkEmployeeCashRegisterReports" runat="server" NavigateUrl="CashRegistersForTO.aspx" CssClass="PanelHider">
 			                <asp:Image runat="server" ID="Image21" ImageUrl="../Images/sel.gif" style="Z-INDEX: 103; position:relative; left:10px;"></asp:Image>&nbsp;Клиенты, диллеры - кассы</asp:HyperLink></td>
 			    </tr>
-				<TR>
+				<tr>
 					<td class="SectionRow">
 						<asp:HyperLink id="lnkSupplierReports" runat="server" NavigateUrl="GoodsRequest.aspx" CssClass="PanelHider">
 						<asp:Image runat="server" ID="Image7" ImageUrl="../Images/sel.gif" style="Z-INDEX: 103; position:relative; left:10px;"></asp:Image>&nbsp;Поставщики</asp:HyperLink></td>
-				</TR>
-				<TR>
+				</tr>
+				<tr>
 					<td class="SectionRow">
 						<asp:HyperLink id="lnkRestReports" runat="server" NavigateUrl="RestRequest.aspx" CssClass="PanelHider">
 						<asp:Image runat="server" ID="Image8" ImageUrl="../Images/sel.gif" style="Z-INDEX: 103; position:relative; left:10px;"></asp:Image>&nbsp;Остатки</asp:HyperLink></td>
-				</TR>
-				<TR>
+				</tr>
+				<tr>
 					<td class="SectionRow">
 						<asp:HyperLink id="lnkAdvertisingReports" runat="server" NavigateUrl="AdvertisingRequest.aspx" CssClass="PanelHider">
 						<asp:Image runat="server" ID="Image10" ImageUrl="../Images/sel.gif" style="Z-INDEX: 103; position:relative; left:10px;"></asp:Image>&nbsp;Реклама</asp:HyperLink></td>
-				</TR>
-				<TR>
+				</tr>
+				<tr>
 					<td class="SectionRow">
 						<asp:HyperLink id="lnkRubrreport" runat="server" NavigateUrl="RubrRequest.aspx" CssClass="PanelHider">
-						<asp:Image runat="server" ID="Image13" ImageUrl="../Images/sel.gif" style="Z-INDEX: 103; position:relative; left:10px;"></asp:Image>&nbsp;Статистика клиентов по рубрикам</asp:HyperLink></td>
-				</TR>	
-			    <TR>
+						<asp:Image runat="server" ID="Image13" ImageUrl="../Images/sel.gif" style="Z-INDEX: 103; position:relative; left:10px;"></asp:Image>&nbsp;Статистика&nbsp;клиентов&nbsp;по&nbsp;рубрикам</asp:HyperLink></td>
+				</tr>	
+			    <tr>
 			        <td class="SectionRow">
 			            <asp:HyperLink id="lnkHistorySKNO" runat="server" NavigateUrl="HistorySKNO.aspx" CssClass="PanelHider">
-			                <asp:Image runat="server" ID="Image14" ImageUrl="../Images/sel.gif" style="Z-INDEX: 103; position:relative; left:10px;"></asp:Image>&nbsp;ККМ с установленным СКНО</asp:HyperLink></td>
-			    </TR>
+			                <asp:Image runat="server" ID="Image14" ImageUrl="../Images/sel.gif" style="Z-INDEX: 103; position:relative; left:10px;"></asp:Image>&nbsp;ККМ&nbsp;с&nbsp;установленным&nbsp;СКНО</asp:HyperLink></td>
+			    </tr>
+			    <tr>
+			        <td class="SectionRow">
+			            <asp:HyperLink id="lnkKkmSoftwareVersion" runat="server" NavigateUrl="KkmSoftwareVersion.aspx" CssClass="PanelHider">
+			                <asp:Image runat="server" ID="Image16" ImageUrl="../Images/sel.gif" style="Z-INDEX: 103; position:relative; left:10px;"></asp:Image>&nbsp;Версии&nbsp;ПО&nbsp;ККМ</asp:HyperLink></td>
+			    </tr>
 				<tr>
 					<td class="Unit" vAlign="top">Техническое обслуживание</td>
 				</tr>
@@ -101,16 +106,16 @@
 						<asp:HyperLink id="HyperLink22" runat="server" NavigateUrl="TOReport.aspx" CssClass="PanelHider">
 						<asp:Image runat="server" ID="Image11" ImageUrl="../Images/sel.gif" style="Z-INDEX: 103; position:relative; left:10px;"></asp:Image>&nbsp;Тестовые&nbsp;отчеты</asp:HyperLink></td> 
 				</tr>-->
-				<TR>
+				<tr>
 					<td class="SectionRow">
 						<asp:HyperLink id="lnkCTODismissReports" runat="server" NavigateUrl="CTODismissRequest.aspx" CssClass="PanelHider">
 						<asp:Image runat="server" ID="Image6" ImageUrl="../Images/sel.gif" style="Z-INDEX: 103; position:relative; left:10px;"></asp:Image>&nbsp;Снятие с ТО</asp:HyperLink></td>
-				</TR>
-				<TR>
+				</tr>
+				<tr>
 					<td class="SectionRow">
 						<asp:HyperLink id="lnkMasterreport" runat="server" NavigateUrl="masterworkrequest.aspx" CssClass="PanelHider">
 						<asp:Image runat="server" ID="Image34" ImageUrl="../Images/sel.gif" style="Z-INDEX: 103; position:relative; left:10px;"></asp:Image>&nbsp;Отчет по работе мастеров</asp:HyperLink></td>
-				</TR>
+				</tr>
 				<tr>
 					<td class="SectionRow">
 						<asp:HyperLink id="lnkQuartalMarkaReports" runat="server" NavigateUrl="QuartalMarkaRequest.aspx" CssClass="PanelHider">

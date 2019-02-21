@@ -40,12 +40,17 @@ Namespace Kasbi
         Dim sCaptionRemoveSupport As String = "Снять с ТО"
         Dim d As Kasbi.Documents
         Dim ReadOnly _notRejectReapirStatusForSendSms As List(Of Integer) = New List(Of Integer) From {12, 22, 32, 33}
+
+        Dim ReadOnly _
+            _statusesForCopyDataFromTwoRapair As List(Of Integer) = New List(Of Integer) From {13, 23}
+
         Const ClearString$ = "-------"
 
         Private ReadOnly _serviceSms As ServiceSms = New ServiceSms()
         Private ReadOnly _serviceExport As ServiceExport = New ServiceExport()
         Private ReadOnly _serviceGood As ServiceGood = New ServiceGood()
         Private ReadOnly _serviceEmail As ServiceEmail = New ServiceEmail()
+        Private ReadOnly _serviceRepair As ServiceRepair = New ServiceRepair()
 
         Private Overloads Sub Page_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
             If CurrentUser.is_admin
@@ -64,6 +69,28 @@ Namespace Kasbi
             Thread.CurrentThread.CurrentCulture = CultureInfo.CreateSpecificCulture("ru-Ru")
 
             If Not IsPostBack Then
+                Dim currentStateRepair As Integer = _serviceGood.GetStateRepair(iCash)
+
+                If _statusesForCopyDataFromTwoRapair.Contains(currentStateRepair)
+                    Const query = "UPDATE cash_history " &
+                                "SET " &
+                                "marka_cto_out = t1.marka_cto_out, " &
+                                "marka_cto_in = t1.marka_cto_out, " &
+                                "marka_pzu_out = t1.marka_pzu_out, " &
+                                "marka_pzu_in = t1.marka_pzu_out, " &
+                                "marka_mfp_out = t1.marka_mfp_out, " &
+                                "marka_mfp_in = t1.marka_mfp_out, " &
+                                "marka_reestr_out = t1.marka_reestr_out, " &
+                                "marka_reestr_in = t1.marka_reestr_out, " &
+                                "marka_cto2_out = t1.marka_cto2_out, " &
+                                "marka_cto2_in = t1.marka_cto2_out, " &
+                                "marka_cp_out = t1.marka_cp_out, " &
+                                "marka_cp_in = t1.marka_cp_out " &
+                                "FROM (SELECT TOP 1 * FROM cash_history ch1 WHERE ch1.state = 5 AND ch1.sys_id > {0}) t1 " &
+                                "WHERE cash_history.state = 5 AND cash_history.sys_id = {0} "
+                    dbSQL.Execute(String.Format(query, iCashHistory))
+                End If
+
                 lblRepairDateOut.Visible = True
                 tbxRepairDateOut.Visible = False
                 Session("CustFilter") = ""
@@ -77,15 +104,9 @@ Namespace Kasbi
                 If _serviceExport.IsLockCashHistory(Convert.ToInt32(iCashHistory)) And Not CurrentUser.is_admin
                     Response.Redirect("Repair.aspx?" & iCash & "&err=002")
                 End If
-                If _notRejectReapirStatusForSendSms.Contains(_serviceGood.GetStateRepair(iCash))
+                If _notRejectReapirStatusForSendSms.Contains(currentStateRepair)
                     cbxSmsSend.Checked = False
                 End If
-                'Try
-                '    _serviceSms.UpdateStatusesByIdCashHistory(iCashHistory)
-                'Catch ex As Exception
-                '    msgNew.Text = "Ошибка обновления статусов СМС!<br>" & Err.Description
-                '    Exit Sub
-                'End Try
             End If
             cbxEtitSmsSend_CheckedChanged(Nothing, Nothing)
         End Sub
@@ -279,9 +300,10 @@ Namespace Kasbi
                     executorId = Convert.ToInt32(reader("executor_id"))
                 End If
 
-                lblCashType.Text = reader("good_name") & "&nbsp;&nbsp;"
-                lblCash.Text = "№" & reader("num_cashregister")
-                NumCashRegister = reader("num_cashregister")
+                lblCashType.Text = reader("good_name").ToString() & "&nbsp;"
+                lblSoftwareVersion.Text = reader("software_version").ToString() & "&nbsp;&nbsp;"
+                lblCash.Text = "№" & reader("num_cashregister").ToString()
+                NumCashRegister = reader("num_cashregister").ToString()
                 Dim s$, sTmp$
                 Dim b As Boolean
 
@@ -377,7 +399,7 @@ Namespace Kasbi
                 Parameters.Value = CurrentCustomer
                 'lblOwner.Visible = b
                 'lnkOwner.Visible = b
-                ''            lblCash.NavigateUrl = "CashOwners.aspx?" & iCash & "&cashowner=" & CurrentCustomer
+                lblCash.NavigateUrl = "CashOwners.aspx?" & iCash & "&cashowner=" & CurrentCustomer
                 'lblCash.NavigateUrl = "Repair1.aspx?" & iCash
 
                 's = Trim(reader("sale"))
@@ -1282,6 +1304,7 @@ Namespace Kasbi
                 End If
 
                 _serviceEmail.AddDillersAktForSend(iCashHistory, CurrentUser.sys_id)
+                _serviceRepair.TryAddGoodSoftwareVersion(iCashHistory, iCash)
             Catch
                 msgNew.Text = "Ошибка сохранения информации о ремонте!<br>" & Err.Description
                 Exit Sub

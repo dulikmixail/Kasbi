@@ -85,10 +85,11 @@ Namespace Kasbi
                     msg.Text = "Ошибка загрузки информации о товаре1!<br>"
                     Exit Sub
                 End If
-                lblCashType.Text = reader("name") & "&nbsp;&nbsp;"
-                lblCash.Text = "№" & reader("num_cashregister")
-                txtGoodNumCashregister.Text = reader("num_cashregister")
-                lstGoodType.Items.FindByText(reader("name")).Selected = True
+                lblCashType.Text = reader("name").ToString() & "&nbsp;"
+                lblSoftwareVersion.Text = reader("software_version").ToString() & "&nbsp;&nbsp;"
+                lblCash.Text = "№" & reader("num_cashregister").ToString()
+                txtGoodNumCashregister.Text = reader("num_cashregister").ToString()
+                lstGoodType.Items.FindByText(reader("name").ToString()).Selected = True
                 lstGoodType.Enabled = False
                 Dim s$, sTmp$
                 Dim b As Boolean

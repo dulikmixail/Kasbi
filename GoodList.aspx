@@ -296,6 +296,21 @@
         </asp:DropDownList>
     </EditItemTemplate>
 </asp:TemplateColumn>
+<asp:TemplateColumn HeaderText="Версия ПО">
+    <ItemTemplate>
+        <asp:Label ID="lbledtSoftwareVersion" runat="server" Text='<%#
+                                  DataBinder.Eval(Container, "DataItem.software_version")%>'>
+        </asp:Label>
+    </ItemTemplate>
+    <EditItemTemplate>
+        <p class="SubTitleEditbox">
+            Версия ПО:
+        </p>
+        <asp:TextBox ID="txtedtSoftwareVersion" runat="server" Width="110px" Text='<%#
+                                  DataBinder.Eval(Container, "DataItem.software_version")%>'>
+        </asp:TextBox>
+    </EditItemTemplate>
+</asp:TemplateColumn>
 <asp:TemplateColumn SortExpression="ownerInfo" HeaderText="Кому продан">
     <ItemTemplate>
         <asp:Label ID="lblSaleOwner" runat="server"></asp:Label>
@@ -614,7 +629,8 @@
 <asp:TemplateColumn HeaderText="Товар">
     <ItemTemplate>
         <asp:Label ID="lbledtGoodName" runat="server" Text='<%#
-                DataBinder.Eval(Container, "DataItem.good_name")%>'>
+                DataBinder.Eval(Container, "DataItem.good_name") & " " &
+                DataBinder.Eval(Container, "DataItem.software_version")%>'>
         </asp:Label>
     </ItemTemplate>
     <EditItemTemplate>

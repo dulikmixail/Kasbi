@@ -10,6 +10,8 @@ Namespace Service
 
         Dim ReadOnly _sharedDbSql As MSSqlDB = ServiceDbConnector.GetConnection()
 
+        Const softwareVersionsPattern As String = "[v,V][0-9]"
+
         Public Function GetNewAktNumberByCashHistoryId(cashHistoryId As Integer) As String
             Dim goodSysId As Integer =
                     Convert.ToInt32(
@@ -100,6 +102,60 @@ Namespace Service
         Public Sub UpdateRepairDateIn(currentUserId As Integer, goodId As Object, Optional cashHistoryId As Object = 0)
             UpdateRepairDateIn(currentUserId, Convert.ToInt32(goodId), Convert.ToInt32(cashHistoryId))
         End Sub
+
+        Public Sub TryAddGoodSoftwareVersion(cashHistoryId As Integer, goodSysId As Integer)
+            Dim detailName As String
+            Dim query As String
+            Dim ds As DataSet
+            Dim adapt As SqlDataAdapter
+            Dim rows As DataRowCollection
+
+            If IsLastRepair(cashHistoryId, goodSysId)
+                ds = New DataSet()
+                query =
+                    "SELECT * FROM repair_info ri INNER JOIN details d ON ri.detail_id=d.detail_id  WHERE d.is_detail = 0 AND ri.hc_sys_id = " &
+                    cashHistoryId
+                adapt = dbSQL.GetDataAdapter(query)
+                adapt.Fill(ds)
+
+                If ds.Tables.Count > 0 And ds.Tables(0).Rows.Count > 0
+                    rows = ds.Tables(0).Rows
+                    For Each row As DataRow In rows
+                        detailName = row("detail_name").ToString()
+                        If Regex.IsMatch(detailName, softwareVersionsPattern)
+                            dbSQL.Execute(String.Format("UPDATE good SET software_version='{0}', sv_cash_history_id={1} WHERE good_sys_id = {2}",
+                                                        detailName,cashHistoryId, goodSysId))
+                        End If
+                    Next
+                End If
+            End If
+        End Sub
+
+        Public Function GetDetailListWithSoftwareVersion() As DataSet
+            Dim ds As DataSet = New DataSet()
+            Dim adapt As SqlDataAdapter = dbSQL.GetDataAdapter("SELECT * FROM details WHERE is_detail = 0")
+            Const tableName As String = "details"
+            adapt.Fill(ds)
+            Dim returnDs As DataSet = ds.Clone()
+            If ds.Tables.Count > 0 And ds.Tables(0).Rows.Count > 0
+                For Each dr As DataRow In ds.Tables(0).Rows
+                    If Regex.IsMatch(dr("detail_name").ToString(), softwareVersionsPattern)
+                        returnDs.Tables(0).ImportRow(dr)
+                    End If
+                Next
+            End If
+            Return returnDs
+        End Function
+
+        Public Function IsLastRepair(cashHistoryId As Integer, goodSysId As Integer) As Boolean
+            Dim lastCashHistoryId As Integer =
+                    Convert.ToInt32(
+                        dbSQL.ExecuteScalar(
+                            String.Format(
+                                "SELECT TOP 1 sys_id FROM cash_history WHERE state = 5 AND good_sys_id = {0} ORDER BY change_state_date DESC",
+                                goodSysId)))
+            Return cashHistoryId = lastCashHistoryId
+        End Function
     End Class
 End Namespace
 

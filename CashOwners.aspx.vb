@@ -91,8 +91,9 @@ Namespace Kasbi
                 msg.Text = "Ошибка загрузки информации о товаре! Невозможно выполнить запрос!<br>"
                 Exit Sub
             End If
-            lblCashType.Text = reader("name") & "&nbsp;&nbsp;"
-            lblCash.Text = "№" & reader("num_cashregister")
+            lblCashType.Text = reader("name").ToString() & "&nbsp;"
+            lblSoftwareVersion.Text = reader("software_version").ToString() & "&nbsp;&nbsp;"
+            lblCash.Text = "№" & reader("num_cashregister").ToString()
 
             Dim s$, sTmp$
             Dim b As Boolean

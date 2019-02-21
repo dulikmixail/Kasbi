@@ -140,10 +140,10 @@ function isFind()
                                 <EditItemTemplate>
                                     <p class="SubTitleEditbox">
                                         Название:</p>
-                                    <asp:TextBox ID="txtCustomerAbr" runat="server" Width="17%" BorderWidth="1px" Text='<%# DataBinder.Eval(Container, "DataItem.customer_abr") %>'
+                                    <asp:TextBox ID="txtCustomerAbr" runat="server" Width="100%" BorderWidth="1px" Text='<%# DataBinder.Eval(Container, "DataItem.customer_abr") %>'
                                         BorderStyle="Solid">
                                     </asp:TextBox>
-                                    <asp:TextBox ID="txtCustomerName" runat="server" Width="83%" BorderWidth="1px" Text='<%# DataBinder.Eval(Container, "DataItem.customer_name") %>'
+                                    <asp:TextBox ID="txtCustomerName" runat="server" Width="100%" BorderWidth="1px" Text='<%# DataBinder.Eval(Container, "DataItem.customer_name") %>'
                                         BorderStyle="Solid">
                                     </asp:TextBox>
                                     <p class="SubTitleEditbox">

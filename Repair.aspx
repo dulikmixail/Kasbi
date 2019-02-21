@@ -61,6 +61,7 @@
                             </td>
                             <td align="right">
                                 <asp:Label ID="lblCashType" runat="server" Font-Bold="true"></asp:Label>
+                                <asp:Label ID="lblSoftwareVersion" runat="server" Font-Bold="true"></asp:Label>
                             </td>
                             <td>
                                 <asp:HyperLink ID="lblCash" runat="server" Font-Bold="true" ToolTip="Карточка ККМ"></asp:HyperLink>

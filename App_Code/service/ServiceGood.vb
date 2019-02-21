@@ -310,6 +310,28 @@ Namespace Service
             Return GetStateRepair(Convert.ToInt32(goodId))
         End Function
 
+        Public Function GetGoodsByType(ByVal type) As DataSet
+            Dim sql$ = ""
+            If type = 1 Then
+                sql = "select * from good_type where is_cashregister='1' order by name"
+            ElseIf type = 2 Then
+                sql = "select * from good_type where is_cashregister='0' and allowCTO='1' order by name"
+            ElseIf type = 3 Then
+                sql = "select * from good_type where allowCTO='1' order by name"
+            End If
+
+            Dim adapt As SqlClient.SqlDataAdapter
+            Dim ds As DataSet = New DataSet()
+            Try
+                adapt = dbSQL.GetDataAdapter(sql)
+                ds = New DataSet
+                adapt.Fill(ds)
+            Catch
+                Throw New Exception(String.Format("Ошибка получения списка товаров с типом равным {0}", type))
+            End Try
+            Return ds
+        End Function
+
         Public Sub SetStateRepair(goodId As Integer, stateRepair As Integer,
                                   Optional ignoreValidation As Boolean = False)
             If CheckChangeStates(GetStateRepair(goodId), stateRepair) Or ignoreValidation

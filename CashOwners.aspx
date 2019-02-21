@@ -57,7 +57,9 @@
                                     ToolTip="На техобслуживании"></asp:HyperLink>
                                 <asp:HyperLink ID="imgRepair" runat="server"  ImageUrl="Images/repair.gif" ToolTip="В ремонте"></asp:HyperLink></td>
                             <td align="right">
-                                <asp:Label ID="lblCashType" runat="server" Font-Bold="true"></asp:Label></td>
+                                <asp:Label ID="lblCashType" runat="server" Font-Bold="true"></asp:Label>
+                                <asp:Label ID="lblSoftwareVersion" runat="server" Font-Bold="true"></asp:Label>
+                            </td>
                             <td>
                                 <asp:HyperLink ID="lblCash" runat="server" Font-Bold="true" ToolTip="Карточка ККМ"></asp:HyperLink></td>
                         </tr>
@@ -184,7 +186,7 @@
                                     </asp:TemplateColumn>
                                     <asp:TemplateColumn HeaderText="Документы">
                                         <ItemTemplate>
-                                            <asp:HyperLink ID="lnkDogovor_Na_TO" runat="server" Target="_blank"></asp:HyperLink><br>
+                                            <asp:HyperLink ID="lnkDogovor_Na_TO" runat="server" Target="_blank" Visible ="False"></asp:HyperLink><br>
                                             <asp:HyperLink ID="lnkLetter_IMNS" runat="server" Target="_blank"></asp:HyperLink><br>
                                             <asp:HyperLink ID="lnkZayav" runat="server" Target="_blank"></asp:HyperLink><br>
                                             <asp:HyperLink ID="lnkAct" runat="server" Target="_blank"></asp:HyperLink><br>

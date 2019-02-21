@@ -156,5 +156,9 @@ Namespace Kasbi.Reports
                 Response.Write("This file does not exist.")
             End If
         End Sub
+
+        Private Sub btnBack_Click(ByVal sender As System.Object, ByVal e As System.Web.UI.ImageClickEventArgs) Handles btnBack.Click
+            Response.Redirect(GetAbsoluteUrl("~/Reports/Default.aspx"))
+        End Sub
     End Class
 End Namespace

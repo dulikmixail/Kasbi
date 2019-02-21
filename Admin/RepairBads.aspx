@@ -97,6 +97,17 @@
                                     <asp:CheckBox ID="cbxDisabledEdit" runat="server" BorderWidth="1px" Checked='<%# DataBinder.Eval(Container.DataItem, "deleted")%>'></asp:CheckBox>
                                 </EditItemTemplate>
                             </asp:TemplateColumn>
+                            <asp:TemplateColumn HeaderText="Сколько раз выбирали">
+                                <HeaderStyle HorizontalAlign="Center" Width="10%"></HeaderStyle>
+                                <ItemStyle HorizontalAlign="Center"></ItemStyle>
+                                <FooterStyle HorizontalAlign="Center"></FooterStyle>
+                                <ItemTemplate>
+                                    <%# DataBinder.Eval(Container.DataItem, "choice_counter")%>
+                                </ItemTemplate>
+                                <EditItemTemplate>
+                                    <%# DataBinder.Eval(Container.DataItem, "choice_counter")%>
+                                </EditItemTemplate>
+                            </asp:TemplateColumn>
                             <asp:TemplateColumn>
                                 <HeaderStyle HorizontalAlign="Center" Width="10%"></HeaderStyle>
                                 <FooterStyle HorizontalAlign="Center"></FooterStyle>
