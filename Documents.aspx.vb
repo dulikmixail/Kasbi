@@ -1019,7 +1019,7 @@ Namespace Kasbi
                             doc.Bookmarks("UNN1").Range.Text = unn
                             doc.Bookmarks("UNN2").Range.Text = unn
                             doc.Bookmarks("Date").Range.Text = sDate
-                            doc.Bookmarks("Date2").Range.Text = sDate
+                            doc.Bookmarks("Date2").Range.Text = GetRussianDate(Today())
                             Dim sEmployee$ =
                                     dbSQL.ExecuteScalar(
                                         "select work_type+' '+Name from Employee where sys_id='" &
@@ -1065,8 +1065,8 @@ Namespace Kasbi
                                         r1.Cells(1).Range.Text = j - 1
                                         r1.Cells(2).Range.Text = ds.Tables("goods").Rows(i - 1)("good_name")
                                         r1.Cells(2).Range.InsertAfter(num_cash_str)
-                                        r1.Cells(2).Range.InsertAfter(
-                                            vbCrLf & "Страна ввоза-" & ds.Tables("goods").Rows(i - 1)("country"))
+                                        'r1.Cells(2).Range.InsertAfter(
+                                        '    vbCrLf & "Страна ввоза-" & ds.Tables("goods").Rows(i - 1)("country"))
 
                                         'r1.Cells(2).Range.InsertAfter(vbCrLf & "Страна ввоза-РФ" & vbCrLf & ds.Tables("goods").Rows(i - 1)("pricelist"))
                                         r1.Cells(3).Range.Text = ds.Tables("goods").Rows(i - 1)("units")
@@ -1144,8 +1144,8 @@ Namespace Kasbi
                             r1.Cells(1).Range.Text = j - 1
                             r1.Cells(2).Range.Text = ds.Tables("goods").Rows(i - 1)("good_name")
                             r1.Cells(2).Range.InsertAfter(num_cash_str)
-                            r1.Cells(2).Range.InsertAfter(
-                                vbCrLf & "Страна ввоза-" & ds.Tables("goods").Rows(i - 1)("country"))
+                            'r1.Cells(2).Range.InsertAfter(
+                            '    vbCrLf & "Страна ввоза-" & ds.Tables("goods").Rows(i - 1)("country"))
 
                             If Not IsDBNull(ds.Tables("goods").Rows(i - 1)("units")) Then
                                 r1.Cells(3).Range.Text = ds.Tables("goods").Rows(i - 1)("units")
@@ -1163,11 +1163,11 @@ Namespace Kasbi
                             Else
                                 CPP = ds.Tables("goods").Rows(i - 1)("price_in")
                             End If
-                            sSum = Math.Round(q*p*1.2, 0)
+                            sSum = Math.Round(q*p*1.2, 2)
                             sNDS = (sSum - (p*q))
                             r1.Cells(5).Range.Text = String.Format("{0:0.00}", CPP)
-                            r1.Cells(6).Range.Text = String.Format("{0:0.00}", CStr(Math.Round((p/CPP - 1)*100, 4)))
-                            r1.Cells(6).Range.Text = (sSum - sNDS)
+                            'r1.Cells(6).Range.Text = String.Format("{0:0.00}", CStr(Math.Round((p/CPP - 1)*100, 4)))
+                            r1.Cells(6).Range.Text = String.Format("{0:0.00}", sSum - sNDS)
                             r1.Cells(7).Range.Text = "20"
                             r1.Cells(8).Range.Text = String.Format("{0:0.00}", sNDS)
                             r1.Cells(9).Range.Text = String.Format("{0:0.00}", sSum)
@@ -1180,9 +1180,9 @@ Namespace Kasbi
 
                             dNDS = dNDS + sNDS
                             dTotal = dTotal + sSum
-                            doc.Bookmarks("TotalNDS").Range.Text = dNDS
-                            doc.Bookmarks("TotalAll").Range.Text = dTotal
-                            doc.Bookmarks("Total").Range.Text = dTotal - dNDS
+                            doc.Bookmarks("TotalNDS").Range.Text = String.Format("{0:0.00}", dNDS)
+                            doc.Bookmarks("TotalAll").Range.Text = String.Format("{0:0.00}" ,dTotal)
+                            doc.Bookmarks("Total").Range.Text = String.Format("{0:0.00}", dTotal - dNDS)
                             doc.Bookmarks("TotalNDSPropis").Range.Text = Summa_propis(dNDS)
                             doc.Bookmarks("TotalAllPropis").Range.Text = Summa_propis(dTotal)
 

@@ -332,20 +332,22 @@ Namespace Service
             Next
             If smsIds.Count <> 0
                 smsStatusingResponse = GetSmsStatusingByIds(smsIds)
-                For Each msg As Sms.Statusing.Response.Msg In smsStatusingResponse.status.msg
-                    cmd = New SqlCommand("insert_or_update_sms_status_history")
-                    With cmd.Parameters
-                        .AddWithValue("@pi_sms_sys_id", msg.sms_id)
-                        .AddWithValue("@pi_sms_count", msg.sms_count)
-                        .AddWithValue("@pi_operator", msg.operator)
-                        .AddWithValue("@pi_error_code", DBNull.Value)
-                        .AddWithValue("@pi_sms_status", msg.sms_status)
-                        .AddWithValue("@pi_recipient", msg.recipient)
-                        .AddWithValue("@pi_do_increment_request_number", 1)
-                    End With
-                    cmd.CommandType = CommandType.StoredProcedure
-                    _sharedDbSql.Execute(cmd)
-                Next
+                If Not smsStatusingResponse Is Nothing
+                    For Each msg As Sms.Statusing.Response.Msg In smsStatusingResponse.status.msg
+                        cmd = New SqlCommand("insert_or_update_sms_status_history")
+                        With cmd.Parameters
+                            .AddWithValue("@pi_sms_sys_id", msg.sms_id)
+                            .AddWithValue("@pi_sms_count", msg.sms_count)
+                            .AddWithValue("@pi_operator", msg.operator)
+                            .AddWithValue("@pi_error_code", DBNull.Value)
+                            .AddWithValue("@pi_sms_status", msg.sms_status)
+                            .AddWithValue("@pi_recipient", msg.recipient)
+                            .AddWithValue("@pi_do_increment_request_number", 1)
+                        End With
+                        cmd.CommandType = CommandType.StoredProcedure
+                        _sharedDbSql.Execute(cmd)
+                    Next
+                End If
             End If
         End Sub
 

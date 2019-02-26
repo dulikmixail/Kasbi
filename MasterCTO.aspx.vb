@@ -466,9 +466,10 @@ Namespace Kasbi
                         e.Item.Visible = False
                     End If
 
+                    Dim periodFix = IIf(IsDBNull(e.Item.DataItem("period")), 1, e.Item.DataItem("period"))
                     If e.Item.DataItem("state") = 6 Then
                         Dim start_month = Month(e.Item.DataItem("ldate"))
-                        Dim end_month = start_month + e.Item.DataItem("period")
+                        Dim end_month = start_month + periodFix
 
                         If (show_state <> 6) Then 'end_month >= Month(Now()) And Or end_month > 12
                             'e.Item.Visible = False
@@ -477,7 +478,7 @@ Namespace Kasbi
                     '
                     'Если проведено ТО
                     '
-                   
+
                     If Not IsDBNull(e.Item.DataItem("lastTO")) Then
                         If _
                             Month(e.Item.DataItem("lastTO")) = Month(Now()) And
@@ -492,7 +493,7 @@ Namespace Kasbi
                     If Not IsDBNull(e.Item.DataItem("start_date"))
                         dateEndDelayTo =
                             Date.Parse(e.Item.DataItem("start_date").ToString).AddMonths(
-                                Convert.ToInt32(e.Item.DataItem("period")))
+                                Convert.ToInt32(periodFix))
                     End If
 
                     If e.Item.DataItem("state") = 2 Or e.Item.DataItem("state") = 3 Then
