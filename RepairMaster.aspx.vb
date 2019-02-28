@@ -187,7 +187,7 @@ Namespace Kasbi
 
             If Not IsPostBack Then
                 If Session("repair-filter") = "" Then Session("repair-filter") = " where good.inrepair='1' "
-                bind(Session("repair-filter"))
+                'bind(Session("repair-filter"))
             End If
         End Sub
 

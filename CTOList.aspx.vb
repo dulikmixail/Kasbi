@@ -182,6 +182,10 @@ Namespace Kasbi
                     s = s & e.Item.DataItem("address")
                 End If
 
+                If Not IsDBNull(e.Item.DataItem("email")) AndAlso Trim(e.Item.DataItem("email").ToString()).Length > 0
+                    s = s & "<br>Email: " & e.Item.DataItem("email").ToString()
+                End If
+
                 CType(e.Item.FindControl("lblAddress2"), Label).Text = s
 
                 'Факс, телефоны

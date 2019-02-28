@@ -449,7 +449,7 @@ Namespace Kasbi
 
                 If ds.Tables("customer").Rows.Count = 0 Then GoTo ExitFunction
 
-                dogovor = ds.Tables("customer").Rows(0)("dogovor") & ds.Tables("sale").Rows(0)("dogovor")
+                dogovor = ds.Tables("customer").Rows(0)("dogovor")
                 boos_name = ds.Tables("customer").Rows(0)("boos_name")
                 customer_name = ds.Tables("customer").Rows(0)("customer_name")
                 accountant = ds.Tables("customer").Rows(0)("accountant")
