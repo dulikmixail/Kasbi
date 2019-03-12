@@ -15,10 +15,6 @@ Namespace Kasbi
     Public Class [Global]
         Inherits System.Web.HttpApplication
 
-        ReadOnly _smsScheduler As SmsScheduler = New SmsScheduler()
-
-        
-
 #Region " Component Designer Generated Code "
 
         Public Sub New()

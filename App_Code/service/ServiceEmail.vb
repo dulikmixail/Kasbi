@@ -1,5 +1,6 @@
 ﻿Imports System.Data.SqlClient
 Imports System.Net.Mail
+Imports System.Reflection
 Imports Kasbi
 Imports MimeKit
 Imports Models
@@ -21,12 +22,16 @@ Namespace Service
 
         Public Sub SendEmail(email As String, subject As String, messageAsHtml As String,
                              Optional attachmentPaths As String() = Nothing)
-            Using client = New MailKit.Net.Smtp.SmtpClient()
-                client.Connect(Host, Port, EnableSsl)
-                client.Authenticate(UserName, Password)
-                client.Send(BuildEmailMessage(email, subject, messageAsHtml, attachmentPaths))
-                client.Disconnect(True)
-            End Using
+            Try
+                Using client = New MailKit.Net.Smtp.SmtpClient()
+                    client.Connect(Host, Port, EnableSsl)
+                    client.Authenticate(UserName, Password)
+                    client.Send(BuildEmailMessage(email, subject, messageAsHtml, attachmentPaths))
+                    client.Disconnect(True)
+                End Using
+            Catch ex As Exception
+                ServiceLogger.Write(MethodBase.GetCurrentMethod(), ex.Message)
+            End Try
         End Sub
 
         Private Function BuildEmailMessage(email As String, subject As String, messageAsHtml As String,

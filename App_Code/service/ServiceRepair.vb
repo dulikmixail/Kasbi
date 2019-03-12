@@ -10,7 +10,7 @@ Namespace Service
 
         Dim ReadOnly _sharedDbSql As MSSqlDB = ServiceDbConnector.GetConnection()
 
-        Const softwareVersionsPattern As String = "[v,V][0-9]"
+        Const SoftwareVersionsPattern As String = "[v,V][0-9]"
 
         Public Function GetNewAktNumberByCashHistoryId(cashHistoryId As Integer) As String
             Dim goodSysId As Integer =
@@ -118,15 +118,19 @@ Namespace Service
                 adapt = dbSQL.GetDataAdapter(query)
                 adapt.Fill(ds)
 
-                If ds.Tables.Count > 0 And ds.Tables(0).Rows.Count > 0
-                    rows = ds.Tables(0).Rows
-                    For Each row As DataRow In rows
-                        detailName = row("detail_name").ToString()
-                        If Regex.IsMatch(detailName, softwareVersionsPattern)
-                            dbSQL.Execute(String.Format("UPDATE good SET software_version='{0}', sv_cash_history_id={1} WHERE good_sys_id = {2}",
-                                                        detailName,cashHistoryId, goodSysId))
-                        End If
-                    Next
+                If ds.Tables.Count > 0
+                    If ds.Tables(0).Rows.Count > 0
+                        rows = ds.Tables(0).Rows
+                        For Each row As DataRow In rows
+                            detailName = row("detail_name").ToString()
+                            If Regex.IsMatch(detailName, softwareVersionsPattern)
+                                dbSQL.Execute(
+                                    String.Format(
+                                        "UPDATE good SET software_version='{0}', sv_cash_history_id={1} WHERE good_sys_id = {2}",
+                                        detailName, cashHistoryId, goodSysId))
+                            End If
+                        Next
+                    End If
                 End If
             End If
         End Sub
@@ -137,7 +141,7 @@ Namespace Service
             Const tableName As String = "details"
             adapt.Fill(ds)
             Dim returnDs As DataSet = ds.Clone()
-            If ds.Tables.Count > 0 And ds.Tables(0).Rows.Count > 0
+            If ds.Tables.Count > 0
                 For Each dr As DataRow In ds.Tables(0).Rows
                     If Regex.IsMatch(dr("detail_name").ToString(), softwareVersionsPattern)
                         returnDs.Tables(0).ImportRow(dr)

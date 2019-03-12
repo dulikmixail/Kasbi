@@ -121,7 +121,7 @@ Namespace Service
 
             Dim fls As IO.File
             Dim fl As IO.FileInfo
-            
+
 
             Try
                 ' Create instance of Word!
@@ -353,7 +353,7 @@ Namespace Service
                     'Копируем док
                     IO.File.Copy(docFullPath,
                                  _pathToXml & "/repair_docs/" & Trim(customer_unn) & "+" &
-                                     Trim(ds.Tables("RepairRealizationAct").Rows(0)("num_cashregister")) & ".doc", True)
+                                 Trim(ds.Tables("RepairRealizationAct").Rows(0)("num_cashregister")) & ".doc", True)
 
                     Dim export_content = Trim(customer_unn) & ";" &
                                          Trim(ds.Tables("RepairRealizationAct").Rows(0)("num_cashregister")) & ";" & Now &
@@ -645,6 +645,33 @@ Namespace Service
             End Try
         End Function
 
+        Public Sub SaveDillersAktToFolder(historyCashId As Integer, updateUserId As Integer)
+            Dim dr As DataRow
+            Dim goodId As Integer = 0
+            Dim customerId As Integer = 0
+            Dim targetPath As String = Path.Combine(_pathToDocs, "Akts", "Dillers", Today.ToString("dd.MM.yyyy"))
+
+            If Not Directory.Exists(targetPath)
+                Directory.CreateDirectory(targetPath)
+            End If
+
+            Dim ds As DataSet = New DataSet()
+            Dim query =
+                    "SELECT * FROM cash_history ch INNER JOIN customer c ON ch.owner_sys_id = c.customer_sys_id WHERE ch.state = 5 AND ch.summa IS NOT NULL AND ch.summa > 0 AND c.cto=1 AND ch.repairdate_out IS NOT NULL AND ch.garantia <> 1 AND ch.sys_id =" &
+                    historyCashId
+            Dim adapt = _sharedDbSql.GetDataAdapter(query)
+            adapt.Fill(ds)
+
+            If ds.Tables(0).Rows.Count > 0
+                dr = ds.Tables(0).Rows(0)
+                goodId = Convert.ToInt32(dr("good_sys_id"))
+                customerId = Convert.ToInt32(dr("owner_sys_id"))
+                Dim pathAkt = ProcessRepairRealizationAct(New Integer() {32}, customerId, goodId, historyCashId)
+                Dim targetFile = Path.Combine(targetPath,
+                                              String.Concat("Act_", historyCashId, Path.GetExtension(pathAkt)))
+                File.Copy(pathAkt, targetFile, true)
+            End If
+        End Sub
 
         Public Sub AktForTOandDolg(checkGoods As ListDictionary, httpResponse As HttpResponse,
                                    Optional withDate As Boolean = True,

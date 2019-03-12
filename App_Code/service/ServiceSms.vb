@@ -201,8 +201,8 @@ Namespace Service
             SendOneSmsWithInsertSmsHistory(phoneNumber, smsText, executorId, smsType, dataSend, Nothing, goodId)
         End Sub
 
-        Private Sub SendManySmsWithUpdateSmsSend(smsSendSysIds As Integer(),
-                                                 Optional dataSend As DateTime = Nothing)
+        Public Sub SendManySmsWithUpdateSmsSend(smsSendSysIds As Integer(),
+                                                Optional dataSend As DateTime = Nothing)
             Dim phonesAndSmsTexts As Dictionary(Of String, String) = New Dictionary(Of String,String)()
             Dim cmd As SqlCommand
             Dim adapt As SqlDataAdapter
@@ -216,24 +216,29 @@ Namespace Service
                 adapt.Fill(ds)
             End If
 
-            If ds.Tables.Count > 0 And ds.Tables(0).Rows.Count > 0
-                rows = ds.Tables(0).Rows
-                For Each row In rows
-                    phonesAndSmsTexts.Add(row("recipient").ToString(), row("sms_text").ToString())
-                Next
+            If ds.Tables.Count > 0
+                If ds.Tables(0).Rows.Count > 0
+                    rows = ds.Tables(0).Rows
+                    For Each row In rows
+                        phonesAndSmsTexts.Add(row("recipient").ToString(), row("sms_text").ToString())
+                    Next
+                End If
             End If
 
-            Dim smsSendingR As SmsSendingResponse = SendManySmsWithDifferentText(phonesAndSmsTexts, dataSend := dataSend)
-            If Not IsNothing(smsSendingR)
-                If smsSendSysIds.Length <> smsSendingR.message.msg.Length
-                    Throw New Exception("Длинна запроса не соответствует длинне ответа<br>")
+            If phonesAndSmsTexts.Count > 0
+                Dim smsSendingR As SmsSendingResponse = SendManySmsWithDifferentText(phonesAndSmsTexts,
+                                                                                     dataSend := dataSend)
+                If Not IsNothing(smsSendingR)
+                    If smsSendSysIds.Length <> smsSendingR.message.msg.Length
+                        Throw New Exception("Длинна запроса не соответствует длинне ответа<br>")
+                    End If
+                    Dim smsSendSysId As Integer
+                    Dim msg = smsSendingR.message.msg
+                    For i As Integer = 0 To smsSendSysIds.Length - 1
+                        smsSendSysId = smsSendSysIds(i)
+                        UpdateSmsSend(smsSendSysId, msg(i).sms_id, msg(i).error_code)
+                    Next
                 End If
-                Dim smsSendSysId As Integer
-                Dim msg = smsSendingR.message.msg
-                For i As Integer = 0 To smsSendSysIds.Length - 1
-                    smsSendSysId = smsSendSysIds(i)
-                    UpdateSmsSend(smsSendSysId, msg(i).sms_id, msg(i).error_code)
-                Next
             End If
         End Sub
 
@@ -367,6 +372,13 @@ Namespace Service
             Next
 
             Return smsSendingResponse
+        End Function
+
+        Public Function GetUnsuccessfullySentSms() As DataSet
+            Dim adapt = _sharedDbSql.GetDataAdapter("SELECT * FROM sms_send WHERE sms_sys_id IS NULL AND error IS NULL")
+            Dim ds As DataSet = New DataSet()
+            adapt.Fill(ds)
+            Return ds
         End Function
     End Class
 End Namespace

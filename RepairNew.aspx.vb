@@ -49,7 +49,7 @@ Namespace Kasbi
         Private ReadOnly _serviceSms As ServiceSms = New ServiceSms()
         Private ReadOnly _serviceExport As ServiceExport = New ServiceExport()
         Private ReadOnly _serviceGood As ServiceGood = New ServiceGood()
-        Private ReadOnly _serviceEmail As ServiceEmail = New ServiceEmail()
+        Private ReadOnly _serviceDocuments As ServiceDocuments = New ServiceDocuments()
         Private ReadOnly _serviceRepair As ServiceRepair = New ServiceRepair()
 
         Private Overloads Sub Page_Load(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Load
@@ -73,21 +73,21 @@ Namespace Kasbi
 
                 If _statusesForCopyDataFromTwoRapair.Contains(currentStateRepair)
                     Const query = "UPDATE cash_history " &
-                                "SET " &
-                                "marka_cto_out = t1.marka_cto_out, " &
-                                "marka_cto_in = t1.marka_cto_out, " &
-                                "marka_pzu_out = t1.marka_pzu_out, " &
-                                "marka_pzu_in = t1.marka_pzu_out, " &
-                                "marka_mfp_out = t1.marka_mfp_out, " &
-                                "marka_mfp_in = t1.marka_mfp_out, " &
-                                "marka_reestr_out = t1.marka_reestr_out, " &
-                                "marka_reestr_in = t1.marka_reestr_out, " &
-                                "marka_cto2_out = t1.marka_cto2_out, " &
-                                "marka_cto2_in = t1.marka_cto2_out, " &
-                                "marka_cp_out = t1.marka_cp_out, " &
-                                "marka_cp_in = t1.marka_cp_out " &
-                                "FROM (SELECT TOP 1 * FROM cash_history ch1 WHERE ch1.state = 5 AND ch1.sys_id > {0}) t1 " &
-                                "WHERE cash_history.state = 5 AND cash_history.sys_id = {0} "
+                                  "SET " &
+                                  "marka_cto_out = t1.marka_cto_out, " &
+                                  "marka_cto_in = t1.marka_cto_out, " &
+                                  "marka_pzu_out = t1.marka_pzu_out, " &
+                                  "marka_pzu_in = t1.marka_pzu_out, " &
+                                  "marka_mfp_out = t1.marka_mfp_out, " &
+                                  "marka_mfp_in = t1.marka_mfp_out, " &
+                                  "marka_reestr_out = t1.marka_reestr_out, " &
+                                  "marka_reestr_in = t1.marka_reestr_out, " &
+                                  "marka_cto2_out = t1.marka_cto2_out, " &
+                                  "marka_cto2_in = t1.marka_cto2_out, " &
+                                  "marka_cp_out = t1.marka_cp_out, " &
+                                  "marka_cp_in = t1.marka_cp_out " &
+                                  "FROM (SELECT TOP 1 * FROM cash_history ch1 WHERE ch1.state = 5 AND ch1.sys_id > {0}) t1 " &
+                                  "WHERE cash_history.state = 5 AND cash_history.sys_id = {0} "
                     dbSQL.Execute(String.Format(query, iCashHistory))
                 End If
 
@@ -1303,7 +1303,8 @@ Namespace Kasbi
                                                                              2)
                 End If
 
-                _serviceEmail.AddDillersAktForSend(iCashHistory, CurrentUser.sys_id)
+                '_serviceEmail.AddDillersAktForSend(iCashHistory, CurrentUser.sys_id)
+                _serviceDocuments.SaveDillersAktToFolder(iCashHistory, CurrentUser.sys_id)
                 _serviceRepair.TryAddGoodSoftwareVersion(iCashHistory, iCash)
             Catch
                 msgNew.Text = "Ошибка сохранения информации о ремонте!<br>" & Err.Description

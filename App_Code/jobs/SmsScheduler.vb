@@ -6,7 +6,8 @@ Imports Quartz.Impl
 Namespace Jobs
     Public Class SmsScheduler
         Inherits PageBase
-        Const MinutesForUpdateSmsStatus As Integer = 5
+        Const MinutesForUpdateSmsStatus As Integer = 9
+        Const MinutesForSendUnsuccessfullySms As Integer = 1
 
         Public Shared Async Sub Start()
             Dim scheduler As IScheduler = Await StdSchedulerFactory.GetDefaultScheduler()
@@ -20,13 +21,19 @@ Namespace Jobs
             job = JobBuilder.Create (Of SmsSender)().Build()
             trigger =
                 TriggerBuilder.Create().WithIdentity("send_sms_about_longtime_repair", "sms_group").StartNow.
-                    WithSchedule(CronScheduleBuilder.AtHourAndMinuteOnGivenDaysOfWeek(10, 10,
+                    WithSchedule(CronScheduleBuilder.AtHourAndMinuteOnGivenDaysOfWeek(10, 30,
                                                                                       New DayOfWeek() _
                                                                                          {DayOfWeek.Monday,
                                                                                           DayOfWeek.Tuesday,
                                                                                           DayOfWeek.Wednesday,
                                                                                           DayOfWeek.Saturday,
                                                                                           DayOfWeek.Friday})).Build()
+            Await scheduler.ScheduleJob(job, trigger)
+
+            job = JobBuilder.Create (Of SmsUnsuccessfullySender)().Build()
+            trigger =
+                TriggerBuilder.Create().WithIdentity("sms_unsuccessfully_sender", "sms_group").WithSimpleSchedule(
+                    Function(x) x.WithIntervalInMinutes(MinutesForSendUnsuccessfullySms).RepeatForever()).Build()
             Await scheduler.ScheduleJob(job, trigger)
         End Sub
     End Class

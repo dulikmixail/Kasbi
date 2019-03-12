@@ -1,5 +1,6 @@
 ﻿Imports System.Web
 Imports System.IO
+Imports System.Reflection
 Imports Kasbi
 Imports Microsoft.VisualBasic
 Imports Quartz
@@ -18,31 +19,36 @@ Namespace Jobs
         End Function
 
         Public Sub SendAktDillers()
-            Dim pathAkt As String = String.Empty
-            Dim emailSendId As Integer = 0
-            Dim goodId As Integer = 0
-            Dim customerId As Integer = 0
-            Dim cashHistoryId As Integer = 0
-            Dim ds As DataSet = GetEmailNotSend()
-            If ds.Tables(0).Rows.Count > 0
-                Dim bodyTextFormat =
-                        File.ReadAllText(Hosting.HostingEnvironment.MapPath("~/Templates") & "\Email\RepairAkt.html")
-                For Each row As DataRow In ds.Tables(0).Rows
-                    emailSendId = Convert.ToInt32(row("email_send_sys_id"))
-                    goodId = Convert.ToInt32(row("good_sys_id"))
-                    customerId = Convert.ToInt32(row("customer_sys_id"))
-                    cashHistoryId = Convert.ToInt32(row("hc_sys_id"))
-                    pathAkt = _serviceDocuments.ProcessRepairRealizationAct(New Integer() {32}, customerId, goodId,
-                                                                            cashHistoryId)
+            Try
+                Dim pathAkt As String = String.Empty
+                Dim emailSendId As Integer = 0
+                Dim goodId As Integer = 0
+                Dim customerId As Integer = 0
+                Dim cashHistoryId As Integer = 0
+                Dim ds As DataSet = GetEmailNotSend()
+                If ds.Tables(0).Rows.Count > 0
+                    Dim bodyTextFormat =
+                            File.ReadAllText(Hosting.HostingEnvironment.MapPath("~/Templates") & "\Email\RepairAkt.html")
+                    For Each row As DataRow In ds.Tables(0).Rows
+                        emailSendId = Convert.ToInt32(row("email_send_sys_id"))
+                        goodId = Convert.ToInt32(row("good_sys_id"))
+                        customerId = Convert.ToInt32(row("customer_sys_id"))
+                        cashHistoryId = Convert.ToInt32(row("hc_sys_id"))
+                        pathAkt = _serviceDocuments.ProcessRepairRealizationAct(New Integer() {32}, customerId, goodId,
+                                                                                cashHistoryId)
 
-                    _serviceEmail.SendEmail(row("recipient").ToString(), row("email_subject").ToString(),
-                                            String.Format(bodyTextFormat, row("email_text").ToString()),
-                                            New String() {pathAkt})
+                        _serviceEmail.SendEmail(row("recipient").ToString(), row("email_subject").ToString(),
+                                                String.Format(bodyTextFormat, row("email_text").ToString()),
+                                                New String() {pathAkt})
 
-                    _sharedDbSql.Execute("UPDATE email_send SET is_send = 1 WHERE email_send_sys_id = " & emailSendId)
+                        _sharedDbSql.Execute("UPDATE email_send SET is_send = 1 WHERE email_send_sys_id = " & emailSendId)
 
-                Next
-            End If
+                    Next
+                End If
+            Catch ex As Exception
+                ServiceLogger.Write(MethodBase.GetCurrentMethod(), ex.Message)
+            End Try
+            
         End Sub
 
         Private Function GetEmailNotSend() As DataSet

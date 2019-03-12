@@ -81,8 +81,9 @@ Namespace Kasbi.Reports
                 adapt = dbSQL.GetDataAdapter(cmd)
                 adapt.Fill(ds)
 
-                If ds.Tables.Count > 0 And ds.Tables(0).Rows.Count > 0
-                    goodName = ds.Tables(0).Rows(0).Item("name").ToString()
+                If ds.Tables.Count > 0
+                    If ds.Tables(0).Rows.Count > 0
+                                            goodName = ds.Tables(0).Rows(0).Item("name").ToString()
                     table = New Table()
                     table.Attributes.Add("class", "itog-table")
                     tr = New TableRow()
@@ -130,6 +131,7 @@ Namespace Kasbi.Reports
                     tr.Cells.Add(tc)
                     table.Rows.Add(tr)
                     plhTotalItog.Controls.Add(table)
+                    End If
                 End If
             Catch
                 lblError.Text = "Ошибка при формировании итоговой таблицы!<br>" & Err.Description
