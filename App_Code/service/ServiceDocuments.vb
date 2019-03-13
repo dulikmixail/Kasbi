@@ -851,21 +851,14 @@ Namespace Service
         End Sub
 
         Private Sub PasteAktForToSummaTo(drs() As Data.DataRow, k As Integer, num As Integer)
-            If InStr(drs(k).Item(6).ToString(), "ТО1") <> 0 Then
-                _wrdDoc.Bookmarks("NDS" & num).Range.Text =
-                    "15.00 (пятнадцать) рублей 00 копеек, в т. ч. НДС (20%) 2.50 (два рубля 50 копеек)."
-            ElseIf InStr(drs(k).Item(6).ToString(), "ТО2") <> 0 Then
-                _wrdDoc.Bookmarks("NDS" & num).Range.Text =
-                    "7.00 (семь) рублей 50 копеек, в т. ч. НДС (20%) 1.25 (один рубль 25 копеек)."
-            ElseIf InStr(drs(k).Item(6).ToString(), "ТО3") <> 0 Then
-                _wrdDoc.Bookmarks("NDS" & num).Range.Text =
-                    "9.00 (девять) рублей 60 копеек, в т. ч. НДС (20%) 1.60 (один рубль 60 копеек)."
-            ElseIf InStr(drs(k).Item(6).ToString(), "ТО4") <> 0 Then
-                _wrdDoc.Bookmarks("NDS" & num).Range.Text =
-                    "24.00 (двадцать четыре) рубля 00 копеек, в т. ч. НДС (20%) 4.00 (четыре рубля 00 копеек)."
-            ElseIf InStr(drs(k).Item(6).ToString(), "ТО5") <> 0 Then
-                _wrdDoc.Bookmarks("NDS" & num).Range.Text =
-                    "6.00 (шесть) рублей 00 копеек, в т. ч. НДС (20%) 1.00 (один рубль 00 копеек)."
+            If Not IsDBNull(drs(k).Item("priceto_value"))
+                Dim priceTo As Double = Convert.ToDouble(drs(k).Item("priceto_value"))
+                Dim nds As Double = priceTo*0.2
+                Dim priceToWithNds As Double = priceTo + NDS
+                _wrdDoc.Bookmarks("NDS" & num).Range.Text = String.Concat(
+                    String.Format("{0:0.00}", priceToWithNds), " (",
+                    Summa_propis(priceToWithNds.ToString()).ToLower(), "), в т. ч. НДС (20%) ",
+                    String.Format("{0:0.00}", nds), " (", Summa_propis(nds.ToString()).ToLower(), ")")
             End If
         End Sub
 
