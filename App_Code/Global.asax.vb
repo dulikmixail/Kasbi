@@ -48,7 +48,7 @@ Namespace Kasbi
             AreaRegistration.RegisterAllAreas()
             GlobalConfiguration.Configure(AddressOf WebApiConfig.Register)
             SmsScheduler.Start()
-            EmailScheduler.Start()
+            'EmailScheduler.Start()
 
             'FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters)
             'RouteConfig.RegisterRoutes(RouteTable.Routes)

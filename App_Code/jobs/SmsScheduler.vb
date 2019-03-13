@@ -7,7 +7,7 @@ Namespace Jobs
     Public Class SmsScheduler
         Inherits PageBase
         Const MinutesForUpdateSmsStatus As Integer = 9
-        Const MinutesForSendUnsuccessfullySms As Integer = 1
+        Const MinutesForSendUnsuccessfullySms As Integer = 10
 
         Public Shared Async Sub Start()
             Dim scheduler As IScheduler = Await StdSchedulerFactory.GetDefaultScheduler()

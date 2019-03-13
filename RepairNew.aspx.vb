@@ -86,9 +86,9 @@ Namespace Kasbi
                                   "marka_cto2_in = t1.marka_cto2_out, " &
                                   "marka_cp_out = t1.marka_cp_out, " &
                                   "marka_cp_in = t1.marka_cp_out " &
-                                  "FROM (SELECT TOP 1 * FROM cash_history ch1 WHERE ch1.state = 5 AND ch1.sys_id > {0}) t1 " &
-                                  "WHERE cash_history.state = 5 AND cash_history.sys_id = {0} "
-                    dbSQL.Execute(String.Format(query, iCashHistory))
+                                  "FROM (SELECT TOP 1 * FROM cash_history ch1 WHERE ch1.state = 5 AND ch1.good_sys_id={0} AND ch1.sys_id > {1}) t1 " &
+                                  "WHERE cash_history.state = 5 AND cash_history.sys_id = {1} "
+                    dbSQL.Execute(String.Format(query, iCash, iCashHistory))
                 End If
 
                 lblRepairDateOut.Visible = True
