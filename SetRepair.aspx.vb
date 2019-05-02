@@ -335,7 +335,6 @@ Namespace Kasbi
                 Else
                     _serviceGood.SetStateRepair(icash, 1)
                 End If
-'                Response.Redirect(GetAbsoluteUrl("~/documents.aspx?t=31&c=" & customer & "&g=" & icash & "&h=" & query))
             End If
         End Sub
 

@@ -1,13 +1,12 @@
 Namespace Kasbi.Reports
-
     Partial Class RepairReport
         Inherits PageBase
 
 #Region " Web Form Designer Generated Code "
 
         'This call is required by the Web Form Designer.
-        <System.Diagnostics.DebuggerStepThrough()> Private Sub InitializeComponent()
-
+        <System.Diagnostics.DebuggerStepThrough()>
+        Private Sub InitializeComponent()
         End Sub
 
 
@@ -18,6 +17,7 @@ Namespace Kasbi.Reports
         End Sub
 
 #End Region
+
         Dim date_start As DateTime
         Dim date_end As DateTime
         Dim details As String
@@ -33,7 +33,7 @@ Namespace Kasbi.Reports
                 date_start = CDate(Request.QueryString("start_date"))
                 date_end = CDate(Request.QueryString("end_date"))
             Catch
-                date_start = Now.AddMonths(-2)
+                date_start = Now.AddMonths(- 2)
                 date_end = Now
             End Try
 
@@ -79,16 +79,29 @@ Namespace Kasbi.Reports
             End Try
         End Sub
 
-        Protected Sub grid_ItemDataBound(ByVal sender As Object, ByVal e As System.Web.UI.WebControls.DataGridItemEventArgs) Handles grid.ItemDataBound
+        Protected Sub grid_ItemDataBound(ByVal sender As Object,
+                                         ByVal e As System.Web.UI.WebControls.DataGridItemEventArgs) _
+            Handles grid.ItemDataBound
 
             If e.Item.ItemType = ListItemType.Item OrElse e.Item.ItemType = ListItemType.AlternatingItem Then
                 If Not (IsDBNull(e.Item.DataItem("norma_hour"))) Then
                     TotalNormaHour = TotalNormaHour + e.Item.DataItem("norma_hour")
                     CType(e.Item.FindControl("lblNormaHour"), Label).Text = Math.Round(e.Item.DataItem("norma_hour"), 2)
 
-                    arrnorm(e.Item.DataItem("employee_id")) = arrnorm(e.Item.DataItem("employee_id")) + e.Item.DataItem("norma_hour")
+                    arrnorm(e.Item.DataItem("employee_id")) = arrnorm(e.Item.DataItem("employee_id")) +
+                                                              e.Item.DataItem("norma_hour")
+                End If
+                If Not IsDBNull(e.Item.DataItem("sale_date")) Then
+                    CType(e.Item.FindControl("lblSaleDate"), Label).Text = Format(e.Item.DataItem("sale_date"),
+                                                                                  "dd.MM.yyyy")
+                End If
+
+                If Not IsDBNull(e.Item.DataItem("sale_date")) And Not IsDBNull(e.Item.DataItem("garantia"))
+                    CType(e.Item.FindControl("lblGarantia"), Label).Text = Format(e.Item.DataItem("sale_date").AddMonths(18), "dd.MM.yyyy")
+                    CType(e.Item.FindControl("lblGarantia2"), Label).Text = e.Item.DataItem("garantia").ToString()
                 End If
             End If
+
 
             If e.Item.ItemType = ListItemType.Footer Then
                 CType(e.Item.FindControl("lblTotalNormaHour"), Label).Text = Math.Round(TotalNormaHour, 2)
@@ -110,13 +123,15 @@ Namespace Kasbi.Reports
                 End Try
 
             End If
-
         End Sub
 
-        Protected Sub grdUsers_ItemDataBound(ByVal sender As Object, ByVal e As System.Web.UI.WebControls.DataGridItemEventArgs) Handles grdUsers.ItemDataBound
+        Protected Sub grdUsers_ItemDataBound(ByVal sender As Object,
+                                             ByVal e As System.Web.UI.WebControls.DataGridItemEventArgs) _
+            Handles grdUsers.ItemDataBound
             If e.Item.ItemType = ListItemType.Item OrElse e.Item.ItemType = ListItemType.AlternatingItem Then
                 If arrnorm(e.Item.DataItem("sys_id")) > 0 Then
-                    CType(e.Item.FindControl("lblNormaHour"), Label).Text = Math.Round(arrnorm(e.Item.DataItem("sys_id")), 2)
+                    CType(e.Item.FindControl("lblNormaHour"), Label).Text = Math.Round(
+                        arrnorm(e.Item.DataItem("sys_id")), 2)
                 Else
                     e.Item.Visible = False
                 End If

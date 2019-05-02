@@ -109,24 +109,15 @@ Namespace Service
 
         Public Function GetInfo(ByVal cust As Integer, ByRef lstCustomers As ListBox, ByRef lblErrors As Label,
                                 Optional ByVal flag As Boolean = True) As String
-            Dim adapt As SqlClient.SqlDataAdapter
-            Dim cmd As SqlClient.SqlCommand
-            Dim ds As DataSet
+            Dim ds As DataSet = New DataSet()
             Dim s$
             s = ""
             If cust = 0 Then
                 lstCustomers.SelectedIndex = 0
                 Return ""
-                Exit Function
             End If
+            ds = GetCutomerInfo(cust)
             Try
-                cmd = New SqlClient.SqlCommand("get_customer_info")
-                cmd.CommandType = CommandType.StoredProcedure
-                cmd.Parameters.AddWithValue("@pi_customer_sys_id", cust)
-                adapt = dbSQL.GetDataAdapter(cmd)
-                ds = New DataSet
-                adapt.Fill(ds)
-
                 If ds.Tables(0).Rows.Count > 0 Then
                     With ds.Tables(0).DefaultView(0)
                         Dim sTmp$
@@ -165,13 +156,55 @@ Namespace Service
                         If sTmp.Length > 0 Then
                             s = s & sTmp & "<br>"
                         End If
-
                     End With
                 End If
             Catch
                 lblErrors.Text = Err.Description
             End Try
             GetInfo = s
+        End Function
+
+        Public Function GetCutomerInfo(customerId As Integer) As DataSet
+            Dim adapt As SqlClient.SqlDataAdapter
+            Dim cmd As SqlClient.SqlCommand
+            Dim ds As DataSet = New DataSet()
+            Try
+                cmd = New SqlClient.SqlCommand("get_customer_info")
+                cmd.CommandType = CommandType.StoredProcedure
+                cmd.Parameters.AddWithValue("@pi_customer_sys_id", customerId)
+                adapt = dbSQL.GetDataAdapter(cmd)
+                ds = New DataSet
+                adapt.Fill(ds)
+            Catch
+            End Try
+            Return ds
+        End Function
+
+        'Override Method
+        Public Function GetСustomerDetails(customerId As Integer) As String
+            Dim ds As DataSet = GetCutomerInfo(customerId)
+            Return GetСustomerDetails(ds)
+        End Function
+
+        'Override Method
+        Public Function GetСustomerDetails(ds As DataSet) As String
+            Dim dr As DataRow
+            Dim customerDetails As String = String.Empty
+            If ds.Tables().Count > 0
+                If ds.Tables(0).Rows.Count > 0
+                    dr = ds.Tables(0).Rows(0)
+                    customerDetails = String.Concat(dr("customer_name"), ", УНП: ", dr("unn"),
+                                                    IIf(String.IsNullOrEmpty(ServiceDbHelper.FixNullAndEmpty(dr, "okpo")), "",
+                                                        String.Concat(", ОКПО: ", dr("okpo"))),
+                                                    vbCrLf, dr("customer_address"),
+                                                    IIf(String.IsNullOrEmpty(ServiceDbHelper.FixNullAndEmpty(dr, "customer_phone")), "",
+                                                        String.Concat(", Тел/ф.: ", dr("customer_phone"))),
+                                                    IIf(String.IsNullOrEmpty(ServiceDbHelper.FixNullAndEmpty(dr, "emails")), "",
+                                                        String.Concat(", Email: ", dr("emails"))),
+                                                    vbCrLf, dr("bank"))
+                End If
+            End If
+            Return customerDetails
         End Function
     End Class
 End Namespace

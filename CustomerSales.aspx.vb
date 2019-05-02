@@ -2,7 +2,6 @@ Imports System.Collections.Generic
 Imports Service
 
 Namespace Kasbi
-
     Partial Class CustomerSales
         Inherits PageBase
         Protected WithEvents btnMain As System.Web.UI.WebControls.HyperLink
@@ -16,8 +15,8 @@ Namespace Kasbi
 #Region " Web Form Designer Generated Code "
 
         'This call is required by the Web Form Designer.
-        <System.Diagnostics.DebuggerStepThrough()> Private Sub InitializeComponent()
-
+        <System.Diagnostics.DebuggerStepThrough()>
+        Private Sub InitializeComponent()
         End Sub
 
         Private Sub Page_Init(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Init
@@ -28,6 +27,8 @@ Namespace Kasbi
 
 #End Region
 
+
+        Dim ReadOnly _serviceDocuments As ServiceDocuments = New ServiceDocuments()
 
         Dim cust%
         Dim dolg As Double
@@ -54,7 +55,6 @@ Namespace Kasbi
 
             Session("AddSaleForCustomer") = cust
             Bind()
-
         End Sub
 
         Function GetInfo(ByVal cust As Integer) As String
@@ -173,7 +173,8 @@ Namespace Kasbi
                             dogovor3IsVisible = True
                             dopStr = " Ë ÔËÎÓÊÂÌË˛ π" & subDogovor
                         Else
-                            If DateTime.Parse(readerSales.Item("sale_date").ToString()) > DateTime.Parse("20.02.2018") Then
+                            If DateTime.Parse(readerSales.Item("sale_date").ToString()) > DateTime.Parse("20.02.2018") _
+                                Then
                                 If saleHaveCashregCount = 0 Then
                                     dogovorIsVisible = True
                                     dogovorDopdIsVisible = False
@@ -234,8 +235,10 @@ Namespace Kasbi
                         'ctrl1 = CType(LoadControl("~/Controls/RebillingGrid.ascx"), ASP.controls_rebillinggrid_ascx)
                         ctrl1.iSale = sale
                         ctrl1.iCustomer = cust
-                        CType(ctrl1.FindControl("HeaderSale"), Label).Text = s & "&nbsp;&nbsp;&nbsp;&nbsp;UID:&nbsp;" & readerSales("sale_sys_id")
-                        CType(ctrl1.FindControl("DateSale"), Label).Text = Format(readerSales.Item("sale_date"), "dd.MM.yyyy„.")
+                        CType(ctrl1.FindControl("HeaderSale"), Label).Text = s & "&nbsp;&nbsp;&nbsp;&nbsp;UID:&nbsp;" &
+                                                                             readerSales("sale_sys_id")
+                        CType(ctrl1.FindControl("DateSale"), Label).Text = Format(readerSales.Item("sale_date"),
+                                                                                  "dd.MM.yyyy„.")
                         If readerSales.IsDBNull(readerSales.GetOrdinal("saler_info")) Then
                             s = ""
                         Else
@@ -243,103 +246,129 @@ Namespace Kasbi
                         End If
                         CType(ctrl1.FindControl("Saler"), Label).Text = s
                         If dogovorOldIsVisible Then
-                            CType(ctrl1.FindControl("lnkDogovor_Na_TO"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?rebilling=1&c=" & cust & "&s=" & sale & "&t=6")
-                            CType(ctrl1.FindControl("lnkDogovor_Na_TO_Dop"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?rebilling=1&c=" & cust & "&s=" & sale & "&t=57")
+                            CType(ctrl1.FindControl("lnkDogovor_Na_TO"), HyperLink).NavigateUrl =
+                                GetAbsoluteUrl("~/documents.aspx?rebilling=1&c=" & cust & "&s=" & sale & "&t=6")
+                            CType(ctrl1.FindControl("lnkDogovor_Na_TO_Dop"), HyperLink).NavigateUrl =
+                                GetAbsoluteUrl("~/documents.aspx?rebilling=1&c=" & cust & "&s=" & sale & "&t=57")
                         Else
                             CType(ctrl1.FindControl("lnkDogovor_Na_TO"), HyperLink).Visible = False
                             CType(ctrl1.FindControl("lnkDogovor_Na_TO_Dop"), HyperLink).Visible = False
                         End If
                         If dogovorIsVisible Then
-                            CType(ctrl1.FindControl("lnkDogovor_Na_TO_2"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?rebilling=1&c=" & cust & "&s=" & sale & "&t=58")
+                            CType(ctrl1.FindControl("lnkDogovor_Na_TO_2"), HyperLink).NavigateUrl =
+                                GetAbsoluteUrl("~/documents.aspx?rebilling=1&c=" & cust & "&s=" & sale & "&t=58")
                         Else
                             CType(ctrl1.FindControl("lnkDogovor_Na_TO_2"), HyperLink).Visible = False
 
                         End If
 
                         If dogovorDopdIsVisible Then
-                            CType(ctrl1.FindControl("lnkDogovor_Na_TO_Dop_2"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?rebilling=1&c=" & cust & "&s=" & sale & "&t=59")
+                            CType(ctrl1.FindControl("lnkDogovor_Na_TO_Dop_2"), HyperLink).NavigateUrl =
+                                GetAbsoluteUrl("~/documents.aspx?rebilling=1&c=" & cust & "&s=" & sale & "&t=59")
                         Else
                             CType(ctrl1.FindControl("lnkDogovor_Na_TO_Dop_2"), HyperLink).Visible = False
                         End If
 
                         If dogovor3IsVisible Then
-                            CType(ctrl1.FindControl("lnkDogovor_Na_TO_3"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?rebilling=1&c=" & cust & "&s=" & sale & "&t=61")
-                            CType(ctrl1.FindControl("lnkReestr_kass_na_TO"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?rebilling=1&c=" & cust & "&s=" & sale & "&t=62")
+                            CType(ctrl1.FindControl("lnkDogovor_Na_TO_3"), HyperLink).NavigateUrl =
+                                GetAbsoluteUrl("~/documents.aspx?rebilling=1&c=" & cust & "&s=" & sale & "&t=61")
+                            CType(ctrl1.FindControl("lnkReestr_kass_na_TO"), HyperLink).NavigateUrl =
+                                GetAbsoluteUrl("~/documents.aspx?rebilling=1&c=" & cust & "&s=" & sale & "&t=62")
                         Else
                             CType(ctrl1.FindControl("lnkDogovor_Na_TO_3"), HyperLink).Visible = False
                             CType(ctrl1.FindControl("lnkReestr_kass_na_TO"), HyperLink).Visible = False
                         End If
-                        CType(ctrl1.FindControl("lnkSpisok_KKM"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?rebilling=1&c=" & cust & "&s=" & sale & "&t=7")
-                        CType(ctrl1.FindControl("lnkZayavlenie_IMNS"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?rebilling=1&c=" & cust & "&s=" & sale & "&t=18")
+                        CType(ctrl1.FindControl("lnkSpisok_KKM"), HyperLink).NavigateUrl =
+                            GetAbsoluteUrl("~/documents.aspx?rebilling=1&c=" & cust & "&s=" & sale & "&t=7")
+                        CType(ctrl1.FindControl("lnkZayavlenie_IMNS"), HyperLink).NavigateUrl =
+                            GetAbsoluteUrl("~/documents.aspx?rebilling=1&c=" & cust & "&s=" & sale & "&t=18")
 
-                            If Not ctrl1 Is Nothing Then
-                                controls.Add(ctrl1)
-                                'pnlSales.Controls.Add(ctrl1)
-                            End If
-                        Else
-                            ctrl = CType(LoadControl("~/sale.ascx"), Kasbi.Sale) 'ASP.sale_ascx)
+                        If Not ctrl1 Is Nothing Then
+                            controls.Add(ctrl1)
+                            'pnlSales.Controls.Add(ctrl1)
+                        End If
+                    Else
+                        ctrl = CType(LoadControl("~/sale.ascx"), Kasbi.Sale) 'ASP.sale_ascx)
                         ctrl.iSale = sale
                         ctrl.iCustomer = cust
                         ctrl.FindControl("btnConfirm").Visible = b
                         ctrl.FindControl("optBeznal").Visible = b
                         ctrl.FindControl("optNal").Visible = b
                         ctrl.FindControl("optSberkassa").Visible = b
-                        CType(ctrl.FindControl("HeaderSale"), Label).Text = s & "&nbsp;&nbsp;&nbsp;&nbsp;UID:&nbsp;" & readerSales("sale_sys_id")
-                        CType(ctrl.FindControl("DateSale"), Label).Text = Format(readerSales.Item("sale_date"), "dd.MM.yyyy„.")
+                        CType(ctrl.FindControl("HeaderSale"), Label).Text = s & "&nbsp;&nbsp;&nbsp;&nbsp;UID:&nbsp;" &
+                                                                            readerSales("sale_sys_id")
+                        CType(ctrl.FindControl("DateSale"), Label).Text = Format(readerSales.Item("sale_date"),
+                                                                                 "dd.MM.yyyy„.")
                         If readerSales.IsDBNull(readerSales.GetOrdinal("saler_info")) Then
                             s = ""
                         Else
                             s = readerSales.Item("saler_info")
                         End If
                         CType(ctrl.FindControl("Saler"), Label).Text = s
-                        CType(ctrl.FindControl("lnkInvoice"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?c=" & cust & "&s=" & sale & "&t=1")
-                        CType(ctrl.FindControl("lnkZayavlenieNaKniguKassira"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?c=" & cust & "&s=" & sale & "&t=2")
-                        CType(ctrl.FindControl("lnkZayavlenie"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?c=" & cust & "&s=" & sale & "&t=3")
+                        CType(ctrl.FindControl("lnkInvoice"), HyperLink).NavigateUrl =
+                            GetAbsoluteUrl("~/documents.aspx?c=" & cust & "&s=" & sale & "&t=1")
+                        CType(ctrl.FindControl("lnkZayavlenieNaKniguKassira"), HyperLink).NavigateUrl =
+                            GetAbsoluteUrl("~/documents.aspx?c=" & cust & "&s=" & sale & "&t=2")
+                        CType(ctrl.FindControl("lnkZayavlenie"), HyperLink).NavigateUrl =
+                            GetAbsoluteUrl("~/documents.aspx?c=" & cust & "&s=" & sale & "&t=3")
                         If dogovorOldIsVisible Then
-                            CType(ctrl.FindControl("lnkDogovor_Na_TO"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?rebilling=0&c=" & cust & "&s=" & sale & "&t=6")
-                            CType(ctrl.FindControl("lnkDogovor_Na_TO_Dop"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?rebilling=0&c=" & cust & "&s=" & sale & "&t=57")
+                            CType(ctrl.FindControl("lnkDogovor_Na_TO"), HyperLink).NavigateUrl =
+                                GetAbsoluteUrl("~/documents.aspx?rebilling=0&c=" & cust & "&s=" & sale & "&t=6")
+                            CType(ctrl.FindControl("lnkDogovor_Na_TO_Dop"), HyperLink).NavigateUrl =
+                                GetAbsoluteUrl("~/documents.aspx?rebilling=0&c=" & cust & "&s=" & sale & "&t=57")
                         Else
                             CType(ctrl.FindControl("lnkDogovor_Na_TO"), HyperLink).Visible = False
                             CType(ctrl.FindControl("lnkDogovor_Na_TO_Dop"), HyperLink).Visible = False
                         End If
 
                         If dogovorIsVisible Then
-                            CType(ctrl.FindControl("lnkDogovor_Na_TO_2"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?rebilling=0&c=" & cust & "&s=" & sale & "&t=58")
+                            CType(ctrl.FindControl("lnkDogovor_Na_TO_2"), HyperLink).NavigateUrl =
+                                GetAbsoluteUrl("~/documents.aspx?rebilling=0&c=" & cust & "&s=" & sale & "&t=58")
                         Else
                             CType(ctrl.FindControl("lnkDogovor_Na_TO_2"), HyperLink).Visible = False
 
                         End If
 
                         If dogovorDopdIsVisible Then
-                            CType(ctrl.FindControl("lnkDogovor_Na_TO_Dop_2"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?rebilling=0&c=" & cust & "&s=" & sale & "&t=59")
+                            CType(ctrl.FindControl("lnkDogovor_Na_TO_Dop_2"), HyperLink).NavigateUrl =
+                                GetAbsoluteUrl("~/documents.aspx?rebilling=0&c=" & cust & "&s=" & sale & "&t=59")
                         Else
                             CType(ctrl.FindControl("lnkDogovor_Na_TO_Dop_2"), HyperLink).Visible = False
                         End If
 
                         If dogovor3IsVisible Then
-                            CType(ctrl.FindControl("lnkDogovor_Na_TO_3"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?rebilling=0&c=" & cust & "&s=" & sale & "&t=61")
-                            CType(ctrl.FindControl("lnkReestr_kass_na_TO"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?rebilling=0&c=" & cust & "&s=" & sale & "&t=62")
+                            CType(ctrl.FindControl("lnkDogovor_Na_TO_3"), HyperLink).NavigateUrl =
+                                GetAbsoluteUrl("~/documents.aspx?rebilling=0&c=" & cust & "&s=" & sale & "&t=61")
+                            CType(ctrl.FindControl("lnkReestr_kass_na_TO"), HyperLink).NavigateUrl =
+                                GetAbsoluteUrl("~/documents.aspx?rebilling=0&c=" & cust & "&s=" & sale & "&t=62")
                         Else
                             CType(ctrl.FindControl("lnkDogovor_Na_TO_3"), HyperLink).Visible = False
                             CType(ctrl.FindControl("lnkReestr_kass_na_TO"), HyperLink).Visible = False
                         End If
 
 
-                        CType(ctrl.FindControl("lnkSpisok_KKM"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?c=" & cust & "&s=" & sale & "&t=7")
+                        CType(ctrl.FindControl("lnkSpisok_KKM"), HyperLink).NavigateUrl =
+                            GetAbsoluteUrl("~/documents.aspx?c=" & cust & "&s=" & sale & "&t=7")
 
-                        CType(ctrl.FindControl("lnkTTN"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?c=" & cust & "&s=" & sale & "&t=5")
+                        CType(ctrl.FindControl("lnkTTN"), HyperLink).NavigateUrl =
+                            GetAbsoluteUrl("~/documents.aspx?c=" & cust & "&s=" & sale & "&t=5")
                         'CType(ctrl.FindControl("btnTTN"), LinkButton).TabIndex = sale
 
-                        CType(ctrl.FindControl("lnkInvoiceNDS"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?c=" & cust & "&s=" & sale & "&t=0")
+                        CType(ctrl.FindControl("lnkInvoiceNDS"), HyperLink).NavigateUrl =
+                            GetAbsoluteUrl("~/documents.aspx?c=" & cust & "&s=" & sale & "&t=0")
                         'CType(ctrl.FindControl("btnInvoiceNDS"), LinkButton).TabIndex = sale
 
-                        CType(ctrl.FindControl("lnkGarantia"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?c=" & cust & "&s=" & sale & "&t=17")
-                        CType(ctrl.FindControl("lnkZayavlenie_IMNS"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?c=" & cust & "&s=" & sale & "&t=18")
-                        CType(ctrl.FindControl("lnkTTN_Transport"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?c=" & cust & "&s=" & sale & "&t=35")
+                        CType(ctrl.FindControl("lnkGarantia"), HyperLink).NavigateUrl =
+                            GetAbsoluteUrl("~/documents.aspx?c=" & cust & "&s=" & sale & "&t=17")
+                        CType(ctrl.FindControl("lnkZayavlenie_IMNS"), HyperLink).NavigateUrl =
+                            GetAbsoluteUrl("~/documents.aspx?c=" & cust & "&s=" & sale & "&t=18")
+                        CType(ctrl.FindControl("lnkTTN_Transport"), HyperLink).NavigateUrl =
+                            GetAbsoluteUrl("~/documents.aspx?c=" & cust & "&s=" & sale & "&t=35")
 
                         'CType(ctrl.FindControl("btnTTNT"), LinkButton).TabIndex = sale
 
-                        CType(ctrl.FindControl("lnkIzveschenie"), HyperLink).NavigateUrl = GetAbsoluteUrl("~/documents.aspx?vidplateza=0&c=" & cust & "&s=" & sale & "&t=41")
+                        CType(ctrl.FindControl("lnkIzveschenie"), HyperLink).NavigateUrl =
+                            GetAbsoluteUrl("~/documents.aspx?vidplateza=0&c=" & cust & "&s=" & sale & "&t=41")
 
                         If Not ctrl Is Nothing Then
                             controls.Add(ctrl)
@@ -398,14 +427,24 @@ Namespace Kasbi
             End Try
         End Sub
 
-        Private Sub btnCanceling_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnCanceling.Click
+        Private Sub lnkDogovorTo7_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) _
+            Handles lnkDogovorTo7.Click
+            _serviceDocuments.DogovorNaOkazaniyeUslugTo7(cust, Response, CurrentUser.sys_id)
+        End Sub
+
+        Private Sub btnCanceling_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) _
+            Handles btnCanceling.Click
             Dim cmd As SqlClient.SqlCommand
             Dim dolgDim As Decimal = CDec(txtSum.Text.Replace(".", ","))
             Dim dolg As Decimal
 
             '«‡ÔËÒ˚‚‡ÂÏ ÒÛÏÏÛ ‚ ‰ÓÎ„
 
-            dolg = CDec(dbSQL.ExecuteScalar("Select CASE WHEN dolg IS NULL THEN 0 ELSE dolg END from  customer where customer_sys_id = " & cust))
+            dolg =
+                CDec(
+                    dbSQL.ExecuteScalar(
+                        "Select CASE WHEN dolg IS NULL THEN 0 ELSE dolg END from  customer where customer_sys_id = " &
+                        cust))
             dolg -= dolgDim
 
             Try
@@ -421,5 +460,4 @@ Namespace Kasbi
             Response.Redirect(GetAbsoluteUrl("~/CustomerSales.aspx?" & cust))
         End Sub
     End Class
-
 End Namespace

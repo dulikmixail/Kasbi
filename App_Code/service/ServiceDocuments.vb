@@ -23,6 +23,8 @@ Namespace Service
         Dim ReadOnly _sharedDbSql As MSSqlDB = ServiceDbConnector.GetConnection()
         Dim ReadOnly _sharedDbSql2 As MSSqlDB = ServiceDbConnector.GetConnection2()
 
+        Dim ReadOnly _serviceCustomer As ServiceCustomer = New ServiceCustomer()
+
         ReadOnly _pathToDocs As String = Hosting.HostingEnvironment.MapPath("~/Docs/")
         ReadOnly _pathToTemplates As String = Hosting.HostingEnvironment.MapPath("~/Templates/")
         ReadOnly _pathToXml As String = Hosting.HostingEnvironment.MapPath("~/XML/")
@@ -731,6 +733,73 @@ Namespace Service
             End If
             Return filePath
         End Function
+
+        Public Function CreateDogovorNaOkazaniyeUslugTo7(customerId As Integer, userId As Integer) As String
+            Dim templatePath, savePath, saveFolder, fileName As String
+            Dim dsCustomerInfo As DataSet = New DataSet()
+
+            fileName = "Dogovor_na_okazaniye_uslug_TO_7.docx"
+            templatePath = Path.Combine(_pathToTemplates, fileName)
+            saveFolder = Path.Combine(_pathToDocs, "Dogovora", userId.ToString())
+            savePath = Path.Combine(saveFolder, fileName)
+
+            If Not Directory.Exists(saveFolder)
+                Directory.CreateDirectory(saveFolder)
+            End If
+
+            CopyFile(templatePath, savePath, overwrite := True)
+
+            Try
+                _wrdApp = New Word.ApplicationClass()
+                _wrdApp.Caption = "Caption1"
+                _wrdApp.DisplayAlerts = Word.WdAlertLevel.wdAlertsNone
+                _wrdApp.Visible = False
+
+                _wrdDoc = _wrdApp.Documents.Open(savePath)
+
+                _wrdDoc.Bookmarks("DateDogovora").Range.Text = Now.ToString("dd.MM.yyyy")
+
+                dsCustomerInfo = _serviceCustomer.GetCutomerInfo(customerId)
+                If dsCustomerInfo.Tables.Count > 0
+                    If dsCustomerInfo.Tables(0).Rows.Count > 0
+                        Dim dr AS DataRow = dsCustomerInfo.Tables(0).Rows(0)
+
+                        Dim customerName As String = dr("customer_name").ToString()
+                        _wrdDoc.Bookmarks("CustomerName").Range.Text = customerName
+                        _wrdDoc.Bookmarks("CustomerName2").Range.Text = customerName
+
+                        Dim boosName As String = dr("boos_name").ToString()
+                        _wrdDoc.Bookmarks("BoosName").Range.Text = boosName
+                        _wrdDoc.Bookmarks("BoosName2").Range.Text = boosName
+
+                        Dim registration As String = String.Empty
+                        If Not IsDBNull(dr("registration"))
+                            registration = dr("registration").ToString()
+                        End If
+                        _wrdDoc.Bookmarks("Registration").Range.Text = registration
+                        _wrdDoc.Bookmarks("Registration2").Range.Text = registration
+
+                        Dim customerDetails As String = _serviceCustomer.GetСustomerDetails(dsCustomerInfo)
+                        _wrdDoc.Bookmarks("Customer").Range.Text = customerDetails
+                        _wrdDoc.Bookmarks("Customer2").Range.Text = customerDetails
+                    End If
+                End If
+
+                _wrdDoc.Close(True)
+                _wrdApp.Quit()
+            Catch ex As Exception
+                _wrdDoc.Close(True)
+                _wrdApp.Quit()
+                savePath = templatePath
+            End Try
+
+            Return savePath
+        End Function
+
+        Public Sub DogovorNaOkazaniyeUslugTo7(customerId As Integer, httpResponse As HttpResponse, userId As Integer)
+            Dim savePath As String = CreateDogovorNaOkazaniyeUslugTo7(customerId, userId)
+            ResponseFile(savePath, httpResponse)
+        End Sub
 
         Private Function CreateAktForTOandDolg(checkGoods As ListDictionary, rootPath As String, fileName As String,
                                                Optional withDate As Boolean = True,

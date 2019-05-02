@@ -108,7 +108,9 @@
                             <td colspan="2" >
                                 <asp:Label ID="lblCaptionSetPlace" runat="server" CssClass="cash">Место установки:</asp:Label></td>
                             <td >
-                                <asp:Label ID="lblSetPlace" runat="server" CssClass="cashDetail"></asp:Label></td>
+                                <asp:Label ID="lblSetPlace" runat="server" CssClass="cashDetail"></asp:Label>
+                            </td>
+                            
                         </tr>
                         <tr height="0">
                             <td colspan="2" >
@@ -179,7 +181,9 @@
                                 Место установки:</td>
                             <td class="SectionRow" colspan="2">
                                 <asp:TextBox ID="txtPlace" runat="server" ToolTip="Введите место установки" BackColor="#F6F8FC"
-                                    Width="100%" MaxLength="250" BorderWidth="1px"></asp:TextBox></td>
+                                    Width="100%" MaxLength="250" BorderWidth="1px"></asp:TextBox>
+                                <br /><a style="font-size: 12px" href="https://ato.by/address" target="_blank">Узнать район по адресу можно здесь: https://ato.by/address </a>
+                            </td>
                         </tr>
                         <tr class="TitleTextbox">
                             <td class="SectionRowLabel" align="left">

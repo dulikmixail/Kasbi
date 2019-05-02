@@ -54,7 +54,7 @@ Namespace Kasbi.Admin
             Dim adapter As SqlClient.SqlDataAdapter
             Dim ds As DataSet = New DataSet
             Try
-                adapter = dbSQL.GetDataAdapter("select *, (select name from place_rn where place_rn.place_rn_id=priceto.place_rn_id) as place_name from priceto ORDER BY group_id")
+                adapter = dbSQL.GetDataAdapter("SELECT * FROM (select *, (select name from place_rn where place_rn.place_rn_id=priceto.place_rn_id) as place_name from priceto) t ORDER BY t.place_name")
                 adapter.Fill(ds)
                 grdPriceTO.DataSource = ds.Tables(0).DefaultView
                 grdPriceTO.DataKeyField = "priceto_id"
