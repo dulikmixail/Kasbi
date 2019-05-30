@@ -321,7 +321,7 @@ Namespace Kasbi
             Dim cmd As SqlClient.SqlCommand
             Dim rs As SqlClient.SqlDataReader
             Dim i% = 0
-            Dim cashHistories As ArrayList = New ArrayList()
+            Dim cashHistoriesExportText As String = ""
             Dim row As String = String.Empty
 
             startdate = DateTime.Parse(tbxBeginDate.Text)
@@ -387,7 +387,7 @@ Namespace Kasbi
                 PrintLine(1, "<history>")
                 While rs.Read
                     row = rs(0).ToString()
-                    cashHistories = ParseCashHistoryRow(row)
+                    cashHistoriesExportText = String.Concat(cashHistoriesExportText, row)
                     Print(1, row)
                     i = i + 1
                 End While
@@ -401,7 +401,7 @@ Namespace Kasbi
                 ShowNotHaveData()
             End If
 
-            _serviceExport.LockCashHistory(cashHistories, ExportType.OneC)
+            _serviceExport.LockCashHistory(ParseCashHistoryRow(cashHistoriesExportText), ExportType.OneC)
         End Sub
 
         Sub export_docs()
@@ -570,7 +570,7 @@ Namespace Kasbi
             Dim cmd As SqlClient.SqlCommand
             Dim rs As SqlClient.SqlDataReader
             Dim i% = 0
-            Dim cashHistories As ArrayList = New ArrayList()
+            Dim cashHistoriesExportText As String = ""
             Dim row As String = String.Empty
 
             startdate = DateTime.Parse(tbxBeginDate.Text)
@@ -601,7 +601,7 @@ Namespace Kasbi
                 PrintLine(1, "<history>")
                 While rs.Read
                     row = rs(0).ToString()
-                    cashHistories = ParseCashHistoryRow(row)
+                    cashHistoriesExportText = String.Concat(cashHistoriesExportText,row)
                     Print(1, row)
                     i = i + 1
                 End While
@@ -614,7 +614,7 @@ Namespace Kasbi
                 rs.Close()
                 ShowNotHaveData()
             End If
-            _serviceExport.LockCashHistory(cashHistories, ExportType.OneC)
+            _serviceExport.LockCashHistory(ParseCashHistoryRow(cashHistoriesExportText), ExportType.OneC)
             'MsgBox(lbxExecutor.SelectedValue)
 
             'Catch

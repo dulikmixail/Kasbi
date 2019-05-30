@@ -231,13 +231,15 @@ Namespace Kasbi
 
             If rows.Count > 0 And Not isGarantia
                 Dim sum As Double = 0
+                Dim quantity As Double = 1
                 For Each row As DataRow In rows
                     IF isWorkNotCall
                         Double.TryParse(row("price").ToString(), sum)
                     Else
                         Double.TryParse(row("total_sum").ToString(), sum)
                     End If
-                    repairTotalSumWithNds += Math.Round(sum*1.2, 2)
+                    Double.TryParse(row("quantity").ToString(), quantity)
+                    repairTotalSumWithNds += Math.Round(sum, 2)*quantity*1.2
                 Next
             End If
 
@@ -256,13 +258,15 @@ Namespace Kasbi
                 Dim rows1 As DataRowCollection = GetDataSetRepairInfo(cashHistoryId1).Tables(0).Rows
                 If rows1.Count > 0 And Not isGarantia1
                     Dim sum1 As Double = 0
+                    Dim quantity1 As Double = 1
                     For Each row2 As DataRow In rows1
                         IF isWorkNotCall
                             Double.TryParse(row2("price").ToString(), sum1)
                         Else
                             Double.TryParse(row2("total_sum").ToString(), sum1)
                         End If
-                        repairTotalSumWithNds += Math.Round(sum1*1.2, 2)
+                        Double.TryParse(row2("quantity").ToString(), quantity1)
+                        repairTotalSumWithNds += Math.Round(sum1, 2)*quantity1*1.2
                     Next
                 End If
 
@@ -273,7 +277,7 @@ Namespace Kasbi
             smsText = "Ваш ККМ " & Trim(lblCash.Text) &
                       " готов." &
                       IIf(isGarantia And isGarantia1, " Гарантийный ремонт.",
-                          " Сумма ремонта " & repairTotalSumWithNds & "р.").ToString() &
+                          " Сумма ремонта " & Math.Round(repairTotalSumWithNds,2) & "р.").ToString() &
                       IIf(dolg > 0, " Общий долг: " & dolg & "р.", "").ToString()
 
             txtSmsText.Text = smsText
@@ -536,7 +540,6 @@ Namespace Kasbi
                 cmd.CommandType = CommandType.StoredProcedure
                 adapt = dbSQL.GetDataAdapter(cmd)
                 adapt.Fill(ds)
-
             Catch
                 msg.Text = "Ошибка загрузки информации о товаре!(5)<br>" & Err.Description
                 Return ds
@@ -845,6 +848,10 @@ Namespace Kasbi
             txtNewDetails.Text = Details.TrimStart(",")
             txtNewInfo.Text = Works.TrimStart(",")
             SetTxtSmsText()
+            If Math.Abs(TotalSum - 0) < 0.0049
+                CType(grdDetails.Controls.Item(0).Controls.Item(grdDetails.Items.Count + 1).FindControl("cbxGarantia"),
+                      CheckBox).Checked = True
+            End If
         End Sub
 
         Private Sub grdDetails_ItemDataBound(ByVal sender As Object,
