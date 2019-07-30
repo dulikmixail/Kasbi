@@ -17,16 +17,19 @@ Namespace Kasbi
         Private Shared companyName As String
         Private Shared documentsFolder As String
         Private Shared kasbi4_id As String
+        Private Shared _jobsSmsSender As String
 
         Private Const _SQL_CONNECTIONSTRING$ = "DataAccess.SqlConnectionString"
         Private Const _COMPANYNAME = "Web.Company"
         Private Const _DOCPATH$ = "Web.DocumentsFolder"
         Private Const _KASBI4_ID$ = "Web.Kasbi04_ID"
+        Private Const _JOBS_SMS_SENDER$ = "Jobs.Sms.Sender"
 
         Private Const DEFAULT_SQL_CONNECTIONSTRING$ = "data source=by-mn-dbsrv;initial catalog=Ramok;persist security info=False;user id=WebDB;workstation id=by-mn-dbsrv;packet size=4096;password=webdb;"
         Private Const DEFAULT_COMPANYNAME$ = "УП 'Рамок'"
         Private Const DEFAULT_DOCPATH$ = "Docs"
         Private Const DEFAULT_KASBI4_ID$ = "120"
+        Private Const DEFAULT_JOBS_SMS_SENDER$ = "false"
 
         Public Function Create( _
           ByVal parent As Object, ByVal configContext As Object, ByVal section As System.Xml.XmlNode) _
@@ -142,6 +145,14 @@ Namespace Kasbi
             End Get
         End Property
 
+        Public Shared ReadOnly Property JobsSmsSender As String
+            Get
+                If (_jobsSmsSender Is Nothing)
+                    _jobsSmsSender = ReadSetting(appSettings, _JOBS_SMS_SENDER, DEFAULT_JOBS_SMS_SENDER)
+                End If
+                Return _jobsSmsSender
+            End Get
+        End Property
     End Class
 
 End Namespace

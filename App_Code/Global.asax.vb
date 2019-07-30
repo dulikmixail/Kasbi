@@ -47,7 +47,9 @@ Namespace Kasbi
 
             AreaRegistration.RegisterAllAreas()
             GlobalConfiguration.Configure(AddressOf WebApiConfig.Register)
-            SmsScheduler.Start()
+            If Config.JobsSmsSender = "true"
+                SmsScheduler.Start()
+            End If
             'EmailScheduler.Start()
 
             'FilterConfig.RegisterGlobalFilters(GlobalFilters.Filters)
