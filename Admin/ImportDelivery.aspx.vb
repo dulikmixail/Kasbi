@@ -3,16 +3,16 @@ Imports System.IO
 Imports System.Xml
 
 Namespace Kasbi.Admin
-
     Partial Class ImportDelivery
         Inherits PageBase
 
 #Region " Web Form Designer Generated Code "
 
         'This call is required by the Web Form Designer.
-        <System.Diagnostics.DebuggerStepThrough()> Private Sub InitializeComponent()
-
+        <System.Diagnostics.DebuggerStepThrough()>
+        Private Sub InitializeComponent()
         End Sub
+
         Protected WithEvents scrollPos As System.Web.UI.HtmlControls.HtmlInputHidden
         Protected WithEvents CurrentPage As System.Web.UI.HtmlControls.HtmlInputHidden
         Protected WithEvents Parameters As System.Web.UI.HtmlControls.HtmlInputHidden
@@ -26,6 +26,7 @@ Namespace Kasbi.Admin
         End Sub
 
 #End Region
+
         Dim table As DataTable
         Dim valid_count
         Dim query
@@ -48,7 +49,6 @@ Namespace Kasbi.Admin
                 btn_clearlog.Visible = False
                 btn_delimport.Visible = False
             End If
-
         End Sub
 
         Private Sub btnLoadData_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnLoadData.Click
@@ -86,6 +86,7 @@ Namespace Kasbi.Admin
 
             lblconent.Text = ""
             Dim text_error As String = ""
+            Dim codeError As String = ""
             Dim node_error = 0 'Глобальная переменная ошибок импорта
             Dim id_pricelist As String
 
@@ -102,6 +103,10 @@ Namespace Kasbi.Admin
                 Dim sale_date 'дата продажи
                 Dim client_unn 'УНП покупателя
                 Dim manager 'Менеджер
+                Dim manager_full_name As String()
+                Dim managerSurname As String
+                Dim firstLetterManagerName As String
+                Dim firstLetterManagerMiddleName
 
                 Dim sale_deliverycode 'код поставки
                 Dim sale_goodname 'название товара
@@ -118,6 +123,11 @@ Namespace Kasbi.Admin
                 'Чистим таблицу лога импорта
                 'query = dbSQL.ExecuteScalar("DELETE FROM import_log")
 
+                '
+                '//
+                '////Тут будем загружать поставки
+                '//
+                '
 
                 For Each node1 In nodeList.ChildNodes
                     If node1.Name = "Document" Then
@@ -132,7 +142,11 @@ Namespace Kasbi.Admin
                                 'Тут информация о поставщике
                                 For Each node3 In node2.ChildNodes
                                     If node3.Name = "Number" Then
-                                        delivery_1cnum = node3.InnerText.ToString.Trim
+                                        Try
+                                            delivery_1cnum = node3.InnerText.ToString.Trim
+                                        Catch ex As Exception
+                                            codeError & = " delivery_1cnu = " & delivery_1cnum.ToString()
+                                        End Try
                                     ElseIf node3.Name = "Date" Then
                                         delivery_date = makedate(node3.InnerText.ToString.Trim)
                                     ElseIf node3.Name = "Counterpart" Then
@@ -150,10 +164,13 @@ Namespace Kasbi.Admin
                                     text_error &= "Поставка id " & delivery_1cnum & ": Нет названия у поставщика<br>"
                                 End If
                                 'Проверяем код поставки
-                                Dim delivery_1cnum_test As String = dbSQL.ExecuteScalar("SELECT id1c FROM delivery WHERE id1c='" & delivery_1cnum & "'")
+                                Dim delivery_1cnum_test As String =
+                                        dbSQL.ExecuteScalar(
+                                            "SELECT id1c FROM delivery WHERE id1c='" & delivery_1cnum & "'")
                                 If delivery_1cnum_test <> "" Then
                                     node_error = 1
-                                    text_error &= "Поставка id " & delivery_1cnum & ": уже была импортирована раньше<br>"
+                                    text_error &= "Поставка id " & delivery_1cnum &
+                                                  ": уже была импортирована раньше<br>"
                                 End If
                             ElseIf node2.Name = "Table" Then
                                 'Тут информация о товарах
@@ -175,117 +192,181 @@ Namespace Kasbi.Admin
                                         'Смотрим вся ли инфа
                                         If good_artikul = "" Then
                                             node_error = 1
-                                            text_error &= "Поставка id " & delivery_1cnum & ": У товара '" & good_name & "' нет артикула<br>"
+                                            text_error &= "Поставка id " & delivery_1cnum & ": У товара '" & good_name &
+                                                          "' нет артикула<br>"
                                         End If
                                         If good_cost_prod = "" Then
                                             node_error = 1
-                                            text_error &= "Поставка id " & delivery_1cnum & ": У товара '" & good_name & "' нет прейскурантной цены<br>"
+                                            text_error &= "Поставка id " & delivery_1cnum & ": У товара '" & good_name &
+                                                          "' нет прейскурантной цены<br>"
                                         End If
                                         If good_preiskurant = "" Then
                                             node_error = 1
-                                            text_error &= "Поставка id " & delivery_1cnum & ": У товара '" & good_name & "' нет прейскуранта<br>"
+                                            text_error &= "Поставка id " & delivery_1cnum & ": У товара '" & good_name &
+                                                          "' нет прейскуранта<br>"
                                         End If
                                     Next
 
-                                    If node_error <> 1 Then 'Если вообще нет ошибок в этом ноде
+                                    'Если вообще нет ошибок в этом ноде или в настройках не разрешена запись при ошибках
+                                    If node_error <> 1 OR ignoreGoodsErrorsInDelivery.Checked Then
                                         '
                                         'Добавляем данные
                                         '
                                         'Достаем id поставщика, если нет такого - создаем
-                                        Dim id_supplier As String = dbSQL.ExecuteScalar("SELECT sys_id FROM supplier WHERE supplier_name ='" & supplier_name & "'")
+                                        Dim id_supplier As String =
+                                                dbSQL.ExecuteScalar(
+                                                    "SELECT sys_id FROM supplier WHERE supplier_name ='" & supplier_name &
+                                                    "'")
                                         If id_supplier = "" Then
                                             'если нет пока такого поставщика - создаем нового
                                             id_supplier = dbSQL.ExecuteScalar("SELECT MAX(sys_id) FROM supplier")
                                             id_supplier += 1
 
-                                            query = dbSQL.ExecuteScalar("INSERT INTO supplier (supplier_name,unn) " & _
-                                            " VALUES ('" & supplier_name & "','" & supplier_unn & "')")
+                                            query = dbSQL.ExecuteScalar("INSERT INTO supplier (supplier_name,unn) " &
+                                                                        " VALUES ('" & supplier_name & "','" &
+                                                                        supplier_unn & "')")
 
                                             id_supplier = dbSQL.ExecuteScalar("SELECT MAX(sys_id) FROM supplier")
 
                                             'Вставляем в лог импорта запись
-                                            query = dbSQL.ExecuteScalar("INSERT INTO import_log (table_name,field_name,field_value) " & _
-                                            "VALUES ('supplier','sys_id','" & id_supplier & "')")
+                                            query =
+                                                dbSQL.ExecuteScalar(
+                                                    "INSERT INTO import_log (table_name,field_name,field_value) " &
+                                                    "VALUES ('supplier','sys_id','" & id_supplier & "')")
                                         End If
                                         'Тут создаем поставку
                                         id_delivery = dbSQL.ExecuteScalar("SELECT MAX(delivery_sys_id) FROM delivery")
                                         id_delivery += 1
-                                        query = dbSQL.ExecuteScalar("INSERT INTO delivery (delivery_sys_id,delivery_date,info,id1c) VALUES ('" & id_delivery & "','" & delivery_date & "','" & supplier_name & "','" & delivery_1cnum & "')")
+                                        query =
+                                            dbSQL.ExecuteScalar(
+                                                "INSERT INTO delivery (delivery_sys_id,delivery_date,info,id1c) VALUES ('" &
+                                                id_delivery & "','" & delivery_date & "','" & supplier_name & "','" &
+                                                delivery_1cnum & "')")
 
                                         id_delivery = dbSQL.ExecuteScalar("SELECT MAX(delivery_sys_id) FROM delivery")
 
 
                                         'Вставляем в лог импорта запись
-                                        query = dbSQL.ExecuteScalar("INSERT INTO import_log (table_name,field_name,field_value) " & _
-                                        "VALUES ('delivery','delivery_sys_id','" & id_delivery & "')")
+                                        query =
+                                            dbSQL.ExecuteScalar(
+                                                "INSERT INTO import_log (table_name,field_name,field_value) " &
+                                                "VALUES ('delivery','delivery_sys_id','" & id_delivery & "')")
 
                                         For Each node3 In node2.ChildNodes
                                             good_1ccode = node3.Attributes.ItemOf("Code").Value()
                                             good_name = node3.Attributes.ItemOf("Goods").Value()
                                             good_artikul = node3.Attributes.ItemOf("Artikul").Value().ToString.Trim
                                             'good_artikul = good_1ccode
+
                                             good_amount = node3.Attributes.ItemOf("Amount").Value()
                                             good_parentname = node3.Attributes.ItemOf("Parents").Value()
                                             good_cost_uchet = node3.Attributes.ItemOf("CostU").Value()
 
-                                            If Not good_name.ToString.Contains("Касби") Then
+                                            If _
+                                                Not good_name.ToString.Contains("Касби") And
+                                                Not String.IsNullOrEmpty(good_1ccode.ToString()) And
+                                                Not String.IsNullOrEmpty(good_name.ToString()) And
+                                                Not String.IsNullOrEmpty(good_artikul.ToString()) And
+                                                Not String.IsNullOrEmpty(good_amount.ToString()) And
+                                                Not String.IsNullOrEmpty(good_parentname.ToString()) And
+                                                Not String.IsNullOrEmpty(good_cost_uchet.ToString()) Then
 
                                                 Try
                                                     good_cost_prod = node3.Attributes.ItemOf("CostP").Value()
                                                 Catch ex As Exception
                                                     good_cost_prod = ""
                                                 End Try
-                                                good_preiskurant = node3.Attributes.ItemOf("Preysk").Value().ToString.Trim
+                                                good_preiskurant =
+                                                    node3.Attributes.ItemOf("Preysk").Value().ToString.Trim
 
                                                 'Проверяем по артикулу, существует ли такой тип товара, если нет - создаем
                                                 id_good = ""
-                                                id_good = dbSQL.ExecuteScalar("SELECT good_type_sys_id FROM good_type WHERE artikul='" & good_artikul & "'")
+                                                id_good =
+                                                    dbSQL.ExecuteScalar(
+                                                        "SELECT good_type_sys_id FROM good_type WHERE artikul='" &
+                                                        good_artikul & "'")
 
                                                 If id_good = "" Then
                                                     'Определяем группу товара по названию
-                                                    Dim id_group = dbSQL.ExecuteScalar("SELECT good_group_sys_id FROM good_group WHERE name='" & good_parentname & "'")
+                                                    Dim id_group =
+                                                            dbSQL.ExecuteScalar(
+                                                                "SELECT good_group_sys_id FROM good_group WHERE name='" &
+                                                                good_parentname & "'")
                                                     'Вставляем новый товар
-                                                    id_good = dbSQL.ExecuteScalar("SELECT MAX(good_type_sys_id) FROM good_type")
+                                                    id_good =
+                                                        dbSQL.ExecuteScalar(
+                                                            "SELECT MAX(good_type_sys_id) FROM good_type")
                                                     id_good += 1
 
-                                                    query = dbSQL.ExecuteScalar("INSERT INTO good_type (name,artikul,allowCTO,is_cashregister,nadbavka,garantia,good_group_sys_id) " & _
-                                                    " VALUES ('" & good_name & "','" & good_artikul & "','0','0','0','0','" & id_group & "')")
+                                                    query =
+                                                        dbSQL.ExecuteScalar(
+                                                            "INSERT INTO good_type (name,artikul,allowCTO,is_cashregister,nadbavka,garantia,good_group_sys_id) " &
+                                                            " VALUES ('" & good_name & "','" & good_artikul &
+                                                            "','0','0','0','0','" & id_group & "')")
 
-                                                    id_good = dbSQL.ExecuteScalar("SELECT MAX(good_type_sys_id) FROM good_type")
+                                                    id_good =
+                                                        dbSQL.ExecuteScalar(
+                                                            "SELECT MAX(good_type_sys_id) FROM good_type")
 
                                                     'Вставляем в лог импорта запись
-                                                    query = dbSQL.ExecuteScalar("INSERT INTO import_log (table_name,field_name,field_value) " & _
-                                                    "VALUES ('good_type','good_type_sys_id','" & id_good & "')")
+                                                    query =
+                                                        dbSQL.ExecuteScalar(
+                                                            "INSERT INTO import_log (table_name,field_name,field_value) " &
+                                                            "VALUES ('good_type','good_type_sys_id','" & id_good & "')")
                                                 End If
 
                                                 'Теперь вставляем товар в поставку
                                                 'Достаем id детали поставки
-                                                Dim id_delivery_detail As String = dbSQL.ExecuteScalar("SELECT MAX(delivery_detail_sys_id) FROM delivery_detail")
+                                                Dim id_delivery_detail As String =
+                                                        dbSQL.ExecuteScalar(
+                                                            "SELECT MAX(delivery_detail_sys_id) FROM delivery_detail")
                                                 id_delivery_detail += 1
 
-                                                query = dbSQL.ExecuteScalar("INSERT INTO delivery_detail (delivery_sys_id,supplier_id,good_type_sys_id,price,quantity,unit_id,rur,artikul) " & _
-                                                "VALUES ('" & id_delivery & "','" & id_supplier & "','" & id_good & "','" & good_cost_uchet & "','" & good_amount & "','1','0','" & good_1ccode & "')")
+                                                query =
+                                                    dbSQL.ExecuteScalar(
+                                                        "INSERT INTO delivery_detail (delivery_sys_id,supplier_id,good_type_sys_id,price,quantity,unit_id,rur,artikul) " &
+                                                        "VALUES ('" & id_delivery & "','" & id_supplier & "','" &
+                                                        id_good & "','" & good_cost_uchet & "','" & good_amount &
+                                                        "','1','0','" & good_1ccode & "')")
 
-                                                id_delivery_detail = dbSQL.ExecuteScalar("SELECT MAX(delivery_detail_sys_id) FROM delivery_detail")
+                                                id_delivery_detail =
+                                                    dbSQL.ExecuteScalar(
+                                                        "SELECT MAX(delivery_detail_sys_id) FROM delivery_detail")
 
                                                 'Вставляем в лог импорта запись
-                                                query = dbSQL.ExecuteScalar("INSERT INTO import_log (table_name,field_name,field_value) " & _
-                                                "VALUES ('delivery_detail','delivery_detail_sys_id','" & id_delivery_detail & "')")
+                                                query =
+                                                    dbSQL.ExecuteScalar(
+                                                        "INSERT INTO import_log (table_name,field_name,field_value) " &
+                                                        "VALUES ('delivery_detail','delivery_detail_sys_id','" &
+                                                        id_delivery_detail & "')")
 
                                                 'Теперь вставляем товар в прайслист
-                                                id_pricelist = dbSQL.ExecuteScalar("SELECT TOP 1 pricelist_sys_id FROM pricelist WHERE pricelist_name='Прейскурант " & good_preiskurant & "'")
+                                                id_pricelist =
+                                                    dbSQL.ExecuteScalar(
+                                                        "SELECT TOP 1 pricelist_sys_id FROM pricelist WHERE pricelist_name='Прейскурант " &
+                                                        good_preiskurant & "'")
 
                                                 If id_pricelist = "" Then
                                                     'Генерируем новый id прайслиста
-                                                    id_pricelist = dbSQL.ExecuteScalar("select max(pricelist_sys_id)+1 from pricelist")
+                                                    id_pricelist =
+                                                        dbSQL.ExecuteScalar(
+                                                            "select max(pricelist_sys_id)+1 from pricelist")
                                                 Else
-                                                    Dim id_pricelist2 = dbSQL.ExecuteScalar("SELECT TOP 1 pricelist_sys_id FROM pricelist WHERE pricelist_name='Прейскурант " & good_preiskurant & "' AND good_type_sys_id='" & id_good & "'")
+                                                    Dim id_pricelist2 =
+                                                            dbSQL.ExecuteScalar(
+                                                                "SELECT TOP 1 pricelist_sys_id FROM pricelist WHERE pricelist_name='Прейскурант " &
+                                                                good_preiskurant & "' AND good_type_sys_id='" & id_good &
+                                                                "'")
                                                     Try
                                                         If id_pricelist2 <> "" Then
-                                                            id_pricelist = dbSQL.ExecuteScalar("select max(pricelist_sys_id)+1 from pricelist")
+                                                            id_pricelist =
+                                                                dbSQL.ExecuteScalar(
+                                                                    "select max(pricelist_sys_id)+1 from pricelist")
                                                         End If
                                                     Catch ex As Exception
-                                                        id_pricelist = dbSQL.ExecuteScalar("select max(pricelist_sys_id)+1 from pricelist")
+                                                        id_pricelist =
+                                                            dbSQL.ExecuteScalar(
+                                                                "select max(pricelist_sys_id)+1 from pricelist")
                                                     End Try
                                                 End If
                                                 good_cost_uchet = CInt(good_cost_uchet.ToString.Replace(".", ","))
@@ -293,37 +374,44 @@ Namespace Kasbi.Admin
 
                                                 'trace = trace & vbCrLf & id_delivery & "-" & id_pricelist & "-" & good_artikul & "-" & id_good
                                                 'MsgBox(trace)
-                                                query = dbSQL.ExecuteScalar("INSERT INTO pricelist (pricelist_sys_id,good_type_sys_id,price,pricelist_name,pricelist_date,seq) " & _
-                                                "VALUES ('" & id_pricelist & "','" & id_good & "','" & good_cost_prod & "','Прейскурант " & good_preiskurant & "','01/01/2011',1)")
+                                                query =
+                                                    dbSQL.ExecuteScalar(
+                                                        "INSERT INTO pricelist (pricelist_sys_id,good_type_sys_id,price,pricelist_name,pricelist_date,seq) " &
+                                                        "VALUES ('" & id_pricelist & "','" & id_good & "','" &
+                                                        good_cost_prod & "','Прейскурант " & good_preiskurant &
+                                                        "','01/01/2011',1)")
 
                                                 'Вставляем в лог импорта запись
-                                                query = dbSQL.ExecuteScalar("INSERT INTO import_log (table_name,field_name,field_value) " & _
-                                                "VALUES ('pricelist','pricelist_sys_id','" & id_pricelist & "')")
+                                                query =
+                                                    dbSQL.ExecuteScalar(
+                                                        "INSERT INTO import_log (table_name,field_name,field_value) " &
+                                                        "VALUES ('pricelist','pricelist_sys_id','" & id_pricelist & "')")
 
                                                 'Теперь вставляем запись в товары
-                                                Dim id_goodsys As String = dbSQL.ExecuteScalar("SELECT MAX(good_sys_id) FROM good")
+                                                Dim id_goodsys As String =
+                                                        dbSQL.ExecuteScalar("SELECT MAX(good_sys_id) FROM good")
                                                 id_goodsys += 1
-                                                Dim good_key As String = dbSQL.ExecuteScalar("SELECT MAX(good_key) FROM good")
+                                                Dim good_key As String =
+                                                        dbSQL.ExecuteScalar("SELECT MAX(good_key) FROM good")
                                                 good_key += 1
-                                                query = dbSQL.ExecuteScalar("INSERT INTO good (good_sys_id, price,param_num,state,delivery_sys_id,good_type_sys_id) " & _
-                                                "VALUES ('" & id_goodsys & "','" & good_cost_prod & "','" & good_amount & "','1','" & id_delivery & "','" & id_good & "')")
+                                                query =
+                                                    dbSQL.ExecuteScalar(
+                                                        "INSERT INTO good (good_sys_id, price,param_num,state,delivery_sys_id,good_type_sys_id) " &
+                                                        "VALUES ('" & id_goodsys & "','" & good_cost_prod & "','" &
+                                                        good_amount & "','1','" & id_delivery & "','" & id_good & "')")
 
                                                 id_goodsys = dbSQL.ExecuteScalar("SELECT MAX(good_sys_id) FROM good")
 
                                                 'Вставляем лог
-                                                query = dbSQL.ExecuteScalar("INSERT INTO import_log (table_name,field_name,field_value) " & _
-                                                "VALUES ('good','good_sys_id','" & id_goodsys & "')")
-
+                                                query =
+                                                    dbSQL.ExecuteScalar(
+                                                        "INSERT INTO import_log (table_name,field_name,field_value) " &
+                                                        "VALUES ('good','good_sys_id','" & id_goodsys & "')")
                                             End If
-
                                         Next
                                     End If
-
-
                                 End If
-
                             End If
-
                         Next
 
                         '//Разбор узла Document
@@ -331,7 +419,6 @@ Namespace Kasbi.Admin
                     End If
                     'lblconent.Text = lblconent.Text + Document.Attributes.ItemOf("Number").Value()
                 Next
-
 
 
                 '
@@ -362,7 +449,11 @@ Namespace Kasbi.Admin
                                 'Тут информация о поставщике
                                 For Each node3 In node2.ChildNodes
                                     If node3.Name = "Number" Then
-                                        sale_1cnum = node3.InnerText.ToString.Trim
+                                        Try
+                                            sale_1cnum = node3.InnerText.ToString.Trim
+                                        Catch ex As Exception
+                                            codeError & = " sale_1cnum = " & sale_1cnum
+                                        End Try
                                     ElseIf node3.Name = "Date" Then
                                         sale_date = makedate(node3.InnerText.ToString.Trim)
                                     ElseIf node3.Name = "Counterpart" Then
@@ -375,50 +466,82 @@ Namespace Kasbi.Admin
                                         End Try
                                     End If
                                 Next
-                                'Смотрим вся ли инфа
-                                'Проверяем УНН
-                                If client_unn = "" Then
-                                    node_error = 1
-                                    text_error &= "Продажа id " & sale_1cnum & ": Нет УНП у клиента<br>"
-                                End If
-                                'Проверяем наличие УНН в Касби
-                                customer_sys_id = dbSQL.ExecuteScalar("SELECT customer_sys_id FROM customer WHERE unn ='" & client_unn & "'")
-                                If customer_sys_id = "" Then
-                                    node_error = 1
-                                    text_error &= "Продажа id " & sale_1cnum & ": не найден клиент с УНП '" & client_unn & "'<br>"
-                                End If
-                                'Проверяем наличие менеджера
-                                manager_id = dbSQL.ExecuteScalar("SELECT sys_id FROM employee WHERE Name ='" & manager & "'")
-                                If manager_id = "" Then
-                                    node_error = 1
-                                    text_error &= "Продажа id " & sale_1cnum & ": не найден менеджер '" & manager & "'<br>"
-                                End If
-                                'Проверяем наличие бухгалтера
-                                If buh <> "" Then
-                                    buh_id = dbSQL.ExecuteScalar("SELECT sys_id FROM employee WHERE Name ='" & buh & "'")
-                                    If buh_id = "" Then
+
+
+                                Dim parse_sale_1cnum As Long = 0
+                                If Long.TryParse(sale_1cnum.ToString(), parse_sale_1cnum)
+                                    'Смотрим вся ли инфа
+                                    'Проверяем УНН
+                                    If client_unn = "" Then
                                         node_error = 1
-                                        text_error &= "Продажа id " & sale_1cnum & ": не найден бухгалтер '" & buh & "'<br>"
+                                        text_error &= "Продажа id " & sale_1cnum & ": Нет УНП у клиента<br>"
                                     End If
-                                End If
-                                'Проверяем наличие продажи с таким номером
-                                Dim test_saleid As String = dbSQL.ExecuteScalar("SELECT id1c FROM sale WHERE id1c='" & sale_1cnum & "'")
-                                If test_saleid <> "" Then
+                                    'Проверяем наличие УНН в Касби
+                                    customer_sys_id =
+                                        dbSQL.ExecuteScalar(
+                                            "SELECT customer_sys_id FROM customer WHERE unn ='" & client_unn & "'")
+                                    If customer_sys_id = "" Then
+                                        node_error = 1
+                                        text_error &= "Продажа id " & sale_1cnum & ": не найден клиент с УНП '" &
+                                                      client_unn &
+                                                      "'<br>"
+                                    End If
+
+                                    manager_full_name = ParseManagerFulName(manager.ToString())
+                                    managerSurname = manager_full_name(0)
+                                    firstLetterManagerName = GetFirstLetterOrEmptyString(manager_full_name(1))
+                                    firstLetterManagerMiddleName = GetFirstLetterOrEmptyString(manager_full_name(2))
+
+                                    'Проверяем наличие менеджера
+                                    manager_id =
+                                        dbSQL.ExecuteScalar(
+                                            "SELECT sys_id FROM employee WHERE Name LIKE'%" & managerSurname & "%" & firstLetterManagerName & "%" & firstLetterManagerMiddleName & "%'").ToString()
+                                    If manager_id = "" Then
+                                        node_error = 1
+                                        text_error &= "Продажа id " & sale_1cnum & ": не найден менеджер '" & manager &
+                                                      "'<br>"
+                                    End If
+                                    'Проверяем наличие бухгалтера
+                                    If buh <> "" Then
+                                        buh_id =
+                                            dbSQL.ExecuteScalar("SELECT sys_id FROM employee WHERE Name ='" & buh & "'")
+                                        If buh_id = "" Then
+                                            node_error = 1
+                                            text_error &= "Продажа id " & sale_1cnum & ": не найден бухгалтер '" & buh &
+                                                          "'<br>"
+                                        End If
+                                    End If
+                                    'Проверяем наличие продажи с таким номером
+                                    Dim test_saleid As String =
+                                            dbSQL.ExecuteScalar("SELECT id1c FROM sale WHERE id1c='" & sale_1cnum & "'")
+                                    If test_saleid <> "" Then
+                                        node_error = 1
+                                        text_error &= "Продажа id " & sale_1cnum & ": уже была загружена раньше '" &
+                                                      sale_1cnum & "'<br>"
+                                    End If
+
+                                Else
                                     node_error = 1
-                                    text_error &= "Продажа id " & sale_1cnum & ": уже была загружена раньше '" & sale_1cnum & "'<br>"
+                                    text_error &= "Продажа id " & sale_1cnum.ToString() & " от " & sale_date.ToString() &
+                                                  ": номер продажи должен быть числовой.<br>"
                                 End If
+
                             ElseIf node2.Name = "Table" Then
                                 'Тут информация о товарах
                                 If node_error <> 1 Then 'Если по поставщику нет ошибки
                                     For Each node3 In node2.ChildNodes
                                         sale_deliverycode = node3.Attributes.ItemOf("Code").Value().ToString.Trim
                                         sale_goodname = node3.Attributes.ItemOf("Goods").Value().ToString.Trim
-                                        sale_artikul = node3.Attributes.ItemOf("Code").Value().ToString.Trim
+                                        sale_artikul = node3.Attributes.ItemOf("Artikul").Value().ToString.Trim
+
                                         sale_amount = node3.Attributes.ItemOf("Amount").Value().ToString.Trim
 
-                                        If sale_goodname.ToString.Contains("ККМ") And sale_goodname.ToString.Contains("Касби") Then
+                                        If _
+                                            sale_goodname.ToString.Contains("ККМ") And
+                                            sale_goodname.ToString.Contains("Касби") Then
                                             node_error = 1
-                                            text_error &= "Продажа id " & sale_1cnum & ": Товар '" & sale_goodname & "' - это касса<br>"
+                                            text_error &= "Продажа id " & sale_1cnum & ": Товар '" & sale_goodname &
+                                                          "' - это касса<br>"
                                         End If
 
                                         Try
@@ -429,34 +552,53 @@ Namespace Kasbi.Admin
                                         'Смотрим вся ли инфа
                                         If sale_artikul = "" Then
                                             node_error = 1
-                                            text_error &= "Продажа id " & sale_1cnum & ": У товара '" & sale_goodname & "' нет артикула<br>"
+                                            text_error &= "Продажа id " & sale_1cnum & ": У товара '" & sale_goodname &
+                                                          "' нет артикула<br>"
                                         End If
                                         If sale_cost = "" Then
                                             node_error = 1
-                                            text_error &= "Продажа id " & sale_1cnum & ": У товара '" & sale_goodname & "' нет цены<br>"
+                                            text_error &= "Продажа id " & sale_1cnum & ": У товара '" & sale_goodname &
+                                                          "' нет цены<br>"
                                         End If
                                         If sale_amount = "" Then
                                             node_error = 1
-                                            text_error &= "Продажа id " & sale_1cnum & ": У товара '" & sale_goodname & "' нет количества<br>"
+                                            text_error &= "Продажа id " & sale_1cnum & ": У товара '" & sale_goodname &
+                                                          "' нет количества<br>"
                                         End If
                                         'Проверяем поставку
-                                        id_delivery = dbSQL.ExecuteScalar("SELECT delivery_sys_id FROM delivery_detail WHERE artikul ='" & sale_deliverycode & "'")
+                                        id_delivery =
+                                            dbSQL.ExecuteScalar(
+                                                "SELECT delivery_sys_id FROM delivery_detail WHERE artikul ='" &
+                                                sale_deliverycode & "'")
                                         If sale_amount = "" Then
                                             node_error = 1
-                                            text_error &= "Продажа id " & sale_1cnum & ": Не найдена поставка с кодом '" & sale_deliverycode & "'<br>"
+                                            text_error &= "Продажа id " & sale_1cnum & ": Не найдена поставка с кодом '" &
+                                                          sale_deliverycode & "'<br>"
                                         End If
                                         'Проверяем есть ли такой артикул
-                                        id_good = dbSQL.ExecuteScalar("SELECT good_type_sys_id FROM good_type WHERE artikul ='" & sale_artikul & "'")
+                                        id_good =
+                                            dbSQL.ExecuteScalar(
+                                                "SELECT good_type_sys_id FROM good_type WHERE artikul ='" & sale_artikul &
+                                                "'")
                                         If id_good = "" Then
                                             node_error = 1
-                                            text_error &= "Продажа id " & sale_1cnum & ": Не найден тип товара с артикулом '" & sale_artikul & "'<br>"
+                                            text_error &= "Продажа id " & sale_1cnum &
+                                                          ": Не найден тип товара с артикулом '" & sale_artikul &
+                                                          "'<br>"
                                         End If
                                         'Проверяем остаток товара
                                         If id_delivery And id_good Then
-                                            Dim real_amount As Integer = dbSQL.ExecuteScalar("SELECT param_num FROM good WHERE delivery_sys_id ='" & id_delivery & "' AND good_type_sys_id ='" & id_good & "' AND (sale_sys_id is NULL OR sale_sys_id=0)")
+                                            Dim real_amount As Integer =
+                                                    dbSQL.ExecuteScalar(
+                                                        "SELECT param_num FROM good WHERE delivery_sys_id ='" &
+                                                        id_delivery & "' AND good_type_sys_id ='" & id_good &
+                                                        "' AND (sale_sys_id is NULL OR sale_sys_id=0)")
                                             If real_amount < sale_amount Then
                                                 node_error = 1
-                                                text_error &= "Продажа id " & sale_1cnum & ": Не хватает товара '" & sale_goodname & "'. В Касби в поставке " & sale_deliverycode & " осталось " & real_amount & ", а надо " & sale_amount & "<br>"
+                                                text_error &= "Продажа id " & sale_1cnum & ": Не хватает товара '" &
+                                                              sale_goodname & "'. В Касби в поставке " &
+                                                              sale_deliverycode & " осталось " & real_amount &
+                                                              ", а надо " & sale_amount & "<br>"
                                             End If
                                         End If
                                     Next
@@ -467,72 +609,93 @@ Namespace Kasbi.Admin
                                         '
                                         'Добавляем продажу
                                         'Вставляем запись
-                                        Dim sale_sys_id As Integer = dbSQL.ExecuteScalar("SELECT MAX(sale_sys_id) FROM sale")
+                                        Dim sale_sys_id As Integer =
+                                                dbSQL.ExecuteScalar("SELECT MAX(sale_sys_id) FROM sale")
                                         sale_sys_id += 1
 
                                         'query = dbSQL.ExecuteScalar("INSERT INTO sale (customer_sys_id,sale_date,state,type,saler_sys_id,firm_sys_id,id1c,buh_sys_id) " & _
                                         '"VALUES ('" & customer_sys_id & "','" & sale_date & "','3','3','" & manager_id & "', '1','" & sale_1cnum & "','" & buh_id & "')")
 
-                                        query = dbSQL.ExecuteScalar("INSERT INTO sale (customer_sys_id,sale_date,state,type,saler_sys_id,firm_sys_id,id1c,buh_sys_id) " & _
-                                        "VALUES ('" & customer_sys_id & "','" & sale_date & "','3','3','" & manager_id & "', '1','" & sale_1cnum & "','" & buh_id & "')")
+                                        query =
+                                            dbSQL.ExecuteScalar(
+                                                "INSERT INTO sale (customer_sys_id,sale_date,state,type,saler_sys_id,firm_sys_id,id1c,buh_sys_id) " &
+                                                "VALUES ('" & customer_sys_id & "','" & sale_date & "','3','3','" &
+                                                manager_id & "', '1','" & sale_1cnum & "','" & buh_id & "')")
                                         'Определяем id
 
                                         sale_sys_id = dbSQL.ExecuteScalar("SELECT MAX(sale_sys_id) FROM sale")
 
                                         'Вставляем лог
-                                        query = dbSQL.ExecuteScalar("INSERT INTO import_log (table_name,field_name,field_value) " & _
-                                        "VALUES ('sale','sale_sys_id','" & sale_sys_id & "')")
+                                        query =
+                                            dbSQL.ExecuteScalar(
+                                                "INSERT INTO import_log (table_name,field_name,field_value) " &
+                                                "VALUES ('sale','sale_sys_id','" & sale_sys_id & "')")
 
                                         If node_error <> 1 Then 'Если по поставщику нет ошибки
                                             For Each node3 In node2.ChildNodes
-                                                sale_deliverycode = node3.Attributes.ItemOf("Code").Value().ToString.Trim
+                                                sale_deliverycode =
+                                                    node3.Attributes.ItemOf("Code").Value().ToString.Trim
                                                 sale_goodname = node3.Attributes.ItemOf("Goods").Value().ToString.Trim
-                                                sale_artikul = node3.Attributes.ItemOf("Code").Value().ToString.Trim
+                                                sale_artikul = node3.Attributes.ItemOf("Artikul").Value().ToString.Trim
                                                 sale_amount = node3.Attributes.ItemOf("Amount").Value().ToString.Trim
+
                                                 Try
                                                     sale_cost = node3.Attributes.ItemOf("CostP").Value().ToString.Trim
                                                 Catch ex As Exception
                                                     sale_cost = ""
                                                 End Try
 
-                                                id_good = dbSQL.ExecuteScalar("SELECT good_type_sys_id FROM good_type WHERE artikul ='" & sale_artikul & "'")
-                                                id_delivery = dbSQL.ExecuteScalar("SELECT delivery_sys_id FROM delivery_detail WHERE artikul ='" & sale_deliverycode & "'")
+                                                id_good =
+                                                    dbSQL.ExecuteScalar(
+                                                        "SELECT good_type_sys_id FROM good_type WHERE artikul ='" &
+                                                        sale_artikul & "'")
+                                                id_delivery =
+                                                    dbSQL.ExecuteScalar(
+                                                        "SELECT delivery_sys_id FROM delivery_detail WHERE artikul ='" &
+                                                        sale_deliverycode & "'")
 
                                                 'Вставляем продажу
                                                 'Достаем максимальный id продажи
-                                                Dim good_sys_id As String = dbSQL.ExecuteScalar("SELECT MAX(good_sys_id) FROM good")
+                                                Dim good_sys_id As String =
+                                                        dbSQL.ExecuteScalar("SELECT MAX(good_sys_id) FROM good")
                                                 good_sys_id += 1
-                                                Dim good_key As String = dbSQL.ExecuteScalar("SELECT MAX(good_key) FROM good")
+                                                Dim good_key As String =
+                                                        dbSQL.ExecuteScalar("SELECT MAX(good_key) FROM good")
                                                 good_key += 1
 
                                                 'Вставляем запись
-                                                query = dbSQL.ExecuteScalar("INSERT INTO good (good_sys_id, good_type_sys_id, delivery_sys_id, sale_sys_id, price, param_num, state, worker) " & _
-                                                "VALUES ('" & good_sys_id & "','" & id_good & "','" & id_delivery & "','" & sale_sys_id & "','" & sale_cost & "','" & sale_amount & "', '3', '" & manager_id & "')")
+                                                query =
+                                                    dbSQL.ExecuteScalar(
+                                                        "INSERT INTO good (good_sys_id, good_type_sys_id, delivery_sys_id, sale_sys_id, price, param_num, state, worker) " &
+                                                        "VALUES ('" & good_sys_id & "','" & id_good & "','" &
+                                                        id_delivery & "','" & sale_sys_id & "','" & sale_cost & "','" &
+                                                        sale_amount & "', '3', '" & manager_id & "')")
 
                                                 good_sys_id = dbSQL.ExecuteScalar("SELECT MAX(good_sys_id) FROM good")
 
                                                 'Вставляем лог
-                                                query = dbSQL.ExecuteScalar("INSERT INTO import_log (table_name,field_name,field_value) " & _
-                                                "VALUES ('good','good_sys_id','" & good_sys_id & "')")
+                                                query =
+                                                    dbSQL.ExecuteScalar(
+                                                        "INSERT INTO import_log (table_name,field_name,field_value) " &
+                                                        "VALUES ('good','good_sys_id','" & good_sys_id & "')")
 
-                                                query = dbSQL.ExecuteScalar("UPDATE good SET param_num=param_num-" & sale_amount & " WHERE delivery_sys_id ='" & id_delivery & "' AND good_type_sys_id ='" & id_good & "' AND (sale_sys_id is NULL OR sale_sys_id=0)")
-
+                                                query =
+                                                    dbSQL.ExecuteScalar(
+                                                        "UPDATE good SET param_num=param_num-" & sale_amount &
+                                                        " WHERE delivery_sys_id ='" & id_delivery &
+                                                        "' AND good_type_sys_id ='" & id_good &
+                                                        "' AND (sale_sys_id is NULL OR sale_sys_id=0)")
                                             Next
                                         End If
-
                                     End If
-
                                 End If
-
                             End If
-
                         Next
-
                     End If
-
                 Next
 
             Catch ex As Exception
+                codeError &= ex.Message
             End Try
 
 
@@ -560,7 +723,7 @@ Namespace Kasbi.Admin
                         If node2.Name = "Table" Then
 
                             For Each node3 In node2.ChildNodes
-                                Dim code1c = node3.Attributes.ItemOf("Artikul").Value().ToString.Trim
+                                Dim artikul = node3.Attributes.ItemOf("Artikul").Value().ToString.Trim
                                 Dim cost = node3.Attributes.ItemOf("CostP").Value().ToString.Trim
                                 Dim pname = node3.Attributes.ItemOf("Goods").Value().ToString.Trim
                                 Dim pcount = node3.Attributes.ItemOf("Count").Value().ToString
@@ -572,30 +735,36 @@ Namespace Kasbi.Admin
                                 End If
 
                                 If pcount <> "0" Then
-                                    If code1c <> "" Then
+                                    If artikul <> "" Then
                                         'Проверяем по артикулу, существует ли такой тип товара
                                         Dim id_good = ""
-                                        id_good = dbSQL.ExecuteScalar("SELECT good_type_sys_id FROM good_type WHERE artikul='" & code1c & "'")
+                                        id_good =
+                                            dbSQL.ExecuteScalar(
+                                                "SELECT good_type_sys_id FROM good_type WHERE artikul='" & artikul & "'")
 
-                                        If id_good Then
+                                        If Not String.IsNullOrEmpty(id_good) Then
                                             Try
-                                                cost = CInt(cost.ToString.Replace(".", ","))
-                                                query = dbSQL.ExecuteScalar("INSERT INTO pricelist (pricelist_sys_id,good_type_sys_id,price,pricelist_name,pricelist_date,seq) " & _
-                                                "VALUES ('" & id_pricelist & "','" & id_good & "','" & cost & "','" & preisk & "','" & date_now & "',1)")
+                                                cost = cost.ToString
+                                                query =
+                                                    dbSQL.ExecuteScalar(
+                                                        "INSERT INTO pricelist (pricelist_sys_id,good_type_sys_id,price,pricelist_name,pricelist_date,seq) " &
+                                                        "VALUES ('" & id_pricelist & "','" & id_good & "','" & cost &
+                                                        "','" & preisk & "', GETDATE(), 1)")
                                                 'Вставляем в лог импорта запись
-                                                query = dbSQL.ExecuteScalar("INSERT INTO import_log (table_name,field_name,field_value) " & _
-                                                "VALUES ('pricelist','pricelist_sys_id','" & id_pricelist & "')")
+                                                query =
+                                                    dbSQL.ExecuteScalar(
+                                                        "INSERT INTO import_log (table_name,field_name,field_value) " &
+                                                        "VALUES ('pricelist','pricelist_sys_id','" & id_pricelist & "')")
                                             Catch ex As Exception
                                             End Try
                                         Else
-                                            text_error &= "Прайслист: не найден тип товара с артикулом '" & code1c & "'<br>"
+                                            text_error &= "Прайслист: не найден тип товара с артикулом '" & artikul &
+                                                          "'<br>"
                                         End If
                                     Else
                                         text_error &= "Прайслист: не указан артикул для товара '" & pname & "'<br>"
                                     End If
                                 End If
-
-
                             Next
                         End If
                     Next
@@ -603,16 +772,17 @@ Namespace Kasbi.Admin
             Next
 
 
-
-
             '
             '//
             '////Итог
             '//
-            '
 
             If text_error <> "" Then
                 lblerror.Text = "<b>В файле выгрузки найдены ошибки:</b> <br>" & text_error
+            End If
+
+            If codeError <> ""
+                lblCodeErr.Text = "<b>Импорт не завершен возникли критичекие ошибки:</b> <br>" & codeError
             End If
 
 
@@ -628,7 +798,6 @@ Namespace Kasbi.Admin
             End If
 
 
-
             'Catch
             'msgImport.Text = "Проблемы с загрузкой данных!<br>" & Err.Description
             'End Try
@@ -641,51 +810,113 @@ Namespace Kasbi.Admin
             btn_clearlog.Visible = False
             btn_delimport.Visible = False
             lblerror.Text = ""
+            lblCodeErr.Text = ""
         End Sub
 
-        Protected Sub btn_delimport_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btn_delimport.Click
+        Protected Sub btn_delimport_Click(ByVal sender As Object, ByVal e As System.EventArgs) _
+            Handles btn_delimport.Click
             'Удаляем записи в базе которые были в логе последнего импорта
             Dim query_del = ""
 
-            Dim reader As SqlClient.SqlDataReader
             query = "SELECT * FROM import_log"
-            reader = dbSQL.GetReader(query)
-            While reader.Read()
-                'Добавляем команду удаления
-                query_del &= "DELETE FROM " & reader("table_name") & " WHERE " & reader("field_name") & "='" & reader("field_value") & "';"
-                If reader("table_name") = "good" Then
-                    'Проверяем является ли продажей
-                    'delsell(reader("field_value"))
-                    query_del &= "UPDATE good SET param_num=param_num-(SELECT param_num FROM good WHERE good_sys_id='" & reader("field_value") & "') WHERE delivery_sys_id=(SELECT delivery_sys_id FROM good WHERE good_sys_id='" & reader("field_value") & "') AND good_type_sys_id=(SELECT good_type_sys_id FROM good WHERE good_sys_id='" & reader("field_value") & "') AND (sale_sys_id is NULL OR sale_sys_id=0);"
-                End If
-            End While
-            reader.Close()
+            Dim err As Boolean = False
+            Dim counter As Integer = 0
 
-            'удаляем записи
-            query = dbSQL.ExecuteScalar(query_del)
+            Try
+                Using adapt = dbSQL.GetDataAdapter(query)
+                    Using ds = New DataSet()
+                        adapt.Fill(ds)
+                        If ds.Tables.Count > 0
+                            For Each dr As DataRow In ds.Tables(0).Rows
+                                'Добавляем команду удаления
+                                query_del &= "DELETE FROM " & dr("table_name") & " WHERE " & dr("field_name") & "='" &
+                                             dr("field_value") & "';"
+                                If dr("table_name") = "good" Then
+                                    'Проверяем является ли продажей
+                                    'delsell(reader("field_value"))
+                                    query_del &=
+                                        "UPDATE good SET param_num=param_num-(SELECT param_num FROM good WHERE good_sys_id='" &
+                                        dr("field_value") &
+                                        "') WHERE delivery_sys_id=(SELECT delivery_sys_id FROM good WHERE good_sys_id='" &
+                                        dr("field_value") &
+                                        "') AND good_type_sys_id=(SELECT good_type_sys_id FROM good WHERE good_sys_id='" &
+                                        dr("field_value") & "') AND (sale_sys_id is NULL OR sale_sys_id=0);"
+                                End If
+
+                                If counter = 100
+                                    'удаляем записи
+                                    query = dbSQL.ExecuteScalar(query_del)
+                                    counter = 0
+                                    query_del = ""
+                                Else
+                                    counter += 1
+                                End If
+                            Next
+                        End If
+                    End Using
+                End Using
+            Catch ex As Exception
+                err = True
+            End Try
+
 
             'Чистим таблицу лога импорта
-            query = dbSQL.ExecuteScalar("DELETE FROM import_log")
-            lbl_countlog.Text = ""
-            btn_clearlog.Visible = False
-            btn_delimport.Visible = False
-            lblerror.Text = ""
+            If Not err
+                query = dbSQL.ExecuteScalar("DELETE FROM import_log")
+                lbl_countlog.Text = ""
+                btn_clearlog.Visible = False
+                btn_delimport.Visible = False
+                lblerror.Text = ""
+                lblCodeErr.Text = ""
+            Else
+                lblCodeErr.Text = "Произошла ошибка: импорт не откачен"
+            End If
         End Sub
 
         Function delsell(ByVal sale_id)
             Dim reader As SqlClient.SqlDataReader
             Dim sale_sys_id = dbSQL.ExecuteScalar("SELECT sale_sys_id FROM good WHERE good_sys_id ='" & sale_id & "'")
             If sale_sys_id <> "" Then
-                Dim id_delivery = dbSQL.ExecuteScalar("SELECT delivery_sys_id FROM good WHERE good_sys_id ='" & sale_id & "'")
-                Dim id_good = dbSQL.ExecuteScalar("SELECT good_type_sys_id FROM good WHERE good_sys_id ='" & sale_id & "'")
+                Dim id_delivery =
+                        dbSQL.ExecuteScalar("SELECT delivery_sys_id FROM good WHERE good_sys_id ='" & sale_id & "'")
+                Dim id_good =
+                        dbSQL.ExecuteScalar("SELECT good_type_sys_id FROM good WHERE good_sys_id ='" & sale_id & "'")
                 Dim param_num = dbSQL.ExecuteScalar("SELECT param_num FROM good WHERE good_sys_id ='" & sale_id & "'")
-                query = dbSQL.ExecuteScalar("UPDATE good SET param_num=param_num+" & param_num & " WHERE delivery_sys_id ='" & id_delivery & "' AND good_type_sys_id ='" & id_good & "' AND (sale_sys_id is NULL OR sale_sys_id=0)")
+                query =
+                    dbSQL.ExecuteScalar(
+                        "UPDATE good SET param_num=param_num+" & param_num & " WHERE delivery_sys_id ='" & id_delivery &
+                        "' AND good_type_sys_id ='" & id_good & "' AND (sale_sys_id is NULL OR sale_sys_id=0)")
             End If
             Return True
         End Function
 
+        Private Function NumberRounding(numberStr As String) As String
+            Dim number As Double = Convert.ToDouble(numberStr, Globalization.CultureInfo.InvariantCulture)
+            Return Math.Round(number, 2).ToString().Replace(",", ".")
+        End Function
 
+        Private Function ParseManagerFulName(managerFullName As String) As String()
+            Dim returnMfn = New String() {"", "", ""}
+            Dim mfn As String() = managerFullName.ToString().Split(" "C)
+            If mfn.Length > 2
+                returnMfn(0) = mfn(0).Trim()
+                returnMfn(1) = mfn(1).Trim()
+                returnMfn(2) = mfn(2).Trim()
+            Else If mfn.Length > 1
+                returnMfn(0) = mfn(0).Trim()
+                returnMfn(1) = mfn(1).Trim()
+            Else If mfn.Length > 0
+                returnMfn(0) = mfn(0).Trim()
+            End If
+            Return returnMfn
+        End Function
 
+        Private Function GetFirstLetterOrEmptyString(str As String) As String
+            Dim letter = ""
+            If str.Length > 0
+                letter = str.Substring(0, 1)
+            End If
+            Return letter
+        End Function
     End Class
-
 End Namespace

@@ -653,6 +653,15 @@ Namespace Kasbi
                 Dim s16$ = CType(e.Item.FindControl("txtedtCTO2"), TextBox).Text.Replace("'", """")
                 Dim s17$ = CType(e.Item.FindControl("txtedtRegistrationNumberSkno"), TextBox).Text.Replace("'", """")
                 Dim s18$ = CType(e.Item.FindControl("txtedtSerialNumberSkno"), TextBox).Text.Replace("'", """")
+                Dim s19$ = CType(e.Item.FindControl("txtedtSoftwareVersion"), TextBox).Text.Replace("'", """")
+
+                Dim cmd = New SqlClient.SqlCommand("update_good_warranty")
+                cmd.Parameters.AddWithValue("@pi_good_sys_id", grdGood.DataKeys(e.Item.ItemIndex))
+                cmd.Parameters.AddWithValue("@pi_user_sys_id", CurrentUser.sys_id)
+                cmd.Parameters.AddWithValue("@pi_remove_from_warranty",
+                                            CType(e.Item.FindControl("cbxedtRemoveFromWarranty"), CheckBox).Checked)
+                cmd.CommandType = CommandType.StoredProcedure
+                dbSQL.Execute(cmd)
 
                 'œ–Œ¬≈–»“‹ œŒ«∆≈
                 idDeliveryNew = CInt(s11)
@@ -663,16 +672,16 @@ Namespace Kasbi
                     s1 = Replace(s1, ",", ".")
                     Dim sql$ =
                             String.Format(
-                                "UPDATE good SET good_type_sys_id='{0}',price='{1}',num_cashregister='{2}',num_control_reestr='{3}',num_control_pzu='{4}',num_control_mfp='{5}',num_control_cto='{6}',set_place='{7}',kassir1='{8}',kassir2='{9}',info='{10}',delivery_sys_id={11},sale_sys_id={12},state={13},place_rn_id={14},num_control_cp='{15}',num_control_cto2='{16}',registration_number_skno='{17}',serial_number_skno = '{18}' WHERE good_sys_id={19}",
-                                s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13, s14, s15, s16, s17, s18,
+                                "UPDATE good SET good_type_sys_id='{0}',price='{1}',num_cashregister='{2}',num_control_reestr='{3}',num_control_pzu='{4}',num_control_mfp='{5}',num_control_cto='{6}',set_place='{7}',kassir1='{8}',kassir2='{9}',info='{10}',delivery_sys_id={11},sale_sys_id={12},state={13},place_rn_id={14},num_control_cp='{15}',num_control_cto2='{16}',registration_number_skno='{17}',serial_number_skno = '{18}', software_version = '{19}' WHERE good_sys_id={20}",
+                                s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13, s14, s15, s16, s17, s18, s19,
                                 grdGood.DataKeys(e.Item.ItemIndex))
                     dbSQL.Execute(sql)
                 Catch
                     msgCashregister.Text = "Œ¯Ë·Í‡ Ó·ÌÓ‚ÎÂÌËˇ Á‡ÔËÒË!<br>" & Err.Description & "(" &
                                            String.Format(
-                                               "UPDATE good SET good_type_sys_id='{0}',price='{1}',num_cashregister='{2}',num_control_reestr='{3}',num_control_pzu='{4}',num_control_mfp='{5}',num_control_cto='{6}',set_place='{7}',kassir1='{8}',kassir2='{9}',info='{10}',delivery_sys_id={11},sale_sys_id={12},state={13},place_rn_id={14},num_control_cp='{15}',num_control_cto2='{16}',registration_number_skno='{17}',serial_number_skno = '{18}' WHERE good_sys_id={19}",
+                                               "UPDATE good SET good_type_sys_id='{0}',price='{1}',num_cashregister='{2}',num_control_reestr='{3}',num_control_pzu='{4}',num_control_mfp='{5}',num_control_cto='{6}',set_place='{7}',kassir1='{8}',kassir2='{9}',info='{10}',delivery_sys_id={11},sale_sys_id={12},state={13},place_rn_id={14},num_control_cp='{15}',num_control_cto2='{16}',registration_number_skno='{17}',serial_number_skno = '{18}', software_version = '{19}' WHERE good_sys_id={20}",
                                                s0, s1, s2, s3, s4, s5, s6, s7, s8, s9, s10, s11, s12, s13, s14, s15, s16,
-                                               s17, s18,
+                                               s17, s18, s19,
                                                grdGood.DataKeys(e.Item.ItemIndex)) & ")"
                 End Try
                 grdGood.EditItemIndex = - 1
@@ -815,6 +824,7 @@ Namespace Kasbi
             grdGood.Columns(3).Visible = visibility
             grdGood.Columns(4).Visible = visibility
             grdGood.Columns(5).Visible = visibility
+            grdGood.Columns(9).Visible = visibility
         End Sub
     End Class
 End Namespace

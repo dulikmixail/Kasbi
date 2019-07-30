@@ -216,11 +216,11 @@ Namespace Kasbi
                 End If
                 If repairBadsInfo.Length > 1
                     repairBadsInfo = repairBadsInfo.Substring(0, repairBadsInfo.Length - 2)
-                    repairBadsInfo &= ". "
+                    repairBadsInfo &= "."
                 End If
 
 
-                If minItog > 0 And maxItog > 0
+                If minItog > 0
                     repairBadsSumItog = "от " & minItog &
                                         IIf(showMaxItog, " до " & maxItog, "").ToString() & " руб."
                 Else
@@ -228,7 +228,17 @@ Namespace Kasbi
                 End If
 
                 If isNeadSKNO.Checked
-                    repairBadsInfo &= "Пометка: Необходимо установить СКНО."
+                    repairBadsInfo &= " Пометка: Необходимо установить СКНО."
+                End If
+
+                If isCtoControlDamaged.Checked
+                    repairBadsInfo &= " Средства контроля нарушены!"
+                    cmd = New SqlClient.SqlCommand("update_good_warranty")
+                    cmd.Parameters.AddWithValue("@pi_good_sys_id", icash)
+                    cmd.Parameters.AddWithValue("@pi_user_sys_id", CurrentUser.sys_id)
+                    cmd.Parameters.AddWithValue("@pi_remove_from_warranty", True)
+                    cmd.CommandType = CommandType.StoredProcedure
+                    dbSQL.Execute(cmd)
                 End If
 
                 cmd = New SqlClient.SqlCommand("new_repair_and_repair_bads_info")
@@ -271,9 +281,9 @@ Namespace Kasbi
 
                 cmd.Parameters.AddWithValue("@pi_repair_bads_list", repairBadsList)
                 cmd.Parameters.AddWithValue("@pi_nead_SKNO", isNeadSKNO.Checked)
-
                 cmd.Parameters.AddWithValue("@pi_reception_date", Now)
                 cmd.Parameters.AddWithValue("@pi_receptionist_sys_id", CurrentUser.sys_id)
+                cmd.Parameters.AddWithValue("@pi_is_cto_control_damaged", isCtoControlDamaged.Checked)
 
                 cmd.CommandType = CommandType.StoredProcedure
                 dbSQL.Execute(cmd)

@@ -170,9 +170,6 @@ Namespace Kasbi
             tr = Nothing
             Return True
         End Function
-
-
-
     End Class
 
 End Namespace

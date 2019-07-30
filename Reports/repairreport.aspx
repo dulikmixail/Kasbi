@@ -164,7 +164,7 @@
                     DataBinder.Eval(Container.DataItem, "marka_cp_in"), "")%>
             </ItemTemplate>
         </asp:TemplateColumn>
-        <asp:TemplateColumn HeaderText="Клиент">
+        <asp:TemplateColumn HeaderText="Палательщик за ремонт">
             <ItemTemplate>
                 <%#
                 DataBinder.Eval(Container.DataItem, "customer_name")%>
@@ -210,6 +210,12 @@
             <ItemTemplate>
                 <%#
                 DataBinder.Eval(Container.DataItem, "details")%>
+            </ItemTemplate>
+        </asp:TemplateColumn>
+        <asp:TemplateColumn HeaderText="Доп. информация">
+            <ItemTemplate>
+                <%#
+                                  DataBinder.Eval(Container.DataItem, "repair_info")%>
             </ItemTemplate>
         </asp:TemplateColumn>
         <asp:TemplateColumn HeaderText="Мастер">

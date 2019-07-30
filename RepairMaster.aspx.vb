@@ -69,7 +69,7 @@ Namespace Kasbi
                 cmd.CommandType = CommandType.StoredProcedure
                 dbSQL.Execute(cmd)
 
-                Response.Redirect(GetAbsoluteUrl("~/RepairMaster.aspx"))
+                LoadActiveRepair()
             ElseIf type = "activaterepair" Then
                 Dim currenState = _serviceGood.GetStateRepair(iCash)
                 Select Case currenState
@@ -181,8 +181,8 @@ Namespace Kasbi
                         "SELECT top 1 sys_id FROM cash_history WHERE good_sys_id='" & iCash &
                         "' AND state='5' ORDER BY sys_id DESC")
                 Response.Redirect(GetAbsoluteUrl("~/RepairNew.aspx?cash=" & iCash & "&hc=" & query))
-            ElseIf type = "" And iCash <> "" Then
-
+            ElseIf type = "load_active_repair" Then
+                LoadActiveRepair()
             End If
 
             If Not IsPostBack Then
@@ -597,15 +597,18 @@ Namespace Kasbi
 
         Protected Sub lnkFindRepair_Click(ByVal sender As Object, ByVal e As System.EventArgs) _
             Handles lnkFindRepair.Click
-            Dim filter
+            LoadActiveRepair()
+        End Sub
 
-            filter = " where good.inrepair='1' "
+        Private Sub LoadActiveRepair() 
+            Const filter = " where good.inrepair='1' "
             Session("repair-filter") = filter
 
             grdRepair.PageSize = 10
             grdRepair.CurrentPageIndex = 0
             bind(filter)
         End Sub
+
 
         Private Function FindLastNotCloseRepairIdWithNeadSkno(goodId As Object) As Integer
             Dim adapt = dbSQL.GetDataAdapter(

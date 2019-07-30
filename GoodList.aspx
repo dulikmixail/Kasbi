@@ -282,10 +282,11 @@
         <asp:Label ID="lblGoodDelivery" runat="server" Width="120px"></asp:Label>
     </EditItemTemplate>
 </asp:TemplateColumn>
-<asp:TemplateColumn HeaderText="Товар">
+<asp:TemplateColumn HeaderText="Товар и Версия ПО">
     <ItemTemplate>
         <asp:Label ID="lbledtGoodName" runat="server" Text='<%#
-                DataBinder.Eval(Container, "DataItem.good_name")%>'>
+                DataBinder.Eval(Container, "DataItem.good_name") & " " &
+                DataBinder.Eval(Container, "DataItem.software_version")%>'>
         </asp:Label>
     </ItemTemplate>
     <EditItemTemplate>
@@ -294,20 +295,11 @@
         </p>
         <asp:DropDownList ID="lstGoodType" runat="server" Width="180px">
         </asp:DropDownList>
-    </EditItemTemplate>
-</asp:TemplateColumn>
-<asp:TemplateColumn HeaderText="Версия ПО">
-    <ItemTemplate>
-        <asp:Label ID="lbledtSoftwareVersion" runat="server" Text='<%#
-                                  DataBinder.Eval(Container, "DataItem.software_version")%>'>
-        </asp:Label>
-    </ItemTemplate>
-    <EditItemTemplate>
         <p class="SubTitleEditbox">
             Версия ПО:
         </p>
         <asp:TextBox ID="txtedtSoftwareVersion" runat="server" Width="110px" Text='<%#
-                                  DataBinder.Eval(Container, "DataItem.software_version")%>'>
+                DataBinder.Eval(Container, "DataItem.software_version")%>'>
         </asp:TextBox>
     </EditItemTemplate>
 </asp:TemplateColumn>
@@ -414,38 +406,14 @@
         </asp:Panel>
     </EditItemTemplate>
 </asp:TemplateColumn>
-<asp:TemplateColumn SortExpression="num_control_reestr" HeaderText="№ СК СКНО.">
+<asp:TemplateColumn SortExpression="num_control_reestr" HeaderText="№ СК ЦТО и СК СКНО">
     <HeaderStyle Font-Underline="True"></HeaderStyle>
     <ItemTemplate>
         <asp:Label ID="lbledtControlSKNO" runat="server" Text='<%#
-                DataBinder.Eval(Container, "DataItem.registration_number_skno") & "<br>" &
-                DataBinder.Eval(Container, "DataItem.serial_number_skno")%>'>
-        </asp:Label>
-    </ItemTemplate>
-    <EditItemTemplate>
-        <p class="SubTitleEditbox">
-            Учетный номер СКНО:
-        </p>
-        <asp:TextBox ID="txtedtRegistrationNumberSkno" runat="server" Width="100%" BorderWidth="1px" Text='<%#
-                DataBinder.Eval(Container, "DataItem.registration_number_skno")%>'
-                     BorderStyle="Solid">
-        </asp:TextBox><br>
-        <p class="SubTitleEditbox">
-            Заводской номер СКНО:
-        </p>
-        <asp:TextBox ID="txtedtSerialNumberSkno" runat="server" Width="100%" BorderWidth="1px" Text='<%#
-                DataBinder.Eval(Container, "DataItem.serial_number_skno")%>'
-                     BorderStyle="Solid">
-        </asp:TextBox><br>
-    </EditItemTemplate>
-</asp:TemplateColumn>
-
-<asp:TemplateColumn SortExpression="num_control_cto" HeaderText="№ СК ЦТО">
-    <HeaderStyle Font-Underline="True"></HeaderStyle>
-    <ItemTemplate>
-        <asp:Label ID="lbledtCTO" runat="server" Text='<%#
                 DataBinder.Eval(Container, "DataItem.num_control_cto") & "<br>" &
-                DataBinder.Eval(Container, "DataItem.num_control_cto2")%>'>
+                DataBinder.Eval(Container, "DataItem.num_control_cto2") & "<br>" &
+                DataBinder.Eval(Container, "DataItem.registration_number_skno") & "<br>" &
+                DataBinder.Eval(Container, "DataItem.serial_number_skno")%> '>
         </asp:Label>
     </ItemTemplate>
     <EditItemTemplate>
@@ -465,8 +433,40 @@
                          BorderStyle="Solid">
             </asp:TextBox>
         </asp:Panel>
+        <p class="SubTitleEditbox">
+            Учетный номер СКНО:
+        </p>
+        <asp:TextBox ID="txtedtRegistrationNumberSkno" runat="server" Width="100%" BorderWidth="1px" Text='<%#
+                DataBinder.Eval(Container, "DataItem.registration_number_skno")%>'
+                     BorderStyle="Solid">
+        </asp:TextBox><br>
+        <p class="SubTitleEditbox">
+            Заводской номер СКНО:
+        </p>
+        <asp:TextBox ID="txtedtSerialNumberSkno" runat="server" Width="100%" BorderWidth="1px" Text='<%#
+                DataBinder.Eval(Container, "DataItem.serial_number_skno")%>'
+                     BorderStyle="Solid">
+        </asp:TextBox>
     </EditItemTemplate>
 </asp:TemplateColumn>
+
+<asp:TemplateColumn SortExpression="removed_from_warranty" HeaderText="Cнят с гарантии" ItemStyle-HorizontalAlign="Center">
+    <HeaderStyle Font-Underline="True"></HeaderStyle>
+    <ItemTemplate>
+        <asp:Label ID="lbledtRemoveFromWarranty" runat="server" Text='<%#
+                IIf(CBool(DataBinder.Eval(Container, "DataItem.removed_from_warranty")), "Да", "Нет") & "<br>"%>'>
+        </asp:Label>
+        <asp:Label ID="lbledtRemoveFromWarrantyUserEditedNameWithDate" runat="server" Font-Size="X-Small" Text='<%#
+                                  DataBinder.Eval(Container, "DataItem.warranty_modified_user_name") & "<br>" & 
+                                  DataBinder.Eval(Container, "DataItem.date_of_withdrawal_from_warranty")%>'>
+        </asp:Label>
+    </ItemTemplate>
+    <EditItemTemplate>
+        <asp:CheckBox ID="cbxedtRemoveFromWarranty" runat="server" Checked='<%#
+                CBool(DataBinder.Eval(Container, "DataItem.removed_from_warranty"))%>'/>
+    </EditItemTemplate>
+</asp:TemplateColumn>
+
 <asp:TemplateColumn SortExpression="price" HeaderText="Цена">
     <HeaderStyle Font-Underline="True"></HeaderStyle>
     <ItemTemplate>

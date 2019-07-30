@@ -152,6 +152,12 @@ CodeFile="SetRepair.aspx.vb" %>
             </td>
         </tr>
         <tr>
+            <td class="SectionRowLabel" align="left">Повреждено средство конроля (СК):</td>
+            <td>
+                <asp:CheckBox runat="server" ID="isCtoControlDamaged" Checked="False"/>
+            </td>
+        </tr>
+        <tr>
             <td class="SectionRowLabel" align="left">Документы:</td>
             <td class="SectionRowLabel">
                 <asp:HyperLink runat="server" ID="lnkDefectAkt" Target="_blank" Text="Акт о принятии в ремонт" Visible="False"></asp:HyperLink>

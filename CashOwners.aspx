@@ -67,7 +67,9 @@
                             <td colspan="2" class="cash">
                                 <asp:Label ID="lblCaptionGarantia" runat="server">Гарантийный срок :</asp:Label></td>
                             <td class="cashDetail">
-                                <asp:Label ID="lblGarantia" runat="server" ForeColor="Red"></asp:Label></td>
+                                <asp:Label ID="lblGarantia" runat="server" ForeColor="Red"></asp:Label>
+                                <asp:Label ID="lblRemovedFromWarranty" runat="server" ForeColor="Red"></asp:Label>
+                            </td>
                         </tr>
                         <tr>
                             <td colspan="2" class="cash">

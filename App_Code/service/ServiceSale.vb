@@ -39,7 +39,7 @@ Namespace Service
             Dim reader As SqlDataReader = Nothing
             Dim dt As DataTable = New DataTable()
             Try
-                reader = dbSQL.GetReader("select top 1 s.* from sale s inner join customer c on s.customer_sys_id=c.customer_sys_id where s.customer_sys_id= " & idCustomer & " and s.dogovor = 1 and c.unn=c.dogovor order by sale_sys_id desc")
+                reader = dbSQL.GetReader("select top 1 s.* from sale s inner join customer c on s.customer_sys_id=c.customer_sys_id where s.customer_sys_id= " & idCustomer & " and s.dogovor > '0' and c.unn=c.dogovor order by sale_sys_id desc")
                 If Not (reader.HasRows) Then
                     exeption.AddTextToList("Не найдена первая продажа")
                 End If

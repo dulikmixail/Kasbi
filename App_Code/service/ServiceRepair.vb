@@ -1,43 +1,43 @@
 ﻿Imports System.Data.SqlClient
-Imports Kasbi
-Imports Microsoft.VisualBasic
-Imports Service
 
 Namespace Service
     Public Class ServiceRepair
         Inherits ServiceExeption
         Implements IService
 
-        Dim ReadOnly _sharedDbSql As MSSqlDB = ServiceDbConnector.GetConnection()
-
         Const SoftwareVersionsPattern As String = "[v,V][0-9]"
 
         Public Function GetNewAktNumberByCashHistoryId(cashHistoryId As Integer) As String
-            Dim goodSysId As Integer =
-                    Convert.ToInt32(
-                        _sharedDbSql.ExecuteScalar(
-                            "SELECT good_sys_id FROM cash_history WHERE sys_id = " & cashHistoryId))
-            Return GetNewAktNumberByGoodId(goodSysId)
+            Using con = ServiceDbConnector.GetSharedConnection()
+                Dim goodSysId As Integer =
+                        Convert.ToInt32(
+                            con.ExecuteScalar(
+                                "SELECT good_sys_id FROM cash_history WHERE sys_id = " & cashHistoryId))
+
+                Return GetNewAktNumberByGoodId(goodSysId)
+            End Using
         End Function
 
         Public Function GetNewAktNumberByGoodId(goodId As Integer) As String
-            Dim cmd As SqlClient.SqlCommand
-            Dim adapt As SqlClient.SqlDataAdapter
-            Dim ds As DataSet
-
             'новый номер договора
             Try
-                cmd = New SqlClient.SqlCommand("get_next_repair_akt")
-                cmd.Parameters.AddWithValue("@good_sys_id", goodId)
-                cmd.CommandType = CommandType.StoredProcedure
-                adapt = _sharedDbSql.GetDataAdapter(cmd)
-                ds = New DataSet
-                adapt.Fill(ds)
+                Using con = ServiceDbConnector.GetSharedConnection()
+                    Using ds = New DataSet
+                        Using cmd = New SqlCommand("get_next_repair_akt")
+                            cmd.Parameters.AddWithValue("@good_sys_id", goodId)
+                            cmd.CommandType = CommandType.StoredProcedure
+                            Using adapt = con.GetDataAdapter(cmd)
 
-                Dim numRepairs As Integer = Convert.ToInt32(ds.Tables(0).Rows(0).Item("num_repairs")) + 1
-                Dim numCashregister As String = Trim(ds.Tables(0).Rows(0).Item("num_cashregister").ToString())
+                                adapt.Fill(ds)
+                            End Using
+                        End Using
 
-                Return numCashregister & "/" & Date.Now.Month & "/" & numRepairs
+                        Dim numRepairs As Integer = Convert.ToInt32(ds.Tables(0).Rows(0).Item("num_repairs")) + 1
+                        Dim numCashregister As String = Trim(ds.Tables(0).Rows(0).Item("num_cashregister").ToString())
+
+                        Return numCashregister & "/" & Date.Now.Month & "/" & numRepairs
+                    End Using
+                End Using
             Catch
                 Return ""
             End Try
@@ -48,19 +48,24 @@ Namespace Service
         End Function
 
         Public Function CreateCopyOfRepairFromRepair(copyCashHistoryId As Integer) As Integer
-            Dim param As SqlClient.SqlParameter
-            Dim cmd = New SqlCommand("create_copy_of_repair_from_repair")
-            cmd.Parameters.AddWithValue("@pi_hc_sys_id", copyCashHistoryId)
-            cmd.Parameters.AddWithValue("@pi_executor", CurrentUser.sys_id)
-            cmd.Parameters.AddWithValue("@pi_akt", GetNewAktNumberByCashHistoryId(copyCashHistoryId))
-            cmd.CommandType = CommandType.StoredProcedure
-            param = New SqlClient.SqlParameter
-            param.Direction = ParameterDirection.Output
-            param.ParameterName = "@po_insert_hc_sys_id"
-            param.SqlDbType = SqlDbType.Int
-            cmd.Parameters.Add(param)
-            dbSQL.ExecuteScalar(cmd)
-            Dim copyRepairId As Integer = Convert.ToInt32(cmd.Parameters("@po_insert_hc_sys_id").Value)
+            Dim param As SqlParameter
+            Dim copyRepairId As Integer
+            Using con = ServiceDbConnector.GetSharedConnection()
+                Using cmd = New SqlCommand("create_copy_of_repair_from_repair")
+                    cmd.Parameters.AddWithValue("@pi_hc_sys_id", copyCashHistoryId)
+                    cmd.Parameters.AddWithValue("@pi_executor", CurrentUser.sys_id)
+                    cmd.Parameters.AddWithValue("@pi_akt", GetNewAktNumberByCashHistoryId(copyCashHistoryId))
+                    cmd.CommandType = CommandType.StoredProcedure
+                    param = New SqlParameter
+                    param.Direction = ParameterDirection.Output
+                    param.ParameterName = "@po_insert_hc_sys_id"
+                    param.SqlDbType = SqlDbType.Int
+                    cmd.Parameters.Add(param)
+                    con.ExecuteScalar(cmd)
+                    copyRepairId = Convert.ToInt32(cmd.Parameters("@po_insert_hc_sys_id").Value)
+                End Using
+            End Using
+
             Return copyRepairId
         End Function
 
@@ -69,13 +74,13 @@ Namespace Service
         End Function
 
         Public Function CreateCopyOfRepairFromRepairWithNewRepairHistory(copyCashHistoryId As Integer) As Integer
-            Dim param As SqlClient.SqlParameter
+            Dim param As SqlParameter
             Dim cmd = New SqlCommand("create_copy_of_repair_from_repair_with_new_repair_history")
             cmd.Parameters.AddWithValue("@pi_hc_sys_id", copyCashHistoryId)
             cmd.Parameters.AddWithValue("@pi_executor", CurrentUser.sys_id)
             cmd.Parameters.AddWithValue("@pi_akt", GetNewAktNumberByCashHistoryId(copyCashHistoryId))
             cmd.CommandType = CommandType.StoredProcedure
-            param = New SqlClient.SqlParameter
+            param = New SqlParameter
             param.Direction = ParameterDirection.Output
             param.ParameterName = "@po_insert_hc_sys_id"
             param.SqlDbType = SqlDbType.Int
@@ -138,7 +143,6 @@ Namespace Service
         Public Function GetDetailListWithSoftwareVersion() As DataSet
             Dim ds As DataSet = New DataSet()
             Dim adapt As SqlDataAdapter = dbSQL.GetDataAdapter("SELECT * FROM details WHERE is_detail = 0")
-            Const tableName As String = "details"
             adapt.Fill(ds)
             Dim returnDs As DataSet = ds.Clone()
             If ds.Tables.Count > 0

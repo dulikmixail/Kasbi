@@ -9,45 +9,50 @@ Namespace Service
         Implements IService
 
         Const ClearString$ = "-------"
-        Dim ReadOnly _sharedDbSql As MSSqlDB = ServiceDbConnector.GetConnection()
-
         Public Function AddCustomerTelNotice(customerSysId As Integer, tel As String,
                                              Optional customerTelNoticeType As Integer = 1) As Boolean
             If customerSysId < 1
                 Return False
             End If
-            Dim cmd = New SqlCommand("set_customer_tel_notice")
-            cmd.CommandType = CommandType.StoredProcedure
-            cmd.Parameters.AddWithValue("@pi_customer_sys_id", customerSysId)
-            cmd.Parameters.AddWithValue("@pi_tel_notice", tel)
-            If customerTelNoticeType <> 1
-                cmd.Parameters.AddWithValue("@pi_customer_tel_notice_type", customerTelNoticeType)
-            End If
-            Return Convert.ToBoolean(_sharedDbSql.Execute(cmd))
+            Using con = ServiceDbConnector.GetSharedConnection()
+                Using cmd = New SqlCommand("set_customer_tel_notice")
+                    cmd.CommandType = CommandType.StoredProcedure
+                    cmd.Parameters.AddWithValue("@pi_customer_sys_id", customerSysId)
+                    cmd.Parameters.AddWithValue("@pi_tel_notice", tel)
+                    If customerTelNoticeType <> 1
+                        cmd.Parameters.AddWithValue("@pi_customer_tel_notice_type", customerTelNoticeType)
+                    End If
+                    Return Convert.ToBoolean(con.Execute(cmd))
+                End Using
+            End Using
         End Function
 
         Public Sub LoadTelephoneNotice(ByRef lstCustomers As ListBox, ByRef lstTelephoneNotice As DropDownList,
                                        ByRef lblTelephoneNotice As Label)
-            Dim cmd As SqlCommand
-            Dim adapt As SqlClient.SqlDataAdapter
-            Dim ds As DataSet
             Dim cutomerSysId As Integer
 
             If lstCustomers.SelectedItem.Text <> ClearString
                 cutomerSysId = Convert.ToInt32(lstCustomers.SelectedValue)
-                cmd = New SqlClient.SqlCommand("get_customer_tel_notice")
-                cmd.CommandType = CommandType.StoredProcedure
-                cmd.Parameters.AddWithValue("@pi_customer_sys_id", cutomerSysId)
-                adapt = _sharedDbSql.GetDataAdapter(cmd)
-                ds = New DataSet
-                adapt.Fill(ds)
-                lstTelephoneNotice.DataSource = ds
-                lstTelephoneNotice.DataValueField = "customer_tel_notice_sys_id"
-                lstTelephoneNotice.DataTextField = "tel_notice"
-                lstTelephoneNotice.DataBind()
-                lstTelephoneNotice.Items.Insert(0, New ListItem(ClearString, "0"))
-                lstTelephoneNotice.Visible = True
-                lblTelephoneNotice.Visible = True
+
+                Using ds = New DataSet
+                    Using cmd = New SqlClient.SqlCommand("get_customer_tel_notice")
+                        cmd.CommandType = CommandType.StoredProcedure
+                        cmd.Parameters.AddWithValue("@pi_customer_sys_id", cutomerSysId)
+                        Using con = ServiceDbConnector.GetSharedConnection()
+                            Using adapt = con.GetDataAdapter(cmd)
+                                adapt.Fill(ds)
+                            End Using
+                        End Using
+                    End Using
+                    lstTelephoneNotice.DataSource = ds
+
+                    lstTelephoneNotice.DataValueField = "customer_tel_notice_sys_id"
+                    lstTelephoneNotice.DataTextField = "tel_notice"
+                    lstTelephoneNotice.DataBind()
+                    lstTelephoneNotice.Items.Insert(0, New ListItem(ClearString, "0"))
+                    lstTelephoneNotice.Visible = True
+                    lblTelephoneNotice.Visible = True
+                End Using
             Else
                 lstTelephoneNotice.Items.Clear()
                 lstTelephoneNotice.Items.Insert(0, New ListItem(ClearString, "0"))
@@ -64,10 +69,8 @@ Namespace Service
 
         Public Sub LoadCustomerList(customerId As String, ByRef lstCustomers As ListBox, ByRef lblCustInfo As Label,
                                     ByRef lblErrors As Label, Optional ByVal sRequest As String = "")
-            Dim adapt As SqlClient.SqlDataAdapter
-            Dim cmd As SqlClient.SqlCommand
-            Dim ds As DataSet
             Dim s$
+
             Try
                 If sRequest <> "" Then
                     s = sRequest
@@ -76,17 +79,19 @@ Namespace Service
                 End If
 
                 If Not String.IsNullOrEmpty(s)
-                    cmd = New SqlClient.SqlCommand("get_customer_for_support")
-                    cmd.Parameters.AddWithValue("@pi_filter", s)
-                    cmd.CommandType = CommandType.StoredProcedure
-                    adapt = dbSQL.GetDataAdapter(cmd)
-                    ds = New DataSet
-                    adapt.Fill(ds)
-
-                    lstCustomers.DataSource = ds.Tables(0).DefaultView
-                    lstCustomers.DataTextField = "customer_name"
-                    lstCustomers.DataValueField = "customer_sys_id"
-                    lstCustomers.DataBind()
+                    Using ds = New DataSet
+                        Using cmd = New SqlClient.SqlCommand("get_customer_for_support")
+                            cmd.Parameters.AddWithValue("@pi_filter", s)
+                            cmd.CommandType = CommandType.StoredProcedure
+                            Using adapt = dbSQL.GetDataAdapter(cmd)
+                                adapt.Fill(ds)
+                            End Using
+                        End Using
+                        lstCustomers.DataSource = ds.Tables(0).DefaultView
+                        lstCustomers.DataTextField = "customer_name"
+                        lstCustomers.DataValueField = "customer_sys_id"
+                        lstCustomers.DataBind()
+                    End Using
                 End If
                 lstCustomers.Items.Insert(0, New ListItem(ClearString, "0"))
 
@@ -109,55 +114,56 @@ Namespace Service
 
         Public Function GetInfo(ByVal cust As Integer, ByRef lstCustomers As ListBox, ByRef lblErrors As Label,
                                 Optional ByVal flag As Boolean = True) As String
-            Dim ds As DataSet = New DataSet()
             Dim s$
             s = ""
             If cust = 0 Then
                 lstCustomers.SelectedIndex = 0
                 Return ""
             End If
-            ds = GetCutomerInfo(cust)
+
             Try
-                If ds.Tables(0).Rows.Count > 0 Then
-                    With ds.Tables(0).DefaultView(0)
-                        Dim sTmp$
+                Using ds = GetCutomerInfo(cust)
+                    If ds.Tables(0).Rows.Count > 0 Then
+                        With ds.Tables(0).DefaultView(0)
+                            Dim sTmp$
 
-                        sTmp = .Item("customer_name").ToString()
-                        If sTmp.Length > 0 Then
-                            s = s & sTmp & "<br>"
-                        End If
-
-                        sTmp = .Item("unn").ToString()
-                        If sTmp.Length > 0 Then
-                            s = s & "УНП: " & sTmp & "<br>"
-                        End If
-
-                        sTmp = .Item("registration").ToString()
-                        If sTmp.Length > 0 Then
-                            s = s & sTmp & "<br>"
-                        End If
-
-                        sTmp = "по " & .Item("tax_inspection").ToString()
-                        If s.Length > 0 Then
-                            s = s & sTmp & "<br>"
-                        End If
-
-                        sTmp = .Item("customer_address").ToString()
-                        If sTmp.Length > 0 Then
-                            s = s & sTmp & "&nbsp;&nbsp;"
-                            sTmp = .Item("customer_phone").ToString()
+                            sTmp = .Item("customer_name").ToString()
                             If sTmp.Length > 0 Then
-                                s = s & sTmp
+                                s = s & sTmp & "<br>"
                             End If
-                            s = s & "<br>"
-                        End If
 
-                        sTmp = .Item("bank").ToString()
-                        If sTmp.Length > 0 Then
-                            s = s & sTmp & "<br>"
-                        End If
-                    End With
-                End If
+                            sTmp = .Item("unn").ToString()
+                            If sTmp.Length > 0 Then
+                                s = s & "УНП: " & sTmp & "<br>"
+                            End If
+
+                            sTmp = .Item("registration").ToString()
+                            If sTmp.Length > 0 Then
+                                s = s & sTmp & "<br>"
+                            End If
+
+                            sTmp = "по " & .Item("tax_inspection").ToString()
+                            If s.Length > 0 Then
+                                s = s & sTmp & "<br>"
+                            End If
+
+                            sTmp = .Item("customer_address").ToString()
+                            If sTmp.Length > 0 Then
+                                s = s & sTmp & "&nbsp;&nbsp;"
+                                sTmp = .Item("customer_phone").ToString()
+                                If sTmp.Length > 0 Then
+                                    s = s & sTmp
+                                End If
+                                s = s & "<br>"
+                            End If
+
+                            sTmp = .Item("bank").ToString()
+                            If sTmp.Length > 0 Then
+                                s = s & sTmp & "<br>"
+                            End If
+                        End With
+                    End If
+                End Using
             Catch
                 lblErrors.Text = Err.Description
             End Try
@@ -165,19 +171,17 @@ Namespace Service
         End Function
 
         Public Function GetCutomerInfo(customerId As Integer) As DataSet
-            Dim adapt As SqlClient.SqlDataAdapter
-            Dim cmd As SqlClient.SqlCommand
-            Dim ds As DataSet = New DataSet()
-            Try
-                cmd = New SqlClient.SqlCommand("get_customer_info")
-                cmd.CommandType = CommandType.StoredProcedure
-                cmd.Parameters.AddWithValue("@pi_customer_sys_id", customerId)
-                adapt = dbSQL.GetDataAdapter(cmd)
-                ds = New DataSet
-                adapt.Fill(ds)
-            Catch
-            End Try
-            Return ds
+            Using ds = New DataSet
+                Using cmd = New SqlClient.SqlCommand("get_customer_info")
+                    cmd.CommandType = CommandType.StoredProcedure
+                    cmd.Parameters.AddWithValue("@pi_customer_sys_id", customerId)
+                    Using adapt = dbSQL.GetDataAdapter(cmd)
+                        adapt.Fill(ds)
+                    End Using
+                End Using
+
+                Return ds
+            End Using
         End Function
 
         'Override Method
@@ -194,12 +198,20 @@ Namespace Service
                 If ds.Tables(0).Rows.Count > 0
                     dr = ds.Tables(0).Rows(0)
                     customerDetails = String.Concat(dr("customer_name"), ", УНП: ", dr("unn"),
-                                                    IIf(String.IsNullOrEmpty(ServiceDbHelper.FixNullAndEmpty(dr, "okpo")), "",
+                                                    IIf(
+                                                        String.IsNullOrEmpty(ServiceDbHelper.FixNullAndEmpty(dr, "okpo")),
+                                                        "",
                                                         String.Concat(", ОКПО: ", dr("okpo"))),
                                                     vbCrLf, dr("customer_address"),
-                                                    IIf(String.IsNullOrEmpty(ServiceDbHelper.FixNullAndEmpty(dr, "customer_phone")), "",
+                                                    IIf(
+                                                        String.IsNullOrEmpty(ServiceDbHelper.FixNullAndEmpty(dr,
+                                                                                                             "customer_phone")),
+                                                        "",
                                                         String.Concat(", Тел/ф.: ", dr("customer_phone"))),
-                                                    IIf(String.IsNullOrEmpty(ServiceDbHelper.FixNullAndEmpty(dr, "emails")), "",
+                                                    IIf(
+                                                        String.IsNullOrEmpty(ServiceDbHelper.FixNullAndEmpty(dr,
+                                                                                                             "emails")),
+                                                        "",
                                                         String.Concat(", Email: ", dr("emails"))),
                                                     vbCrLf, dr("bank"))
                 End If

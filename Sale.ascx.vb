@@ -3,10 +3,8 @@ Imports System.Collections
 
 
 Namespace Kasbi
-
-
-Partial  Class Sale
-    Inherits System.Web.UI.UserControl
+    Partial Class Sale
+        Inherits System.Web.UI.UserControl
         Dim dTotal As Double
         Public iSale As Integer
         Public iCustomer As Integer
@@ -34,17 +32,18 @@ Partial  Class Sale
 #Region " Web Form Designer Generated Code "
 
         'This call is required by the Web Form Designer.
-        <System.Diagnostics.DebuggerStepThrough()> Private Sub InitializeComponent()
+        <System.Diagnostics.DebuggerStepThrough()>
+        Private Sub InitializeComponent()
+        End Sub
 
-    End Sub
-
-    Private Sub Page_Init(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Init
-        'CODEGEN: This method call is required by the Web Form Designer
-        'Do not modify it using the code editor.
-        InitializeComponent()
-    End Sub
+        Private Sub Page_Init(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Init
+            'CODEGEN: This method call is required by the Web Form Designer
+            'Do not modify it using the code editor.
+            InitializeComponent()
+        End Sub
 
 #End Region
+
         Dim i%
         Dim iCashCount As New SortedList
         Private currentPage As PageBase
@@ -99,7 +98,9 @@ Partial  Class Sale
             End Try
         End Sub
 
-        Private Sub grd_ItemDataBound(ByVal sender As System.Object, ByVal e As System.Web.UI.WebControls.DataGridItemEventArgs) Handles grdSale.ItemDataBound
+        Private Sub grd_ItemDataBound(ByVal sender As System.Object,
+                                      ByVal e As System.Web.UI.WebControls.DataGridItemEventArgs) _
+            Handles grdSale.ItemDataBound
 
             If e.Item.ItemType = ListItemType.Item Or e.Item.ItemType = ListItemType.AlternatingItem Then
                 Dim d As Double
@@ -114,7 +115,7 @@ Partial  Class Sale
                 add_new_goods.PostBackUrl = "NewGoodTO.aspx?c=" & iCustomer & "&s=" & iSale
 
                 If Not (IsDBNull(e.Item.DataItem("price")) Or IsDBNull(e.Item.DataItem("quantity"))) Then
-                    d = CDbl(e.Item.DataItem("price")) * CDbl(e.Item.DataItem("quantity"))
+                    d = CDbl(e.Item.DataItem("price"))*CDbl(e.Item.DataItem("quantity"))
                     CType(e.Item.FindControl("lblCost"), Label).Text = CStr(d)
                     dTotal = dTotal + d
                 End If
@@ -128,9 +129,15 @@ Partial  Class Sale
                         iCashCount.Item(e.Item.DataItem("good_name")) = CStr(iC)
                     End If
 
-                    CType(e.Item.FindControl("lnkAkt_Pokazaniy"), HyperLink).NavigateUrl = currentPage.GetAbsoluteUrl("~/documents.aspx?c=" & iCustomer & "&s=" & iSale & "&t=4&n=" & e.Item.ItemIndex)
-                    CType(e.Item.FindControl("lnkTeh_Zaklyuchenie"), HyperLink).NavigateUrl = currentPage.GetAbsoluteUrl("~/documents.aspx?c=" & iCustomer & "&s=" & iSale & "&t=8&n=" & e.Item.ItemIndex)
-                    CType(e.Item.FindControl("lnkUdostoverenie_Kassira"), HyperLink).NavigateUrl = currentPage.GetAbsoluteUrl("~/documents.aspx?c=" & iCustomer & "&s=" & iSale & "&t=9&n=" & e.Item.ItemIndex)
+                    CType(e.Item.FindControl("lnkAkt_Pokazaniy"), HyperLink).NavigateUrl =
+                        currentPage.GetAbsoluteUrl(
+                            "~/documents.aspx?c=" & iCustomer & "&s=" & iSale & "&t=4&n=" & e.Item.ItemIndex)
+                    CType(e.Item.FindControl("lnkTeh_Zaklyuchenie"), HyperLink).NavigateUrl =
+                        currentPage.GetAbsoluteUrl(
+                            "~/documents.aspx?c=" & iCustomer & "&s=" & iSale & "&t=8&n=" & e.Item.ItemIndex)
+                    CType(e.Item.FindControl("lnkUdostoverenie_Kassira"), HyperLink).NavigateUrl =
+                        currentPage.GetAbsoluteUrl(
+                            "~/documents.aspx?c=" & iCustomer & "&s=" & iSale & "&t=9&n=" & e.Item.ItemIndex)
                 Else
                     CType(e.Item.FindControl("lnkAkt_Pokazaniy"), HyperLink).Visible = False
                     CType(e.Item.FindControl("lnkTeh_Zaklyuchenie"), HyperLink).Visible = False
@@ -140,7 +147,8 @@ Partial  Class Sale
                 i = i + 1
                 CType(e.Item.FindControl("lblNumGood"), Label).Text = i
                 ' Подтверждение удаления записи
-                CType(e.Item.FindControl("cmdDelete"), ImageButton).Attributes.Add("onclick", "if (confirm('Вы действительно хотите удалить товар ?')){return confirm('Отменить удаление невозможно!!! Продолжить удаление?');}else {return false};")
+                CType(e.Item.FindControl("cmdDelete"), ImageButton).Attributes.Add("onclick",
+                                                                                   "if (confirm('Вы действительно хотите удалить товар ?')){return confirm('Отменить удаление невозможно!!! Продолжить удаление?');}else {return false};")
                 If currentPage.CurrentUser.is_admin = True Then
                     CType(e.Item.FindControl("cmdDelete"), ImageButton).Visible = True
                 Else
@@ -150,7 +158,7 @@ Partial  Class Sale
                 Dim d As Double
 
                 If Not (IsDBNull(e.Item.DataItem("price")) Or IsDBNull(e.Item.DataItem("quantity"))) Then
-                    d = CDbl(e.Item.DataItem("price")) * CDbl(e.Item.DataItem("quantity"))
+                    d = CDbl(e.Item.DataItem("price"))*CDbl(e.Item.DataItem("quantity"))
                     CType(e.Item.FindControl("lblCostEdit"), Label).Text = CStr(d)
                     dTotal = dTotal + d
                 End If
@@ -175,7 +183,6 @@ Partial  Class Sale
                 Next
                 CType(e.Item.FindControl("lblTotalCountByCash"), Label).Text = s
             End If
-
         End Sub
 
         Private Sub btnPrint1_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnPrint1.Click
@@ -278,7 +285,7 @@ Partial  Class Sale
                     PrintDocument(sFldr & i & DocName4)
                     i = i + 1
                 End While
-ExitSub:
+                ExitSub:
             Catch
                 msgSale.Text = "Ошибка печати<br>" & Err.Description
             Finally
@@ -295,7 +302,8 @@ ExitSub:
             End Try
         End Sub
 
-        Private Function PrintDocument(ByVal sPath As String, Optional ByVal CopyCount As Integer = 1, Optional ByVal isFirstPage As Boolean = False) As String
+        Private Function PrintDocument(ByVal sPath As String, Optional ByVal CopyCount As Integer = 1,
+                                       Optional ByVal isFirstPage As Boolean = False) As String
             Try
                 PrintDocument = ""
                 Dim fls As New IO.FileInfo(sPath)
@@ -313,7 +321,8 @@ ExitSub:
             End Try
         End Function
 
-        Private Sub btnDelete_Click(ByVal sender As System.Object, ByVal e As System.Web.UI.ImageClickEventArgs) Handles btnDelete.Click
+        Private Sub btnDelete_Click(ByVal sender As System.Object, ByVal e As System.Web.UI.ImageClickEventArgs) _
+            Handles btnDelete.Click
             'Ограничение прав на удаление
             If Session("rule9") = "1" Or Session("rule27") = "1" Then
                 Dim cmd As SqlClient.SqlCommand
@@ -336,7 +345,9 @@ ExitSub:
 
                         'умеьшаем долг
                         If saletype = 0 Then
-                            query = "UPDATE  customer SET  dolg = dolg - (SELECT SUM(good.price) AS Expr1  FROM  sale INNER JOIN good ON sale.sale_sys_id = good.sale_sys_id  WHERE (sale.sale_sys_id = '" & iSale & "')) * 1.2  WHERE (customer_sys_id = '" & iCustomer & "')"
+                            query =
+                                "UPDATE  customer SET  dolg = dolg - (SELECT SUM(good.price) AS Expr1  FROM  sale INNER JOIN good ON sale.sale_sys_id = good.sale_sys_id  WHERE (sale.sale_sys_id = '" &
+                                iSale & "')) * 1.2  WHERE (customer_sys_id = '" & iCustomer & "')"
                             adapt = currentPage.dbSQL.GetDataAdapter(query)
                             ds = New DataSet
                             adapt.Fill(ds)
@@ -366,7 +377,8 @@ ExitSub:
             End If
         End Sub
 
-        Private Sub btnConfirm_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnConfirm.Click
+        Private Sub btnConfirm_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) _
+            Handles btnConfirm.Click
             Dim cmd As SqlClient.SqlCommand
             Dim adapt As SqlClient.SqlDataAdapter
             Dim ds As DataSet
@@ -380,14 +392,18 @@ ExitSub:
                     i = 1
                 ElseIf optNal.Checked Then
                     i = 2
-                Else
+                ElseIf optSberkassa.Checked Then
                     i = 3
+                Else
+                    i = 1
                 End If
                 cmd.Parameters.AddWithValue("@pi_type", i)
                 currentPage.dbSQL.Execute(cmd)
 
 
-                Dim query = "UPDATE  customer SET  dolg = dolg - (SELECT SUM(good.price) AS Expr1  FROM  sale INNER JOIN good ON sale.sale_sys_id = good.sale_sys_id  WHERE (sale.sale_sys_id = '" & iSale & "')) * 1.2  WHERE (customer_sys_id = '" & iCustomer & "')"
+                Dim query =
+                        "UPDATE  customer SET  dolg = dolg - (SELECT SUM(good.price) AS Expr1  FROM  sale INNER JOIN good ON sale.sale_sys_id = good.sale_sys_id  WHERE (sale.sale_sys_id = '" &
+                        iSale & "')) * 1.2  WHERE (customer_sys_id = '" & iCustomer & "')"
                 adapt = currentPage.dbSQL.GetDataAdapter(query)
                 ds = New DataSet
                 adapt.Fill(ds)
@@ -405,14 +421,16 @@ ExitSub:
             End If
         End Sub
 
-        Private Sub btnCreateDocuments_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles btnCreateDocuments.Click
+        Private Sub btnCreateDocuments_Click(ByVal sender As System.Object, ByVal e As System.EventArgs) _
+            Handles btnCreateDocuments.Click
             Dim doc_num() As Integer = New Integer(9) {5, 6, 1, 7, 4, 8, 9, 17, 18, 35}
             Dim docs As New Kasbi.Migrated_Documents
             docs.ProcessDocuments(doc_num, iCustomer, iSale)
             docs = Nothing
         End Sub
 
-        Private Sub btnEdit_Click(ByVal sender As System.Object, ByVal e As System.Web.UI.ImageClickEventArgs) Handles btnEdit.Click
+        Private Sub btnEdit_Click(ByVal sender As System.Object, ByVal e As System.Web.UI.ImageClickEventArgs) _
+            Handles btnEdit.Click
             'Ограничение прав на редактирование
             If Session("rule9") = "1" Then
                 Session("AddGoodsForSale") = iSale
@@ -422,7 +440,7 @@ ExitSub:
             End If
         End Sub
 
-        
+
         'Private Sub grdSale_UpdateCommand(ByVal source As Object, ByVal e As System.Web.UI.WebControls.DataGridCommandEventArgs) Handles grdSale.UpdateCommand
         '    Dim cmd As SqlClient.SqlCommand
         '    Dim quantity As Double
@@ -448,7 +466,9 @@ ExitSub:
         '    Bind()
         'End Sub
 
-        Private Sub grdSale_DeleteCommand(ByVal source As Object, ByVal e As System.Web.UI.WebControls.DataGridCommandEventArgs) Handles grdSale.DeleteCommand
+        Private Sub grdSale_DeleteCommand(ByVal source As Object,
+                                          ByVal e As System.Web.UI.WebControls.DataGridCommandEventArgs) _
+            Handles grdSale.DeleteCommand
             'Ограничение прав на удаление
             If Session("rule9") = "1" Then
                 Dim cmd As SqlClient.SqlCommand
@@ -466,7 +486,7 @@ ExitSub:
                         msgSale.Text = "Ошибка удаления записи!<br>" & Err.Description
                     End If
                 End Try
-                grdSale.EditItemIndex = -1
+                grdSale.EditItemIndex = - 1
                 Bind()
             End If
         End Sub
@@ -474,7 +494,9 @@ ExitSub:
         Protected Sub btnTTN_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnTTN.Click
             Dim cmd As SqlClient.SqlCommand
 
-            If MsgBox("Вы точно хотите сформировать накладную?", MsgBoxStyle.OkCancel, "Формирование накладной") = MsgBoxResult.Ok Then
+            If _
+                MsgBox("Вы точно хотите сформировать накладную?", MsgBoxStyle.OkCancel, "Формирование накладной") =
+                MsgBoxResult.Ok Then
                 Dim inp
                 inp = InputBox("Введите номер накладной", "Формирование накладной")
                 If inp.ToString.Length > 3 Then
@@ -491,15 +513,19 @@ ExitSub:
 
                     Response.Redirect(currentPage.GetAbsoluteUrl(lnkTTN.NavigateUrl))
                 Else
-                    MsgBox("Неверно введен номер накладной. Накладная не сформирована", MsgBoxStyle.Critical, "Формирование накладной")
+                    MsgBox("Неверно введен номер накладной. Накладная не сформирована", MsgBoxStyle.Critical,
+                           "Формирование накладной")
                 End If
             End If
         End Sub
 
-        Protected Sub btnInvoiceNDS_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnInvoiceNDS.Click
+        Protected Sub btnInvoiceNDS_Click(ByVal sender As Object, ByVal e As System.EventArgs) _
+            Handles btnInvoiceNDS.Click
             Dim cmd As SqlClient.SqlCommand
 
-            If MsgBox("Вы точно хотите сформировать счет-фактуру?", MsgBoxStyle.OkCancel, "Формирование счет-фактуры") = MsgBoxResult.Ok Then
+            If _
+                MsgBox("Вы точно хотите сформировать счет-фактуру?", MsgBoxStyle.OkCancel, "Формирование счет-фактуры") =
+                MsgBoxResult.Ok Then
                 Dim inp
                 inp = InputBox("Введите номер счет-фактуры по НДС", "Формирование счет-фактуры")
                 If inp.ToString.Length > 3 Then
@@ -516,7 +542,8 @@ ExitSub:
 
                     Response.Redirect(currentPage.GetAbsoluteUrl(lnkInvoiceNDS.NavigateUrl))
                 Else
-                    MsgBox("Неверно введен номер счета. Счет-фактура не сформирована", MsgBoxStyle.Critical, "Формирование счет-фактуры")
+                    MsgBox("Неверно введен номер счета. Счет-фактура не сформирована", MsgBoxStyle.Critical,
+                           "Формирование счет-фактуры")
                 End If
             End If
         End Sub
@@ -524,7 +551,9 @@ ExitSub:
         Protected Sub btnTTNT_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnTTNT.Click
             Dim cmd As SqlClient.SqlCommand
 
-            If MsgBox("Вы точно хотите сформировать ТТН?", MsgBoxStyle.OkCancel, "Формирование транспортной накладной") = MsgBoxResult.Ok Then
+            If _
+                MsgBox("Вы точно хотите сформировать ТТН?", MsgBoxStyle.OkCancel, "Формирование транспортной накладной") =
+                MsgBoxResult.Ok Then
                 Dim inp
                 inp = InputBox("Введите номер ТТН", "Формирование транспортной накладной")
                 If inp.ToString.Length > 3 Then
@@ -541,11 +570,10 @@ ExitSub:
 
                     Response.Redirect(currentPage.GetAbsoluteUrl(lnkTTN_Transport.NavigateUrl))
                 Else
-                    MsgBox("Неверно введен номер накладной. ТТН не сформирована", MsgBoxStyle.Critical, "Формирование транспортной накладной")
+                    MsgBox("Неверно введен номер накладной. ТТН не сформирована", MsgBoxStyle.Critical,
+                           "Формирование транспортной накладной")
                 End If
             End If
-
-
         End Sub
 
         Protected Sub btndocs_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btndocs.Click
@@ -596,13 +624,7 @@ ExitSub:
 
 
             End If
-
-
-
-
-
         End Sub
     End Class
-
 End Namespace
 

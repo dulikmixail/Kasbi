@@ -127,7 +127,7 @@
                         </tr>
                         <tr>
                             <td class="SectionRow" align="center">
-                                <asp:DropDownList ID="lstGoodDelivery" runat="server" Width="200px" BackColor="#F6F8FC"
+                                <asp:DropDownList ID="lstGoodDelivery" runat="server" Width="220px" BackColor="#F6F8FC"
                                     AutoPostBack="True">
                                 </asp:DropDownList></td>
                             <td class="SectionRow" colspan="3">

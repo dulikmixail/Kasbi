@@ -87,6 +87,8 @@ Namespace Kasbi
         Const DocName54 As String = "Route_Report.xls"
         Const DocName55 As String = "IMNS_letter.doc"
 
+        Const TxtСustomerAcceptsViolationsOfControls As String =
+            "Я представитель заказчика подтверждаю, что средства контроля нарушены."
 
         Private reader As SqlClient.SqlDataReader
         Private wrdApp As Word.ApplicationClass
@@ -1181,7 +1183,7 @@ Namespace Kasbi
                             dNDS = dNDS + sNDS
                             dTotal = dTotal + sSum
                             doc.Bookmarks("TotalNDS").Range.Text = String.Format("{0:0.00}", dNDS)
-                            doc.Bookmarks("TotalAll").Range.Text = String.Format("{0:0.00}" ,dTotal)
+                            doc.Bookmarks("TotalAll").Range.Text = String.Format("{0:0.00}", dTotal)
                             doc.Bookmarks("Total").Range.Text = String.Format("{0:0.00}", dTotal - dNDS)
                             doc.Bookmarks("TotalNDSPropis").Range.Text = Summa_propis(dNDS)
                             doc.Bookmarks("TotalAllPropis").Range.Text = Summa_propis(dTotal)
@@ -5026,6 +5028,8 @@ Namespace Kasbi
             Dim cmd As SqlClient.SqlCommand
             Dim adapt As SqlClient.SqlDataAdapter
             Dim ds As DataSet = New DataSet
+            Dim textCtoControlDamaged As String =
+                    "Я, представитель заказчика, подтверждаю, что средства контроля нарушены."
 
             cmd = New SqlClient.SqlCommand("prc_rpt_DefectAct")
             cmd.CommandType = CommandType.StoredProcedure
@@ -5089,13 +5093,22 @@ Namespace Kasbi
                 doc.Bookmarks("customer2").Range.Text = dr1("customer_name")
                 doc.Bookmarks("phone1").Range.Text = dr1("phone")
                 doc.Bookmarks("phone2").Range.Text = dr1("phone")
-                doc.Bookmarks("repair_bads").Range.Text = dr1("repair_bads_info")
+                doc.Bookmarks("repair_bads1").Range.Text = dr1("repair_bads_info")
                 doc.Bookmarks("repair_bads2").Range.Text = dr1("repair_bads_info")
-                doc.Bookmarks("itog").Range.Text = "Общая стоимость: " & dr1("repair_bads_sum_itog")
-                doc.Bookmarks("itog2").Range.Text = "Общая стоимость: " & dr1("repair_bads_sum_itog")
+                doc.Bookmarks("itog1").Range.Text = dr1("repair_bads_sum_itog")
+                doc.Bookmarks("itog2").Range.Text = dr1("repair_bads_sum_itog")
 
                 doc.Bookmarks("num_akt").Range.Text = dr1("akt")
                 doc.Bookmarks("num_akt2").Range.Text = dr1("akt")
+
+                If dr1("is_cto_control_damaged")
+                    doc.Bookmarks("text_сto_сontrol_damaged1").Range.Text = textCtoControlDamaged
+                    doc.Bookmarks("text_сto_сontrol_damaged2").Range.Text = textCtoControlDamaged
+                Else
+                    doc.Bookmarks("text_сto_сontrol_damaged1").Range.Text = ""
+                    doc.Bookmarks("text_сto_сontrol_damaged2").Range.Text = ""
+                End If
+
 
                 Dim telNoticeFormat As String = dr1("tel_notice")
                 If telNoticeFormat.Length <> 0
@@ -5127,7 +5140,7 @@ Namespace Kasbi
                 'doc.Bookmarks("repairdate_in2").Range.Text = GetRussianDate1(Now) & " " & Now.ToString("HH:mm")
 
                 Dim d As DateTime
-                d = ds.Tables("defectAct").Rows(0)("reception_date")
+                d = dr1("reception_date")
                 doc.Bookmarks("repairdate_in").Range.Text = GetRussianDate1(d) & " " & d.ToString("HH:mm")
                 doc.Bookmarks("repairdate_in2").Range.Text = GetRussianDate1(d) & " " & d.ToString("HH:mm")
                 doc.Bookmarks("repairdate_in3").Range.Text = GetRussianDate1(d)
@@ -5298,7 +5311,6 @@ Namespace Kasbi
                 End If
                 xlsApp = Nothing
                 ds = Nothing
-                xlsApp.Quit()
             Catch
                 WriteError("Аварийное завершение работы Microsoft Excel<br>" & Err.Description)
             End Try

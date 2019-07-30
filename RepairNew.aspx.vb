@@ -451,6 +451,9 @@ Namespace Kasbi
                 If Not IsDBNull(reader("garantia")) Then
                     lblGarantia.Text = reader("garantia")
                 End If
+
+                lblRemovedFromWarranty.Text = IIf(CBool(reader("removed_from_warranty")), ", снят с гарантии", "").ToString()
+
                 If IsDBNull(reader("support")) OrElse reader("support") = 0 Then
                     lblSupport.Text = "Не заключен договор на ТО"
                     lblSupport.Enabled = False

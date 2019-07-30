@@ -127,7 +127,7 @@
                                         Font-Bold="True" Font-Size="10pt">...</asp:Label></td>
                                 <td class="SectionRow" align="left" colspan="3">
                                     <asp:TextBox ID="txtCustomerName" runat="server" ToolTip="Введите название организации (только для организаций)"
-                                        MaxLength="90" BackColor="#F6F8FC" BorderWidth="1px" Width="100%"></asp:TextBox></td>
+                                        MaxLength="200" BackColor="#F6F8FC" BorderWidth="1px" Width="100%"></asp:TextBox></td>
                                 <td class="SectionRow" align="right">
                                     <asp:TextBox ID="txtUNN" runat="server" ToolTip="Введите УНП организации" MaxLength="9"
                                         BackColor="#F6F8FC" BorderWidth="1px" Width="100%"></asp:TextBox></td>
@@ -151,7 +151,7 @@
                                     <asp:TextBox ID="txtRegistration" runat="server" ToolTip="Введите информацию о регистрации"
                                         MaxLength="250" BackColor="#F6F8FC" BorderWidth="1px" Width="100%"></asp:TextBox></td>
                                 <td class="SectionRow" align="right">
-                                    <asp:TextBox ID="txtOKPO" runat="server" ToolTip="Введите код ОКЮЛП" MaxLength="9"
+                                    <asp:TextBox ID="txtOKPO" runat="server" ToolTip="Введите код ОКЮЛП" MaxLength="13"
                                         BackColor="#F6F8FC" BorderWidth="1px" Width="100%"></asp:TextBox></td>
                                 <td class="SectionRow" align="left" colspan="2">
                                     &nbsp;</td>
@@ -190,7 +190,7 @@
                                     Руководитель:</td>
                                 <td class="SectionRow" align="right" colspan="3">
                                     <asp:TextBox ID="txtBoosLastName" runat="server" ToolTip="Введите фамилию руководителя"
-                                        MaxLength="50" BackColor="#F6F8FC" BorderWidth="1px" Width="100%"></asp:TextBox></td>
+                                        MaxLength="100" BackColor="#F6F8FC" BorderWidth="1px" Width="100%"></asp:TextBox></td>
                                 <td class="SectionRow" align="right" colspan="2">
                                     <asp:TextBox ID="txtBoosFirstName" runat="server" ToolTip="Введите имя руководителя"
                                         MaxLength="50" BackColor="#F6F8FC" BorderWidth="1px" Width="100%"></asp:TextBox></td>
@@ -306,9 +306,9 @@
                                 <td class="SubTitleTextbox" align="left">
                                     домашний</td>
                                 <td class="SubTitleTextbox" align="left">
-                                    мобильный</td>
+                                    моб.</td>
                                 <td class="SubTitleTextbox" align="left">
-                                    для СМС</td>
+                                    моб. для СМС</td>
                                 <td class="SubTitleTextbox" align="left">
                                     &nbsp;</td>
                             </tr>
@@ -736,11 +736,10 @@
                     border-left: black 1px ridge; border-bottom: black 1px ridge; background-color: #f6f8fc"
                     align="center">
                     <asp:Label ID="radiobuttons" runat="server">
-                        <asp:RadioButton ID="optBeznal" runat="server" Text="Без/нал" GroupName="radioPayed">
+                        <asp:RadioButton ID="optBeznal" runat="server" Text="Без/нал" GroupName="radioPayed" Checked="True">
                         </asp:RadioButton>&nbsp;&nbsp;&nbsp;
                         <asp:RadioButton ID="optNal" runat="server" Text="Наличные" GroupName="radioPayed"></asp:RadioButton>&nbsp;&nbsp;
-                        <asp:RadioButton ID="optSberkassa" runat="server" Text="Сберкасса" GroupName="radioPayed"
-                            Checked="True"></asp:RadioButton></asp:Label></td>
+                        <asp:RadioButton ID="optSberkassa" runat="server" Text="Сберкасса" GroupName="radioPayed"></asp:RadioButton></asp:Label></td>
             </tr>
         </table>
         <table cellspacing="0" cellpadding="0" width="90%">

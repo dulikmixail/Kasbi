@@ -107,7 +107,7 @@
 											</TD>
 										</TR>
 										<TR>
-											<TD><asp:listbox id="lstGoodType" runat="server" Rows="8" SelectionMode="Multiple"></asp:listbox></TD>
+											<TD><asp:listbox id="lstGoodType" runat="server" Rows="20" SelectionMode="Multiple"></asp:listbox></TD>
 										</TR>
 									</TABLE>
 								</TD>

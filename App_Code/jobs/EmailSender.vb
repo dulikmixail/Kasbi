@@ -1,8 +1,6 @@
-﻿Imports System.Web
-Imports System.IO
+﻿Imports System.IO
 Imports System.Reflection
 Imports Kasbi
-Imports Microsoft.VisualBasic
 Imports Quartz
 Imports Service
 
@@ -12,7 +10,6 @@ Namespace Jobs
         Implements IJob
         Dim ReadOnly _serviceEmail As ServiceEmail = New ServiceEmail()
         Dim ReadOnly _serviceDocuments As ServiceDocuments = New ServiceDocuments()
-        Dim ReadOnly _sharedDbSql As MSSqlDB = ServiceDbConnector.GetConnection()
 
         Public Function Execute(context As IJobExecutionContext) As System.Threading.Tasks.Task Implements IJob.Execute
             SendAktDillers()
@@ -40,8 +37,9 @@ Namespace Jobs
                         _serviceEmail.SendEmail(row("recipient").ToString(), row("email_subject").ToString(),
                                                 String.Format(bodyTextFormat, row("email_text").ToString()),
                                                 New String() {pathAkt})
-
-                        _sharedDbSql.Execute("UPDATE email_send SET is_send = 1 WHERE email_send_sys_id = " & emailSendId)
+                        Using con = ServiceDbConnector.GetSharedConnection()
+                            con.Execute("UPDATE email_send SET is_send = 1 WHERE email_send_sys_id = " & emailSendId)
+                        End Using
 
                     Next
                 End If
@@ -54,7 +52,9 @@ Namespace Jobs
         Private Function GetEmailNotSend() As DataSet
             Const cmd As String = "SELECT TOP 1 * FROM email_send WHERE is_send <> 1 ORDER BY email_send_sys_id"
             Dim ds As DataSet = New DataSet()
-            _sharedDbSql.GetDataAdapter(cmd).Fill(ds)
+            Using con = ServiceDbConnector.GetSharedConnection()
+                con.GetDataAdapter(cmd).Fill(ds)
+            End Using
             Return ds
         End Function
     End Class

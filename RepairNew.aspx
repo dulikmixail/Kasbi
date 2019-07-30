@@ -86,6 +86,7 @@
         </td>
         <td class="cashDetail">
             <asp:Label ID="lblGarantia" runat="server" ForeColor="Red"></asp:Label>
+            <asp:Label ID="lblRemovedFromWarranty" runat="server" ForeColor="Red"></asp:Label>
         </td>
     </tr>
     <tr>

@@ -174,7 +174,11 @@ Namespace Kasbi
             lnkOwner.Visible = b
             lnkSupportConduct.NavigateUrl = GetAbsoluteUrl("~/NewSupportConduct.aspx?" & iCash)
             lblCash.NavigateUrl = GetAbsoluteUrl("~/CashOwners.aspx?" & iCash & "&cashowner=" & CurrentCustomer)
-            s = Trim(reader("sale"))
+            If IsDBNull(reader("sale"))
+                s = ""
+            Else
+                s = Trim(reader("sale"))
+            End If
             b = s.Length > 0
             If b Then
                 lblSale.Text = s
@@ -185,6 +189,8 @@ Namespace Kasbi
             If Not IsDBNull(reader("garantia")) Then
                 lblGarantia.Text = reader("garantia")
             End If
+            lblRemovedFromWarranty.Text = IIf(CBool(reader("removed_from_warranty")), ", снят с гарантии", "").ToString()
+
             If IsDBNull(reader("support")) OrElse reader("support") = 0 Then
                 lblSupport.Text = "Не заключен договор на ТО"
                 lblSupport.Enabled = False

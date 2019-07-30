@@ -2,7 +2,6 @@ Imports Exeption
 Imports Service
 
 Namespace Kasbi
-
     Partial Class NewGood
         Inherits PageBase
         Protected WithEvents btnMain As System.Web.UI.WebControls.HyperLink
@@ -20,8 +19,8 @@ Namespace Kasbi
 #Region " Web Form Designer Generated Code "
 
         'This call is required by the Web Form Designer.
-        <System.Diagnostics.DebuggerStepThrough()> Private Sub InitializeComponent()
-
+        <System.Diagnostics.DebuggerStepThrough()>
+        Private Sub InitializeComponent()
         End Sub
 
         Private Sub Page_Init(ByVal sender As System.Object, ByVal e As System.EventArgs) Handles MyBase.Init
@@ -71,7 +70,10 @@ Namespace Kasbi
                 adapt.Fill(ds)
                 Dim i%
                 For i = 0 To ds.Tables(0).Rows.Count - 1
-                    lstGoodDelivery.Items.Add(New ListItem(GetRussianDate(ds.Tables(0).Rows(i)("delivery_date")), ds.Tables(0).Rows(i)("delivery_sys_id")))
+                    lstGoodDelivery.Items.Add(New ListItem(
+                        String.Concat("№", ds.Tables(0).Rows(i)("delivery_sys_id"), " от ",
+                                      GetRussianDate(ds.Tables(0).Rows(i)("delivery_date"))),
+                        ds.Tables(0).Rows(i)("delivery_sys_id")))
                 Next
 
                 adapt = dbSQL.GetDataAdapter("get_salers", True)
@@ -92,7 +94,6 @@ Namespace Kasbi
             If lstGoodDelivery.Items.Count > 0 Then
                 lstGoodDelivery_SelectedIndexChanged(Me, Nothing)
             End If
-
         End Sub
 
         Sub BindFreeKKMList()
@@ -129,7 +130,8 @@ Namespace Kasbi
             End Try
         End Sub
 
-        Private Sub lstGoodDelivery_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles lstGoodDelivery.SelectedIndexChanged
+        Private Sub lstGoodDelivery_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) _
+            Handles lstGoodDelivery.SelectedIndexChanged
             Dim cmd As SqlClient.SqlCommand
             Dim adapt As SqlClient.SqlDataAdapter
             Dim ds As DataSet
@@ -155,13 +157,17 @@ Namespace Kasbi
             End Try
         End Sub
 
-        Private Sub btnAdd_Click(ByVal sender As System.Object, ByVal e As System.Web.UI.ImageClickEventArgs) Handles btnAdd.Click
+        Private Sub btnAdd_Click(ByVal sender As System.Object, ByVal e As System.Web.UI.ImageClickEventArgs) _
+            Handles btnAdd.Click
             Dim cmd As SqlClient.SqlCommand
             Try
-                _serviceGood.CheckNumbers(txtGoodNumCashregister.Text.Trim, NumbersCashRegister.Number, lstGoodType.SelectedItem.Value)
-                _serviceGood.CheckNumbers(txtReestr.Text.Trim, NumbersCashRegister.Register, lstGoodType.SelectedItem.Value)
+                _serviceGood.CheckNumbers(txtGoodNumCashregister.Text.Trim, NumbersCashRegister.Number,
+                                          lstGoodType.SelectedItem.Value)
+                _serviceGood.CheckNumbers(txtReestr.Text.Trim, NumbersCashRegister.Register,
+                                          lstGoodType.SelectedItem.Value)
                 _serviceGood.CheckNumbers(txtPZU.Text.Trim, NumbersCashRegister.ROM, lstGoodType.SelectedItem.Value)
-                _serviceGood.CheckNumbers(txtMFP.Text.Trim, NumbersCashRegister.FiscalMemory, lstGoodType.SelectedItem.Value)
+                _serviceGood.CheckNumbers(txtMFP.Text.Trim, NumbersCashRegister.FiscalMemory,
+                                          lstGoodType.SelectedItem.Value)
                 _serviceGood.CheckNumbers(txtCTO.Text.Trim, NumbersCashRegister.SC1, lstGoodType.SelectedItem.Value)
 
                 If txtCTO2.Visible = True Then
@@ -179,7 +185,8 @@ Namespace Kasbi
                     msgAddGood.Text = "Выберите ответственного за установку средств контроля. "
                     Exit Sub
                 End If
-                _serviceGood.CanAddGoodToDelivery(CInt(lstGoodDelivery.SelectedItem.Value), CInt(lstGoodType.SelectedItem.Value), 1)
+                _serviceGood.CanAddGoodToDelivery(CInt(lstGoodDelivery.SelectedItem.Value),
+                                                  CInt(lstGoodType.SelectedItem.Value), 1)
                 If _serviceGood.HaveAnyExeption() Then
                     msgAddGood.Text = _serviceGood.GetTextStringAllExeption()
                     Exit Sub
@@ -193,8 +200,10 @@ Namespace Kasbi
                 cmd.Parameters.AddWithValue("@pi_num_control_pzu", txtPZU.Text.Trim)
                 cmd.Parameters.AddWithValue("@pi_num_control_mfp", txtMFP.Text.Trim)
                 cmd.Parameters.AddWithValue("@pi_num_control_cto", txtCTO.Text.Trim)
-                cmd.Parameters.AddWithValue("@pi_num_control_cto2", IIf(txtCTO2.Visible = True, txtCTO2.Text.Trim, DBNull.Value))
-                cmd.Parameters.AddWithValue("@pi_num_control_cp", IIf(txtCP.Visible = True, txtCP.Text.Trim, DBNull.Value))
+                cmd.Parameters.AddWithValue("@pi_num_control_cto2",
+                                            IIf(txtCTO2.Visible = True, txtCTO2.Text.Trim, DBNull.Value))
+                cmd.Parameters.AddWithValue("@pi_num_control_cp",
+                                            IIf(txtCP.Visible = True, txtCP.Text.Trim, DBNull.Value))
                 cmd.Parameters.AddWithValue("@pi_info", txtGoodInfo.Text.Replace("'", """"))
                 cmd.Parameters.AddWithValue("@pi_worker", worker)
                 If (rbtnKKM_Type.SelectedIndex = 0) Then
@@ -222,11 +231,15 @@ Namespace Kasbi
         End Sub
 
         Public Function GetRussianDate(ByVal d As Date) As String
-            Dim m() As String = {" января ", " февраля ", " марта ", " апреля ", " мая ", " июня ", " июля ", " августа ", " сентября ", " октября ", " ноября ", " декабря "}
+            Dim m() As String =
+                    {" января ", " февраля ", " марта ", " апреля ", " мая ", " июня ", " июля ", " августа ",
+                     " сентября ", " октября ", " ноября ", " декабря "}
             GetRussianDate = Day(d) & m(Month(d) - 1) & Year(d) & "г."
         End Function
 
-        Private Sub repGoodStatistic_ItemDataBound(ByVal sender As Object, ByVal e As System.Web.UI.WebControls.RepeaterItemEventArgs) Handles repGoodStatistic.ItemDataBound
+        Private Sub repGoodStatistic_ItemDataBound(ByVal sender As Object,
+                                                   ByVal e As System.Web.UI.WebControls.RepeaterItemEventArgs) _
+            Handles repGoodStatistic.ItemDataBound
             If e.Item.ItemType = ListItemType.Item Or e.Item.ItemType = ListItemType.AlternatingItem Then
                 sum = sum + CInt(e.Item.DataItem("cash_all"))
                 outside = outside + CInt(e.Item.DataItem("cash_outside"))
@@ -238,16 +251,22 @@ Namespace Kasbi
             End If
         End Sub
 
-        Private Sub btnCancel_Click(ByVal sender As System.Object, ByVal e As System.Web.UI.ImageClickEventArgs) Handles btnCancel.Click
+        Private Sub btnCancel_Click(ByVal sender As System.Object, ByVal e As System.Web.UI.ImageClickEventArgs) _
+            Handles btnCancel.Click
             Response.Redirect("GoodList.aspx")
         End Sub
 
-        Protected Sub lstGoodType_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles lstGoodType.SelectedIndexChanged
+        Protected Sub lstGoodType_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) _
+            Handles lstGoodType.SelectedIndexChanged
             Dim cmd As SqlClient.SqlCommand
             Dim adapt As SqlClient.SqlDataAdapter
             Dim ds As DataSet
 
-            If Not dbSQL.ExecuteScalar("select name from good_type where good_type_sys_id='" & lstGoodType.SelectedItem.Value & "'").ToString.Contains("Касби-03МФ") Then
+            If _
+                Not _
+                dbSQL.ExecuteScalar(
+                    "select name from good_type where good_type_sys_id='" & lstGoodType.SelectedItem.Value & "'").
+                    ToString.Contains("Касби-03МФ") Then
                 txtPZU.Visible = True
             Else
                 txtPZU.Visible = False
@@ -291,7 +310,8 @@ Namespace Kasbi
             End If
         End Sub
 
-        Protected Sub rbtnKKM_Type_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) Handles rbtnKKM_Type.SelectedIndexChanged
+        Protected Sub rbtnKKM_Type_SelectedIndexChanged(ByVal sender As Object, ByVal e As System.EventArgs) _
+            Handles rbtnKKM_Type.SelectedIndexChanged
             If rbtnKKM_Type.SelectedIndex = 0 Then
                 lstGoodDelivery.Enabled = True
                 blstDeliveryInfo.Visible = True
@@ -303,5 +323,4 @@ Namespace Kasbi
             End If
         End Sub
     End Class
-
 End Namespace

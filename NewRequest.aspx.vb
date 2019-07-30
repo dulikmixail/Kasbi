@@ -390,30 +390,29 @@ Namespace Kasbi
 
         Sub export_customer()
             Try
-                Dim cmd As SqlClient.SqlCommand
-                Dim rs As SqlClient.SqlDataReader
-                Dim f As IO.File
-                Dim fs As IO.FileStream
                 Dim i% = 0
-                cmd = New SqlClient.SqlCommand("get_xml_new_customer")
-                cmd.CommandType = CommandType.StoredProcedure
-                cmd.Parameters.AddWithValue("@date", Date.Today)
+                Using cmd = New SqlClient.SqlCommand("get_xml_new_customer")
+                    Using rs = dbSQL.GetReader(cmd)
 
-                rs = dbSQL.GetReader(cmd)
+                        cmd.CommandType = CommandType.StoredProcedure
+                        cmd.Parameters.AddWithValue("@date", Date.Today)
 
-                FileOpen(1, Server.MapPath("XML") & "\new_customer.xml", OpenMode.Output, OpenAccess.Write,
-                         OpenShare.LockWrite)
-                PrintLine(1, "<?xml version='1.0' encoding='windows-1251' ?>")
-                PrintLine(1, "<Customers>")
-                While rs.Read
-                    Print(1, rs(0))
-                    i = i + 1
-                End While
-                PrintLine(1)
-                PrintLine(1, "</Customers>")
 
-                FileClose(1)
-                rs.Close()
+                        FileOpen(1, Server.MapPath("XML") & "\new_customer.xml", OpenMode.Output, OpenAccess.Write,
+                                 OpenShare.LockWrite)
+                        PrintLine(1, "<?xml version='1.0' encoding='windows-1251' ?>")
+                        PrintLine(1, "<Customers>")
+                        While rs.Read
+                            Print(1, rs(0))
+                            i = i + 1
+                        End While
+                        PrintLine(1)
+                        PrintLine(1, "</Customers>")
+
+                        FileClose(1)
+                        rs.Close()
+                    End Using
+                End Using
             Catch
             End Try
         End Sub
@@ -990,54 +989,52 @@ Namespace Kasbi
         End Sub
 
         Sub goods_to_list()
-            Dim cmd As SqlClient.SqlCommand
-            Dim adapt As SqlClient.SqlDataAdapter
-            Dim ds As DataSet
             If lstType.SelectedIndex <> 0 Then
                 Try
-                    ds = Cache.Get(Session.SessionID & "goods" & lstType.SelectedItem.Value)
-                    If ds Is Nothing Then
-                        cmd = New SqlClient.SqlCommand("get_goods_by_type")
-                        cmd.CommandType = CommandType.StoredProcedure
-                        cmd.Parameters.AddWithValue("@pi_good_type_sys_id", lstType.SelectedItem.Value)
-                        adapt = dbSQL.GetDataAdapter(cmd)
-                        ds = New DataSet
-
-                        adapt.Fill(ds)
+                    Using ds = New DataSet()
+                        Using cmd = New SqlClient.SqlCommand("get_goods_by_type")
+                            Using adapt = dbSQL.GetDataAdapter(cmd)
+                                cmd.CommandType = CommandType.StoredProcedure
+                                cmd.Parameters.AddWithValue("@pi_good_type_sys_id", lstType.SelectedItem.Value)
+                                adapt.Fill(ds)
+                            End Using
+                        End Using
                         Cache.Insert(Session.SessionID & "goods" & lstType.SelectedItem.Value, ds)
-                    End If
-                    If Not isExpired Then
-                        lstDescription.DataSource = ds.Tables(0).DefaultView
-                        lstDescription.DataTextField = "good_description"
-                        lstDescription.DataValueField = "good_sys_id"
-                        lstDescription.DataBind()
-                        If ds.Tables(0).Rows.Count = 0 Then
-                            lstDescription.Enabled = False
-                            txtQuantity.Enabled = False
-                            lblQuantity.Enabled = False
-                            btnAddGood.Enabled = False
-                        Else
-                            lstDescription.Enabled = True
-                            btnAddGood.Enabled = True
-                            txtQuantity.Enabled = GoodTypeIsChashregister(ds)
-                            lblQuantity.Enabled = txtQuantity.Enabled
-                            If txtQuantity.Enabled Then
-                                txtQuantity.Text = "1"
+                        If Not isExpired Then
+                            lstDescription.DataSource = ds.Tables(0).DefaultView
+                            lstDescription.DataTextField = "good_description"
+                            lstDescription.DataValueField = "good_sys_id"
+                            lstDescription.DataBind()
+                            If ds.Tables(0).Rows.Count = 0 Then
+                                lstDescription.Enabled = False
+                                txtQuantity.Enabled = False
+                                lblQuantity.Enabled = False
+                                btnAddGood.Enabled = False
+                            Else
+                                lstDescription.Enabled = True
+                                btnAddGood.Enabled = True
+                                txtQuantity.Enabled = GoodTypeIsChashregister(ds)
+                                lblQuantity.Enabled = txtQuantity.Enabled
+                                If txtQuantity.Enabled Then
+                                    txtQuantity.Text = "1"
+                                End If
                             End If
+                            isExpired = True
                         End If
-                        isExpired = True
-                    End If
-
-                    cmd = New SqlClient.SqlCommand("get_pricelist_by_good")
-                    cmd.CommandType = CommandType.StoredProcedure
-                    cmd.Parameters.AddWithValue("@pi_good_type_sys_id", lstType.SelectedItem.Value)
-                    adapt = dbSQL.GetDataAdapter(cmd)
-                    ds = New DataSet
-                    adapt.Fill(ds)
-                    lstPriceList.DataSource = ds.Tables(0).DefaultView
-                    lstPriceList.DataTextField = "pricelist_name"
-                    lstPriceList.DataValueField = "pricelist_sys_id"
-                    lstPriceList.DataBind()
+                    End Using
+                    Using cmd = New SqlClient.SqlCommand("get_pricelist_by_good")
+                        Using adapt = dbSQL.GetDataAdapter(cmd)
+                            Using ds = New DataSet
+                                cmd.CommandType = CommandType.StoredProcedure
+                                cmd.Parameters.AddWithValue("@pi_good_type_sys_id", lstType.SelectedItem.Value)
+                                adapt.Fill(ds)
+                                lstPriceList.DataSource = ds.Tables(0).DefaultView
+                                lstPriceList.DataTextField = "pricelist_name"
+                                lstPriceList.DataValueField = "pricelist_sys_id"
+                                lstPriceList.DataBind()
+                            End Using
+                        End Using
+                    End Using
                 Catch
                     msgGoods.Text = "Ошибка формирования списка товаров!<br>" & Err.Description
                     Exit Sub
@@ -1482,81 +1479,77 @@ Namespace Kasbi
         End Sub
 
         Protected Sub btnArtikul_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btnArtikul.Click
-            Dim reader As SqlClient.SqlDataReader
-
             If txtArtikul.Text <> "" Then
-                reader =
+                Using reader =
                     dbSQL.GetReader(
                         "select good_type_sys_id from delivery_detail where artikul='" & txtArtikul.Text & "'")
 
 
-                If reader.Read() Then
-                    Dim type_id = reader.Item(0)
+                    If reader.Read() Then
+                        Dim type_id = reader.Item(0)
 
-                    If type_id Is DBNull.Value Or type_id.ToString = "" Then
+                        If type_id Is DBNull.Value Or type_id.ToString = "" Then
+                            Exit Sub
+                        End If
+
+                        reader.Close()
+                        'MsgBox(type_id)
+
+                        lstType.SelectedIndex = - 1
+                        Dim item As ListItem = lstType.Items.FindByValue(type_id)
+                        If Not item Is Nothing Then item.Selected = True
+
+                        Dim nn = 0
+                        For nn = 0 To lstDescription.Items.Count - 1 Step 1
+                            If lstDescription.Items(nn).Text.Contains(txtArtikul.Text) = True Then
+                                lstDescription.Items(nn).Selected = True
+                            End If
+                        Next
+
+                        'MsgBox(lstType.SelectedIndex.ToString)
+
+                        lstType_SelectedIndexChanged(Me, Nothing)
+                    Else
+                        lbl_artikul_error.Text = "<br><b>Вы ввели неправильный артикул!</b>"
                         Exit Sub
                     End If
-
-                    reader.Close()
-                    'MsgBox(type_id)
-
-                    lstType.SelectedIndex = - 1
-                    Dim item As ListItem = lstType.Items.FindByValue(type_id)
-                    If Not item Is Nothing Then item.Selected = True
-
-                    Dim nn = 0
-                    For nn = 0 To lstDescription.Items.Count - 1 Step 1
-                        If lstDescription.Items(nn).Text.Contains(txtArtikul.Text) = True Then
-                            lstDescription.Items(nn).Selected = True
-                        End If
-                    Next
-
-                    'MsgBox(lstType.SelectedIndex.ToString)
-
-                    lstType_SelectedIndexChanged(Me, Nothing)
-                Else
-                    lbl_artikul_error.Text = "<br><b>Вы ввели неправильный артикул!</b>"
-                    Exit Sub
-                End If
+                End Using
             End If
         End Sub
 
         Protected Sub btn_fast_add_Click(ByVal sender As Object, ByVal e As System.EventArgs) Handles btn_fast_add.Click
-            Dim reader As SqlClient.SqlDataReader
-            Dim ds As DataSet
-
             If (txt_fast_add.Text.Length = 8 Or txt_fast_add.Text.Length = 13) Then
-
-                reader =
+                Using reader =
                     dbSQL.GetReader(
                         "select good_type_sys_id, good_sys_id from good where num_cashregister='" & txt_fast_add.Text &
                         "'")
 
-                If reader.Read() Then
-                    Dim good_type_sys_id = reader.Item(0)
-                    Dim good_sys_id = reader.Item(1)
+                    If reader.Read() Then
+                        Dim good_type_sys_id = reader.Item(0)
+                        Dim good_sys_id = reader.Item(1)
 
-                    'Если совпадает тип товара
-                    reader.Close()
+                        'Если совпадает тип товара
+                        reader.Close()
 
-                    Dim res
-                    Try
-                        res = lstDescription.Items.FindByValue(good_sys_id).Text
-                    Catch
-                    End Try
+                        Dim res
+                        Try
+                            res = lstDescription.Items.FindByValue(good_sys_id).Text
+                        Catch
+                        End Try
 
-                    If good_type_sys_id = lstType.SelectedItem.Value Then
-                        If res <> "" Then
-                            lstDescription.Items.FindByValue(good_sys_id).Selected = True
-                            add_good()
+                        If good_type_sys_id = lstType.SelectedItem.Value Then
+                            If res <> "" Then
+                                lstDescription.Items.FindByValue(good_sys_id).Selected = True
+                                add_good()
+                            Else
+                                lbl_fast_add_error.Text = "<br><b>Данного кассового аппарата нет в списке ККМ!</b>"
+                            End If
                         Else
-                            lbl_fast_add_error.Text = "<br><b>Данного кассового аппарата нет в списке ККМ!</b>"
+                            lbl_fast_add_error.Text = "<br><b>Выберите тип товара и цену!</b>"
                         End If
-                    Else
-                        lbl_fast_add_error.Text = "<br><b>Выберите тип товара и цену!</b>"
-                    End If
 
-                End If
+                    End If
+                End Using
             Else
                 lbl_fast_add_error.Text = "<br><b>Введите номер кассового аппарата!</b>"
             End If
@@ -1584,8 +1577,10 @@ Namespace Kasbi
                     lstType_SelectedIndexChanged(Nothing, Nothing)
                 End If
                 ds = Cache.Get(Session.SessionID & "goods" & lstType.SelectedItem.Value)
-                If ds.Tables(0).Rows.Count = 0 Then
-                    Exit Sub
+                If ds.Tables.Count > 0
+                    If ds.Tables(0).Rows.Count = 0 Then
+                        Exit Sub
+                    End If
                 End If
 
                 'Проверка на достаточность товара

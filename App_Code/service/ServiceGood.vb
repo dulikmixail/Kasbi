@@ -1,15 +1,11 @@
 ﻿Imports System.Data.SqlClient
-Imports System.Net.Configuration
 Imports Exeption
-Imports Kasbi
 Imports Models
 
 Namespace Service
     Public Class ServiceGood
         Inherits ServiceExeption
         Implements IService
-
-        Dim ReadOnly _sharedDbSql As MSSqlDB = ServiceDbConnector.GetConnection()
 
         Dim ReadOnly _
             _allowedStatesTransitions As Dictionary(Of Integer, Integer()) = New Dictionary(Of Integer, Integer())
@@ -37,43 +33,45 @@ Namespace Service
 
         Private Function GetInfoCounterGoodByDelivery(ByVal idDelivery As Integer, ByVal idGoodType As Integer) _
             As InfoCounterGood
-            Dim adapt As SqlClient.SqlDataAdapter
-            Dim cmd As SqlClient.SqlCommand
-            Dim ds As DataSet
             Dim infoCounterGood As InfoCounterGood
-
-            cmd = New SqlClient.SqlCommand("get_good_type_by_delivery_info")
-            cmd.CommandType = CommandType.StoredProcedure
-            cmd.Parameters.AddWithValue("@pi_good_type_sys_id", idGoodType)
-            cmd.Parameters.AddWithValue("@pi_delivery_sys_id", idDelivery)
-            adapt = _sharedDbSql.GetDataAdapter(cmd)
-            ds = New DataSet
-            adapt.Fill(ds)
-            With ds.Tables(0).DefaultView(0)
-                infoCounterGood = New InfoCounterGood(idDelivery, idGoodType, .Item("name").ToString(),
-                                                      CInt(.Item("prihod")), CInt(.Item("rashod")),
-                                                      CInt(.Item("ostatok")))
-            End With
-
+            Using ds = New DataSet()
+                Using cmd = New SqlCommand("get_good_type_by_delivery_info")
+                    cmd.CommandType = CommandType.StoredProcedure
+                    cmd.Parameters.AddWithValue("@pi_good_type_sys_id", idGoodType)
+                    cmd.Parameters.AddWithValue("@pi_delivery_sys_id", idDelivery)
+                    Using con = ServiceDbConnector.GetSharedConnection()
+                        Using adapt = con.GetDataAdapter(cmd)
+                            adapt.Fill(ds)
+                        End Using
+                    End Using
+                End Using
+                With ds.Tables(0).DefaultView(0)
+                    infoCounterGood = New InfoCounterGood(idDelivery, idGoodType, .Item("name").ToString(),
+                                                          CInt(.Item("prihod")), CInt(.Item("rashod")),
+                                                          CInt(.Item("ostatok")))
+                End With
+            End Using
             Return infoCounterGood
         End Function
 
         Private Function IsExistDelivery(ByVal idDelivery As Integer) As Boolean
-            If _sharedDbSql.ExecuteScalar("SELECT COUNT(*) FROM delivery WHERE delivery_sys_id = " & idDelivery) <> 0 _
-                Then
-                Return True
-            Else
-                Return False
-            End If
+            Using con = ServiceDbConnector.GetSharedConnection()
+                If con.ExecuteScalar("SELECT COUNT(*) FROM delivery WHERE delivery_sys_id = " & idDelivery) <> 0
+                    Return True
+                Else
+                    Return False
+                End If
+            End Using
         End Function
 
         Private Function IsExistGoodType(ByVal idGoodType As Integer) As Boolean
-            If _sharedDbSql.ExecuteScalar("SELECT COUNT(*) FROM good_type WHERE good_type_sys_id = " & idGoodType) <> 0 _
-                Then
-                Return True
-            Else
-                Return False
-            End If
+            Using con = ServiceDbConnector.GetSharedConnection()
+                If con.ExecuteScalar("SELECT COUNT(*) FROM good_type WHERE good_type_sys_id = " & idGoodType) <> 0
+                    Return True
+                Else
+                    Return False
+                End If
+            End Using
         End Function
 
 
@@ -169,117 +167,111 @@ Namespace Service
         Public Function CheckNumbers(ByVal number As String, ByVal type As NumbersCashRegister,
                                      ByVal goodTypeId As String) As Boolean
             Dim exeption As BaseExeption = New BaseExeption()
-            Select Case type
-                Case NumbersCashRegister.Number
-                    If IsEmptyString(number) Then
-                        exeption.AddTextToList("Введите заводской номер.")
-                    Else
-                        If number.Length = 8 Or number.Length = 13 Then
-                            If _
-                                _sharedDbSql.ExecuteScalar(
+            Using con = ServiceDbConnector.GetSharedConnection()
+                Select Case type
+                    Case NumbersCashRegister.Number
+                        If IsEmptyString(number) Then
+                            exeption.AddTextToList("Введите заводской номер.")
+                        Else
+                            If number.Length = 8 Or number.Length = 13 Then
+                                If con.ExecuteScalar(
                                     "select count(*) from good where num_cashregister='" & number &
                                     "' and good_type_sys_id='" & goodTypeId & "'") > 0 Then
-                                exeption.AddTextToList("Введенный заводской номер уже занесен в базу.")
-                            End If
-                        Else
-                            exeption.AddTextToList("Введите корректный заводской номер.")
-                        End If
-
-                    End If
-                    Exit Select
-                Case NumbersCashRegister.Register
-                    If IsEmptyString(number) Then
-                        exeption.AddTextToList("Введите номер СК реестра.")
-                    Else
-                        If number.Length = 11 Then
-                            If _
-                                _sharedDbSql.ExecuteScalar(
-                                    "select count(*) from good where num_control_reestr='" & number & "'") > 0 Then
-                                exeption.AddTextToList("Введенный номер СК реестра уже занесен в базу.")
-                            End If
-                        Else
-                            exeption.AddTextToList("Введите корректный номер СК реестра.")
-                        End If
-                    End If
-                    Exit Select
-                Case NumbersCashRegister.ROM
-                    If _
-                        Not _
-                        _sharedDbSql.ExecuteScalar(
-                            "select name from good_type where good_type_sys_id='" & goodTypeId & "'").
-                            ToString.Contains("Касби-03МФ") Then
-                        If IsEmptyString(number) Then
-                            exeption.AddTextToList("Введите номер ПЗУ реестра.")
-                        Else
-                            If number.Length = 11 Then
-                                If _
-                                    _sharedDbSql.ExecuteScalar(
-                                        "select count(*) from good where num_control_pzu='" & number & "'") > 0 Then
-                                    exeption.AddTextToList("Введенный номер СК ПЗУ уже занесен в базу.")
+                                    exeption.AddTextToList("Введенный заводской номер уже занесен в базу.")
                                 End If
                             Else
-                                exeption.AddTextToList("Введите корректный номер СК ПЗУ.")
+                                exeption.AddTextToList("Введите корректный заводской номер.")
+                            End If
+
+                        End If
+                        Exit Select
+                    Case NumbersCashRegister.Register
+                        If IsEmptyString(number) Then
+                            exeption.AddTextToList("Введите номер СК реестра.")
+                        Else
+                            If number.Length = 11 Then
+                                If con.ExecuteScalar(
+                                    "select count(*) from good where num_control_reestr='" & number & "'") > 0 Then
+                                    exeption.AddTextToList("Введенный номер СК реестра уже занесен в базу.")
+                                End If
+                            Else
+                                exeption.AddTextToList("Введите корректный номер СК реестра.")
                             End If
                         End If
-                    End If
-                    Exit Select
-                Case NumbersCashRegister.FiscalMemory
-                    If IsEmptyString(number) Then
-                        exeption.AddTextToList("Введите номер МФП реестра.")
-                    Else
-                        If number.Length = 11 Then
-                            If _
-                                _sharedDbSql.ExecuteScalar(
+                        Exit Select
+                    Case NumbersCashRegister.ROM
+                        If Not con.ExecuteScalar(
+                            "select name from good_type where good_type_sys_id='" & goodTypeId & "'").
+                               ToString.Contains("Касби-03МФ") Then
+                            If IsEmptyString(number) Then
+                                exeption.AddTextToList("Введите номер ПЗУ реестра.")
+                            Else
+                                If number.Length = 11 Then
+                                    If con.ExecuteScalar(
+                                        "select count(*) from good where num_control_pzu='" & number & "'") > 0 Then
+                                        exeption.AddTextToList("Введенный номер СК ПЗУ уже занесен в базу.")
+                                    End If
+                                Else
+                                    exeption.AddTextToList("Введите корректный номер СК ПЗУ.")
+                                End If
+                            End If
+                        End If
+                        Exit Select
+                    Case NumbersCashRegister.FiscalMemory
+                        If IsEmptyString(number) Then
+                            exeption.AddTextToList("Введите номер МФП реестра.")
+                        Else
+                            If number.Length = 11 Then
+                                If con.ExecuteScalar(
                                     "select count(*) from good where num_control_mfp='" & number & "'") >
-                                0 Then
-                                exeption.AddTextToList("Введенный номер СК МФП уже занесен в базу.")
+                                   0 Then
+                                    exeption.AddTextToList("Введенный номер СК МФП уже занесен в базу.")
+                                End If
+                            Else
+                                exeption.AddTextToList("Введите корректный номер СК МФП.")
+                            End If
+                        End If
+                        Exit Select
+                    Case NumbersCashRegister.CPU
+                        If number.Length = 11 Then
+                            If con.ExecuteScalar(
+                                "select count(*) from good where num_control_cp='" & number & "'") >
+                               0 _
+                                Then
+                                exeption.AddTextToList("Введенный номер СК ЦП уже занесен в базу.")
                             End If
                         Else
-                            exeption.AddTextToList("Введите корректный номер СК МФП.")
+                            exeption.AddTextToList("Введите корректный номер СК ЦП.")
                         End If
-                    End If
-                    Exit Select
-                Case NumbersCashRegister.CPU
-                    If number.Length = 11 Then
-                        If _
-                            _sharedDbSql.ExecuteScalar("select count(*) from good where num_control_cp='" & number & "'") >
-                            0 _
-                            Then
-                            exeption.AddTextToList("Введенный номер СК ЦП уже занесен в базу.")
-                        End If
-                    Else
-                        exeption.AddTextToList("Введите корректный номер СК ЦП.")
-                    End If
-                    Exit Select
-                Case NumbersCashRegister.SC1
-                    If Not IsEmptyString(number) Then
-                        If number.Length = 11 Or number.Length = 0 Then
-                            If _
-                                _sharedDbSql.ExecuteScalar(
+                        Exit Select
+                    Case NumbersCashRegister.SC1
+                        If Not IsEmptyString(number) Then
+                            If number.Length = 11 Or number.Length = 0 Then
+                                If con.ExecuteScalar(
                                     "select count(*) from good where num_control_cto='" & number & "'") >
-                                0 Then
-                                exeption.AddTextToList("Введенный номер СК ЦТО уже занесен в базу.")
+                                   0 Then
+                                    exeption.AddTextToList("Введенный номер СК ЦТО уже занесен в базу.")
+                                End If
+                            Else
+                                exeption.AddTextToList("Введите корректный номер СК ЦТО.")
                             End If
-                        Else
-                            exeption.AddTextToList("Введите корректный номер СК ЦТО.")
                         End If
-                    End If
-                    Exit Select
-                Case NumbersCashRegister.SC2
-                    If Not IsEmptyString(number) Then
-                        If number.Length = 11 And number.Length = 0 Then
-                            If _
-                                _sharedDbSql.ExecuteScalar(
+                        Exit Select
+                    Case NumbersCashRegister.SC2
+                        If Not IsEmptyString(number) Then
+                            If number.Length = 11 And number.Length = 0 Then
+                                If con.ExecuteScalar(
                                     "select count(*) from good where num_control_cto2='" & number & "'") >
-                                0 Then
-                                exeption.AddTextToList("Введенный номер СК ЦТО 2 уже занесен в базу.")
+                                   0 Then
+                                    exeption.AddTextToList("Введенный номер СК ЦТО 2 уже занесен в базу.")
+                                End If
+                            Else
+                                exeption.AddTextToList("Введите корректный номер СК ЦТО 2.")
                             End If
-                        Else
-                            exeption.AddTextToList("Введите корректный номер СК ЦТО 2.")
                         End If
-                    End If
-                    Exit Select
-            End Select
+                        Exit Select
+                End Select
+            End Using
             If exeption.HaveAnyText() Then
                 AddExeption(exeption)
                 Return False
@@ -301,16 +293,19 @@ Namespace Service
         End Function
 
         Public Function GetStateRepair(goodId As Integer) As Integer
-            Return Convert.ToInt32(
-                _sharedDbSql.ExecuteScalar(
-                    "SELECT ISNULL(state_repair, 0) state_repair FROM good WHERE good_sys_id = " +
-                    goodId.ToString()))
+            Using con = ServiceDbConnector.GetSharedConnection()
+                Return Convert.ToInt32(
+                    con.ExecuteScalar(
+                        "SELECT ISNULL(state_repair, 0) state_repair FROM good WHERE good_sys_id = " +
+                        goodId.ToString()))
+            End Using
         End Function
+
         Public Function GetStateRepair(goodId As Object) As Integer
             Return GetStateRepair(Convert.ToInt32(goodId))
         End Function
 
-        Public Function GetGoodsByType(ByVal type) As DataSet
+        Public Function GetGoodsByType(ByVal type As Integer) As DataSet
             Dim sql$ = ""
             If type = 1 Then
                 sql = "select * from good_type where is_cashregister='1' order by name"
@@ -320,26 +315,29 @@ Namespace Service
                 sql = "select * from good_type where allowCTO='1' order by name"
             End If
 
-            Dim adapt As SqlClient.SqlDataAdapter
-            Dim ds As DataSet = New DataSet()
-            Try
-                adapt = dbSQL.GetDataAdapter(sql)
-                ds = New DataSet
-                adapt.Fill(ds)
-            Catch
-                Throw New Exception(String.Format("Ошибка получения списка товаров с типом равным {0}", type))
-            End Try
-            Return ds
+            Using ds = New DataSet()
+                Try
+                    Using adapt = dbSQL.GetDataAdapter(sql)
+                        adapt.Fill(ds)
+                    End Using
+                Catch
+                    Throw New Exception(String.Format("Ошибка получения списка товаров с типом равным {0}", type))
+                End Try
+                Return ds
+            End Using
         End Function
 
         Public Sub SetStateRepair(goodId As Integer, stateRepair As Integer,
                                   Optional ignoreValidation As Boolean = False)
             If CheckChangeStates(GetStateRepair(goodId), stateRepair) Or ignoreValidation
-                Dim cmd As SqlCommand = New SqlCommand("set_state_repair")
-                cmd.Parameters.AddWithValue("@pi_state_repair", stateRepair)
-                cmd.Parameters.AddWithValue("@pi_good_sys_id", goodId)
-                cmd.CommandType = CommandType.StoredProcedure
-                _sharedDbSql.Execute(cmd)
+                Using cmd As SqlCommand = New SqlCommand("set_state_repair")
+                    cmd.Parameters.AddWithValue("@pi_state_repair", stateRepair)
+                    cmd.Parameters.AddWithValue("@pi_good_sys_id", goodId)
+                    cmd.CommandType = CommandType.StoredProcedure
+                    Using con = ServiceDbConnector.GetSharedConnection()
+                        con.Execute(cmd)
+                    End Using
+                End Using
             Else
                 Throw New Exception("Not set repair state")
             End If
@@ -351,12 +349,15 @@ Namespace Service
         End Sub
 
         Public Sub SetStatusSknoReceived(goodId As Integer, status As Integer, Optional withUpdateDate As Boolean = True)
-            Dim cmd As SqlCommand = New SqlCommand("set_status_skno_received")
-            cmd.Parameters.AddWithValue("@pi_status_skno_received", status)
-            cmd.Parameters.AddWithValue("@pi_good_sys_id", goodId)
-            cmd.Parameters.AddWithValue("@withUpdateDate", withUpdateDate)
-            cmd.CommandType = CommandType.StoredProcedure
-            _sharedDbSql.Execute(cmd)
+            Using cmd As SqlCommand = New SqlCommand("set_status_skno_received")
+                cmd.Parameters.AddWithValue("@pi_status_skno_received", status)
+                cmd.Parameters.AddWithValue("@pi_good_sys_id", goodId)
+                cmd.Parameters.AddWithValue("@withUpdateDate", withUpdateDate)
+                cmd.CommandType = CommandType.StoredProcedure
+                Using con = ServiceDbConnector.GetSharedConnection()
+                    con.Execute(cmd)
+                End Using
+            End Using
         End Sub
     End Class
 End Namespace

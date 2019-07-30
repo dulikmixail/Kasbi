@@ -91,7 +91,22 @@ Namespace Kasbi
             Else
                 ViewState("goodsort") = e.SortExpression
             End If
+
+            Dim checkedGoodIds = GetFoundCheckGoods()
             bind(Session("filter"))
+            RecoverÑheckboxes(checkedGoodIds)
+
+        End Sub
+
+        Private Sub RecoverÑheckboxes(checkedGoodIds As ListDictionary)
+            Dim goodIdFromLabel As String
+
+            For j = 0 To grdTO.Items.Count - 1
+                goodIdFromLabel = CType(grdTO.Items(j).FindControl("lblGood"), Label).Text
+                If checkedGoodIds.Contains(goodIdFromLabel)
+                    CType(grdTO.Items(j).FindControl("cbxSelect"), CheckBox).Checked = True
+                End If
+            Next
         End Sub
 
         Sub bind(ByVal filter)
@@ -530,9 +545,7 @@ Namespace Kasbi
         Sub SelectAll(ByVal sender As Object, ByVal e As System.EventArgs)
             Dim j
             grdTO.Columns(0).Visible = True
-            Dim s As Boolean =
-                    CType(grdTO.Controls.Item(0).Controls.Item(0).FindControl("cbxSelectAll"), WebControls.CheckBox).
-                    Checked
+            Dim s As Boolean = CType(sender, WebControls.CheckBox).Checked
 
             For j = 0 To grdTO.Items.Count - 1
                 If grdTO.Items(j).Visible = True Then
@@ -1131,7 +1144,7 @@ Namespace Kasbi
 
         Private Sub AktForTOandDolg(withDate As Boolean)
             Dim checkGoods As ListDictionary
-            checkGoods = FindCheckGoods()
+            checkGoods = GetFoundCheckGoods()
             If checkGoods.Count > 0 Then
                 _serviceDoc.AktForTOandDolg(checkGoods, Response, withDate, DateTime.Parse(tbxCloseDate.Text))
             End If
@@ -1148,8 +1161,8 @@ Namespace Kasbi
         End Sub
 
 
-        Private Function FindCheckGoods() As ListDictionary
-            Dim checkGoods As ListDictionary = New ListDictionary
+        Private Function GetFoundCheckGoods() As ListDictionary
+            Dim checkGoods = New ListDictionary
 
             For j = 0 To grdTO.Items.Count - 1
                 If CType(grdTO.Items(j).FindControl("cbxSelect"), WebControls.CheckBox).Checked Then
@@ -1221,5 +1234,6 @@ Namespace Kasbi
             lblCountPhonesNotFound.Text = countPhonesNotFound.ToString()
             smsSendModal.Style.Add("display", "block")
         End Sub
+
     End Class
 End Namespace

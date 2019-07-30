@@ -173,17 +173,17 @@ function isFind()
                                 <EditItemTemplate>
                                     <p class="SubTitleEditbox">
                                         Фамилия:</p>
-                                    <asp:TextBox ID="txtLastName" runat="server" Width="100%" BorderWidth="1px" Text='<%# DataBinder.Eval(Container, "DataItem.boos_last_name") %>'
+                                    <asp:TextBox ID="txtLastName" runat="server" Width="100%" MaxLength="100" BorderWidth="1px" Text='<%# DataBinder.Eval(Container, "DataItem.boos_last_name") %>'
                                         BorderStyle="Solid">
                                     </asp:TextBox><br>
                                     <p class="SubTitleEditbox">
                                         Имя:</p>
-                                    <asp:TextBox ID="txtFirstName" runat="server" Width="100%" BorderWidth="1px" Text='<%# DataBinder.Eval(Container, "DataItem.boos_first_name") %>'
+                                    <asp:TextBox ID="txtFirstName" runat="server" Width="100%" MaxLength="50" BorderWidth="1px" Text='<%# DataBinder.Eval(Container, "DataItem.boos_first_name") %>'
                                         BorderStyle="Solid">
                                     </asp:TextBox><br>
                                     <p class="SubTitleEditbox">
                                         Отчество:</p>
-                                    <asp:TextBox ID="txtPatronymicName" runat="server" Width="100%" BorderWidth="1px"
+                                    <asp:TextBox ID="txtPatronymicName" runat="server" Width="100%" MaxLength="50" BorderWidth="1px"
                                         Text='<%# DataBinder.Eval(Container, "DataItem.boos_patronymic_name") %>' BorderStyle="Solid">
                                     </asp:TextBox><br>
                                     <p class="SubTitleEditbox">
@@ -206,7 +206,7 @@ function isFind()
                                     </asp:TextBox>
                                     <p class="SubTitleEditbox">
                                         ОКЮЛП:</p>
-                                    <asp:TextBox ID="txtOKPO" runat="server" Width="70px" BorderWidth="1px" MaxLength="9"
+                                    <asp:TextBox ID="txtOKPO" runat="server" Width="70px" BorderWidth="1px" MaxLength="13"
                                         BorderStyle="Solid" Text='<%# DataBinder.Eval(Container, "DataItem.OKPO") %>'>
                                     </asp:TextBox><br>
                                     <asp:CheckBox ID="chkNDS" runat="server" CssClass="SubTitleEditbox" Text="НДС:" TextAlign="Left">

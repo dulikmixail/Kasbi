@@ -28,7 +28,7 @@
 				<tr>
 					<td align="center" colSpan="2">
 					<asp:checkbox runat="server" AutoPostBack="True" Font-Size="10" ID="cbxShowDescription" Text="Показывать описание" OnCheckedChanged="ShowDescription" Checked="false" /></asp:checkbox>
-					<asp:datagrid id="grdGoodTypes" runat="server" ShowFooter="True" PageSize="1000" AllowPaging="True"
+					<asp:datagrid id="grdGoodTypes" runat="server" ShowFooter="True" PageSize="500" AllowPaging="True"
 							AllowSorting="True" AutoGenerateColumns="False" Width="80%" CellPadding="1" BorderColor="#CC9966" BorderWidth="1px">
 							<AlternatingItemStyle CssClass="alternativeitemGrid"></AlternatingItemStyle>
                         <ItemStyle CssClass="itemGrid"></ItemStyle>
